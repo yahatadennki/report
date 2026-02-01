@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ひまわりスタッフ 日報</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+  h2 { text-align: center; font-size: 20px; }
+  .sub { text-align: center; font-size: 12px; color: #888; margin-bottom: 20px; }
+  .form { background: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-bottom: 20px; }
+  label { font-size: 13px; font-weight: bold; display: block; margin-bottom: 4px; }
+  input[type="date"], input[type="number"], textarea {
+    display: block; width: 100%; padding: 6px 8px; font-size: 14px;
+    border: 1px solid #ccc; border-radius: 4px; margin-bottom: 12px;
+  }
+  .row { display: flex; gap: 12px; }
+  .row > div { flex: 1; }
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .tag {
+    padding: 5px 12px; border-radius: 20px; border: 1px solid #ccc;
+    background: #fff; color: #333; cursor: pointer; font-size: 12px;
+  }
+  .tag.on { border-color: #4CAF50; background: #4CAF50; color: #fff; }
+  .tag.blue.on { border-color: #2196F3; background: #2196F3; color: #fff; }
+  .tag.orange.on { border-color: #FF9800; background: #FF9800; color: #fff; }
+  .btn {
+    display: block; width: 100%; padding: 10px; font-size: 15px; font-weight: bold;
+    background: #4CAF50; color: #fff; border: none; border-radius: 6px; cursor: pointer; margin-top: 16px;
+  }
+  .btn:disabled { background: #aaa; cursor: not-allowed; }
+  .msg { text-align: center; margin-top: 10px; font-weight: bold; font-size: 14px; }
+  .msg.ok { color: #4CAF50; }
+  .msg.err { color: #e53935; }
+  .log { background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 10px; margin-bottom: 8px; font-size: 12px; }
+  .log-header { display: flex; justify-content: space-between; align-items: center; }
+  .del { background: none; border: none; color: #e53935; cursor: pointer; font-size: 13px; }
+  textarea { resize: vertical; }
+</style>
+</head>
+<body>
+  <h2>🌻 ひまわりスタッフ 日報</h2>
+  <p class="sub">㈲ヤハタ電機商会</p>
+
+  <div class="form">
+    <label>日にち</label>
+    <input type="date" id="date">
+
+    <label>担当者</label>
+    <div class="tags" id="staffTags"></div>
+
+    <label>区域</label>
+    <div class="tags" id="areaTags"></div>
+
+    <div class="row">
+      <div>
+        <label>面談件数</label>
+        <input type="number" id="visits" min="0" placeholder="0">
+      </div>
+      <div>
+        <label>ポスティング件数</label>
+        <input type="number" id="postings" min="0" placeholder="0">
+      </div>
+    </div>
+
+    <label>配布物</label>
+    <div class="tags" id="itemTags"></div>
+
+    <label>備考</label>
+    <textarea id="remarks" rows="3" placeholder="お客様からの要望など"></textarea>
+
+    <button class="btn" id="submitBtn">送信</button>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <div id="logs"></div>
+
+<script>
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxrFUzdm4ZVBLa2JApaVBmHD7J-UNW9CiCltjeSVEeq6Bpi0rkLCHfOgqJiYTvuiP2v/exec";
+const STAFF = ["石橋", "角井", "櫻井"];
+const AREAS = ["1区","2区","3区","4区","5区","6区","7区","8区","9区"];
+const ITEMS = ["消耗品","ハガキ","チラシ","招待状","カレンダー","年賀タオル"];
+
+let selected = { staff: [], areas: [], items: [] };
+let logs = [];
+
+function createTags(arr, containerId, key, colorClass) {
+  const container = document.getElementById(containerId);
+  arr.forEach(val => {
+    const btn = document.createElement("button");
+    btn.className = "tag " + (colorClass || "");
+    btn.textContent = val;
+    btn.onclick = () => {
+      const idx = selected[key].indexOf(val);
+      if (idx > -1) { selected[key].splice(idx, 1); btn.classList.remove("on"); }
+      else { selected[key].push(val); btn.classList.add("on"); }
+    };
+    container.appendChild(btn);
+  });
+}
+
+createTags(STAFF, "staffTags", "staff", "");
+createTags(AREAS, "areaTags", "areas", "blue");
+createTags(ITEMS, "itemTags", "items", "orange");
+
+// 今日の日付をセット
+const today = new Date();
+document.getElementById("date").value = today.toISOString().split("T")[0];
+
+document.getElementById("submitBtn").addEventListener("click", async () => {
+  const date = document.getElementById("date").value;
+  if (!date || selected.staff.length === 0) { alert("日にちと担当者は必須です"); return; }
+
+  const btn = document.getElementById("submitBtn");
+  const msg = document.getElementById("msg");
+  btn.disabled = true;
+  btn.textContent = "送信中...";
+  msg.textContent = "";
+
+  const entry = {
+    date,
+    staff: selected.staff.join("・"),
+    areas: selected.areas.join("・"),
+    visits: document.getElementById("visits").value || "0",
+    postings: document.getElementById("postings").value || "0",
+    items: selected.items.join("・"),
+    remarks: document.getElementById("remarks").value
+  };
+
+  try {
+    await fetch(GAS_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(entry)
+    });
+    msg.className = "msg ok";
+    msg.textContent = "✅ スプレッドシートに送信しました！";
+    logs.push(entry);
+    renderLogs();
+    // リセット
+    document.getElementById("date").value = today.toISOString().split("T")[0];
+    document.getElementById("visits").value = "";
+    document.getElementById("postings").value = "";
+    document.getElementById("remarks").value = "";
+    selected = { staff: [], areas: [], items: [] };
+    document.querySelectorAll(".tag").forEach(t => t.classList.remove("on"));
+  } catch (e) {
+    msg.className = "msg err";
+    msg.textContent = "❌ 送信に失敗しました。再度お試しください。";
+  }
+  btn.disabled = false;
+  btn.textContent = "送信";
+  setTimeout(() => { msg.textContent = ""; }, 3000);
+});
+
+function renderLogs() {
+  const container = document.getElementById("logs");
+  if (logs.length > 0) {
+    container.innerHTML = '<h3 style="font-size:14px;margin-bottom:8px">本日の送信済み一覧</h3>';
+  } else { container.innerHTML = ""; return; }
+  logs.forEach((log, i) => {
+    container.innerHTML += `
+      <div class="log">
+        <div class="log-header"><strong>${log.date}</strong><button class="del" onclick="deletLog(${i})">削除</button></div>
+        <div>担当者: ${log.staff || "ー"}</div>
+        <div>区域: ${log.areas || "ー"}</div>
+        <div>面談件数: ${log.visits} / ポスティング: ${log.postings}</div>
+        <div>配布物: ${log.items || "ー"}</div>
+        ${log.remarks ? "<div>備考: " + log.remarks + "</div>" : ""}
+      </div>`;
+  });
+}
+
+function deletLog(i) { logs.splice(i, 1); renderLogs(); }
+</script>
+</body>
+</html>
