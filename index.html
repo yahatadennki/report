@@ -47,7 +47,7 @@
     <label>日にち</label>
     <input type="date" id="date">
 
-    <label>担当者</label>
+    <label>担当者（1人だけ選択してください）</label>
     <div class="tags" id="staffTags"></div>
 
     <label>区域</label>
@@ -82,8 +82,25 @@ const STAFF = ["石橋", "角井", "櫻井"];
 const AREAS = ["1区","2区","3区","4区","5区","6区","7区","8区","9区"];
 const ITEMS = ["消耗品","ハガキ","チラシ","招待状","カレンダー","年賀タオル"];
 
-let selected = { staff: [], areas: [], items: [] };
+let selected = { staff: "", areas: [], items: [] };
 let logs = [];
+
+function createStaffTags() {
+  const container = document.getElementById("staffTags");
+  STAFF.forEach(val => {
+    const btn = document.createElement("button");
+    btn.className = "tag";
+    btn.textContent = val;
+    btn.onclick = () => {
+      // 他の担当者ボタンを全てオフにする
+      document.querySelectorAll("#staffTags .tag").forEach(t => t.classList.remove("on"));
+      // クリックしたボタンだけオンにする
+      btn.classList.add("on");
+      selected.staff = val;
+    };
+    container.appendChild(btn);
+  });
+}
 
 function createTags(arr, containerId, key, colorClass) {
   const container = document.getElementById(containerId);
@@ -93,14 +110,19 @@ function createTags(arr, containerId, key, colorClass) {
     btn.textContent = val;
     btn.onclick = () => {
       const idx = selected[key].indexOf(val);
-      if (idx > -1) { selected[key].splice(idx, 1); btn.classList.remove("on"); }
-      else { selected[key].push(val); btn.classList.add("on"); }
+      if (idx > -1) { 
+        selected[key].splice(idx, 1); 
+        btn.classList.remove("on"); 
+      } else { 
+        selected[key].push(val); 
+        btn.classList.add("on"); 
+      }
     };
     container.appendChild(btn);
   });
 }
 
-createTags(STAFF, "staffTags", "staff", "");
+createStaffTags();
 createTags(AREAS, "areaTags", "areas", "blue");
 createTags(ITEMS, "itemTags", "items", "orange");
 
@@ -110,7 +132,10 @@ document.getElementById("date").value = today.toISOString().split("T")[0];
 
 document.getElementById("submitBtn").addEventListener("click", async () => {
   const date = document.getElementById("date").value;
-  if (!date || selected.staff.length === 0) { alert("日にちと担当者は必須です"); return; }
+  if (!date || !selected.staff) { 
+    alert("日にちと担当者は必須です"); 
+    return; 
+  }
 
   const btn = document.getElementById("submitBtn");
   const msg = document.getElementById("msg");
@@ -120,7 +145,7 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
 
   const entry = {
     date,
-    staff: selected.staff.join("・"),
+    staff: selected.staff,
     areas: selected.areas.join("・"),
     visits: document.getElementById("visits").value || "0",
     postings: document.getElementById("postings").value || "0",
@@ -136,7 +161,7 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
       body: JSON.stringify(entry)
     });
     msg.className = "msg ok";
-    msg.textContent = "✅ スプレッドシートに送信しました！";
+    msg.textContent = "✅ " + selected.staff + "のシートに送信しました！";
     logs.push(entry);
     renderLogs();
     // リセット
@@ -144,7 +169,7 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
     document.getElementById("visits").value = "";
     document.getElementById("postings").value = "";
     document.getElementById("remarks").value = "";
-    selected = { staff: [], areas: [], items: [] };
+    selected = { staff: "", areas: [], items: [] };
     document.querySelectorAll(".tag").forEach(t => t.classList.remove("on"));
   } catch (e) {
     msg.className = "msg err";
@@ -163,7 +188,7 @@ function renderLogs() {
   logs.forEach((log, i) => {
     container.innerHTML += `
       <div class="log">
-        <div class="log-header"><strong>${log.date}</strong><button class="del" onclick="deletLog(${i})">削除</button></div>
+        <div class="log-header"><strong>${log.date}</strong><button class="del" onclick="deleteLog(${i})">削除</button></div>
         <div>担当者: ${log.staff || "ー"}</div>
         <div>区域: ${log.areas || "ー"}</div>
         <div>面談件数: ${log.visits} / ポスティング: ${log.postings}</div>
@@ -173,7 +198,7 @@ function renderLogs() {
   });
 }
 
-function deletLog(i) { logs.splice(i, 1); renderLogs(); }
+function deleteLog(i) { logs.splice(i, 1); renderLogs(); }
 </script>
 </body>
 </html>
