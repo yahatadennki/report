@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>受注日報 - ヤハタ電機商会</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script type="text/babel">
+    const { useState } = React;
+    const { Calendar, Plus, Trash2, User, Phone, Store, MapPin, Download, Send, Settings } = lucide;
+
+    const OrderDailyReport = () => {
+      const [orders, setOrders] = useState([]);
+      const [currentDate, setCurrentDate] = useState(new Date().toISOString().slice(0, 10));
+      const [scriptUrl, setScriptUrl] = useState(localStorage.getItem('scriptUrl') || '');
+      const [showSettings, setShowSettings] = useState(false);
+      const [isSyncing, setIsSyncing] = useState(false);
+      const [formData, setFormData] = useState({
+        担当: '',
+        種類: '',
+        顧客名: '',
+        電話番号: '',
+        住所: '',
+        訪問日時: '',
+        内容: ''
+      });
+
+      const 担当者リスト = ['宇留野', '石橋', '角井', '櫻井', '渡邊', '伊藤', '高山'];
+      const 種類リスト = ['電話', '来店', '訪問'];
+
+      const getIconForType = (type) => {
+        switch(type) {
+          case '電話': return React.createElement(Phone, { className: "w-4 h-4" });
+          case '来店': return React.createElement(Store, { className: "w-4 h-4" });
+          case '訪問': return React.createElement(MapPin, { className: "w-4 h-4" });
+          default: return null;
+        }
+      };
+
+      const getColorForType = (type) => {
+        switch(type) {
+          case '電話': return 'bg-blue-100 text-blue-800 border-blue-300';
+          case '来店': return 'bg-green-100 text-green-800 border-green-300';
+          case '訪問': return 'bg-purple-100 text-purple-800 border-purple-300';
+          default: return 'bg-gray-100 text-gray-800 border-gray-300';
+        }
+      };
+
+      const handleAddOrder = () => {
+        if (!formData.担当 || !formData.種類 || !formData.顧客名) {
+          alert('担当、種類、顧客名は必須項目です');
+          return;
+        }
+
+        const newOrder = {
+          id: Date.now(),
+          日付: currentDate,
+          登録時刻: new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }),
+          ...formData
+        };
+
+        setOrders([...orders, newOrder]);
+        
+        if (scriptUrl) {
+          sendToSpreadsheet(newOrder);
+        }
+        
+        setFormData({
+          担当: '',
+          種類: '',
+          顧客名: '',
+          電話番号: '',
+          住所: '',
+          訪問日時: '',
+          内容: ''
+        });
+      };
+
+      const sendToSpreadsheet = async (order) => {
+        if (!scriptUrl) return;
+
+        try {
+          await fetch(scriptUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              日付: order.日付,
+              登録時刻: order.登録時刻,
+              担当: order.担当,
+              種類: order.種類,
+              顧客名: order.顧客名,
+              電話番号: order.電話番号 || '',
+              住所: order.住所 || '',
+              訪問日時: order.訪問日時 || '',
+              内容: order.内容 || ''
+            })
+          });
+          console.log('スプレッドシートに送信しました');
+        } catch (error) {
+          console.error('送信エラー:', error);
+        }
+      };
+
+      const syncAllToSpreadsheet = async () => {
+        if (!scriptUrl) {
+          alert('スプレッドシートURLを設定してください');
+          return;
+        }
+
+        const todayOrders = getTodayOrders();
+        if (todayOrders.length === 0) {
+          alert('同期するデータがありません');
+          return;
+        }
+
+        setIsSyncing(true);
+        
+        try {
+          for (const order of todayOrders) {
+            await sendToSpreadsheet(order);
+            await new Promise(resolve => setTimeout(resolve, 500));
+          }
+          alert(`${todayOrders.length}件の受注をスプレッドシートに同期しました`);
+        } catch (error) {
+          alert('同期中にエラーが発生しました');
+        } finally {
+          setIsSyncing(false);
+        }
+      };
+
+      const handleDeleteOrder = (id) => {
+        if (window.confirm('この受注を削除しますか？')) {
+          setOrders(orders.filter(order => order.id !== id));
+        }
+      };
+
+      const getTodayOrders = () => {
+        return orders.filter(order => order.日付 === currentDate);
+      };
+
+      const exportToCSV = () => {
+        const todayOrders = getTodayOrders();
+        if (todayOrders.length === 0) {
+          alert('エクスポートするデータがありません');
+          return;
+        }
+
+        const headers = ['日付', '登録時刻', '担当', '種類', '顧客名', '電話番号', '住所', '訪問日時', '受注内容'];
+        const csvData = todayOrders.map(order => [
+          order.日付,
+          order.登録時刻,
+          order.担当,
+          order.種類,
+          order.顧客名,
+          order.電話番号 || '',
+          order.住所 || '',
+          order.訪問日時 || '',
+          order.内容 || ''
+        ]);
+
+        const csvContent = [
+          headers.join(','),
+          ...csvData.map(row => row.map(cell => `"${cell}"`).join(','))
+        ].join('\n');
+
+        const bom = '\uFEFF';
+        const blob = new Blob([bom + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        
+        link.setAttribute('href', url);
+        link.setAttribute('download', `受注日報_${currentDate}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      };
+
+      const handleScriptUrlChange = (url) => {
+        setScriptUrl(url);
+        localStorage.setItem('scriptUrl', url);
+      };
+
+      const todayOrders = getTodayOrders();
+
+      return React.createElement('div', { className: "min-h-screen bg-gradient-to-br from-orange-50 to-yellow-100 p-4" },
+        React.createElement('div', { className: "max-w-6xl mx-auto" },
+          React.createElement('div', { className: "bg-white rounded-lg shadow-lg p-6 mb-6" },
+            React.createElement('div', { className: "flex items-center justify-between mb-4" },
+              React.createElement('h1', { className: "text-3xl font-bold text-gray-800 flex items-center gap-3" },
+                React.createElement('div', { className: "bg-orange-500 p-2 rounded-lg" },
+                  React.createElement(Calendar, { className: "w-8 h-8 text-white" })
+                ),
+                '受注日報'
+              ),
+              React.createElement('div', { className: "flex gap-2" },
+                React.createElement('button', {
+                  onClick: () => setShowSettings(!showSettings),
+                  className: "bg-gray-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-gray-700 transition-colors flex items-center gap-2"
+                },
+                  React.createElement(Settings, { className: "w-5 h-5" }),
+                  '設定'
+                ),
+                todayOrders.length > 0 && scriptUrl && React.createElement('button', {
+                  onClick: syncAllToSpreadsheet,
+                  disabled: isSyncing,
+                  className: "bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2 disabled:bg-gray-400"
+                },
+                  React.createElement(Send, { className: "w-5 h-5" }),
+                  isSyncing ? '同期中...' : '一括同期'
+                ),
+                todayOrders.length > 0 && React.createElement('button', {
+                  onClick: exportToCSV,
+                  className: "bg-green-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center gap-2"
+                },
+                  React.createElement(Download, { className: "w-5 h-5" }),
+                  'CSV'
+                )
+              )
+            ),
+
+            showSettings && React.createElement('div', { className: "mb-4 p-4 bg-blue-50 border-2 border-blue-200 rounded-lg" },
+              React.createElement('h3', { className: "font-bold text-gray-800 mb-2 flex items-center gap-2" },
+                React.createElement(Settings, { className: "w-5 h-5" }),
+                'スプレッドシート連携設定'
+              ),
+              React.createElement('div', { className: "space-y-2" },
+                React.createElement('label', { className: "block text-sm font-semibold text-gray-700" },
+                  'Google Apps Script URL'
+                ),
+                React.createElement('input', {
+                  type: "text",
+                  value: scriptUrl,
+                  onChange: (e) => handleScriptUrlChange(e.target.value),
+                  className: "w-full p-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none",
+                  placeholder: "https://script.google.com/macros/s/..."
+                }),
+                React.createElement('p', { className: "text-sm text-gray-600" },
+                  '※ Google Apps ScriptのウェブアプリURLを入力してください',
+                  scriptUrl && React.createElement('span', { className: "text-green-600 font-semibold ml-2" }, '✓ 設定済み（受注追加時に自動送信されます）')
+                )
+              )
+            ),
+
+            React.createElement('div', { className: "flex items-center gap-4 bg-orange-50 p-4 rounded-lg border-2 border-orange-200" },
+              React.createElement(Calendar, { className: "w-6 h-6 text-orange-600" }),
+              React.createElement('div', { className: "flex-1" },
+                React.createElement('label', { className: "block text-sm font-semibold text-gray-700 mb-2" }, '日付'),
+                React.createElement('input', {
+                  type: "date",
+                  value: currentDate,
+                  onChange: (e) => setCurrentDate(e.target.value),
+                  className: "w-full p-3 border-2 border-orange-300 rounded-lg focus:border-orange-500 focus:outline-none text-lg font-semibold"
+                })
+              ),
+              React.createElement('div', { className: "text-right" },
+                React.createElement('div', { className: "text-sm text-gray-600" }, '本日の受注'),
+                React.createElement('div', { className: "text-3xl font-bold text-orange-600" }, `${todayOrders.length}件`)
+              )
+            )
+          ),
+
+          React.createElement('div', { className: "bg-white rounded-lg shadow-lg p-6 mb-6" },
+            React.createElement('h2', { className: "text-xl font-bold text-gray-800 mb-4 flex items-center gap-2" },
+              React.createElement(Plus, { className: "w-6 h-6" }),
+              '受注入力'
+            ),
+
+            React.createElement('div', { className: "space-y-4" },
+              React.createElement('div', { className: "grid grid-cols-1 md:grid-cols-2 gap-4" },
+                React.createElement('div', null,
+                  React.createElement('label', { className: "block text-sm font-semibold text-gray-700 mb-2" },
+                    React.createElement(User, { className: "w-4 h-4 inline mr-1" }),
+                    '担当者 ',
+                    React.createElement('span', { className: "text-red-500" }, '*')
+                  ),
+                  React.createElement('select', {
+                    value: formData.担当,
+                    onChange: (e) => setFormData({...formData, 担当: e.target.value}),
+                    className: "w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none"
+                  },
+                    React.createElement('option', { value: "" }, '選択してください'),
+                    担当者リスト.map(name => React.createElement('option', { key: name, value: name }, name))
+                  )
+                ),
+
+                React.createElement('div', null,
+                  React.createElement('label', { className: "block text-sm font-semibold text-gray-700 mb-2" },
+                    '受注種類 ',
+                    React.createElement('span', { className: "text-red-500" }, '*')
+                  ),
+                  React.createElement('div', { className: "grid grid-cols-3 gap-2" },
+                    種類リスト.map(type => React.createElement('button', {
+                      key: type,
+                      onClick: () => setFormData({...formData, 種類: type}),
+                      className: `p-3 rounded-lg border-2 font-semibold transition-all ${formData.種類 === type ? getColorForType(type) : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'}`
+                    },
+                      React.createElement('div', { className: "flex items-center justify-center gap-1" },
+                        getIconForType(type),
+                        React.createElement('span', null, type)
+                      )
+                    ))
+                  )
+                )
+              ),
+
+              React.createElement('div', { className: "grid grid-cols-1 md:grid-cols-3 gap-4" },
+                React.createElement('div', null,
+                  React.createElement('label', { className: "block text-sm font-semibold text-gray-700 mb-2" },
+                    '顧客名 ',
+                    React.createElement('span', { className: "text-red-500" }, '*')
+                  ),
+                  React.createElement('input', {
+                    type: "text",
+                    value: formData.顧客名,
+                    onChange: (e) => setFormData({...formData, 顧客名: e.target.value}),
+                    className: "w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none",
+                    placeholder: "顧客名を入力"
+                  })
+                ),
+
+                React.createElement('div', null,
+                  React.createElement('label', { className: "block text-sm font-semibold text-gray-700 mb-2" },
+                    React.createElement(Phone, { className: "w-4 h-4 inline mr-1" }),
+                    '電話番号'
+                  ),
+                  React.createElement('input', {
+                    type: "tel",
+                    value: formData.電話番号,
+                    onChange: (e) => setFormData({...formData, 電話番号: e.target.value}),
+                    className: "w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none",
+                    placeholder: "例: 043-123-4567"
+                  })
+                ),
+
+                React.createElement('div', null,
+                  React.createElement('label', { className: "block text-sm font-semibold text-gray-700 mb-2" },
+                    React.createElement(MapPin, { className: "w-4 h-4 inline mr-1" }),
+                    '住所'
+                  ),
+                  React.createElement('input', {
+                    type: "text",
+                    value: formData.住所,
+                    onChange: (e) => setFormData({...formData, 住所: e.target.value}),
+                    className: "w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none",
+                    placeholder: "例: 長沼町"
+                  })
+                )
+              ),
+
+              React.createElement('div', null,
+                React.createElement('label', { className: "block text-sm font-semibold text-gray-700 mb-2" }, '訪問日時'),
+                React.createElement('input', {
+                  type: "datetime-local",
+                  value: formData.訪問日時,
+                  onChange: (e) => setFormData({...formData, 訪問日時: e.target.value}),
+                  className: "w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none"
+                })
+              ),
+
+              React.createElement('div', null,
+                React.createElement('label', { className: "block text-sm font-semibold text-gray-700 mb-2" }, '受注内容'),
+                React.createElement('textarea', {
+                  value: formData.内容,
+                  onChange: (e) => setFormData({...formData, 内容: e.target.value}),
+                  className: "w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none",
+                  rows: "3",
+                  placeholder: "受注内容を入力"
+                })
+              ),
+
+              React.createElement('button', {
+                onClick: handleAddOrder,
+                className: "w-full bg-orange-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center gap-2"
+              },
+                React.createElement(Plus, { className: "w-5 h-5" }),
+                '受注を追加'
+              )
+            )
+          ),
+
+          React.createElement('div', { className: "bg-white rounded-lg shadow-lg p-6" },
+            React.createElement('h2', { className: "text-xl font-bold text-gray-800 mb-4" },
+              `${currentDate} の受注一覧 (${todayOrders.length}件)`
+            ),
+
+            todayOrders.length === 0 ? React.createElement('div', { className: "text-center py-12 text-gray-500" },
+              React.createElement(Store, { className: "w-16 h-16 mx-auto mb-4 opacity-30" }),
+              React.createElement('p', { className: "text-lg" }, 'この日の受注はまだありません')
+            ) : React.createElement('div', { className: "space-y-3" },
+              todayOrders.map((order, index) => React.createElement('div', {
+                key: order.id,
+                className: "border-2 border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+              },
+                React.createElement('div', { className: "flex items-start justify-between" },
+                  React.createElement('div', { className: "flex-1" },
+                    React.createElement('div', { className: "flex items-center gap-3 mb-2" },
+                      React.createElement('span', { className: "px-2 py-1 bg-gray-200 text-gray-700 rounded text-sm font-bold" },
+                        `#${index + 1}`
+                      ),
+                      React.createElement('span', { className: "px-2 py-1 bg-orange-100 text-orange-800 rounded text-sm font-semibold" },
+                        order.登録時刻
+                      ),
+                      React.createElement('span', { className: `px-3 py-1 rounded-full text-sm font-semibold border-2 flex items-center gap-1 ${getColorForType(order.種類)}` },
+                        getIconForType(order.種類),
+                        order.種類
+                      ),
+                      React.createElement('span', { className: "px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm font-semibold border-2 border-gray-200 flex items-center gap-1" },
+                        React.createElement(User, { className: "w-4 h-4" }),
+                        order.担当
+                      )
+                    ),
+                    
+                    React.createElement('h3', { className: "text-xl font-bold text-gray-800 mb-2" }, order.顧客名),
+                    
+                    React.createElement('div', { className: "space-y-1 mb-2" },
+                      order.電話番号 && React.createElement('p', { className: "text-gray-700 flex items-center gap-2" },
+                        React.createElement(Phone, { className: "w-4 h-4" }),
+                        order.電話番号
+                      ),
+                      order.住所 && React.createElement('p', { className: "text-gray-700 flex items-center gap-2" },
+                        React.createElement(MapPin, { className: "w-4 h-4" }),
+                        order.住所
+                      )
+                    ),
+
+                    order.訪問日時 && React.createElement('p', { className: "text-gray-700 mb-2 flex items-center gap-2" },
+                      React.createElement(Calendar, { className: "w-4 h-4" }),
+                      `訪問予定: ${new Date(order.訪問日時).toLocaleString('ja-JP')}`
+                    ),
+                    
+                    order.内容 && React.createElement('div', { className: "bg-gray-50 p-3 rounded border border-gray-200 mt-2" },
+                      React.createElement('p', { className: "text-gray-700 whitespace-pre-wrap" }, order.内容)
+                    )
+                  ),
+
+                  React.createElement('button', {
+                    onClick: () => handleDeleteOrder(order.id),
+                    className: "text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-colors ml-4"
+                  },
+                    React.createElement(Trash2, { className: "w-5 h-5" })
+                  )
+                )
+              ))
+            )
+          )
+        )
+      );
+    };
+
+    lucide.createIcons();
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(React.createElement(OrderDailyReport));
+  </script>
+</body>
+</html>
