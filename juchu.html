@@ -1,757 +1,614 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>受注日報 - ヤハタ電機商会</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    .icon { width: 1rem; height: 1rem; display: inline-block; vertical-align: middle; }
-  </style>
-</head>
-<body class="min-h-screen bg-gradient-to-br from-orange-50 to-yellow-100">
-  <div id="app" class="p-4 max-w-6xl mx-auto"></div>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>受注日報 - ヤハタ電機商会</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <script>
-    // データ管理
-    let orders = [];
-    let currentDate = new Date().toISOString().slice(0, 10);
-    let scriptUrl = localStorage.getItem('scriptUrl') || '';
-    let showSettings = false;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-    const 担当者リスト = ['宇留野', '石橋', '角井', '櫻井', '渡邊', '伊藤', '高山'];
-    const 種類リスト = ['電話', '来店', '訪問'];
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 30px;
+        }
 
-    // アイコンSVG
-    const icons = {
-      calendar: '<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>',
-      plus: '<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>',
-      trash: '<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>',
-      user: '<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>',
-      phone: '<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>',
-      store: '<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>',
-      mapPin: '<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>',
-      download: '<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>',
-      send: '<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>',
-      settings: '<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M12 1v6m0 6v6m5.2-13.2l-4.2 4.2m-2 2l-4.2 4.2M23 12h-6m-6 0H1m18.2 5.2l-4.2-4.2m-2-2l-4.2-4.2"></path></svg>'
-    };
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
 
-    function getIconForType(type) {
-      if (type === '電話') return icons.phone;
-      if (type === '来店') return icons.store;
-      if (type === '訪問') return icons.mapPin;
-      return '';
-    }
+        .header h1 {
+            color: #667eea;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
 
-    function getColorForType(type) {
-      if (type === '電話') return 'bg-blue-100 text-blue-800 border-blue-300';
-      if (type === '来店') return 'bg-green-100 text-green-800 border-green-300';
-      if (type === '訪問') return 'bg-purple-100 text-purple-800 border-purple-300';
-      return 'bg-gray-100 text-gray-800 border-gray-300';
-    }
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
 
-    async function sendToSpreadsheet(order) {
-      if (!scriptUrl) return;
-      try {
-        await fetch(scriptUrl, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            日付: order.日付,
-            登録時刻: order.登録時刻,
-            担当: order.担当,
-            種類: order.種類,
-            顧客名: order.顧客名,
-            電話番号: order.電話番号 || '',
-            住所: order.住所 || '',
-            訪問日時: order.訪問日時 || '',
-            内容: order.内容 || ''
-          })
-        });
-        console.log('スプレッドシートに送信しました');
-      } catch (error) {
-        console.error('送信エラー:', error);
-      }
-    }
+        .date-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 18px;
+            font-weight: bold;
+        }
 
-    function handleAddOrder() {
-      const 担当 = document.getElementById('担当').value;
-      const 種類 = document.querySelector('input[name="種類"]:checked')?.value;
-      const 顧客名 = document.getElementById('顧客名').value;
-      const 電話番号 = document.getElementById('電話番号').value;
-      const 住所 = document.getElementById('住所').value;
-      const 訪問日時 = document.getElementById('訪問日時').value;
-      const 内容 = document.getElementById('内容').value;
+        .settings-btn {
+            background: #95a5a6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
 
-      if (!担当 || !種類 || !顧客名) {
-        alert('担当、種類、顧客名は必須項目です');
-        return;
-      }
+        .settings-btn:hover {
+            background: #7f8c8d;
+        }
 
-      const newOrder = {
-        id: Date.now(),
-        日付: currentDate,
-        登録時刻: new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }),
-        担当, 種類, 顧客名, 電話番号, 住所, 訪問日時, 内容
-      };
+        .settings-panel {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
 
-      orders.push(newOrder);
-      if (scriptUrl) sendToSpreadsheet(newOrder);
+        .settings-panel.active {
+            display: block;
+        }
 
-      document.getElementById('担当').value = '';
-      document.querySelectorAll('input[name="種類"]').forEach(el => el.checked = false);
-      document.getElementById('顧客名').value = '';
-      document.getElementById('電話番号').value = '';
-      document.getElementById('住所').value = '';
-      document.getElementById('訪問日時').value = '';
-      document.getElementById('内容').value = '';
+        .form-group {
+            margin-bottom: 20px;
+        }
 
-      render();
-    }
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
 
-    function deleteOrder(id) {
-      if (confirm('この受注を削除しますか？')) {
-        orders = orders.filter(o => o.id !== id);
-        render();
-      }
-    }
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
 
-    function exportCSV() {
-      const todayOrders = orders.filter(o => o.日付 === currentDate);
-      if (todayOrders.length === 0) {
-        alert('エクスポートするデータがありません');
-        return;
-      }
+        .form-group select:focus,
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
 
-      const headers = ['日付', '登録時刻', '担当', '種類', '顧客名', '電話番号', '住所', '訪問日時', '受注内容'];
-      const csvData = todayOrders.map(o => [
-        o.日付, o.登録時刻, o.担当, o.種類, o.顧客名, o.電話番号 || '', o.住所 || '', o.訪問日時 || '', o.内容 || ''
-      ]);
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
 
-      const csvContent = [
-        headers.join(','),
-        ...csvData.map(row => row.map(cell => `"${cell}"`).join(','))
-      ].join('\n');
+        .required {
+            color: #e74c3c;
+            margin-left: 4px;
+        }
 
-      const bom = '\uFEFF';
-      const blob = new Blob([bom + csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `受注日報_${currentDate}.csv`;
-      link.click();
-    }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
 
-    function render() {
-      const todayOrders = orders.filter(o => o.日付 === currentDate);
-      
-      document.getElementById('app').innerHTML = `
-        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <div class="flex items-center justify-between mb-4">
-            <h1 class="text-3xl font-bold text-gray-800 flex items-center gap-3">
-              <div class="bg-orange-500 p-2 rounded-lg">${icons.calendar}</div>
-              受注日報
-            </h1>
-            <div class="flex gap-2">
-              <button onclick="showSettings = !showSettings; render()" class="bg-gray-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-gray-700 transition-colors flex items-center gap-2">
-                ${icons.settings} 設定
-              </button>
-              ${todayOrders.length > 0 ? `<button onclick="exportCSV()" class="bg-green-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center gap-2">${icons.download} CSV</button>` : ''}
-            </div>
-          </div>
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
 
-          ${showSettings ? `
-            <div class="mb-4 p-4 bg-blue-50 border-2 border-blue-200 rounded-lg">
-              <h3 class="font-bold text-gray-800 mb-2 flex items-center gap-2">
-                ${icons.settings} スプレッドシート連携設定
-              </h3>
-              <label class="block text-sm font-semibold text-gray-700 mb-2">Google Apps Script URL</label>
-              <input type="text" id="scriptUrlInput" value="${scriptUrl}" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none" placeholder="https://script.google.com/macros/s/...">
-              <button onclick="scriptUrl = document.getElementById('scriptUrlInput').value; localStorage.setItem('scriptUrl', scriptUrl); render()" class="mt-2 bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-700">保存</button>
-              <p class="text-sm text-gray-600 mt-2">※ Google Apps ScriptのウェブアプリURLを入力してください</p>
-            </div>
-          ` : ''}
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
 
-          <div class="flex items-center gap-4 bg-orange-50 p-4 rounded-lg border-2 border-orange-200">
-            ${icons.calendar}
-            <div class="flex-1">
-              <label class="block text-sm font-semibold text-gray-700 mb-2">日付</label>
-              <input type="date" id="dateInput" value="${currentDate}" onchange="currentDate = this.value; render()" class="w-full p-3 border-2 border-orange-300 rounded-lg focus:border-orange-500 focus:outline-none text-lg font-semibold">
-            </div>
-            <div class="text-right">
-              <div class="text-sm text-gray-600">本日の受注</div>
-              <div class="text-3xl font-bold text-orange-600">${todayOrders.length}件</div>
-            </div>
-          </div>
-        </div>
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
 
-        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-            ${icons.plus} 受注入力
-          </h2>
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #e0e0e0;
+        }
 
-          <div class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">${icons.user} 担当者 <span class="text-red-500">*</span></label>
-                <select id="担当" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
-                  <option value="">選択してください</option>
-                  ${担当者リスト.map(name => `<option value="${name}">${name}</option>`).join('')}
-                </select>
-              </div>
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
 
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">受注種類 <span class="text-red-500">*</span></label>
-                <div class="grid grid-cols-3 gap-2">
-                  ${種類リスト.map(type => `
-                    <label class="p-3 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100">
-                      <input type="radio" name="種類" value="${type}" class="hidden">
-                      <div class="flex items-center justify-center gap-1">${getIconForType(type)} ${type}</div>
-                    </label>
-                  `).join('')}
-                </div>
-              </div>
-            </div>
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">顧客名 <span class="text-red-500">*</span></label>
-                <input type="text" id="顧客名" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="顧客名を入力">
-              </div>
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">${icons.phone} 電話番号</label>
-                <input type="tel" id="電話番号" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="例: 043-123-4567">
-              </div>
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">${icons.mapPin} 住所</label>
-                <input type="text" id="住所" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="例: 長沼町">
-              </div>
-            </div>
+        .orders-list {
+            margin-top: 30px;
+        }
 
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2">訪問日時</label>
-              <input type="datetime-local" id="訪問日時" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
-            </div>
+        .orders-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
 
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2">受注内容</label>
-              <textarea id="内容" rows="3" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="受注内容を入力"></textarea>
-            </div>
+        .orders-header h2 {
+            color: #333;
+            font-size: 20px;
+        }
 
-            <button onclick="handleAddOrder()" class="w-full bg-orange-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center gap-2">
-              ${icons.plus} 受注を追加
-            </button>
-          </div>
-        </div>
+        .order-count {
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
 
-        <div class="bg-white rounded-lg shadow-lg p-6">
-          <h2 class="text-xl font-bold text-gray-800 mb-4">${currentDate} の受注一覧 (${todayOrders.length}件)</h2>
-          ${todayOrders.length === 0 ? `
-            <div class="text-center py-12 text-gray-500">
-              ${icons.store}
-              <p class="text-lg">この日の受注はまだありません</p>
-            </div>
-          ` : `
-            <div class="space-y-3">
-              ${todayOrders.map((order, index) => `
-                <div class="border-2 border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                  <div class="flex items-start justify-between">
-                    <div class="flex-1">
-                      <div class="flex items-center gap-3 mb-2">
-                        <span class="px-2 py-1 bg-gray-200 text-gray-700 rounded text-sm font-bold">#${index + 1}</span>
-                        <span class="px-2 py-1 bg-orange-100 text-orange-800 rounded text-sm font-semibold">${order.登録時刻}</span>
-                        <span class="px-3 py-1 rounded-full text-sm font-semibold border-2 flex items-center gap-1 ${getColorForType(order.種類)}">
-                          ${getIconForType(order.種類)} ${order.種類}
-                        </span>
-                        <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm font-semibold border-2 border-gray-200 flex items-center gap-1">
-                          ${icons.user} ${order.担当}
-                        </span>
-                      </div>
-                      <h3 class="text-xl font-bold text-gray-800 mb-2">${order.顧客名}</h3>
-                      <div class="space-y-1 mb-2">
-                        ${order.電話番号 ? `<p class="text-gray-700 flex items-center gap-2">${icons.phone} ${order.電話番号}</p>` : ''}
-                        ${order.住所 ? `<p class="text-gray-700 flex items-center gap-2">${icons.mapPin} ${order.住所}</p>` : ''}
-                      </div>
-                      ${order.訪問日時 ? `<p class="text-gray-700 mb-2 flex items-center gap-2">${icons.calendar} 訪問予定: ${new Date(order.訪問日時).toLocaleString('ja-JP')}</p>` : ''}
-                      ${order.内容 ? `<div class="bg-gray-50 p-3 rounded border border-gray-200 mt-2"><p class="text-gray-700 whitespace-pre-wrap">${order.内容}</p></div>` : ''}
-                    </div>
-                    <button onclick="deleteOrder(${order.id})" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-colors ml-4">
-                      ${icons.trash}
-                    </button>
-                  </div>
-                </div>
-              `).join('')}
-            </div>
-          `}
-        </div>
-      `;
+        .order-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+            position: relative;
+        }
 
-      // ラジオボタンのスタイル更新
-      document.querySelectorAll('input[name="種類"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-          document.querySelectorAll('input[name="種類"]').forEach(r => {
-            const label = r.closest('label');
-            if (r.checked) {
-              label.className = `p-3 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center ${getColorForType(r.value)}`;
-            } else {
-              label.className = 'p-3 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100';
+        .order-card.type-電話 {
+            border-left-color: #3498db;
+        }
+
+        .order-card.type-来店 {
+            border-left-color: #2ecc71;
+        }
+
+        .order-card.type-訪問 {
+            border-left-color: #9b59b6;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+
+        .order-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .order-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .order-badge.type-電話 {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .order-badge.type-来店 {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .order-badge.type-訪問 {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .order-info {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .order-info p {
+            margin: 5px 0;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .delete-btn:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+
+        .sync-status {
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .sync-status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .sync-status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .type-select {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .type-option {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .type-option:hover {
+            border-color: #667eea;
+        }
+
+        .type-option.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+            font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
             }
-          });
-        });
-      });
-    }
 
-    // 初期表示
-    render();
-  </script>
-</body>
-</html>
-    const { useState } = React;
-    const { Calendar, Plus, Trash2, User, Phone, Store, MapPin, Download, Send, Settings } = lucide;
-
-    const OrderDailyReport = () => {
-      const [orders, setOrders] = useState([]);
-      const [currentDate, setCurrentDate] = useState(new Date().toISOString().slice(0, 10));
-      const [scriptUrl, setScriptUrl] = useState(localStorage.getItem('scriptUrl') || '');
-      const [showSettings, setShowSettings] = useState(false);
-      const [isSyncing, setIsSyncing] = useState(false);
-      const [formData, setFormData] = useState({
-        担当: '',
-        種類: '',
-        顧客名: '',
-        電話番号: '',
-        住所: '',
-        訪問日時: '',
-        内容: ''
-      });
-
-      const 担当者リスト = ['宇留野', '石橋', '角井', '櫻井', '渡邊', '伊藤', '高山'];
-      const 種類リスト = ['電話', '来店', '訪問'];
-
-      const getIconForType = (type) => {
-        switch(type) {
-          case '電話': return React.createElement(Phone, { className: "w-4 h-4" });
-          case '来店': return React.createElement(Store, { className: "w-4 h-4" });
-          case '訪問': return React.createElement(MapPin, { className: "w-4 h-4" });
-          default: return null;
+            .button-group {
+                flex-direction: column;
+            }
         }
-      };
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 受注日報</h1>
+            <p>㈲ヤハタ電機商会</p>
+        </div>
 
-      const getColorForType = (type) => {
-        switch(type) {
-          case '電話': return 'bg-blue-100 text-blue-800 border-blue-300';
-          case '来店': return 'bg-green-100 text-green-800 border-green-300';
-          case '訪問': return 'bg-purple-100 text-purple-800 border-purple-300';
-          default: return 'bg-gray-100 text-gray-800 border-gray-300';
-        }
-      };
+        <button class="settings-btn" onclick="toggleSettings()">⚙️ 設定</button>
 
-      const handleAddOrder = () => {
-        if (!formData.担当 || !formData.種類 || !formData.顧客名) {
-          alert('担当、種類、顧客名は必須項目です');
-          return;
-        }
+        <div id="settingsPanel" class="settings-panel">
+            <div class="form-group">
+                <label>Google Apps Script URL</label>
+                <input type="text" id="scriptUrl" placeholder="https://script.google.com/macros/s/.../exec">
+            </div>
+            <button class="btn btn-primary" onclick="saveSettings()">保存</button>
+            <div id="syncStatus"></div>
+        </div>
 
-        const newOrder = {
-          id: Date.now(),
-          日付: currentDate,
-          登録時刻: new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }),
-          ...formData
-        };
+        <div class="date-display" id="currentDate"></div>
 
-        setOrders([...orders, newOrder]);
-        
-        if (scriptUrl) {
-          sendToSpreadsheet(newOrder);
-        }
-        
-        setFormData({
-          担当: '',
-          種類: '',
-          顧客名: '',
-          電話番号: '',
-          住所: '',
-          訪問日時: '',
-          内容: ''
-        });
-      };
+        <form id="orderForm" onsubmit="handleSubmit(event)">
+            <div class="form-group">
+                <label>担当<span class="required">*</span></label>
+                <select id="staff" required>
+                    <option value="">選択してください</option>
+                    <option value="宇留野">宇留野</option>
+                    <option value="石橋">石橋</option>
+                    <option value="角井">角井</option>
+                    <option value="櫻井">櫻井</option>
+                    <option value="渡邊">渡邊</option>
+                    <option value="伊藤">伊藤</option>
+                    <option value="高山">高山</option>
+                </select>
+            </div>
 
-      const sendToSpreadsheet = async (order) => {
-        if (!scriptUrl) return;
+            <div class="form-group">
+                <label>種類<span class="required">*</span></label>
+                <input type="hidden" id="type" required>
+                <div class="type-select">
+                    <div class="type-option" onclick="selectType('電話')">📞 電話</div>
+                    <div class="type-option" onclick="selectType('来店')">🏢 来店</div>
+                    <div class="type-option" onclick="selectType('訪問')">🚗 訪問</div>
+                </div>
+            </div>
 
-        try {
-          await fetch(scriptUrl, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              日付: order.日付,
-              登録時刻: order.登録時刻,
-              担当: order.担当,
-              種類: order.種類,
-              顧客名: order.顧客名,
-              電話番号: order.電話番号 || '',
-              住所: order.住所 || '',
-              訪問日時: order.訪問日時 || '',
-              内容: order.内容 || ''
-            })
-          });
-          console.log('スプレッドシートに送信しました');
-        } catch (error) {
-          console.error('送信エラー:', error);
-        }
-      };
+            <div class="form-group">
+                <label>顧客名<span class="required">*</span></label>
+                <input type="text" id="customerName" required>
+            </div>
 
-      const syncAllToSpreadsheet = async () => {
-        if (!scriptUrl) {
-          alert('スプレッドシートURLを設定してください');
-          return;
+            <div class="form-group">
+                <label>電話番号</label>
+                <input type="tel" id="phone" placeholder="例: 043-123-4567">
+            </div>
+
+            <div class="form-group">
+                <label>住所</label>
+                <input type="text" id="address" placeholder="例: 長沼町">
+            </div>
+
+            <div class="form-group">
+                <label>訪問日時</label>
+                <input type="datetime-local" id="visitDateTime">
+            </div>
+
+            <div class="form-group">
+                <label>受注内容<span class="required">*</span></label>
+                <textarea id="content" required placeholder="受注内容を入力"></textarea>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary">➕ 受注を追加</button>
+                <button type="button" class="btn btn-secondary" onclick="clearForm()">🔄 クリア</button>
+            </div>
+        </form>
+
+        <div class="orders-list">
+            <div class="orders-header">
+                <h2>📊 本日の受注</h2>
+                <span class="order-count" id="orderCount">0件</span>
+            </div>
+            <div id="ordersList"></div>
+        </div>
+    </div>
+
+    <script>
+        let orders = [];
+
+        // 現在の日付を表示
+        function updateDate() {
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('ja-JP', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                weekday: 'long'
+            });
+            document.getElementById('currentDate').textContent = dateStr;
         }
 
-        const todayOrders = getTodayOrders();
-        if (todayOrders.length === 0) {
-          alert('同期するデータがありません');
-          return;
+        // 種類を選択
+        function selectType(type) {
+            document.getElementById('type').value = type;
+            const options = document.querySelectorAll('.type-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            event.target.classList.add('selected');
         }
 
-        setIsSyncing(true);
-        
-        try {
-          for (const order of todayOrders) {
-            await sendToSpreadsheet(order);
-            await new Promise(resolve => setTimeout(resolve, 500));
-          }
-          alert(`${todayOrders.length}件の受注をスプレッドシートに同期しました`);
-        } catch (error) {
-          alert('同期中にエラーが発生しました');
-        } finally {
-          setIsSyncing(false);
-        }
-      };
-
-      const handleDeleteOrder = (id) => {
-        if (window.confirm('この受注を削除しますか？')) {
-          setOrders(orders.filter(order => order.id !== id));
-        }
-      };
-
-      const getTodayOrders = () => {
-        return orders.filter(order => order.日付 === currentDate);
-      };
-
-      const exportToCSV = () => {
-        const todayOrders = getTodayOrders();
-        if (todayOrders.length === 0) {
-          alert('エクスポートするデータがありません');
-          return;
+        // 設定パネルの表示切替
+        function toggleSettings() {
+            const panel = document.getElementById('settingsPanel');
+            panel.classList.toggle('active');
+            if (panel.classList.contains('active')) {
+                const savedUrl = localStorage.getItem('scriptUrl') || '';
+                document.getElementById('scriptUrl').value = savedUrl;
+            }
         }
 
-        const headers = ['日付', '登録時刻', '担当', '種類', '顧客名', '電話番号', '住所', '訪問日時', '受注内容'];
-        const csvData = todayOrders.map(order => [
-          order.日付,
-          order.登録時刻,
-          order.担当,
-          order.種類,
-          order.顧客名,
-          order.電話番号 || '',
-          order.住所 || '',
-          order.訪問日時 || '',
-          order.内容 || ''
-        ]);
+        // 設定を保存
+        function saveSettings() {
+            const url = document.getElementById('scriptUrl').value;
+            localStorage.setItem('scriptUrl', url);
+            showSyncStatus('設定を保存しました', 'success');
+            setTimeout(() => {
+                document.getElementById('settingsPanel').classList.remove('active');
+            }, 1500);
+        }
 
-        const csvContent = [
-          headers.join(','),
-          ...csvData.map(row => row.map(cell => `"${cell}"`).join(','))
-        ].join('\n');
+        // 同期ステータスを表示
+        function showSyncStatus(message, type) {
+            const status = document.getElementById('syncStatus');
+            status.textContent = message;
+            status.className = 'sync-status ' + type;
+            setTimeout(() => {
+                status.textContent = '';
+                status.className = 'sync-status';
+            }, 3000);
+        }
 
-        const bom = '\uFEFF';
-        const blob = new Blob([bom + csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        
-        link.setAttribute('href', url);
-        link.setAttribute('download', `受注日報_${currentDate}.csv`);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      };
+        // Google Spreadsheetに送信
+        async function sendToSpreadsheet(order) {
+            const url = localStorage.getItem('scriptUrl');
+            if (!url) {
+                alert('スプレッドシートURLを設定してください');
+                return;
+            }
 
-      const handleScriptUrlChange = (url) => {
-        setScriptUrl(url);
-        localStorage.setItem('scriptUrl', url);
-      };
-
-      const todayOrders = getTodayOrders();
-
-      return React.createElement('div', { className: "min-h-screen bg-gradient-to-br from-orange-50 to-yellow-100 p-4" },
-        React.createElement('div', { className: "max-w-6xl mx-auto" },
-          React.createElement('div', { className: "bg-white rounded-lg shadow-lg p-6 mb-6" },
-            React.createElement('div', { className: "flex items-center justify-between mb-4" },
-              React.createElement('h1', { className: "text-3xl font-bold text-gray-800 flex items-center gap-3" },
-                React.createElement('div', { className: "bg-orange-500 p-2 rounded-lg" },
-                  React.createElement(Calendar, { className: "w-8 h-8 text-white" })
-                ),
-                '受注日報'
-              ),
-              React.createElement('div', { className: "flex gap-2" },
-                React.createElement('button', {
-                  onClick: () => setShowSettings(!showSettings),
-                  className: "bg-gray-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-gray-700 transition-colors flex items-center gap-2"
-                },
-                  React.createElement(Settings, { className: "w-5 h-5" }),
-                  '設定'
-                ),
-                todayOrders.length > 0 && scriptUrl && React.createElement('button', {
-                  onClick: syncAllToSpreadsheet,
-                  disabled: isSyncing,
-                  className: "bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2 disabled:bg-gray-400"
-                },
-                  React.createElement(Send, { className: "w-5 h-5" }),
-                  isSyncing ? '同期中...' : '一括同期'
-                ),
-                todayOrders.length > 0 && React.createElement('button', {
-                  onClick: exportToCSV,
-                  className: "bg-green-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center gap-2"
-                },
-                  React.createElement(Download, { className: "w-5 h-5" }),
-                  'CSV'
-                )
-              )
-            ),
-
-            showSettings && React.createElement('div', { className: "mb-4 p-4 bg-blue-50 border-2 border-blue-200 rounded-lg" },
-              React.createElement('h3', { className: "font-bold text-gray-800 mb-2 flex items-center gap-2" },
-                React.createElement(Settings, { className: "w-5 h-5" }),
-                'スプレッドシート連携設定'
-              ),
-              React.createElement('div', { className: "space-y-2" },
-                React.createElement('label', { className: "block text-sm font-semibold text-gray-700" },
-                  'Google Apps Script URL'
-                ),
-                React.createElement('input', {
-                  type: "text",
-                  value: scriptUrl,
-                  onChange: (e) => handleScriptUrlChange(e.target.value),
-                  className: "w-full p-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none",
-                  placeholder: "https://script.google.com/macros/s/..."
-                }),
-                React.createElement('p', { className: "text-sm text-gray-600" },
-                  '※ Google Apps ScriptのウェブアプリURLを入力してください',
-                  scriptUrl && React.createElement('span', { className: "text-green-600 font-semibold ml-2" }, '✓ 設定済み（受注追加時に自動送信されます）')
-                )
-              )
-            ),
-
-            React.createElement('div', { className: "flex items-center gap-4 bg-orange-50 p-4 rounded-lg border-2 border-orange-200" },
-              React.createElement(Calendar, { className: "w-6 h-6 text-orange-600" }),
-              React.createElement('div', { className: "flex-1" },
-                React.createElement('label', { className: "block text-sm font-semibold text-gray-700 mb-2" }, '日付'),
-                React.createElement('input', {
-                  type: "date",
-                  value: currentDate,
-                  onChange: (e) => setCurrentDate(e.target.value),
-                  className: "w-full p-3 border-2 border-orange-300 rounded-lg focus:border-orange-500 focus:outline-none text-lg font-semibold"
-                })
-              ),
-              React.createElement('div', { className: "text-right" },
-                React.createElement('div', { className: "text-sm text-gray-600" }, '本日の受注'),
-                React.createElement('div', { className: "text-3xl font-bold text-orange-600" }, `${todayOrders.length}件`)
-              )
-            )
-          ),
-
-          React.createElement('div', { className: "bg-white rounded-lg shadow-lg p-6 mb-6" },
-            React.createElement('h2', { className: "text-xl font-bold text-gray-800 mb-4 flex items-center gap-2" },
-              React.createElement(Plus, { className: "w-6 h-6" }),
-              '受注入力'
-            ),
-
-            React.createElement('div', { className: "space-y-4" },
-              React.createElement('div', { className: "grid grid-cols-1 md:grid-cols-2 gap-4" },
-                React.createElement('div', null,
-                  React.createElement('label', { className: "block text-sm font-semibold text-gray-700 mb-2" },
-                    React.createElement(User, { className: "w-4 h-4 inline mr-1" }),
-                    '担当者 ',
-                    React.createElement('span', { className: "text-red-500" }, '*')
-                  ),
-                  React.createElement('select', {
-                    value: formData.担当,
-                    onChange: (e) => setFormData({...formData, 担当: e.target.value}),
-                    className: "w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none"
-                  },
-                    React.createElement('option', { value: "" }, '選択してください'),
-                    担当者リスト.map(name => React.createElement('option', { key: name, value: name }, name))
-                  )
-                ),
-
-                React.createElement('div', null,
-                  React.createElement('label', { className: "block text-sm font-semibold text-gray-700 mb-2" },
-                    '受注種類 ',
-                    React.createElement('span', { className: "text-red-500" }, '*')
-                  ),
-                  React.createElement('div', { className: "grid grid-cols-3 gap-2" },
-                    種類リスト.map(type => React.createElement('button', {
-                      key: type,
-                      onClick: () => setFormData({...formData, 種類: type}),
-                      className: `p-3 rounded-lg border-2 font-semibold transition-all ${formData.種類 === type ? getColorForType(type) : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'}`
+            try {
+                await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
                     },
-                      React.createElement('div', { className: "flex items-center justify-center gap-1" },
-                        getIconForType(type),
-                        React.createElement('span', null, type)
-                      )
-                    ))
-                  )
-                )
-              ),
+                    body: JSON.stringify({
+                        日付: order.date,
+                        登録時刻: order.time,
+                        担当: order.staff,
+                        種類: order.type,
+                        顧客名: order.customerName,
+                        電話番号: order.phone || '',
+                        住所: order.address || '',
+                        訪問日時: order.visitDateTime || '',
+                        内容: order.content
+                    })
+                });
+                console.log('スプレッドシートに送信しました');
+            } catch (error) {
+                console.error('送信エラー:', error);
+            }
+        }
 
-              React.createElement('div', { className: "grid grid-cols-1 md:grid-cols-3 gap-4" },
-                React.createElement('div', null,
-                  React.createElement('label', { className: "block text-sm font-semibold text-gray-700 mb-2" },
-                    '顧客名 ',
-                    React.createElement('span', { className: "text-red-500" }, '*')
-                  ),
-                  React.createElement('input', {
-                    type: "text",
-                    value: formData.顧客名,
-                    onChange: (e) => setFormData({...formData, 顧客名: e.target.value}),
-                    className: "w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none",
-                    placeholder: "顧客名を入力"
-                  })
-                ),
+        // フォーム送信
+        async function handleSubmit(e) {
+            e.preventDefault();
 
-                React.createElement('div', null,
-                  React.createElement('label', { className: "block text-sm font-semibold text-gray-700 mb-2" },
-                    React.createElement(Phone, { className: "w-4 h-4 inline mr-1" }),
-                    '電話番号'
-                  ),
-                  React.createElement('input', {
-                    type: "tel",
-                    value: formData.電話番号,
-                    onChange: (e) => setFormData({...formData, 電話番号: e.target.value}),
-                    className: "w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none",
-                    placeholder: "例: 043-123-4567"
-                  })
-                ),
+            const type = document.getElementById('type').value;
+            if (!type) {
+                alert('種類を選択してください');
+                return;
+            }
 
-                React.createElement('div', null,
-                  React.createElement('label', { className: "block text-sm font-semibold text-gray-700 mb-2" },
-                    React.createElement(MapPin, { className: "w-4 h-4 inline mr-1" }),
-                    '住所'
-                  ),
-                  React.createElement('input', {
-                    type: "text",
-                    value: formData.住所,
-                    onChange: (e) => setFormData({...formData, 住所: e.target.value}),
-                    className: "w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none",
-                    placeholder: "例: 長沼町"
-                  })
-                )
-              ),
+            const now = new Date();
+            const order = {
+                id: Date.now(),
+                date: now.toLocaleDateString('ja-JP'),
+                time: now.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }),
+                staff: document.getElementById('staff').value,
+                type: type,
+                customerName: document.getElementById('customerName').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                visitDateTime: document.getElementById('visitDateTime').value,
+                content: document.getElementById('content').value
+            };
 
-              React.createElement('div', null,
-                React.createElement('label', { className: "block text-sm font-semibold text-gray-700 mb-2" }, '訪問日時'),
-                React.createElement('input', {
-                  type: "datetime-local",
-                  value: formData.訪問日時,
-                  onChange: (e) => setFormData({...formData, 訪問日時: e.target.value}),
-                  className: "w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none"
-                })
-              ),
+            orders.push(order);
+            localStorage.setItem('orders', JSON.stringify(orders));
+            renderOrders();
+            clearForm();
 
-              React.createElement('div', null,
-                React.createElement('label', { className: "block text-sm font-semibold text-gray-700 mb-2" }, '受注内容'),
-                React.createElement('textarea', {
-                  value: formData.内容,
-                  onChange: (e) => setFormData({...formData, 内容: e.target.value}),
-                  className: "w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none",
-                  rows: "3",
-                  placeholder: "受注内容を入力"
-                })
-              ),
+            // Google Spreadsheetに送信
+            await sendToSpreadsheet(order);
+        }
 
-              React.createElement('button', {
-                onClick: handleAddOrder,
-                className: "w-full bg-orange-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center gap-2"
-              },
-                React.createElement(Plus, { className: "w-5 h-5" }),
-                '受注を追加'
-              )
-            )
-          ),
+        // 受注を表示
+        function renderOrders() {
+            const container = document.getElementById('ordersList');
+            const count = document.getElementById('orderCount');
 
-          React.createElement('div', { className: "bg-white rounded-lg shadow-lg p-6" },
-            React.createElement('h2', { className: "text-xl font-bold text-gray-800 mb-4" },
-              `${currentDate} の受注一覧 (${todayOrders.length}件)`
-            ),
+            if (orders.length === 0) {
+                container.innerHTML = '<div class="empty-state">まだ受注が登録されていません</div>';
+                count.textContent = '0件';
+                return;
+            }
 
-            todayOrders.length === 0 ? React.createElement('div', { className: "text-center py-12 text-gray-500" },
-              React.createElement(Store, { className: "w-16 h-16 mx-auto mb-4 opacity-30" }),
-              React.createElement('p', { className: "text-lg" }, 'この日の受注はまだありません')
-            ) : React.createElement('div', { className: "space-y-3" },
-              todayOrders.map((order, index) => React.createElement('div', {
-                key: order.id,
-                className: "border-2 border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-              },
-                React.createElement('div', { className: "flex items-start justify-between" },
-                  React.createElement('div', { className: "flex-1" },
-                    React.createElement('div', { className: "flex items-center gap-3 mb-2" },
-                      React.createElement('span', { className: "px-2 py-1 bg-gray-200 text-gray-700 rounded text-sm font-bold" },
-                        `#${index + 1}`
-                      ),
-                      React.createElement('span', { className: "px-2 py-1 bg-orange-100 text-orange-800 rounded text-sm font-semibold" },
-                        order.登録時刻
-                      ),
-                      React.createElement('span', { className: `px-3 py-1 rounded-full text-sm font-semibold border-2 flex items-center gap-1 ${getColorForType(order.種類)}` },
-                        getIconForType(order.種類),
-                        order.種類
-                      ),
-                      React.createElement('span', { className: "px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm font-semibold border-2 border-gray-200 flex items-center gap-1" },
-                        React.createElement(User, { className: "w-4 h-4" }),
-                        order.担当
-                      )
-                    ),
-                    
-                    React.createElement('h3', { className: "text-xl font-bold text-gray-800 mb-2" }, order.顧客名),
-                    
-                    React.createElement('div', { className: "space-y-1 mb-2" },
-                      order.電話番号 && React.createElement('p', { className: "text-gray-700 flex items-center gap-2" },
-                        React.createElement(Phone, { className: "w-4 h-4" }),
-                        order.電話番号
-                      ),
-                      order.住所 && React.createElement('p', { className: "text-gray-700 flex items-center gap-2" },
-                        React.createElement(MapPin, { className: "w-4 h-4" }),
-                        order.住所
-                      )
-                    ),
+            count.textContent = orders.length + '件';
+            container.innerHTML = orders.map(order => {
+                const visitDateTimeStr = order.visitDateTime ? 
+                    new Date(order.visitDateTime).toLocaleString('ja-JP') : '';
+                
+                return `
+                    <div class="order-card type-${order.type}">
+                        <button class="delete-btn" onclick="deleteOrder(${order.id})">🗑️ 削除</button>
+                        <div class="order-header">
+                            <div class="order-title">${order.customerName}</div>
+                            <span class="order-badge type-${order.type}">${order.type}</span>
+                        </div>
+                        <div class="order-info">
+                            <p><strong>担当:</strong> ${order.staff}</p>
+                            ${order.phone ? '<p><strong>電話:</strong> ' + order.phone + '</p>' : ''}
+                            ${order.address ? '<p><strong>住所:</strong> ' + order.address + '</p>' : ''}
+                            ${visitDateTimeStr ? '<p><strong>訪問日時:</strong> ' + visitDateTimeStr + '</p>' : ''}
+                            <p><strong>内容:</strong> ${order.content}</p>
+                            <p style="font-size: 12px; color: #999; margin-top: 8px;">登録: ${order.date} ${order.time}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
 
-                    order.訪問日時 && React.createElement('p', { className: "text-gray-700 mb-2 flex items-center gap-2" },
-                      React.createElement(Calendar, { className: "w-4 h-4" }),
-                      `訪問予定: ${new Date(order.訪問日時).toLocaleString('ja-JP')}`
-                    ),
-                    
-                    order.内容 && React.createElement('div', { className: "bg-gray-50 p-3 rounded border border-gray-200 mt-2" },
-                      React.createElement('p', { className: "text-gray-700 whitespace-pre-wrap" }, order.内容)
-                    )
-                  ),
+        // 受注を削除
+        function deleteOrder(id) {
+            if (confirm('この受注を削除してもよろしいですか?')) {
+                orders = orders.filter(order => order.id !== id);
+                localStorage.setItem('orders', JSON.stringify(orders));
+                renderOrders();
+            }
+        }
 
-                  React.createElement('button', {
-                    onClick: () => handleDeleteOrder(order.id),
-                    className: "text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-colors ml-4"
-                  },
-                    React.createElement(Trash2, { className: "w-5 h-5" })
-                  )
-                )
-              ))
-            )
-          )
-        )
-      );
-    };
+        // フォームをクリア
+        function clearForm() {
+            document.getElementById('orderForm').reset();
+            document.getElementById('type').value = '';
+            const options = document.querySelectorAll('.type-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+        }
 
-    lucide.createIcons();
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(React.createElement(OrderDailyReport));
-  </script>
+        // ローカルストレージから受注を読み込み
+        function loadOrders() {
+            const saved = localStorage.getItem('orders');
+            if (saved) {
+                orders = JSON.parse(saved);
+                renderOrders();
+            }
+        }
+
+        // 初期化
+        updateDate();
+        loadOrders();
+    </script>
 </body>
 </html>
