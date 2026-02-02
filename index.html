@@ -3,174 +3,64 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ひまわりスタッフ 日報送信</title>
+  <title>ひまわり日報</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: "Helvetica Neue", Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; background-color: #f0f2f5; color: #333; }
-    h2 { text-align: center; margin-bottom: 5px; color: #2e7d32; }
-    .sub { text-align: center; font-size: 12px; color: #666; margin-bottom: 20px; }
-    .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-    label { display: block; font-size: 14px; font-weight: bold; margin: 15px 0 5px; color: #444; }
-    input[type="date"], input[type="number"], textarea {
-      width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; outline: none;
-    }
-    input:focus { border-color: #4CAF50; }
-    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 5px; }
-    .tag {
-      padding: 8px 16px; border-radius: 20px; border: 1px solid #ddd; background: #fff;
-      cursor: pointer; font-size: 14px; transition: 0.2s;
-    }
-    .tag.on { background: #4CAF50; color: white; border-color: #4CAF50; }
-    .tag.blue.on { background: #2196F3; border-color: #2196F3; }
-    .tag.orange.on { background: #FF9800; border-color: #FF9800; }
-    .btn {
-      width: 100%; padding: 15px; background: #4CAF50; color: white; border: none;
-      border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 25px;
-    }
-    .btn:disabled { background: #ccc; }
-    #msg { text-align: center; margin-top: 15px; font-weight: bold; min-height: 1.5em; }
-    .ok { color: #4CAF50; }
-    .err { color: #f44336; }
+    body { font-family: sans-serif; padding: 20px; max-width: 400px; margin: auto; background: #f4f4f4; }
+    .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    input, textarea, select { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
+    button { width: 100%; padding: 10px; background: #4CAF50; color: white; border: none; border-radius: 5px; margin-top: 20px; font-size: 16px; cursor: pointer; }
   </style>
 </head>
 <body>
-
-  <h2>🌻 ひまわり日報</h2>
-  <p class="sub">有限会社ヤハタ電機商会</p>
-
   <div class="card">
-    <label>日にち</label>
-    <input type="date" id="date">
-
+    <h3>🌻 ひまわり日報</h3>
+    <label>日付</label><input type="date" id="date">
     <label>担当者</label>
-    <div class="tags" id="staffTags"></div>
-
-    <label>回った区域</label>
-    <div class="tags" id="areaTags"></div>
-
-    <div style="display: flex; gap: 15px;">
-      <div style="flex: 1;">
-        <label>面談件数</label>
-        <input type="number" id="visits" placeholder="0">
-      </div>
-      <div style="flex: 1;">
-        <label>ポスティング</label>
-        <input type="number" id="postings" placeholder="0">
-      </div>
-    </div>
-
-    <label>配布物</label>
-    <div class="tags" id="itemTags"></div>
-
-    <label>備考・要望など</label>
-    <textarea id="remarks" rows="3"></textarea>
-
-    <button class="btn" id="submitBtn">送信する</button>
-    <div id="msg"></div>
+    <select id="staff">
+      <option value="">選択してください</option>
+      <option value="石橋">石橋</option>
+      <option value="角井">角井</option>
+      <option value="櫻井">櫻井</option>
+    </select>
+    <label>区域</label><input type="text" id="area" placeholder="例：1区">
+    <label>面談</label><input type="number" id="visits" value="0">
+    <label>ポスティング</label><input type="number" id="postings" value="0">
+    <label>備考</label><textarea id="remarks"></textarea>
+    <button id="btn">送信する</button>
+    <p id="msg" style="text-align:center; margin-top:10px;"></p>
   </div>
 
-<script>
-// --- 設定エリア ---
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxrFUzdm4ZVBLa2JApaVBmHD7J-UNW9CiCltjeSVEeq6Bpi0rkLCHfOgqJiYTvuiP2v/exec";
-const STAFF_LIST = ["石橋", "角井", "櫻井"];
-const AREA_LIST = ["1区", "2区", "3区", "4区", "5区", "6区", "7区", "8区", "9区"];
-const ITEM_LIST = ["消耗品", "ハガキ", "チラシ", "招待状", "カレンダー", "年賀タオル"];
+  <script>
+    // ★ここに新しいURLを貼り付けてください★
+    const URL = "https://script.google.com/macros/s/AKfycbxrFUzdm4ZVBLa2JApaVBmHD7J-UNW9CiCltjeSVEeq6Bpi0rkLCHfOgqJiYTvuiP2v/exec";
 
-let selected = { staff: "", areas: [], items: [] };
+    document.getElementById("btn").onclick = async () => {
+      const staff = document.getElementById("staff").value;
+      if(!staff) return alert("担当者を選んでください");
 
-// --- 初期化処理 ---
-window.onload = () => {
-  document.getElementById("date").value = new Date().toISOString().split('T')[0];
-  
-  // 担当者タグ（単一選択）
-  const sContainer = document.getElementById("staffTags");
-  STAFF_LIST.forEach(name => {
-    const btn = document.createElement("button");
-    btn.className = "tag";
-    btn.textContent = name;
-    btn.onclick = () => {
-      document.querySelectorAll("#staffTags .tag").forEach(t => t.classList.remove("on"));
-      btn.classList.add("on");
-      selected.staff = name;
-    };
-    sContainer.appendChild(btn);
-  });
+      document.getElementById("btn").disabled = true;
+      document.getElementById("msg").innerText = "送信中...";
 
-  // 区域・配布物タグ（複数選択）
-  setupMultiTags(AREA_LIST, "areaTags", "areas", "blue");
-  setupMultiTags(ITEM_LIST, "itemTags", "items", "orange");
-};
+      // GASが一番読み取りやすい形式で作る
+      const params = new URLSearchParams();
+      params.append("日付", document.getElementById("date").value);
+      params.append("担当者", staff);
+      params.append("区域", document.getElementById("area").value);
+      params.append("面談", document.getElementById("visits").value);
+      params.append("ポスティング", document.getElementById("postings").value);
+      params.append("備考", document.getElementById("remarks").value);
 
-function setupMultiTags(list, containerId, key, color) {
-  const container = document.getElementById(containerId);
-  list.forEach(val => {
-    const btn = document.createElement("button");
-    btn.className = "tag " + color;
-    btn.textContent = val;
-    btn.onclick = () => {
-      const idx = selected[key].indexOf(val);
-      if (idx > -1) {
-        selected[key].splice(idx, 1);
-        btn.classList.remove("on");
-      } else {
-        selected[key].push(val);
-        btn.classList.add("on");
+      try {
+        await fetch(URL, { method: "POST", mode: "no-cors", body: params });
+        document.getElementById("msg").innerText = "✅ " + staff + "シートに送信しました！";
+        document.getElementById("remarks").value = "";
+      } catch (e) {
+        document.getElementById("msg").innerText = "❌ エラーが発生しました";
       }
+      document.getElementById("btn").disabled = false;
     };
-    container.appendChild(btn);
-  });
-}
-
-// --- 送信処理 ---
-document.getElementById("submitBtn").onclick = async () => {
-  const btn = document.getElementById("submitBtn");
-  const msg = document.getElementById("msg");
-  const dateValue = document.getElementById("date").value;
-
-  if (!selected.staff) { alert("担当者を選んでください！"); return; }
-
-  btn.disabled = true;
-  btn.textContent = "送信中...";
-  msg.textContent = "";
-
-  const payload = {
-    date: dateValue,
-    staff: selected.staff,
-    areas: selected.areas.join("・"),
-    visits: document.getElementById("visits").value || 0,
-    postings: document.getElementById("postings").value || 0,
-    items: selected.items.join("・"),
-    remarks: document.getElementById("remarks").value
-  };
-
-  try {
-    // GASが確実に読み取れるよう、URLSearchParams形式に変換
-    const params = new URLSearchParams(payload);
-
-    await fetch(GAS_URL, {
-      method: "POST",
-      mode: "no-cors",
-      body: params
-    });
-
-    msg.className = "ok";
-    msg.textContent = "✅ " + selected.staff + "さんのシートに送信完了！";
-    
-    // フォームの一部リセット
-    document.getElementById("visits").value = "";
-    document.getElementById("postings").value = "";
-    document.getElementById("remarks").value = "";
-    document.querySelectorAll(".tag").forEach(t => t.classList.remove("on"));
-    selected.staff = ""; selected.areas = []; selected.items = [];
-
-  } catch (err) {
-    msg.className = "err";
-    msg.textContent = "❌ 送信に失敗しました。";
-  } finally {
-    btn.disabled = false;
-    btn.textContent = "送信する";
-  }
-};
-</script>
+    document.getElementById("date").value = new Date().toISOString().split('T')[0];
+  </script>
 </body>
 </html>
