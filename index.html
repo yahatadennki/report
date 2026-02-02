@@ -88,18 +88,21 @@ let logs = [];
 function createTags(arr, containerId, key, colorClass) {
   const container = document.getElementById(containerId);
   arr.forEach(val => {
+    const btn = document.createElement("button");
+    btn.className = "tag " + (colorClass || "");
+    btn.textContent = val;
     btn.onclick = () => {
-     if (key === "staff") {
-       // 担当者は1人だけ選択
-       selected.staff = [val];
-       document.querySelectorAll("#staffTags .tag").forEach(t => t.classList.remove("on"));
-       btn.classList.add("on");
-     } else {
-       const idx = selected[key].indexOf(val);
-       if (idx > -1) { selected[key].splice(idx, 1); btn.classList.remove("on"); }
-       else { selected[key].push(val); btn.classList.add("on"); }
-     }
-   };
+      if (key === "staff") {
+        // 担当者は1人だけ選択
+        selected.staff = [val];
+        document.querySelectorAll("#staffTags .tag").forEach(t => t.classList.remove("on"));
+        btn.classList.add("on");
+      } else {
+        const idx = selected[key].indexOf(val);
+        if (idx > -1) { selected[key].splice(idx, 1); btn.classList.remove("on"); }
+        else { selected[key].push(val); btn.classList.add("on"); }
+      }
+    };
     container.appendChild(btn);
   });
 }
@@ -167,7 +170,7 @@ function renderLogs() {
   logs.forEach((log, i) => {
     container.innerHTML += `
       <div class="log">
-        <div class="log-header"><strong>${log.date}</strong><button class="del" onclick="deletLog(${i})">削除</button></div>
+        <div class="log-header"><strong>${log.date}</strong><button class="del" onclick="deleteLog(${i})">削除</button></div>
         <div>担当者: ${log.staff || "ー"}</div>
         <div>区域: ${log.areas || "ー"}</div>
         <div>面談件数: ${log.visits} / ポスティング: ${log.postings}</div>
@@ -177,7 +180,7 @@ function renderLogs() {
   });
 }
 
-function deletLog(i) { logs.splice(i, 1); renderLogs(); }
+function deleteLog(i) { logs.splice(i, 1); renderLogs(); }
 </script>
 </body>
 </html>
