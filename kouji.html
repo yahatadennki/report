@@ -23,8 +23,7 @@
     const PEOPLE = ["1人", "2人", "3人", "4人以上"];
     const PEOPLE_NUM = { "1人": 1, "2人": 2, "3人": 3, "4人以上": 4 };
 
-    // ★ Google Apps ScriptのURLをここに入れてください
-    const GAS_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbwXWHaiuuKs1M2Oredv5fjzofdEqsi79gXXfuZ4Ps5KGTXXgbWRq4BVfLiwpK6yp2OEDQ/exec";
 
     function App() {
       const today = new Date();
@@ -72,11 +71,11 @@
           paySchedule: payment === "売掛" && paymentMethod === "振込" ? (paySchedule === "その他" ? payScheduleOther : paySchedule) : "",
           amount: amount || "0",
           people,
-          perPerson: perPerson || "",
+          perPerson: perPerson !== null ? String(perPerson) : "",
           remarks
         };
         try {
-          await fetch(GAS_URL, {
+          const res = await fetch(GAS_URL, {
             method: "POST",
             mode: "no-cors",
             headers: { "Content-Type": "application/json" },
@@ -239,7 +238,7 @@
             </div>
             <div style={{ height: 8 }} />
 
-            {perPerson && (
+            {perPerson !== null && (
               <div style={{ background: "#e8f5e9", border: "1px solid #a5d6a7", borderRadius: 6, padding: "6px 10px", marginBottom: 12, fontSize: 13 }}>
                 売上/人: <strong style={{ color: "#2e7d32" }}>{perPerson} 千円</strong>
               </div>
