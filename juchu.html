@@ -18,25 +18,18 @@
   <script>
     let orders = [];
     let currentDate = new Date().toISOString().slice(0, 10);
-    // ===== Google Apps Script URL（ここに埋め込む） =====
     let scriptUrl = 'https://script.google.com/macros/s/AKfycbwc3CyA6X1M5b4xcFFCgn_a59gUiq3P2ptcQfPPnUC9UtrbHKvHCPTZ24pncN5efGRO/exec';
-    // =============================================
-    let showSettings = false;
-    let selectedArea = '';
-    let selectedService = ''; // 修理 / エアコンクリーニング
-    let selectedProduct = ''; // パナソニック / パナ以外
+    let selectedService = '';
+    let selectedProduct = '';
 
     const 担当者リスト = ['宇留野', '石橋', '角井', '櫻井', '渡邊', '高山'];
     const 種類リスト = ['電話', 'LINE', '来店', '訪問'];
-    const 区リスト = [];
 
-    // サービス種別
     const サービスリスト = [
-      { name: '修理', icon: 'wrench', color: 'red' },
-      { name: 'エアコンクリーニング', icon: 'wind', color: 'blue' }
+      { name: '修理', icon: 'wrench' },
+      { name: 'エアコンクリーニング', icon: 'wind' }
     ];
 
-    // アイコンSVG
     const icons = {
       calendar: '<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>',
       plus: '<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>',
@@ -46,7 +39,6 @@
       store: '<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>',
       mapPin: '<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>',
       download: '<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>',
-      settings: '<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>',
       wrench: '<svg class="icon icon-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>',
       wind: '<svg class="icon icon-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9.59 4.59a2 2 0 1 1 3 2.83L9.5 12H3"></path><path d="M9.59 19.41a2 2 0 1 0 3-2.83L9.5 12H3"></path><path d="M14.5 12H21"></path></svg>',
       person: '<svg class="icon icon-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-4 4-6 8-6s8 2 8 6"></path></svg>'
@@ -69,15 +61,14 @@
     }
 
     const staffColors = [
-      { normal: 'bg-blue-100 text-blue-800 border-blue-300', active: 'bg-blue-200 text-blue-900 border-blue-400' },       // 宇留野：青系
-      { normal: 'bg-red-100 text-red-800 border-red-300', active: 'bg-red-200 text-red-900 border-red-400' },             // 石橋：赤系
-      { normal: 'bg-yellow-100 text-yellow-800 border-yellow-300', active: 'bg-yellow-200 text-yellow-900 border-yellow-400' }, // 角井：黄色系
-      { normal: 'bg-purple-100 text-purple-800 border-purple-300', active: 'bg-purple-200 text-purple-900 border-purple-400' }, // 櫻井：紫系
-      { normal: 'bg-green-100 text-green-800 border-green-300', active: 'bg-green-200 text-green-900 border-green-400' },  // 渡邊：緑系
-      { normal: 'bg-sky-100 text-sky-800 border-sky-300', active: 'bg-sky-200 text-sky-900 border-sky-400' }              // 高山：パナソニックブルー系
+      { normal: 'bg-blue-100 text-blue-800 border-blue-300', active: 'bg-blue-200 text-blue-900 border-blue-400' },
+      { normal: 'bg-red-100 text-red-800 border-red-300', active: 'bg-red-200 text-red-900 border-red-400' },
+      { normal: 'bg-yellow-100 text-yellow-800 border-yellow-300', active: 'bg-yellow-200 text-yellow-900 border-yellow-400' },
+      { normal: 'bg-purple-100 text-purple-800 border-purple-300', active: 'bg-purple-200 text-purple-900 border-purple-400' },
+      { normal: 'bg-green-100 text-green-800 border-green-300', active: 'bg-green-200 text-green-900 border-green-400' },
+      { normal: 'bg-sky-100 text-sky-800 border-sky-300', active: 'bg-sky-200 text-sky-900 border-sky-400' }
     ];
 
-    // サービス種別のカラー
     function getColorForService(name) {
       if (name === '修理') return { normal: 'bg-red-50 text-red-700 border-red-300', active: 'bg-red-200 text-red-900 border-red-500' };
       if (name === 'エアコンクリーニング') return { normal: 'bg-sky-50 text-sky-700 border-sky-300', active: 'bg-sky-200 text-sky-900 border-sky-500' };
@@ -85,8 +76,12 @@
     }
 
     async function sendToSpreadsheet(order) {
-      if (!scriptUrl) return;
+      if (!scriptUrl) {
+        console.log('URL未設定');
+        return;
+      }
       try {
+        console.log('送信中...', JSON.stringify(order));
         await fetch(scriptUrl, {
           method: 'POST',
           mode: 'no-cors',
@@ -134,13 +129,11 @@
 
     function selectService(btn) {
       const name = btn.dataset.name;
-      // 同じサービスを再クリックしたら解除
       if (selectedService === name) {
         selectedService = '';
         selectedProduct = '';
         document.querySelectorAll('.service-btn').forEach((b, i) => {
-          const sName = サービスリスト[i].name;
-          const color = getColorForService(sName);
+          const color = getColorForService(サービスリスト[i].name);
           b.classList.remove('active');
           b.className = `service-btn btn-select p-3 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center ${color.normal}`;
         });
@@ -148,8 +141,7 @@
         selectedService = name;
         selectedProduct = '';
         document.querySelectorAll('.service-btn').forEach((b, i) => {
-          const sName = サービスリスト[i].name;
-          const color = getColorForService(sName);
+          const color = getColorForService(サービスリスト[i].name);
           if (b.dataset.name === name) {
             b.classList.add('active');
             b.className = `service-btn active btn-select p-3 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center shadow-md ${color.active}`;
@@ -174,7 +166,6 @@
           b.className = 'product-btn btn-select p-2 px-4 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100';
         }
       });
-      // パナ以外で商品詳細の表示を更新
       const detailArea = document.getElementById('productDetailArea');
       if (detailArea) {
         detailArea.style.display = (name === 'パナ以外') ? 'block' : 'none';
@@ -184,18 +175,13 @@
     function renderProductSection() {
       const container = document.getElementById('productSection');
       if (!container) return;
-
       if (selectedService) {
         container.style.display = 'block';
         container.innerHTML = `
           <label class="block text-sm font-semibold text-gray-700 mb-2">商品区分</label>
           <div class="flex gap-2 mb-3">
-            <button class="product-btn btn-select p-2 px-4 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100" data-name="パナソニック" onclick="selectProduct(this)">
-              パナソニック
-            </button>
-            <button class="product-btn btn-select p-2 px-4 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100" data-name="パナ以外" onclick="selectProduct(this)">
-              パナ以外
-            </button>
+            <button class="product-btn btn-select p-2 px-4 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100" data-name="パナソニック" onclick="selectProduct(this)">パナソニック</button>
+            <button class="product-btn btn-select p-2 px-4 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100" data-name="パナ以外" onclick="selectProduct(this)">パナ以外</button>
           </div>
           <div id="productDetailArea" style="display:none;">
             <label class="block text-sm font-semibold text-gray-700 mb-2">商品詳細</label>
@@ -233,10 +219,15 @@
       };
 
       orders.push(newOrder);
-      if (scriptUrl) sendToSpreadsheet(newOrder);
+      sendToSpreadsheet(newOrder);
 
       // リセット
-                    selectedService = '';
+      document.getElementById('顧客名').value = '';
+      document.getElementById('電話番号').value = '';
+      document.getElementById('住所text').value = '';
+      document.getElementById('訪問日時').value = '';
+      document.getElementById('内容').value = '';
+      selectedService = '';
       selectedProduct = '';
       render();
     }
@@ -254,20 +245,16 @@
         alert('エクスポートするデータがありません');
         return;
       }
-
-      const headers = ['日付', '登録時刻', '担当', '種類', '顧客名', '電話番号', '住所', 'サービス種別', '商品区分', '商品詳細', '訪問日時', '受注内容'];
+      const headers = ['日付', '登録時刻', '担当', '種類', '顧客名', '電話番号', '住所', 'メーカーサービス', '商品区分', '商品詳細', '訪問日時', '受注内容'];
       const csvData = todayOrders.map(o => [
         o.日付, o.登録時刻, o.担当, o.種類, o.顧客名, o.電話番号 || '', o.住所 || '',
         o.サービス種別 || '', o.商品区分 || '', o.商品詳細 || '', o.訪問日時 || '', o.内容 || ''
       ]);
-
       const csvContent = [
         headers.join(','),
         ...csvData.map(row => row.map(cell => `"${cell}"`).join(','))
       ].join('\n');
-
-      const bom = '\uFEFF';
-      const blob = new Blob([bom + csvContent], { type: 'text/csv;charset=utf-8;' });
+      const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
       link.download = `受注日報_${currentDate}.csv`;
@@ -307,8 +294,8 @@
         <!-- 受注入力 -->
         <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
           <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">${icons.plus} 受注入力</h2>
-
           <div class="space-y-4">
+
             <!-- 担当者 -->
             <div>
               <label class="block text-sm font-semibold text-gray-700 mb-2">担当者 <span class="text-red-500">*</span></label>
@@ -360,9 +347,7 @@
                   const color = getColorForService(s.name);
                   return `
                     <button class="service-btn btn-select p-3 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center ${color.normal}" data-name="${s.name}" onclick="selectService(this)">
-                      <div class="flex items-center justify-center gap-2 text-lg">
-                        ${icons[s.icon]} ${s.name}
-                      </div>
+                      <div class="flex items-center justify-center gap-2 text-lg">${icons[s.icon]} ${s.name}</div>
                     </button>
                   `;
                 }).join('')}
@@ -415,11 +400,9 @@
                           <span class="px-3 py-1 rounded-full text-sm font-semibold border-2 flex items-center gap-1 ${typeColor.bg} ${typeColor.text} ${typeColor.border}">
                             ${getIconForType(order.種類)} ${order.種類}
                           </span>
-                          <span class="px-3 py-1 rounded-full text-sm font-semibold border-2 ${sColor}">
-                            ${order.担当}
-                          </span>
-                          ${order.サービス種別 ? `<span class="px-3 py-1 rounded-full text-sm font-semibold border-2 bg-gray-100 text-gray-800 border-gray-300">${order.メーカーサービス}</span>` : ''}
-                          ${order.商品区分 ? `<span class="px-3 py-1 rounded-full text-sm font-semibold border-2 ${order.商品区分 === 'パナソニック' ? 'bg-blue-100 text-blue-800 border-blue-300' : 'bg-amber-100 text-amber-800 border-amber-300'}">${order.商品区分}</span>` : ''}
+                          <span class="px-3 py-1 rounded-full text-sm font-semibold border-2 ${sColor}">${order.担当}</span>
+                          ${order.サービス種別 ? `<span class="px-3 py-1 rounded-full text-sm font-semibold border-2 bg-gray-100 text-gray-800 border-gray-300">${order.サービス種別}</span>` : ''}
+                          ${order.商品区分 ? `<span class="px-3 py-1 rounded-full text-sm font-semibold border-2 ${order.商品区分 === 'パナソニック' ? 'bg-sky-100 text-sky-800 border-sky-300' : 'bg-amber-100 text-amber-800 border-amber-300'}">${order.商品区分}</span>` : ''}
                         </div>
                         <h3 class="text-xl font-bold text-gray-800 mb-2">${order.顧客名}</h3>
                         <div class="space-y-1 mb-2">
@@ -439,8 +422,6 @@
           `}
         </div>
       `;
-
-      // サービス種別のプロダクトセクションを描画
       renderProductSection();
     }
 
