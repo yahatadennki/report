@@ -387,8 +387,17 @@
       document.getElementById("inp-phone").oninput = e => setStateSilent({ phone: e.target.value });
       document.getElementById("inp-amount").oninput = e => {
         setStateSilent({ amount: e.target.value });
-        // 売上/人を更新するために再描画
-        if (state.people) render();
+        // 売上/人を更新するために売上金額と人数の両方がある場合だけ再描画
+        const perPersonBox = document.querySelector(".per-person-box");
+        if (state.people) {
+          const val = Math.floor(Number(e.target.value) / PEOPLE_NUM[state.people]);
+          if (perPersonBox) {
+            perPersonBox.innerHTML = "売上/人: <strong>" + val + " 千円</strong>";
+          } else {
+            // per-person-boxが表示されていなかった場合は再描画
+            render();
+          }
+        }
       };
       document.getElementById("inp-remarks").oninput = e => setStateSilent({ remarks: e.target.value });
       document.getElementById("btn-submit").onclick = handleSubmit;
