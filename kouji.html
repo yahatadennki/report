@@ -1,181 +1,306 @@
-// ============================================
-// 工事スタッフ 業務日報 - Google Apps Script
-// ㈲ヤハタ電機商会
-// ============================================
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>工事スタッフ日報 - ㈲ヤハタ電機商会</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
 
-// ★ シート名をここで設定してください
-const SHEET_NAME = "工事日報";
+  <script type="text/babel">
+    const { useState } = React;
 
-// ★ ヘッダー行の項目
-const HEADERS = [
-  "日にち",
-  "時間帯",
-  "販売担当者",
-  "責任者",
-  "訪問先名(現場名)",
-  "電話番号",
-  "区分",
-  "内容",
-  "支払方法",
-  "集金方法",
-  "振込予定時期",
-  "売上金額(千円)",
-  "人数",
-  "売上/人(千円)",
-  "備考"
-];
+    const TIMES = ["午前", "午後"];
+    const SALES = ["伊藤", "高山"];
+    const MANAGERS = ["渡辺", "高山"];
+    const WORK_ITEMS = ["エアコン", "照明", "レンジフード", "換気扇", "電気", "アンテナ", "ドアホン", "IH", "エコキュート", "管球", "その他"];
+    const DELIVERY_ITEMS = ["TV", "BD", "冷蔵庫", "洗濯機", "調理", "家事", "理美容", "季節", "その他"];
+    const PAYMENTS = ["パナカード", "現金", "売掛"];
+    const PEOPLE = ["1人", "2人", "3人", "4人以上"];
+    const PEOPLE_NUM = { "1人": 1, "2人": 2, "3人": 3, "4人以上": 4 };
 
-// --------------------------------------------
-// POST リクエスト受信
-// --------------------------------------------
-function doPost(e) {
-  try {
-    const data = JSON.parse(e.postData.contents);
-    const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-    let sheet = spreadsheet.getSheetByName(SHEET_NAME);
+    // ★ Google Apps ScriptのURLをここに入れてください
+    const GAS_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
 
-    // シートが存在しない場合は新規作成
-    if (!sheet) {
-      sheet = spreadsheet.insertSheet(SHEET_NAME);
-      // ヘッダー行を追加
-      sheet.appendRow(HEADERS);
-      // ヘッダー行のスタイル設定
-      const headerRange = sheet.getRange(1, 1, 1, HEADERS.length);
-      headerRange.setBackground("#1a3c5e");
-      headerRange.setFontColor("#ffffff");
-      headerRange.setFontWeight("bold");
-      headerRange.setHorizontalAlignment("center");
-      headerRange.setBorder(true, true, true, true, true, true);
+    function App() {
+      const today = new Date();
+      const [date, setDate] = useState(today.toISOString().split("T")[0]);
+      const [time, setTime] = useState("");
+      const [sales, setSales] = useState("");
+      const [manager, setManager] = useState("");
+      const [visitName, setVisitName] = useState("");
+      const [phone, setPhone] = useState("");
+      const [type, setType] = useState("");
+      const [workItem, setWorkItem] = useState([]);
+      const [deliveryItem, setDeliveryItem] = useState([]);
+      const [payment, setPayment] = useState("");
+      const [paymentMethod, setPaymentMethod] = useState("");
+      const [paySchedule, setPaySchedule] = useState("");
+      const [payScheduleOther, setPayScheduleOther] = useState("");
+      const [amount, setAmount] = useState("");
+      const [people, setPeople] = useState("");
+      const [remarks, setRemarks] = useState("");
+      const [logs, setLogs] = useState([]);
+      const [status, setStatus] = useState("");
+      const [errorMsg, setErrorMsg] = useState("");
+
+      const toggle = (list, setList, val) => {
+        setList(list.includes(val) ? list.filter(v => v !== val) : [...list, val]);
+      };
+
+      const perPerson = amount && people
+        ? Math.floor(Number(amount) / PEOPLE_NUM[people])
+        : null;
+
+      const dailyTotal = logs.reduce((s, l) => s + (Number(l.amount) || 0), 0);
+
+      const handleSubmit = async () => {
+        if (!date || !visitName) {
+          alert("日にちと訪問先名は必須です");
+          return;
+        }
+        setStatus("sending");
+        const entry = {
+          date, time, sales, manager, visitName, phone, type,
+          detail: type === "工事" ? workItem.join("・") : type === "配達" ? deliveryItem.join("・") : "",
+          payment,
+          paymentMethod: payment === "売掛" ? paymentMethod : "",
+          paySchedule: payment === "売掛" && paymentMethod === "振込" ? (paySchedule === "その他" ? payScheduleOther : paySchedule) : "",
+          amount: amount || "0",
+          people,
+          perPerson: perPerson || "",
+          remarks
+        };
+        try {
+          await fetch(GAS_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(entry)
+          });
+          setLogs([...logs, entry]);
+          setStatus("success");
+          setTimeout(() => setStatus(""), 2500);
+          setTime(""); setSales(""); setManager(""); setVisitName("");
+          setPhone(""); setType(""); setWorkItem([]); setDeliveryItem([]);
+          setPayment(""); setPaymentMethod(""); setPaySchedule(""); setPayScheduleOther("");
+          setAmount(""); setPeople(""); setRemarks("");
+        } catch (e) {
+          setStatus("error");
+          setErrorMsg("送信に失敗しました。再度お試しください。");
+          setTimeout(() => setStatus(""), 3000);
+        }
+      };
+
+      const handleDelete = (i) => setLogs(logs.filter((_, idx) => idx !== i));
+
+      const ToggleBtn = ({ label, active, onClick, color }) => (
+        <button onClick={onClick} style={{
+          padding: "6px 14px", borderRadius: 20, border: "1px solid",
+          borderColor: active ? color : "#ccc",
+          background: active ? color : "#fff",
+          color: active ? "#fff" : "#333",
+          cursor: "pointer", fontSize: 13
+        }}>{label}</button>
+      );
+
+      return (
+        <div style={{ fontFamily: "sans-serif", maxWidth: 600, margin: "0 auto", padding: 20 }}>
+          <div style={{ textAlign: "center", marginBottom: 20 }}>
+            <h2 style={{ margin: 0, fontSize: 20 }}>🔧 工事スタッフ 日報</h2>
+            <p style={{ margin: "4px 0 0", fontSize: 12, color: "#888" }}>㈲ヤハタ電機商会</p>
+          </div>
+
+          <div style={{ background: "#f9f9f9", border: "1px solid #ddd", borderRadius: 8, padding: 16, marginBottom: 20 }}>
+
+            <label style={{ fontSize: 13, fontWeight: "bold" }}>日にち</label>
+            <input type="date" value={date} onChange={e => setDate(e.target.value)}
+              style={{ display: "block", width: "100%", padding: "6px 8px", marginBottom: 12, fontSize: 14, boxSizing: "border-box", border: "1px solid #ccc", borderRadius: 4 }} />
+
+            <label style={{ fontSize: 13, fontWeight: "bold" }}>時間帯</label>
+            <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
+              {TIMES.map(t => (
+                <ToggleBtn key={t} label={t} active={time === t} color="#4CAF50"
+                  onClick={() => setTime(time === t ? "" : t)} />
+              ))}
+            </div>
+
+            <label style={{ fontSize: 13, fontWeight: "bold" }}>販売担当者</label>
+            <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
+              {SALES.map(s => (
+                <ToggleBtn key={s} label={s} active={sales === s} color="#2196F3"
+                  onClick={() => setSales(sales === s ? "" : s)} />
+              ))}
+            </div>
+
+            <label style={{ fontSize: 13, fontWeight: "bold" }}>責任者</label>
+            <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
+              {MANAGERS.map(m => (
+                <ToggleBtn key={m} label={m} active={manager === m} color="#9C27B0"
+                  onClick={() => setManager(manager === m ? "" : m)} />
+              ))}
+            </div>
+
+            <label style={{ fontSize: 13, fontWeight: "bold" }}>訪問先名(現場名)</label>
+            <input value={visitName} onChange={e => setVisitName(e.target.value)} placeholder="お客様名・現場名"
+              style={{ display: "block", width: "100%", padding: "6px 8px", marginBottom: 12, fontSize: 14, boxSizing: "border-box", border: "1px solid #ccc", borderRadius: 4 }} />
+
+            <label style={{ fontSize: 13, fontWeight: "bold" }}>電話番号</label>
+            <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="000-0000-0000"
+              style={{ display: "block", width: "100%", padding: "6px 8px", marginBottom: 12, fontSize: 14, boxSizing: "border-box", border: "1px solid #ccc", borderRadius: 4 }} />
+
+            <label style={{ fontSize: 13, fontWeight: "bold" }}>区分</label>
+            <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
+              {["工事", "配達"].map(t => (
+                <ToggleBtn key={t} label={t} active={type === t} color="#FF9800"
+                  onClick={() => { setType(type === t ? "" : t); setWorkItem([]); setDeliveryItem([]); }} />
+              ))}
+            </div>
+
+            {type === "工事" && (
+              <>
+                <label style={{ fontSize: 13, fontWeight: "bold" }}>工事内容（複数選択可）</label>
+                <div style={{ display: "flex", gap: 6, marginBottom: 12, flexWrap: "wrap" }}>
+                  {WORK_ITEMS.map(item => (
+                    <ToggleBtn key={item} label={item} active={workItem.includes(item)} color="#E91E63"
+                      onClick={() => toggle(workItem, setWorkItem, item)} />
+                  ))}
+                </div>
+              </>
+            )}
+
+            {type === "配達" && (
+              <>
+                <label style={{ fontSize: 13, fontWeight: "bold" }}>配達内容（複数選択可）</label>
+                <div style={{ display: "flex", gap: 6, marginBottom: 12, flexWrap: "wrap" }}>
+                  {DELIVERY_ITEMS.map(item => (
+                    <ToggleBtn key={item} label={item} active={deliveryItem.includes(item)} color="#E91E63"
+                      onClick={() => toggle(deliveryItem, setDeliveryItem, item)} />
+                  ))}
+                </div>
+              </>
+            )}
+
+            <label style={{ fontSize: 13, fontWeight: "bold" }}>支払方法</label>
+            <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
+              {PAYMENTS.map(p => (
+                <ToggleBtn key={p} label={p} active={payment === p} color="#009688"
+                  onClick={() => { setPayment(payment === p ? "" : p); setPaymentMethod(""); setPaySchedule(""); setPayScheduleOther(""); }} />
+              ))}
+            </div>
+
+            {payment === "売掛" && (
+              <>
+                <label style={{ fontSize: 13, fontWeight: "bold" }}>集金方法</label>
+                <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
+                  {["集金", "振込"].map(m => (
+                    <ToggleBtn key={m} label={m} active={paymentMethod === m} color="#00897B"
+                      onClick={() => { setPaymentMethod(paymentMethod === m ? "" : m); setPaySchedule(""); setPayScheduleOther(""); }} />
+                  ))}
+                </div>
+              </>
+            )}
+
+            {payment === "売掛" && paymentMethod === "振込" && (
+              <>
+                <label style={{ fontSize: 13, fontWeight: "bold" }}>振込予定時期</label>
+                <div style={{ display: "flex", gap: 6, marginBottom: 12, flexWrap: "wrap" }}>
+                  {["今週中", "来週中", "月末まで", "その他"].map(s => (
+                    <ToggleBtn key={s} label={s} active={paySchedule === s} color="#00695C"
+                      onClick={() => { setPaySchedule(paySchedule === s ? "" : s); setPayScheduleOther(""); }} />
+                  ))}
+                </div>
+                {paySchedule === "その他" && (
+                  <input value={payScheduleOther} onChange={e => setPayScheduleOther(e.target.value)} placeholder="予定日やその他の内容"
+                    style={{ display: "block", width: "100%", padding: "6px 8px", marginBottom: 12, fontSize: 14, boxSizing: "border-box", border: "1px solid #ccc", borderRadius: 4 }} />
+                )}
+              </>
+            )}
+
+            <div style={{ display: "flex", gap: 12 }}>
+              <div style={{ flex: 1 }}>
+                <label style={{ fontSize: 13, fontWeight: "bold" }}>売上金額(千円)</label>
+                <input type="number" min="0" value={amount} onChange={e => setAmount(e.target.value)} placeholder="0"
+                  style={{ display: "block", width: "100%", padding: "6px 8px", fontSize: 14, boxSizing: "border-box", border: "1px solid #ccc", borderRadius: 4 }} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <label style={{ fontSize: 13, fontWeight: "bold" }}>人数</label>
+                <div style={{ display: "flex", gap: 4, flexWrap: "wrap", paddingTop: 4 }}>
+                  {PEOPLE.map(p => (
+                    <ToggleBtn key={p} label={p} active={people === p} color="#607D8B"
+                      onClick={() => setPeople(people === p ? "" : p)} />
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div style={{ height: 8 }} />
+
+            {perPerson && (
+              <div style={{ background: "#e8f5e9", border: "1px solid #a5d6a7", borderRadius: 6, padding: "6px 10px", marginBottom: 12, fontSize: 13 }}>
+                売上/人: <strong style={{ color: "#2e7d32" }}>{perPerson} 千円</strong>
+              </div>
+            )}
+
+            <label style={{ fontSize: 13, fontWeight: "bold" }}>備考</label>
+            <textarea value={remarks} onChange={e => setRemarks(e.target.value)} placeholder="トラブルやお客様からの要望など"
+              rows={3}
+              style={{ display: "block", width: "100%", padding: "6px 8px", fontSize: 13, boxSizing: "border-box", border: "1px solid #ccc", borderRadius: 4, resize: "vertical" }} />
+
+            <button onClick={handleSubmit} disabled={status === "sending"}
+              style={{
+                display: "block", width: "100%", marginTop: 16, padding: "10px", fontSize: 15, fontWeight: "bold",
+                background: status === "sending" ? "#aaa" : "#4CAF50", color: "#fff", border: "none", borderRadius: 6,
+                cursor: status === "sending" ? "not-allowed" : "pointer"
+              }}>
+              {status === "sending" ? "送信中..." : "送信"}
+            </button>
+
+            {status === "success" && (
+              <div style={{ textAlign: "center", marginTop: 10, color: "#4CAF50", fontWeight: "bold", fontSize: 14 }}>
+                ✅ スプレッドシートに送信しました！
+              </div>
+            )}
+            {status === "error" && (
+              <div style={{ textAlign: "center", marginTop: 10, color: "#e53935", fontWeight: "bold", fontSize: 14 }}>
+                ❌ {errorMsg}
+              </div>
+            )}
+          </div>
+
+          {logs.length > 0 && (
+            <div style={{ background: "#fff3e0", border: "1px solid #ffe0b2", borderRadius: 6, padding: "8px 12px", marginBottom: 12, textAlign: "center", fontSize: 14 }}>
+              本日の売上合計: <strong style={{ color: "#e65100", fontSize: 16 }}>{dailyTotal} 千円</strong>
+            </div>
+          )}
+
+          {logs.length > 0 && (
+            <div>
+              <h3 style={{ fontSize: 14, marginBottom: 8 }}>本日の送信済み一覧</h3>
+              {logs.map((log, i) => (
+                <div key={i} style={{ background: "#fff", border: "1px solid #ddd", borderRadius: 6, padding: 10, marginBottom: 8, fontSize: 12 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <strong>{log.date} {log.time}</strong>
+                    <button onClick={() => handleDelete(i)} style={{ background: "none", border: "none", color: "#e53935", cursor: "pointer", fontSize: 13 }}>削除</button>
+                  </div>
+                  <div>訪問先(現場名): {log.visitName} {log.phone && `(${log.phone})`}</div>
+                  <div>販売担当者: {log.sales || "ー"} / 責任者: {log.manager || "ー"}</div>
+                  <div>{log.type}{log.detail ? `・${log.detail}` : ""} / 支払方法: {log.payment || "ー"}{log.paymentMethod ? `・${log.paymentMethod}` : ""}{log.paySchedule ? `(${log.paySchedule})` : ""}</div>
+                  <div>売上: {log.amount} 千円 / {log.people || "ー"} {log.perPerson ? `(売上/人: ${log.perPerson} 千円)` : ""}</div>
+                  {log.remarks && <div>備考: {log.remarks}</div>}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      );
     }
 
-    // データを配列にまとめる
-    const row = [
-      data.date || "",
-      data.time || "",
-      data.sales || "",
-      data.manager || "",
-      data.visitName || "",
-      data.phone || "",
-      data.type || "",
-      data.detail || "",
-      data.payment || "",
-      data.paymentMethod || "",
-      data.paySchedule || "",
-      data.amount || "0",
-      data.people || "",
-      data.perPerson || "",
-      data.remarks || ""
-    ];
-
-    // シートに行を追加
-    sheet.appendRow(row);
-
-    // 追加した行のスタイル設定
-    const lastRow = sheet.getLastRow();
-    const dataRange = sheet.getRange(lastRow, 1, 1, HEADERS.length);
-    dataRange.setBorder(true, true, true, true, true, true);
-
-    // 売上金額と売上/人は右揃え
-    sheet.getRange(lastRow, 12, 1, 1).setHorizontalAlignment("right"); // 売上金額
-    sheet.getRange(lastRow, 14, 1, 1).setHorizontalAlignment("right"); // 売上/人
-
-    // 売掛以外の場合は集金方法・振込予定時期をグレアウト
-    if (data.payment !== "売掛") {
-      sheet.getRange(lastRow, 10, 1, 2).setBackground("#f0f0f0");
-    }
-
-    // 売掛かつ集金の場合は振込予定時期をグレアウト
-    if (data.payment === "売掛" && data.paymentMethod === "集金") {
-      sheet.getRange(lastRow, 11, 1, 1).setBackground("#f0f0f0");
-    }
-
-    // 奇数行・偶数行で背景色を交互にする
-    if (lastRow % 2 === 0) {
-      dataRange.setBackground("#f9f9f9");
-    }
-
-    return ContentService.createTextOutput(JSON.stringify({ result: "success" }))
-      .setMimeType(ContentService.MimeType.JSON);
-
-  } catch (e) {
-    // エラーログを記録
-    console.log("エラー: " + e.getMessage());
-    return ContentService.createTextOutput(JSON.stringify({ result: "error", message: e.getMessage() }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-// --------------------------------------------
-// GET リクエスト（テスト用）
-// ブラウザでURLにアクセスして動作確認できる
-// --------------------------------------------
-function doGet() {
-  return ContentService.createTextOutput("工事スタッフ日報 GAS は正常に動作しています。")
-    .setMimeType(ContentService.MimeType.TEXT);
-}
-
-// --------------------------------------------
-// 月次レポート（手動実行用）
-// シートの末尾に当月の合計を追加する
-// --------------------------------------------
-function addMonthlyTotal() {
-  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  const sheet = spreadsheet.getSheetByName(SHEET_NAME);
-
-  if (!sheet) {
-    SpreadsheetApp.getUi().alert("シートが見つかりません");
-    return;
-  }
-
-  const lastRow = sheet.getLastRow();
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth() + 1;
-  const monthStr = year + "-" + String(month).padStart(2, "0");
-
-  let totalAmount = 0;
-  let totalVisits = 0;
-
-  // 2行目以降（ヘッダー除く）を走査
-  for (let i = 2; i <= lastRow; i++) {
-    const dateVal = sheet.getRange(i, 1).getString();
-    if (dateVal.startsWith(monthStr)) {
-      totalAmount += Number(sheet.getRange(i, 12).getString()) || 0;
-      totalVisits++;
-    }
-  }
-
-  // 合計行を追加
-  const totalRow = lastRow + 2;
-  sheet.getRange(totalRow, 1).setValue("【" + monthStr + " 月次合計】");
-  sheet.getRange(totalRow, 7).setValue("訪問件数: " + totalVisits + "件");
-  sheet.getRange(totalRow, 12).setValue(totalAmount);
-
-  // スタイル設定
-  const totalRange = sheet.getRange(totalRow, 1, 1, HEADERS.length);
-  totalRange.setBackground("#fff3e0");
-  totalRange.setFontWeight("bold");
-  totalRange.setBorder(true, true, true, true, true, true);
-
-  SpreadsheetApp.getUi().alert(
-    monthStr + " の月次合計を追加しました。\n" +
-    "訪問件数: " + totalVisits + "件\n" +
-    "売上合計: " + totalAmount + " 千円"
-  );
-}
-
-// --------------------------------------------
-// シート幅の自動調整（手動実行用）
-// --------------------------------------------
-function autoResize() {
-  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  const sheet = spreadsheet.getSheetByName(SHEET_NAME);
-
-  if (!sheet) {
-    SpreadsheetApp.getUi().alert("シートが見つかりません");
-    return;
-  }
-
-  sheet.autoResizeColumns(1, HEADERS.length);
-  SpreadsheetApp.getUi().alert("列幅を自動調整しました。");
-}
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
