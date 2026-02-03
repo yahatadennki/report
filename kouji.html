@@ -50,13 +50,37 @@
     }
     .log-header { display: flex; justify-content: space-between; align-items: center; }
     .log-delete { background: none; border: none; color: #e53935; cursor: pointer; font-size: 13px; }
+
+    /* 写真関連 */
+    .photo-upload-btn {
+      display: block; width: 100%; padding: 10px;
+      border: 2px dashed #ccc; border-radius: 6px;
+      background: #fff; color: #666; font-size: 13px;
+      cursor: pointer; text-align: center; margin-bottom: 8px;
+    }
+    .photo-upload-btn:hover { border-color: #4CAF50; color: #4CAF50; }
+    .photo-preview { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+    .photo-preview .thumb-wrap { position: relative; width: 80px; height: 80px; }
+    .photo-preview img { width: 80px; height: 80px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; }
+    .photo-preview .del-btn {
+      position: absolute; top: 2px; right: 2px;
+      background: rgba(229,57,53,0.85); color: #fff;
+      border: none; border-radius: 50%; width: 20px; height: 20px;
+      font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .photo-count { font-size: 12px; color: #888; margin-bottom: 4px; }
+    .log-photos { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+    .log-photos img { width: 50px; height: 50px; object-fit: cover; border-radius: 3px; border: 1px solid #ddd; }
   </style>
 </head>
 <body>
   <div id="app"></div>
+  <!-- 숨겨진 ファイル入力 -->
+  <input type="file" id="file-input" accept="image/*" multiple style="display:none" />
 
   <script>
     const GAS_URL = "https://script.google.com/macros/s/AKfycbwXWHaiuuKs1M2Oredv5fjzofdEqsi79gXXfuZ4Ps5KGTXXgbWRq4BVfLiwpK6yp2OEDQ/exec";
+    const MAX_PHOTOS = 5;
 
     const TIMES = ["午前", "午後"];
     const SALES = ["伊藤", "高山"];
@@ -78,8 +102,9 @@
       paySchedule: "", payScheduleOther: "",
       amount: "", people: "",
       remarks: "",
+      photos: [], // base64の配列
       logs: [],
-      status: "" // "sending" | "success" | "error"
+      status: ""
     };
 
     function setState(newState) {
@@ -89,6 +114,53 @@
 
     function toggleArr(arr, val) {
       return arr.includes(val) ? arr.filter(v => v !== val) : [...arr, val];
+    }
+
+    // ---------- 写真処理 ----------
+    function handleFileSelect(e) {
+      const files = Array.from(e.target.files);
+      const remaining = MAX_PHOTOS - state.photos.length;
+      const selected = files.slice(0, remaining);
+
+      if (selected.length === 0) return;
+
+      let loaded = 0;
+      const newPhotos = [...state.photos];
+
+      selected.forEach(file => {
+        // 画像をリサイズしてbase64にする
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+          // リサイズ: 最大800px
+          const maxSize = 800;
+          let w = img.width, h = img.height;
+          if (w > maxSize || h > maxSize) {
+            if (w > h) { h = h * maxSize / w; w = maxSize; }
+            else { w = w * maxSize / h; h = maxSize; }
+          }
+          const canvas = document.createElement("canvas");
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, w, h);
+          const base64 = canvas.toDataURL("image/jpeg", 0.7); // 画質70%で圧縮
+          newPhotos.push(base64);
+          URL.revokeObjectURL(url);
+          loaded++;
+          if (loaded === selected.length) {
+            setState({ photos: newPhotos });
+          }
+        };
+        img.src = url;
+      });
+
+      // ファイル入力をリセット
+      e.target.value = "";
+    }
+
+    function removePhoto(idx) {
+      const photos = state.photos.filter((_, i) => i !== idx);
+      setState({ photos });
     }
 
     // ---------- Submit ----------
@@ -120,7 +192,8 @@
         amount: state.amount || "0",
         people: state.people,
         perPerson: String(perPerson),
-        remarks: state.remarks
+        remarks: state.remarks,
+        photos: state.photos
       };
 
       try {
@@ -136,7 +209,7 @@
           time: "", sales: "", manager: "", visitName: "",
           phone: "", type: "", workItem: [], deliveryItem: [],
           payment: "", paymentMethod: "", paySchedule: "", payScheduleOther: "",
-          amount: "", people: "", remarks: ""
+          amount: "", people: "", remarks: "", photos: []
         });
         setTimeout(() => setState({ status: "" }), 2500);
       } catch (e) {
@@ -154,8 +227,7 @@
       const btn = document.createElement("button");
       btn.className = "toggle-btn" + (active ? " active" : "");
       btn.textContent = label;
-      if (active) btn.style.background = color;
-      if (active) btn.style.borderColor = color;
+      if (active) { btn.style.background = color; btn.style.borderColor = color; }
       btn.onclick = onClick;
       return btn;
     }
@@ -236,7 +308,33 @@
       html += `
           <label>備考</label>
           <textarea id="inp-remarks" rows="3" placeholder="トラブルやお客様からの要望など">${state.remarks}</textarea>
+      `;
 
+      // ---------- 完了写真 ----------
+      html += `<label>完了写真（最大${MAX_PHOTOS}枚）</label>`;
+      html += `<p class="photo-count">${state.photos.length} / ${MAX_PHOTOS} 枚</p>`;
+
+      // サムネイル表示
+      if (state.photos.length > 0) {
+        html += `<div class="photo-preview">`;
+        state.photos.forEach((p, i) => {
+          html += `
+            <div class="thumb-wrap">
+              <img src="${p}" />
+              <button class="del-btn" onclick="removePhoto(${i})">×</button>
+            </div>
+          `;
+        });
+        html += `</div>`;
+      }
+
+      // 追加ボタン
+      if (state.photos.length < MAX_PHOTOS) {
+        html += `<button class="photo-upload-btn" id="btn-photo">📷 写真を追加</button>`;
+      }
+
+      // 送信ボタン
+      html += `
           <button class="submit-btn" id="btn-submit" ${state.status === "sending" ? 'disabled' : ''}>
             ${state.status === "sending" ? "送信中..." : "送信"}
           </button>
@@ -271,6 +369,7 @@
               <div>${log.type}${log.detail ? `・${log.detail}` : ""} / 支払方法: ${log.payment || "ー"}${log.paymentMethod ? `・${log.paymentMethod}` : ""}${log.paySchedule ? `(${log.paySchedule})` : ""}</div>
               <div>売上: ${log.amount} 千円 / ${log.people || "ー"} ${log.perPerson ? `(売上/人: ${log.perPerson} 千円)` : ""}</div>
               ${log.remarks ? `<div>備考: ${log.remarks}</div>` : ""}
+              ${log.photos && log.photos.length > 0 ? `<div class="log-photos">${log.photos.map(p => `<img src="${p}" />`).join("")}</div>` : ""}
             </div>
           `;
         });
@@ -288,6 +387,12 @@
 
       if (state.payment === "売掛" && state.paymentMethod === "振込" && state.paySchedule === "その他") {
         document.getElementById("inp-payScheduleOther").oninput = e => setState({ payScheduleOther: e.target.value });
+      }
+
+      // 写真追加ボタン
+      const photoBtn = document.getElementById("btn-photo");
+      if (photoBtn) {
+        photoBtn.onclick = () => document.getElementById("file-input").click();
       }
 
       // トグルボタン
@@ -350,6 +455,9 @@
         );
       });
     }
+
+    // ---------- ファイル入力イベント（一度だけセット） ----------
+    document.getElementById("file-input").onchange = handleFileSelect;
 
     // ---------- 初期描画 ----------
     render();
