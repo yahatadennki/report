@@ -94,7 +94,7 @@
     // ---------- State ----------
     let state = {
       date: new Date().toISOString().split("T")[0],
-      time: "", sales: "", manager: "",
+      time: [], sales: "", manager: "",
       visitName: "", phone: "",
       type: "",
       workItem: [], deliveryItem: [],
@@ -110,6 +110,11 @@
     function setState(newState) {
       state = { ...state, ...newState };
       render();
+    }
+
+    // テキスト入力用: 再描画しない
+    function setStateSilent(newState) {
+      state = { ...state, ...newState };
     }
 
     function toggleArr(arr, val) {
@@ -178,7 +183,6 @@
       const entry = {
         date: state.date,
         time: state.time,
-        sales: state.sales,
         manager: state.manager,
         visitName: state.visitName,
         phone: state.phone,
@@ -206,7 +210,7 @@
         setState({
           logs: [...state.logs, entry],
           status: "success",
-          time: "", sales: "", manager: "", visitName: "",
+          time: [], sales: "", manager: "", visitName: "",
           phone: "", type: "", workItem: [], deliveryItem: [],
           payment: "", paymentMethod: "", paySchedule: "", payScheduleOther: "",
           amount: "", people: "", remarks: "", photos: []
@@ -379,14 +383,18 @@
 
       // ---------- イベント ----------
       document.getElementById("inp-date").onchange = e => setState({ date: e.target.value });
-      document.getElementById("inp-visitName").oninput = e => setState({ visitName: e.target.value });
-      document.getElementById("inp-phone").oninput = e => setState({ phone: e.target.value });
-      document.getElementById("inp-amount").oninput = e => setState({ amount: e.target.value });
-      document.getElementById("inp-remarks").oninput = e => setState({ remarks: e.target.value });
+      document.getElementById("inp-visitName").oninput = e => setStateSilent({ visitName: e.target.value });
+      document.getElementById("inp-phone").oninput = e => setStateSilent({ phone: e.target.value });
+      document.getElementById("inp-amount").oninput = e => {
+        setStateSilent({ amount: e.target.value });
+        // 売上/人を更新するために再描画
+        if (state.people) render();
+      };
+      document.getElementById("inp-remarks").oninput = e => setStateSilent({ remarks: e.target.value });
       document.getElementById("btn-submit").onclick = handleSubmit;
 
       if (state.payment === "売掛" && state.paymentMethod === "振込" && state.paySchedule === "その他") {
-        document.getElementById("inp-payScheduleOther").oninput = e => setState({ payScheduleOther: e.target.value });
+        document.getElementById("inp-payScheduleOther").oninput = e => setStateSilent({ payScheduleOther: e.target.value });
       }
 
       // 写真追加ボタン
@@ -398,7 +406,7 @@
       // トグルボタン
       TIMES.forEach(t => {
         document.getElementById("row-time").appendChild(
-          createToggleBtn(t, state.time === t, "#4CAF50", () => setState({ time: state.time === t ? "" : t }))
+          createToggleBtn(t, state.time.includes(t), "#4CAF50", () => setState({ time: toggleArr(state.time, t) }))
         );
       });
       SALES.forEach(s => {
