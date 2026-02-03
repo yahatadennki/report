@@ -1,466 +1,138 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>工事スタッフ日報 - ㈲ヤハタ電機商会</title>
-  <style>
-    * { box-sizing: border-box; }
-    body { font-family: sans-serif; background: #fff; margin: 0; padding: 0; }
-    #app { max-width: 600px; margin: 0 auto; padding: 20px; }
-    h2 { text-align: center; margin: 0; font-size: 20px; }
-    .subtitle { text-align: center; margin: 4px 0 20px; font-size: 12px; color: #888; }
-    .form-box { background: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-bottom: 20px; }
-    label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 4px; }
-    input[type="date"], input[type="text"], input[type="number"], textarea {
-      display: block; width: 100%; padding: 6px 8px; font-size: 14px;
-      border: 1px solid #ccc; border-radius: 4px; margin-bottom: 12px;
-    }
-    textarea { resize: vertical; font-size: 13px; }
-    .toggle-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
-    .toggle-btn {
-      padding: 6px 14px; border-radius: 20px; border: 1px solid #ccc;
-      background: #fff; color: #333; cursor: pointer; font-size: 13px;
-    }
-    .toggle-btn.active { color: #fff; }
-    .row2 { display: flex; gap: 12px; }
-    .row2 > div { flex: 1; }
-    .per-person-box {
-      background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 6px;
-      padding: 6px 10px; margin-bottom: 12px; font-size: 13px;
-    }
-    .per-person-box strong { color: #2e7d32; }
-    .submit-btn {
-      display: block; width: 100%; margin-top: 16px; padding: 10px;
-      font-size: 15px; font-weight: bold; background: #4CAF50;
-      color: #fff; border: none; border-radius: 6px; cursor: pointer;
-    }
-    .submit-btn:disabled { background: #aaa; cursor: not-allowed; }
-    .msg-success { text-align: center; margin-top: 10px; color: #4CAF50; font-weight: bold; font-size: 14px; }
-    .msg-error { text-align: center; margin-top: 10px; color: #e53935; font-weight: bold; font-size: 14px; }
-    .total-box {
-      background: #fff3e0; border: 1px solid #ffe0b2; border-radius: 6px;
-      padding: 8px 12px; margin-bottom: 12px; text-align: center; font-size: 14px;
-    }
-    .total-box strong { color: #e65100; font-size: 16px; }
-    .log-title { font-size: 14px; margin-bottom: 8px; }
-    .log-item {
-      background: #fff; border: 1px solid #ddd; border-radius: 6px;
-      padding: 10px; margin-bottom: 8px; font-size: 12px;
-    }
-    .log-header { display: flex; justify-content: space-between; align-items: center; }
-    .log-delete { background: none; border: none; color: #e53935; cursor: pointer; font-size: 13px; }
+// ============================================
+// 工事スタッフ 業務日報 - Google Apps Script
+// ㈲ヤハタ電機商会
+// ============================================
 
-    /* 写真関連 */
-    .photo-upload-btn {
-      display: block; width: 100%; padding: 10px;
-      border: 2px dashed #ccc; border-radius: 6px;
-      background: #fff; color: #666; font-size: 13px;
-      cursor: pointer; text-align: center; margin-bottom: 8px;
-    }
-    .photo-upload-btn:hover { border-color: #4CAF50; color: #4CAF50; }
-    .photo-preview { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
-    .photo-preview .thumb-wrap { position: relative; width: 80px; height: 80px; }
-    .photo-preview img { width: 80px; height: 80px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; }
-    .photo-preview .del-btn {
-      position: absolute; top: 2px; right: 2px;
-      background: rgba(229,57,53,0.85); color: #fff;
-      border: none; border-radius: 50%; width: 20px; height: 20px;
-      font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;
-    }
-    .photo-count { font-size: 12px; color: #888; margin-bottom: 4px; }
-    .log-photos { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
-    .log-photos img { width: 50px; height: 50px; object-fit: cover; border-radius: 3px; border: 1px solid #ddd; }
-  </style>
-</head>
-<body>
-  <div id="app"></div>
-  <!-- 숨겨진 ファイル入力 -->
-  <input type="file" id="file-input" accept="image/*" multiple style="display:none" />
+const SHEET_NAME = "工事日報";
+// ★ 写真を保存するGoogle Driveのフォルダ ID を入れてください
+const DRIVE_FOLDER_ID = "17R6uVjwN6kei_VdLjNJX4LeA6TEINwc4";
 
-  <script>
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbwXWHaiuuKs1M2Oredv5fjzofdEqsi79gXXfuZ4Ps5KGTXXgbWRq4BVfLiwpK6yp2OEDQ/exec";
-    const MAX_PHOTOS = 5;
+const HEADERS = [
+  "日にち",
+  "時間帯",
+  "販売担当者",
+  "責任者",
+  "訪問先名(現場名)",
+  "電話番号",
+  "区分",
+  "内容",
+  "支払方法",
+  "集金方法",
+  "振込予定時期",
+  "売上金額(千円)",
+  "人数",
+  "売上/人(千円)",
+  "備考",
+  "完了写真"
+];
 
-    const TIMES = ["午前", "午後"];
-    const SALES = ["伊藤", "高山"];
-    const MANAGERS = ["渡辺", "高山"];
-    const WORK_ITEMS = ["エアコン", "照明", "レンジフード", "換気扇", "電気", "アンテナ", "ドアホン", "IH", "エコキュート", "管球", "その他"];
-    const DELIVERY_ITEMS = ["TV", "BD", "冷蔵庫", "洗濯機", "調理", "家事", "理美容", "季節", "その他"];
-    const PAYMENTS = ["パナカード", "現金", "売掛"];
-    const PEOPLE_LIST = ["1人", "2人", "3人", "4人以上"];
-    const PEOPLE_NUM = { "1人": 1, "2人": 2, "3人": 3, "4人以上": 4 };
+// --------------------------------------------
+// POST リクエスト受信（テキスト＋写真対応）
+// --------------------------------------------
+function doPost(e) {
+  try {
+    const contentType = e.parameter.contentType || "";
+    const data = JSON.parse(e.postData.contents);
 
-    // ---------- State ----------
-    let state = {
-      date: new Date().toISOString().split("T")[0],
-      time: "", sales: "", manager: "",
-      visitName: "", phone: "",
-      type: "",
-      workItem: [], deliveryItem: [],
-      payment: "", paymentMethod: "",
-      paySchedule: "", payScheduleOther: "",
-      amount: "", people: "",
-      remarks: "",
-      photos: [], // base64の配列
-      logs: [],
-      status: ""
-    };
+    const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+    let sheet = spreadsheet.getSheetByName(SHEET_NAME);
 
-    function setState(newState) {
-      state = { ...state, ...newState };
-      render();
+    // シートが存在しない場合は新規作成
+    if (!sheet) {
+      sheet = spreadsheet.insertSheet(SHEET_NAME);
+      sheet.appendRow(HEADERS);
+      const headerRange = sheet.getRange(1, 1, 1, HEADERS.length);
+      headerRange.setBackground("#1a3c5e");
+      headerRange.setFontColor("#ffffff");
+      headerRange.setFontWeight("bold");
+      headerRange.setHorizontalAlignment("center");
+      headerRange.setBorder(true, true, true, true, true, true);
     }
 
-    function toggleArr(arr, val) {
-      return arr.includes(val) ? arr.filter(v => v !== val) : [...arr, val];
-    }
-
-    // ---------- 写真処理 ----------
-    function handleFileSelect(e) {
-      const files = Array.from(e.target.files);
-      const remaining = MAX_PHOTOS - state.photos.length;
-      const selected = files.slice(0, remaining);
-
-      if (selected.length === 0) return;
-
-      let loaded = 0;
-      const newPhotos = [...state.photos];
-
-      selected.forEach(file => {
-        // 画像をリサイズしてbase64にする
-        const img = new Image();
-        const url = URL.createObjectURL(file);
-        img.onload = () => {
-          // リサイズ: 最大800px
-          const maxSize = 800;
-          let w = img.width, h = img.height;
-          if (w > maxSize || h > maxSize) {
-            if (w > h) { h = h * maxSize / w; w = maxSize; }
-            else { w = w * maxSize / h; h = maxSize; }
-          }
-          const canvas = document.createElement("canvas");
-          canvas.width = w; canvas.height = h;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0, w, h);
-          const base64 = canvas.toDataURL("image/jpeg", 0.7); // 画質70%で圧縮
-          newPhotos.push(base64);
-          URL.revokeObjectURL(url);
-          loaded++;
-          if (loaded === selected.length) {
-            setState({ photos: newPhotos });
-          }
-        };
-        img.src = url;
-      });
-
-      // ファイル入力をリセット
-      e.target.value = "";
-    }
-
-    function removePhoto(idx) {
-      const photos = state.photos.filter((_, i) => i !== idx);
-      setState({ photos });
-    }
-
-    // ---------- Submit ----------
-    async function handleSubmit() {
-      if (!state.date || !state.visitName) {
-        alert("日にちと訪問先名は必須です");
-        return;
-      }
-      setState({ status: "sending" });
-
-      const perPerson = state.amount && state.people
-        ? Math.floor(Number(state.amount) / PEOPLE_NUM[state.people])
-        : "";
-
-      const entry = {
-        date: state.date,
-        time: state.time,
-        sales: state.sales,
-        manager: state.manager,
-        visitName: state.visitName,
-        phone: state.phone,
-        type: state.type,
-        detail: state.type === "工事" ? state.workItem.join("・") : state.type === "配達" ? state.deliveryItem.join("・") : "",
-        payment: state.payment,
-        paymentMethod: state.payment === "売掛" ? state.paymentMethod : "",
-        paySchedule: state.payment === "売掛" && state.paymentMethod === "振込"
-          ? (state.paySchedule === "その他" ? state.payScheduleOther : state.paySchedule)
-          : "",
-        amount: state.amount || "0",
-        people: state.people,
-        perPerson: String(perPerson),
-        remarks: state.remarks,
-        photos: state.photos
-      };
-
-      try {
-        await fetch(GAS_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(entry)
-        });
-        setState({
-          logs: [...state.logs, entry],
-          status: "success",
-          time: "", sales: "", manager: "", visitName: "",
-          phone: "", type: "", workItem: [], deliveryItem: [],
-          payment: "", paymentMethod: "", paySchedule: "", payScheduleOther: "",
-          amount: "", people: "", remarks: "", photos: []
-        });
-        setTimeout(() => setState({ status: "" }), 2500);
-      } catch (e) {
-        setState({ status: "error" });
-        setTimeout(() => setState({ status: "" }), 3000);
-      }
-    }
-
-    function deleteLog(i) {
-      setState({ logs: state.logs.filter((_, idx) => idx !== i) });
-    }
-
-    // ---------- Render ----------
-    function createToggleBtn(label, active, color, onClick) {
-      const btn = document.createElement("button");
-      btn.className = "toggle-btn" + (active ? " active" : "");
-      btn.textContent = label;
-      if (active) { btn.style.background = color; btn.style.borderColor = color; }
-      btn.onclick = onClick;
-      return btn;
-    }
-
-    function render() {
-      const app = document.getElementById("app");
-      const perPerson = state.amount && state.people
-        ? Math.floor(Number(state.amount) / PEOPLE_NUM[state.people])
-        : null;
-      const dailyTotal = state.logs.reduce((s, l) => s + (Number(l.amount) || 0), 0);
-
-      let html = `
-        <h2>🔧 工事スタッフ 日報</h2>
-        <p class="subtitle">㈲ヤハタ電機商会</p>
-        <div class="form-box">
-          <label>日にち</label>
-          <input type="date" id="inp-date" value="${state.date}" />
-
-          <label>時間帯</label>
-          <div class="toggle-row" id="row-time"></div>
-
-          <label>販売担当者</label>
-          <div class="toggle-row" id="row-sales"></div>
-
-          <label>責任者</label>
-          <div class="toggle-row" id="row-manager"></div>
-
-          <label>訪問先名(現場名)</label>
-          <input type="text" id="inp-visitName" value="${state.visitName}" placeholder="お客様名・現場名" />
-
-          <label>電話番号</label>
-          <input type="text" id="inp-phone" value="${state.phone}" placeholder="000-0000-0000" />
-
-          <label>区分</label>
-          <div class="toggle-row" id="row-type"></div>
-      `;
-
-      if (state.type === "工事") {
-        html += `<label>工事内容（複数選択可）</label><div class="toggle-row" id="row-workItem"></div>`;
-      }
-      if (state.type === "配達") {
-        html += `<label>配達内容（複数選択可）</label><div class="toggle-row" id="row-deliveryItem"></div>`;
+    // ---------- 写真の処理 ----------
+    let photoLinks = "";
+    if (data.photos && data.photos.length > 0) {
+      const links = [];
+      const folder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
+      // フォルダ名: 訪問先名_日付
+      const subFolderName = (data.date || "") + "_" + (data.visitName || "無名") + "_" + (data.detail || "");
+      let subFolder;
+      // サブフォルダが存在するか確認
+      const existing = folder.getFoldersByName(subFolderName);
+      if (existing.hasNext()) {
+        subFolder = existing.next();
+      } else {
+        subFolder = folder.createFolder(subFolderName);
       }
 
-      html += `
-          <label>支払方法</label>
-          <div class="toggle-row" id="row-payment"></div>
-      `;
-
-      if (state.payment === "売掛") {
-        html += `<label>集金方法</label><div class="toggle-row" id="row-paymentMethod"></div>`;
-      }
-      if (state.payment === "売掛" && state.paymentMethod === "振込") {
-        html += `<label>振込予定時期</label><div class="toggle-row" id="row-paySchedule"></div>`;
-        if (state.paySchedule === "その他") {
-          html += `<input type="text" id="inp-payScheduleOther" value="${state.payScheduleOther}" placeholder="予定日やその他の内容" />`;
-        }
-      }
-
-      html += `
-          <div class="row2">
-            <div>
-              <label>売上金額(千円)</label>
-              <input type="number" id="inp-amount" value="${state.amount}" placeholder="0" style="margin-bottom:0" />
-            </div>
-            <div>
-              <label>人数</label>
-              <div class="toggle-row" id="row-people" style="margin-bottom:0"></div>
-            </div>
-          </div>
-          <div style="height:8px"></div>
-      `;
-
-      if (perPerson !== null) {
-        html += `<div class="per-person-box">売上/人: <strong>${perPerson} 千円</strong></div>`;
-      }
-
-      html += `
-          <label>備考</label>
-          <textarea id="inp-remarks" rows="3" placeholder="トラブルやお客様からの要望など">${state.remarks}</textarea>
-      `;
-
-      // ---------- 完了写真 ----------
-      html += `<label>完了写真（最大${MAX_PHOTOS}枚）</label>`;
-      html += `<p class="photo-count">${state.photos.length} / ${MAX_PHOTOS} 枚</p>`;
-
-      // サムネイル表示
-      if (state.photos.length > 0) {
-        html += `<div class="photo-preview">`;
-        state.photos.forEach((p, i) => {
-          html += `
-            <div class="thumb-wrap">
-              <img src="${p}" />
-              <button class="del-btn" onclick="removePhoto(${i})">×</button>
-            </div>
-          `;
-        });
-        html += `</div>`;
-      }
-
-      // 追加ボタン
-      if (state.photos.length < MAX_PHOTOS) {
-        html += `<button class="photo-upload-btn" id="btn-photo">📷 写真を追加</button>`;
-      }
-
-      // 送信ボタン
-      html += `
-          <button class="submit-btn" id="btn-submit" ${state.status === "sending" ? 'disabled' : ''}>
-            ${state.status === "sending" ? "送信中..." : "送信"}
-          </button>
-      `;
-
-      if (state.status === "success") {
-        html += `<div class="msg-success">✅ スプレッドシートに送信しました！</div>`;
-      }
-      if (state.status === "error") {
-        html += `<div class="msg-error">❌ 送信に失敗しました。再度お試しください。</div>`;
-      }
-
-      html += `</div>`;
-
-      // 売上合計
-      if (state.logs.length > 0) {
-        html += `<div class="total-box">本日の売上合計: <strong>${dailyTotal} 千円</strong></div>`;
-      }
-
-      // 送信済みログ
-      if (state.logs.length > 0) {
-        html += `<h3 class="log-title">本日の送信済み一覧</h3>`;
-        state.logs.forEach((log, i) => {
-          html += `
-            <div class="log-item">
-              <div class="log-header">
-                <strong>${log.date} ${log.time}</strong>
-                <button class="log-delete" onclick="deleteLog(${i})">削除</button>
-              </div>
-              <div>訪問先(現場名): ${log.visitName} ${log.phone ? `(${log.phone})` : ""}</div>
-              <div>販売担当者: ${log.sales || "ー"} / 責任者: ${log.manager || "ー"}</div>
-              <div>${log.type}${log.detail ? `・${log.detail}` : ""} / 支払方法: ${log.payment || "ー"}${log.paymentMethod ? `・${log.paymentMethod}` : ""}${log.paySchedule ? `(${log.paySchedule})` : ""}</div>
-              <div>売上: ${log.amount} 千円 / ${log.people || "ー"} ${log.perPerson ? `(売上/人: ${log.perPerson} 千円)` : ""}</div>
-              ${log.remarks ? `<div>備考: ${log.remarks}</div>` : ""}
-              ${log.photos && log.photos.length > 0 ? `<div class="log-photos">${log.photos.map(p => `<img src="${p}" />`).join("")}</div>` : ""}
-            </div>
-          `;
-        });
-      }
-
-      app.innerHTML = html;
-
-      // ---------- イベント ----------
-      document.getElementById("inp-date").onchange = e => setState({ date: e.target.value });
-      document.getElementById("inp-visitName").oninput = e => setState({ visitName: e.target.value });
-      document.getElementById("inp-phone").oninput = e => setState({ phone: e.target.value });
-      document.getElementById("inp-amount").oninput = e => setState({ amount: e.target.value });
-      document.getElementById("inp-remarks").oninput = e => setState({ remarks: e.target.value });
-      document.getElementById("btn-submit").onclick = handleSubmit;
-
-      if (state.payment === "売掛" && state.paymentMethod === "振込" && state.paySchedule === "その他") {
-        document.getElementById("inp-payScheduleOther").oninput = e => setState({ payScheduleOther: e.target.value });
-      }
-
-      // 写真追加ボタン
-      const photoBtn = document.getElementById("btn-photo");
-      if (photoBtn) {
-        photoBtn.onclick = () => document.getElementById("file-input").click();
-      }
-
-      // トグルボタン
-      TIMES.forEach(t => {
-        document.getElementById("row-time").appendChild(
-          createToggleBtn(t, state.time === t, "#4CAF50", () => setState({ time: state.time === t ? "" : t }))
+      data.photos.forEach((photo, idx) => {
+        // base64からBlobに変換
+        const base64 = photo.split(",")[1]; // "data:image/..." のプレフィックスを除去
+        const mimeType = photo.split(";")[0].split(":")[1]; // "image/jpeg" など
+        const fileName = (data.date || "") + "_" + (data.visitName || "無名") + "_" + (data.detail || "") + "_" + (idx + 1) + ".jpg";
+        const blob = Utilities.newBlob(
+          Utilities.base64Decode(base64),
+          mimeType,
+          fileName
         );
+        const file = subFolder.createFile(blob);
+        file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+        links.push(file.getUrl());
       });
-      SALES.forEach(s => {
-        document.getElementById("row-sales").appendChild(
-          createToggleBtn(s, state.sales === s, "#2196F3", () => setState({ sales: state.sales === s ? "" : s }))
-        );
-      });
-      MANAGERS.forEach(m => {
-        document.getElementById("row-manager").appendChild(
-          createToggleBtn(m, state.manager === m, "#9C27B0", () => setState({ manager: state.manager === m ? "" : m }))
-        );
-      });
-      ["工事", "配達"].forEach(t => {
-        document.getElementById("row-type").appendChild(
-          createToggleBtn(t, state.type === t, "#FF9800", () => setState({ type: state.type === t ? "" : t, workItem: [], deliveryItem: [] }))
-        );
-      });
-      if (state.type === "工事") {
-        WORK_ITEMS.forEach(item => {
-          document.getElementById("row-workItem").appendChild(
-            createToggleBtn(item, state.workItem.includes(item), "#E91E63", () => setState({ workItem: toggleArr(state.workItem, item) }))
-          );
-        });
-      }
-      if (state.type === "配達") {
-        DELIVERY_ITEMS.forEach(item => {
-          document.getElementById("row-deliveryItem").appendChild(
-            createToggleBtn(item, state.deliveryItem.includes(item), "#E91E63", () => setState({ deliveryItem: toggleArr(state.deliveryItem, item) }))
-          );
-        });
-      }
-      PAYMENTS.forEach(p => {
-        document.getElementById("row-payment").appendChild(
-          createToggleBtn(p, state.payment === p, "#009688", () => setState({ payment: state.payment === p ? "" : p, paymentMethod: "", paySchedule: "", payScheduleOther: "" }))
-        );
-      });
-      if (state.payment === "売掛") {
-        ["集金", "振込"].forEach(m => {
-          document.getElementById("row-paymentMethod").appendChild(
-            createToggleBtn(m, state.paymentMethod === m, "#00897B", () => setState({ paymentMethod: state.paymentMethod === m ? "" : m, paySchedule: "", payScheduleOther: "" }))
-          );
-        });
-      }
-      if (state.payment === "売掛" && state.paymentMethod === "振込") {
-        ["今週中", "来週中", "月末まで", "その他"].forEach(s => {
-          document.getElementById("row-paySchedule").appendChild(
-            createToggleBtn(s, state.paySchedule === s, "#00695C", () => setState({ paySchedule: state.paySchedule === s ? "" : s, payScheduleOther: "" }))
-          );
-        });
-      }
-      PEOPLE_LIST.forEach(p => {
-        document.getElementById("row-people").appendChild(
-          createToggleBtn(p, state.people === p, "#607D8B", () => setState({ people: state.people === p ? "" : p }))
-        );
-      });
+
+      photoLinks = links.join("\n");
     }
 
-    // ---------- ファイル入力イベント（一度だけセット） ----------
-    document.getElementById("file-input").onchange = handleFileSelect;
+    // ---------- データを行にまとめる ----------
+    const row = [
+      data.date || "",
+      data.time || "",
+      data.sales || "",
+      data.manager || "",
+      data.visitName || "",
+      data.phone || "",
+      data.type || "",
+      data.detail || "",
+      data.payment || "",
+      data.paymentMethod || "",
+      data.paySchedule || "",
+      data.amount || "0",
+      data.people || "",
+      data.perPerson || "",
+      data.remarks || "",
+      photoLinks
+    ];
 
-    // ---------- 初期描画 ----------
-    render();
-  </script>
-</body>
-</html>
+    sheet.appendRow(row);
+
+    // 追加した行のスタイル
+    const lastRow = sheet.getLastRow();
+    const dataRange = sheet.getRange(lastRow, 1, 1, HEADERS.length);
+    dataRange.setBorder(true, true, true, true, true, true);
+    sheet.getRange(lastRow, 12, 1, 1).setHorizontalAlignment("right");
+    sheet.getRange(lastRow, 14, 1, 1).setHorizontalAlignment("right");
+
+    if (lastRow % 2 === 0) {
+      dataRange.setBackground("#f9f9f9");
+    }
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ result: "success" }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (err) {
+    console.log("エラー: " + err.getMessage());
+    return ContentService
+      .createTextOutput(JSON.stringify({ result: "error", message: err.getMessage() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// --------------------------------------------
+// GET リクエスト（テスト用）
+// --------------------------------------------
+function doGet() {
+  return ContentService
+    .createTextOutput("工事スタッフ日報 GAS は正常に動作しています。")
+    .setMimeType(ContentService.MimeType.TEXT);
+}
