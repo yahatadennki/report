@@ -203,7 +203,9 @@
       const サービス種別 = selectedService;
       const 商品区分 = selectedProduct;
       const 商品詳細 = document.getElementById('商品詳細')?.value || '';
-      const 訪問日時 = document.getElementById('訪問日時').value;
+      const 訪問日 = document.getElementById('訪問日').value;
+      const 訪問時刻 = document.getElementById('訪問時刻').value;
+      const 訪問日時 = (訪問日 && 訪問時刻) ? `${訪問日} ${訪問時刻}` : '';
       const 内容 = document.getElementById('内容').value;
 
       if (!担当 || !種類 || !顧客名) {
@@ -225,7 +227,8 @@
       document.getElementById('顧客名').value = '';
       document.getElementById('電話番号').value = '';
       document.getElementById('住所text').value = '';
-      document.getElementById('訪問日時').value = '';
+      document.getElementById('訪問日').value = '';
+      document.getElementById('訪問時刻').value = '';
       document.getElementById('内容').value = '';
       selectedService = '';
       selectedProduct = '';
@@ -335,8 +338,8 @@
 
             <!-- 住所 -->
             <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2">${icons.mapPin} 住所</label>
-              <input type="text" id="住所text" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="例: 長沼町">
+              <label class="block text-sm font-semibold text-gray-700 mb-2">${icons.mapPin} 住所（◯◯町orマンション名＋部屋番号）</label>
+              <input type="text" id="住所text" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="例: 長沼町330-24 または ◯◯マンション101号室">
             </div>
 
             <!-- メーカーサービス -->
@@ -360,7 +363,16 @@
             <!-- 訪問日時 -->
             <div>
               <label class="block text-sm font-semibold text-gray-700 mb-2">訪問日時</label>
-              <input type="datetime-local" id="訪問日時" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
+              <div class="grid grid-cols-2 gap-2">
+                <input type="date" id="訪問日" class="p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
+                <select id="訪問時刻" class="p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
+                  <option value="">時刻を選択</option>
+                  ${Array.from({length: 24}, (_, i) => {
+                    const h = String(i).padStart(2, '0');
+                    return `<option value="${h}:00">${h}:00</option><option value="${h}:30">${h}:30</option>`;
+                  }).join('')}
+                </select>
+              </div>
             </div>
 
             <!-- 受注内容 -->
@@ -410,7 +422,7 @@
                           ${order.住所 ? `<p class="text-gray-700 flex items-center gap-2">${icons.mapPin} ${order.住所}</p>` : ''}
                           ${order.商品詳細 ? `<p class="text-gray-700">商品詳細: ${order.商品詳細}</p>` : ''}
                         </div>
-                        ${order.訪問日時 ? `<p class="text-gray-700 mb-2 flex items-center gap-2">${icons.calendar} 訪問予定: ${new Date(order.訪問日時).toLocaleString('ja-JP')}</p>` : ''}
+                        ${order.訪問日時 ? `<p class="text-gray-700 mb-2 flex items-center gap-2">${icons.calendar} 訪問予定: ${order.訪問日時}</p>` : ''}
                         ${order.内容 ? `<div class="bg-gray-50 p-3 rounded border border-gray-200 mt-2"><p class="text-gray-700 whitespace-pre-wrap">${order.内容}</p></div>` : ''}
                       </div>
                       <button onclick="deleteOrder(${order.id})" class="text-red-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-colors ml-4">${icons.trash}</button>
