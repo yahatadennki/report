@@ -5,41 +5,51 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>業務日報 - ㈲ヤハタ電機商会</title>
   <style>
-    /* デザイン設定はそのまま維持 */
+    /* 現場で見やすいPro仕様デザイン */
     * { box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f0f2f5; margin: 0; padding: 15px; }
-    .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    h2 { text-align: center; color: #1a3c5e; margin-top: 0; margin-bottom: 25px; font-size: 24px; }
+    body { font-family: -apple-system, sans-serif; background: #f0f2f5; margin: 0; padding: 15px; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    h2 { text-align: center; color: #1a3c5e; margin: 0 0 25px; font-size: 24px; letter-spacing: 1px; }
+    
     .section { margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #e8e8e8; }
     .section:last-of-type { border-bottom: none; }
-    label { display: block; font-weight: bold; margin: 15px 0 8px; font-size: 14px; color: #333; }
-    .label-optional { font-weight: normal; color: #999; font-size: 12px; }
-    input[type="text"], input[type="date"], input[type="number"], textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; transition: border-color 0.2s; }
-    input:focus, textarea:focus { outline: none; border-color: #007bff; }
+    
+    label { display: block; font-weight: bold; margin: 15px 0 8px; font-size: 14px; }
+    .label-sub { font-weight: normal; font-size: 12px; color: #666; margin-left: 5px; }
+    
+    input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; margin-bottom: 5px; }
+    input:focus, textarea:focus { outline: none; border-color: #007bff; box-shadow: 0 0 0 3px rgba(0,123,255,0.1); }
+    
     .btn-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-    .toggle-btn { padding: 10px 15px; border: 2px solid #ddd; border-radius: 8px; background: white; cursor: pointer; font-size: 14px; transition: all 0.2s; font-weight: 500; }
-    .toggle-btn:hover { border-color: #007bff; background: #f0f8ff; }
+    .toggle-btn { padding: 10px 14px; border: 2px solid #e0e0e0; border-radius: 8px; background: white; cursor: pointer; font-size: 14px; font-weight: 600; color: #555; transition: all 0.2s; }
     .toggle-btn.active { background: #007bff; color: white; border-color: #007bff; }
-    .staff-type-btn { padding: 15px 20px; font-size: 16px; border-radius: 10px; flex: 1; min-width: 140px; }
+    
+    .staff-type-btn { flex: 1; padding: 15px; font-size: 16px; border-radius: 10px; }
     .staff-type-btn.active { background: #28a745; border-color: #28a745; }
+    
     .hidden { display: none !important; }
-    .submit-btn { width: 100%; padding: 16px; background: #28a745; color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; margin-top: 30px; cursor: pointer; transition: background 0.2s; }
-    .submit-btn:disabled { background: #ccc; cursor: not-allowed; }
-    .photo-preview { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
-    .photo-item { position: relative; }
-    .photo-item img { width: 80px; height: 80px; object-fit: cover; border-radius: 6px; border: 2px solid #ddd; }
-    .photo-badge { position: absolute; top: -6px; right: -6px; background: #17a2b8; color: white; font-size: 10px; padding: 3px 7px; border-radius: 10px; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-    .photo-type-btn { flex: 1; padding: 10px; border: 2px solid #ddd; border-radius: 8px; background: white; cursor: pointer; font-size: 14px; font-weight: 500; }
-    .photo-type-btn.active { background: #17a2b8; color: white; border-color: #17a2b8; }
+    
+    .submit-btn { width: 100%; padding: 16px; background: #28a745; color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; margin-top: 20px; cursor: pointer; box-shadow: 0 4px 6px rgba(40,167,69,0.2); transition: transform 0.1s; }
+    .submit-btn:active { transform: scale(0.98); }
+    .submit-btn:disabled { background: #ccc; box-shadow: none; }
+
     .amount-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .work-detail-section { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 12px; }
-    .inspection-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+    .work-detail-box { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 10px; border: 1px solid #eee; }
+    
+    /* 写真エリア */
+    .photo-ctrl { display: flex; gap: 10px; margin-bottom: 12px; }
+    .photo-type-btn { flex: 1; padding: 10px; border: 2px solid #ddd; border-radius: 8px; background: white; cursor: pointer; font-weight: bold; }
+    .photo-type-btn.active { background: #17a2b8; color: white; border-color: #17a2b8; }
+    .photo-preview { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .photo-item { position: relative; }
+    .photo-item img { width: 70px; height: 70px; object-fit: cover; border-radius: 6px; border: 1px solid #ccc; }
+    .photo-badge { position: absolute; top: -5px; right: -5px; background: #17a2b8; color: white; font-size: 9px; padding: 2px 6px; border-radius: 10px; }
   </style>
 </head>
 <body>
   <div class="container">
     <h2>📋 業務日報</h2>
-    
+
     <div class="section">
       <label>職種を選択してください</label>
       <div class="btn-group">
@@ -49,36 +59,38 @@
     </div>
 
     <div id="mainForm" class="hidden">
+      
       <div class="section">
         <label>日にち</label>
         <input type="date" id="date">
-        <label>時間帯 <span class="label-optional">（複数選択可）</span></label>
+        
+        <label>時間帯 <span class="label-sub">(複数可)</span></label>
         <div class="btn-group" id="group-time"></div>
-        <label>あなたの名前</label>
+        
+        <label>報告者名</label>
         <div class="btn-group" id="group-staff"></div>
-        <label>訪問先名（現場名）</label>
+        
+        <label>訪問先名 <span class="label-sub">(現場名)</span></label>
         <input type="text" id="visitName" placeholder="例：山田太郎様">
       </div>
 
       <div class="section">
-        <label>作業内容 <span class="label-optional">（複数選択可）</span></label>
+        <label>作業内容 <span class="label-sub">(複数可)</span></label>
         <div class="btn-group" id="group-workType"></div>
 
-        <div id="construction-detail" class="work-detail-section hidden">
-          <label>工事種類 <span class="label-optional">（複数選択可）</span></label>
-          <div class="btn-group" id="group-constructionTypes"></div>
+        <div id="construction-detail" class="work-detail-box hidden">
+          <label>工事種類</label><div class="btn-group" id="group-constructionTypes"></div>
         </div>
-
-        <div id="delivery-detail" class="work-detail-section hidden">
-          <label>配達商品 <span class="label-optional">（複数選択可）</span></label>
-          <div class="btn-group" id="group-deliveryItems"></div>
+        
+        <div id="delivery-detail" class="work-detail-box hidden">
+          <label>配達商品</label><div class="btn-group" id="group-deliveryItems"></div>
         </div>
-
-        <div id="inspection-detail" class="work-detail-section hidden">
-          <label>点検内容</label>
-          <div class="inspection-inputs">
-            <div class="inspection-item"><label>エアコン点検</label><input type="number" id="inspectionAircon" min="0" value="0"></div>
-            <div class="inspection-item"><label>その他点検</label><input type="number" id="inspectionOther" min="0" value="0"></div>
+        
+        <div id="inspection-detail" class="work-detail-box hidden">
+          <label>点検台数</label>
+          <div class="amount-group">
+            <div><small>エアコン</small><input type="number" id="inspectionAircon" value="0" min="0"></div>
+            <div><small>その他</small><input type="number" id="inspectionOther" value="0" min="0"></div>
           </div>
         </div>
       </div>
@@ -92,46 +104,40 @@
           <label>工事/配達責任者</label>
           <div class="btn-group" id="group-workManager"></div>
         </div>
-        <div id="section-surveyManager" class="hidden">
-          <label>現調責任者</label>
-          <div class="btn-group" id="group-surveyManager"></div>
-        </div>
       </div>
 
       <div class="section">
-        <label>売上金額（千円単位） ※半角数字</label>
+        <label>売上金額 <span class="label-sub">(千円単位)</span></label>
         <div class="amount-group">
-          <div class="amount-item" id="sales-amount-wrapper"><label>💰 販売売上</label><input type="number" id="salesAmount" value="0"></div>
-          <div class="amount-item"><label>🔧 工事/配達売上</label><input type="number" id="workAmount" value="0"></div>
+          <div id="sales-amount-wrapper"><small>💰 販売売上</small><input type="number" id="salesAmount" value="0"></div>
+          <div><small>🔧 工事売上</small><input type="number" id="workAmount" value="0"></div>
         </div>
       </div>
 
       <div class="section">
-        <label>作業人数</label>
-        <div class="btn-group" id="group-people"></div>
+        <label>作業人数</label><div class="btn-group" id="group-people"></div>
       </div>
 
       <div class="section">
         <label>支払方法</label>
         <div class="btn-group" id="group-payment"></div>
-        <div id="payment-amount-wrapper" class="hidden">
-          <label style="margin-top: 12px;">受領金額（千円単位）</label>
-          <input type="number" id="paymentAmount" placeholder="例：50">
+        <div id="payment-amount-wrapper" class="hidden" style="margin-top:10px;">
+          <small>受領金額 (千円)</small><input type="number" id="paymentAmount">
         </div>
       </div>
 
       <div class="section">
-        <label>写真アップロード</label>
-        <div class="btn-group" style="margin-bottom:10px;">
-          <button type="button" class="photo-type-btn" data-photo-type="現調">📸 現調写真</button>
-          <button type="button" class="photo-type-btn" data-photo-type="完了">✅ 完了写真</button>
+        <label>写真撮影・添付</label>
+        <div class="photo-ctrl">
+          <button class="photo-type-btn" data-type="現調">📸 現調写真</button>
+          <button class="photo-type-btn" data-type="完了">✅ 完了写真</button>
         </div>
         <input type="file" id="files" accept="image/*" multiple>
         <div class="photo-preview" id="preview"></div>
       </div>
 
       <div class="section">
-        <label>備考 <span class="label-optional">（任意）</span></label>
+        <label>備考</label>
         <textarea id="remarks" rows="3"></textarea>
       </div>
 
@@ -140,154 +146,24 @@
   </div>
 
   <script>
+    // ★ GASのURLはここだけ書き換えてください ★
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxrFUzdm4ZVBLa2JApaVBmHD7J-UNW9CiCltjeSVEeq6Bpi0rkLCHfOgqJiYTvuiP2v/exec";
 
-    const STAFF_LIST = { service: ["伊藤", "高山"], construction: ["渡辺"] };
-    // ★並び順を「工事・現調・配達」に変更
+    // --- データ定義 ---
+    const STAFF_LIST = { 
+      service: ["伊藤", "高山"], 
+      construction: ["渡辺"] 
+    };
+    
+    // ご要望通り：工事→現調→配達の順
     const WORK_TYPES = {
-      service: ["工事", "現調", "配達", "お困りごと対応", "点検", "販売のみ（訪問なし）"],
+      service: ["工事", "現調", "配達", "お困りごと対応", "点検", "販売のみ"],
       construction: ["工事", "現調", "配達"]
     };
-    const DELIVERY_ITEMS = ["TV・BD", "冷蔵庫", "洗濯機", "調理", "家事", "理美容", "修理品", "その他"];
-    const CONSTRUCTION_TYPES = ["電気", "水道", "アンテナ", "エアコン", "照明", "レンジフード", "換気扇", "ドアホン", "トイレ", "洗面台", "IH", "エコキュート", "管球", "その他"];
 
-    const state = { staffType: "", time: [], staff: "", workType: [], photos: { 現調: [], 完了: [] }, currentPhotoType: "現調" };
+    // ご要望通り：指定のメンバーと順序
+    const SALES_STAFF_LIST = ["伊藤", "高山"];
+    const WORK_MANAGER_LIST = ["渡辺", "伊藤", "高山"];
 
-    function createButtons(containerId, list, stateKey, isMultiple = false) {
-      const container = document.getElementById(containerId);
-      container.innerHTML = "";
-      list.forEach(item => {
-        const btn = document.createElement("button");
-        btn.type = "button"; btn.className = "toggle-btn"; btn.textContent = item;
-        btn.onclick = () => {
-          if (isMultiple) {
-            state[stateKey] = state[stateKey] || [];
-            if (state[stateKey].includes(item)) {
-              state[stateKey] = state[stateKey].filter(i => i !== item);
-              btn.classList.remove("active");
-            } else {
-              state[stateKey].push(item);
-              btn.classList.add("active");
-            }
-          } else {
-            Array.from(container.children).forEach(b => b.classList.remove("active"));
-            state[stateKey] = item; btn.classList.add("active");
-          }
-          if (stateKey === "workType") updateWorkDetails();
-        };
-        container.appendChild(btn);
-      });
-    }
-
-    function updateWorkDetails() {
-      const show = (id, cond) => document.getElementById(id).classList[cond ? 'remove' : 'add']("hidden");
-      show("inspection-detail", state.workType.includes("点検"));
-      show("delivery-detail", state.workType.includes("配達"));
-      show("construction-detail", state.workType.includes("工事"));
-      
-      const isSalesWork = ["工事", "現調", "配達", "お困りごと対応", "販売のみ（訪問なし）"].some(w => state.workType.includes(w));
-      show("section-salesPerson", state.staffType === "service" && isSalesWork);
-      show("section-workManager", state.workType.includes("工事") || state.workType.includes("配達"));
-      show("section-surveyManager", state.workType.includes("現調"));
-    }
-
-    // 初期化
-    createButtons("group-time", ["午前", "午後"], "time", true);
-    createButtons("group-people", ["1人", "2人", "3人", "4人以上"], "people");
-    // ★「集金方法」から「支払方法」に名称変更
-    createButtons("group-payment", ["パナカード", "現金", "売掛", "なし"], "payment");
-    createButtons("group-deliveryItems", DELIVERY_ITEMS, "deliveryItems", true);
-    createButtons("group-constructionTypes", CONSTRUCTION_TYPES, "constructionTypes", true);
-    document.getElementById("date").value = new Date().toISOString().split('T')[0];
-
-    document.querySelectorAll(".staff-type-btn").forEach(btn => {
-      btn.onclick = () => {
-        document.querySelectorAll(".staff-type-btn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        state.staffType = btn.dataset.type;
-        document.getElementById("mainForm").classList.remove("hidden");
-        document.getElementById("sales-amount-wrapper").classList[state.staffType === 'construction' ? 'add' : 'remove']("hidden");
-        createButtons("group-workType", WORK_TYPES[state.staffType], "workType", true);
-        const allStaff = [...STAFF_LIST.service, ...STAFF_LIST.construction];
-        createButtons("group-staff", STAFF_LIST[state.staffType], "staff");
-        createButtons("group-salesPerson", allStaff, "salesPerson");
-        createButtons("group-workManager", allStaff, "workManager");
-        createButtons("group-surveyManager", allStaff, "surveyManager");
-        updateWorkDetails();
-      };
-    });
-
-    document.getElementById("group-payment").onclick = (e) => {
-      if(e.target.tagName === 'BUTTON') {
-        document.getElementById("payment-amount-wrapper").classList[e.target.textContent === 'なし' ? 'add' : 'remove']("hidden");
-      }
-    };
-
-    document.querySelectorAll(".photo-type-btn").forEach(btn => {
-      btn.onclick = () => {
-        document.querySelectorAll(".photo-type-btn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active"); state.currentPhotoType = btn.dataset.photoType;
-      };
-    });
-    document.querySelector(".photo-type-btn[data-photo-type='現調']").classList.add("active");
-
-    document.getElementById("files").onchange = (e) => {
-      const files = Array.from(e.target.files);
-      files.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          const img = new Image();
-          img.onload = () => {
-            const canvas = document.createElement("canvas");
-            const max = 800; let w = img.width, h = img.height;
-            if (w > h && w > max) { h *= max/w; w = max; } else if (h > max) { w *= max/h; h = max; }
-            canvas.width = w; canvas.height = h;
-            canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-            state.photos[state.currentPhotoType].push(canvas.toDataURL("image/jpeg", 0.7));
-            renderPreviews();
-          };
-          img.src = ev.target.result;
-        };
-        reader.readAsDataURL(file);
-      });
-    };
-
-    function renderPreviews() {
-      const p = document.getElementById("preview"); p.innerHTML = "";
-      ["現調", "完了"].forEach(t => state.photos[t].forEach(src => {
-        const d = document.createElement("div"); d.className = "photo-item";
-        d.innerHTML = `<img src="${src}"><span class="photo-badge">${t}</span>`;
-        p.appendChild(d);
-      }));
-    }
-
-    document.getElementById("sendBtn").onclick = async () => {
-      const btn = document.getElementById("sendBtn");
-      if (!state.staff || !document.getElementById("visitName").value) return alert("名前と訪問先は必須です");
-      
-      btn.disabled = true; btn.textContent = "送信中...";
-      const photos = [];
-      Object.keys(state.photos).forEach(t => state.photos[t].forEach(d => photos.push({type:t, data:d})));
-
-      const entry = {
-        staffType: state.staffType, date: document.getElementById("date").value,
-        time: state.time.join("・"), staff: state.staff, visitName: document.getElementById("visitName").value,
-        workType: state.workType.join("、"), inspectionAircon: document.getElementById("inspectionAircon").value,
-        inspectionOther: document.getElementById("inspectionOther").value,
-        deliveryItems: state.deliveryItems.join("、"), constructionTypes: state.constructionTypes.join("、"),
-        salesPerson: state.salesPerson, workManager: state.workManager, surveyManager: state.surveyManager,
-        salesAmount: document.getElementById("salesAmount").value, workAmount: document.getElementById("workAmount").value,
-        people: state.people, payment: state.payment, paymentAmount: document.getElementById("paymentAmount").value,
-        remarks: document.getElementById("remarks").value, photos: photos
-      };
-
-      try {
-        await fetch(GAS_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(entry) });
-        alert("送信完了！"); location.reload();
-      } catch (err) {
-        alert("エラー発生"); btn.disabled = false;
-      }
-    };
-  </script>
-</body>
-</html>
+    const ITEMS_DELIVERY = ["TV・BD", "冷蔵庫", "洗濯機", "調理", "家事", "理美容", "修理品", "その他"];
+    const ITEMS_CONST = ["電気", "水道", "
