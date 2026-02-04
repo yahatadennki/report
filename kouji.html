@@ -3,107 +3,642 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>工事スタッフ日報 - ㈲ヤハタ電機商会</title>
+  <title>業務日報 - ㈲ヤハタ電機商会</title>
   <style>
-    /* 現場で使いやすいシンプルなデザイン */
     * { box-sizing: border-box; }
-    body { font-family: sans-serif; background: #f0f2f5; margin: 0; padding: 15px; }
-    .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    h2 { text-align: center; color: #1a3c5e; margin-top: 0; }
-    label { display: block; font-weight: bold; margin: 15px 0 5px; font-size: 14px; }
-    input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; }
-    .btn-group { display: flex; flex-wrap: wrap; gap: 8px; }
-    .toggle-btn { padding: 10px 15px; border: 1px solid #ddd; border-radius: 20px; background: white; cursor: pointer; }
-    .toggle-btn.active { background: #007bff; color: white; border-color: #007bff; }
-    .submit-btn { width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; margin-top: 25px; cursor: pointer; }
-    .submit-btn:disabled { background: #ccc; }
-    .photo-preview { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-    .photo-preview img { width: 80px; height: 80px; object-fit: cover; border-radius: 5px; border: 1px solid #ddd; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; 
+      background: #f0f2f5; 
+      margin: 0; 
+      padding: 15px; 
+    }
+    .container { 
+      max-width: 600px; 
+      margin: 0 auto; 
+      background: white; 
+      padding: 20px; 
+      border-radius: 12px; 
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+    }
+    h2 { 
+      text-align: center; 
+      color: #1a3c5e; 
+      margin-top: 0; 
+      margin-bottom: 25px;
+      font-size: 24px;
+    }
+    
+    .section { 
+      margin-bottom: 25px; 
+      padding-bottom: 20px; 
+      border-bottom: 1px solid #e8e8e8; 
+    }
+    .section:last-of-type { border-bottom: none; }
+    
+    label { 
+      display: block; 
+      font-weight: bold; 
+      margin: 15px 0 8px; 
+      font-size: 14px; 
+      color: #333; 
+    }
+    .label-optional { 
+      font-weight: normal; 
+      color: #999; 
+      font-size: 12px; 
+    }
+    
+    input[type="text"],
+    input[type="date"],
+    input[type="number"],
+    textarea { 
+      width: 100%; 
+      padding: 12px; 
+      border: 1px solid #ddd; 
+      border-radius: 8px; 
+      font-size: 16px; 
+      transition: border-color 0.2s;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #007bff;
+    }
+    
+    .btn-group { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 8px; 
+      margin-top: 8px; 
+    }
+    .toggle-btn { 
+      padding: 10px 15px; 
+      border: 2px solid #ddd; 
+      border-radius: 8px; 
+      background: white; 
+      cursor: pointer; 
+      font-size: 14px; 
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    .toggle-btn:hover {
+      border-color: #007bff;
+      background: #f0f8ff;
+    }
+    .toggle-btn.active { 
+      background: #007bff; 
+      color: white; 
+      border-color: #007bff; 
+    }
+    
+    .staff-type-btn { 
+      padding: 15px 20px; 
+      font-size: 16px; 
+      border-radius: 10px; 
+      flex: 1;
+      min-width: 140px;
+    }
+    .staff-type-btn.active { 
+      background: #28a745; 
+      border-color: #28a745; 
+    }
+    .staff-type-btn:hover {
+      border-color: #28a745;
+      background: #f0fff4;
+    }
+    .staff-type-btn.active:hover {
+      background: #218838;
+    }
+    
+    .hidden { display: none !important; }
+    
+    .submit-btn { 
+      width: 100%; 
+      padding: 16px; 
+      background: #28a745; 
+      color: white; 
+      border: none; 
+      border-radius: 10px; 
+      font-size: 18px; 
+      font-weight: bold; 
+      margin-top: 30px; 
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .submit-btn:disabled { 
+      background: #ccc; 
+      cursor: not-allowed; 
+    }
+    .submit-btn:hover:not(:disabled) { 
+      background: #218838; 
+    }
+    
+    .photo-section { 
+      margin-top: 15px; 
+    }
+    .photo-type-group { 
+      display: flex; 
+      gap: 10px; 
+      margin-bottom: 12px; 
+    }
+    .photo-type-btn { 
+      flex: 1; 
+      padding: 10px; 
+      border: 2px solid #ddd; 
+      border-radius: 8px; 
+      background: white; 
+      cursor: pointer; 
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .photo-type-btn:hover {
+      border-color: #17a2b8;
+      background: #e6f7f9;
+    }
+    .photo-type-btn.active { 
+      background: #17a2b8; 
+      color: white; 
+      border-color: #17a2b8; 
+    }
+    
+    .photo-preview { 
+      display: flex; 
+      gap: 10px; 
+      flex-wrap: wrap; 
+      margin-top: 12px; 
+    }
+    .photo-item { 
+      position: relative; 
+    }
+    .photo-item img { 
+      width: 80px; 
+      height: 80px; 
+      object-fit: cover; 
+      border-radius: 6px; 
+      border: 2px solid #ddd; 
+    }
+    .photo-badge { 
+      position: absolute; 
+      top: -6px; 
+      right: -6px; 
+      background: #17a2b8; 
+      color: white; 
+      font-size: 10px; 
+      padding: 3px 7px; 
+      border-radius: 10px;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .photo-count {
+      font-size: 12px;
+      color: #666;
+      margin-top: 8px;
+    }
+    
+    .amount-group { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 12px; 
+    }
+    .amount-item label { 
+      font-weight: normal; 
+      font-size: 13px; 
+      margin: 0 0 6px 0;
+    }
+    
+    .info-text { 
+      font-size: 12px; 
+      color: #666; 
+      margin-top: 8px; 
+      font-style: italic; 
+    }
+
+    .work-detail-section {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 12px;
+    }
+    .work-detail-section label {
+      margin-top: 10px;
+    }
+    .work-detail-section label:first-child {
+      margin-top: 0;
+    }
+
+    .inspection-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .inspection-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .inspection-item label {
+      font-size: 12px;
+      margin: 0 0 4px 0;
+    }
+    .inspection-item input {
+      padding: 8px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>🔧 業務日報</h2>
-    <div id="form">
-      <label>日にち</label>
-      <input type="date" id="date">
+    <h2>📋 業務日報</h2>
+    
+    <!-- 職種選択 -->
+    <div class="section">
+      <label>あなたの職種を選択してください</label>
+      <div class="btn-group">
+        <button class="toggle-btn staff-type-btn" data-type="construction">🔧 工事スタッフ</button>
+        <button class="toggle-btn staff-type-btn" data-type="service">🛠️ サービススタッフ</button>
+      </div>
+    </div>
 
-      <label>時間帯</label>
-      <div class="btn-group" id="group-time"></div>
+    <div id="mainForm" class="hidden">
+      <!-- 基本情報 -->
+      <div class="section">
+        <label>日にち</label>
+        <input type="date" id="date">
 
-      <label>販売担当者</label>
-      <div class="btn-group" id="group-sales"></div>
+        <label>時間帯 <span class="label-optional">（複数選択可）</span></label>
+        <div class="btn-group" id="group-time"></div>
 
-      <label>責任者</label>
-      <div class="btn-group" id="group-manager"></div>
+        <label>あなたの名前</label>
+        <div class="btn-group" id="group-staff"></div>
 
-      <label>訪問先名(現場名)</label>
-      <input type="text" id="visitName" placeholder="例：山田太郎様">
+        <label>訪問先名（現場名）</label>
+        <input type="text" id="visitName" placeholder="例：山田太郎様">
+      </div>
 
-      <label>売上金額(千円) ※半角数字</label>
-      <input type="number" id="amount" placeholder="例：50">
+      <!-- 作業内容 -->
+      <div class="section">
+        <label>作業内容 <span class="label-optional">（複数選択可）</span></label>
+        <div class="btn-group" id="group-workType"></div>
 
-      <label>人数</label>
-      <div class="btn-group" id="group-people"></div>
+        <!-- 点検詳細 -->
+        <div id="inspection-detail" class="work-detail-section hidden">
+          <label>点検内容</label>
+          <div class="inspection-inputs">
+            <div class="inspection-item">
+              <label>エアコン点検</label>
+              <input type="number" id="inspectionAircon" placeholder="台数" min="0" value="0">
+            </div>
+            <div class="inspection-item">
+              <label>その他点検</label>
+              <input type="number" id="inspectionOther" placeholder="台数" min="0" value="0">
+            </div>
+          </div>
+        </div>
 
-      <label>備考</label>
-      <textarea id="remarks" rows="3"></textarea>
+        <!-- 配達商品選択 -->
+        <div id="delivery-detail" class="work-detail-section hidden">
+          <label>配達商品 <span class="label-optional">（複数選択可）</span></label>
+          <div class="btn-group" id="group-deliveryItems"></div>
+        </div>
 
-      <label>写真 (最大5枚)</label>
-      <input type="file" id="files" accept="image/*" multiple>
-      <div class="photo-preview" id="preview"></div>
+        <!-- 工事種類選択 -->
+        <div id="construction-detail" class="work-detail-section hidden">
+          <label>工事種類 <span class="label-optional">（複数選択可）</span></label>
+          <div class="btn-group" id="group-constructionTypes"></div>
+        </div>
+      </div>
 
-      <button id="sendBtn" class="submit-btn">報告書を送信する</button>
+      <!-- 責任者セクション -->
+      <div class="section">
+        <!-- 販売担当者 -->
+        <div id="section-salesPerson" class="hidden">
+          <label>販売担当者 <span class="label-optional">（販売した人）</span></label>
+          <div class="btn-group" id="group-salesPerson"></div>
+        </div>
+
+        <!-- 工事/配達責任者 -->
+        <div id="section-workManager" class="hidden">
+          <label>工事/配達責任者</label>
+          <div class="btn-group" id="group-workManager"></div>
+        </div>
+
+        <!-- 現調責任者 -->
+        <div id="section-surveyManager" class="hidden">
+          <label>現調責任者</label>
+          <div class="btn-group" id="group-surveyManager"></div>
+        </div>
+      </div>
+
+      <!-- 売上情報 -->
+      <div class="section">
+        <label>売上金額（千円単位） ※半角数字</label>
+        <div class="amount-group">
+          <div class="amount-item" id="sales-amount-wrapper">
+            <label>💰 販売売上</label>
+            <input type="number" id="salesAmount" placeholder="例：250" value="0">
+          </div>
+          <div class="amount-item">
+            <label>🔧 工事/配達売上</label>
+            <input type="number" id="workAmount" placeholder="例：50" value="0">
+          </div>
+        </div>
+        <p class="info-text">※ 工事/配達売上は作業人数で自動的に按分されます</p>
+      </div>
+
+      <!-- 作業人数 -->
+      <div class="section">
+        <label>作業人数</label>
+        <div class="btn-group" id="group-people"></div>
+      </div>
+
+      <!-- 集金情報 -->
+      <div class="section">
+        <label>集金方法</label>
+        <div class="btn-group" id="group-payment"></div>
+        
+        <div id="payment-amount-wrapper" class="hidden">
+          <label style="margin-top: 12px;">集金額（千円単位）</label>
+          <input type="number" id="paymentAmount" placeholder="例：50">
+        </div>
+      </div>
+
+      <!-- 写真 -->
+      <div class="section">
+        <label>写真アップロード</label>
+        <div class="photo-type-group">
+          <button type="button" class="photo-type-btn" data-photo-type="現調">📸 現調写真</button>
+          <button type="button" class="photo-type-btn" data-photo-type="完了">✅ 完了写真</button>
+        </div>
+        <input type="file" id="files" accept="image/*" multiple>
+        <div class="photo-count">現調: <span id="gentyoCount">0</span>/5枚　完了: <span id="kanryoCount">0</span>/5枚</div>
+        <div class="photo-preview" id="preview"></div>
+      </div>
+
+      <!-- 備考 -->
+      <div class="section">
+        <label>備考 <span class="label-optional">（任意）</span></label>
+        <textarea id="remarks" rows="3" placeholder="特記事項があればご記入ください"></textarea>
+      </div>
+
+      <button type="button" id="sendBtn" class="submit-btn">📤 報告書を送信する</button>
     </div>
   </div>
 
   <script>
     // ★ ここをご自身の最新GAS URLに書き換えてください ★
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbytOv73ZY9kz5aVeD_nAiZBhut2OZdCAyRzRk-XcvV61DYXf-ECxVs0bIt7Eq0-cAISpg/exec";
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbxrFUzdm4ZVBLa2JApaVBmHD7J-UNW9CiCltjeSVEeq6Bpi0rkLCHfOgqJiYTvuiP2v/exec";
+
+    // スタッフリスト
+    const STAFF_LIST = {
+      service: ["伊藤", "高山"],
+      construction: ["渡辺"]
+    };
+
+    // 作業内容リスト
+    const WORK_TYPES = {
+      service: ["お困りごと対応", "点検", "販売のみ（訪問なし）", "配達", "工事"],
+      construction: ["配達", "工事", "現調"]
+    };
+
+    // 配達商品リスト
+    const DELIVERY_ITEMS = ["TV・BD", "冷蔵庫", "洗濯機", "調理", "家事", "理美容", "修理品", "その他"];
+
+    // 工事種類リスト
+    const CONSTRUCTION_TYPES = ["電気", "水道", "アンテナ", "エアコン", "照明", "レンジフード", "換気扇", "ドアホン", "トイレ", "洗面台", "IH", "エコキュート", "管球", "その他"];
 
     const state = {
-      time: [], sales: "", manager: "", people: "", photos: []
+      staffType: "",
+      time: [],
+      staff: "",
+      workType: [],
+      inspectionAircon: 0,
+      inspectionOther: 0,
+      deliveryItems: [],
+      constructionTypes: [],
+      salesPerson: "",
+      workManager: "",
+      surveyManager: "",
+      people: "",
+      payment: "",
+      currentPhotoType: "現調",
+      photos: { 現調: [], 完了: [] }
     };
 
     // ボタン生成ヘルパー
     function createButtons(containerId, list, stateKey, isMultiple = false) {
       const container = document.getElementById(containerId);
+      container.innerHTML = "";
       list.forEach(item => {
         const btn = document.createElement("button");
+        btn.type = "button";
         btn.className = "toggle-btn";
         btn.textContent = item;
         btn.onclick = () => {
           if (isMultiple) {
-            if (state[stateKey].includes(item)) {
-              state[stateKey] = state[stateKey].filter(i => i !== item);
-              btn.classList.remove("active");
-            } else {
-              state[stateKey].push(item);
-              btn.classList.add("active");
+            if (Array.isArray(state[stateKey])) {
+              if (state[stateKey].includes(item)) {
+                state[stateKey] = state[stateKey].filter(i => i !== item);
+                btn.classList.remove("active");
+              } else {
+                state[stateKey].push(item);
+                btn.classList.add("active");
+              }
             }
           } else {
             Array.from(container.children).forEach(b => b.classList.remove("active"));
             state[stateKey] = item;
             btn.classList.add("active");
           }
+          
+          // 作業内容が変更されたら詳細表示を更新
+          if (stateKey === "workType") {
+            updateWorkDetails();
+          }
         };
         container.appendChild(btn);
       });
     }
 
-    // セットアップ
+    // 作業内容の詳細表示を更新
+    function updateWorkDetails() {
+      const inspectionDetail = document.getElementById("inspection-detail");
+      const deliveryDetail = document.getElementById("delivery-detail");
+      const constructionDetail = document.getElementById("construction-detail");
+      const salesPersonSection = document.getElementById("section-salesPerson");
+      const workManagerSection = document.getElementById("section-workManager");
+      const surveyManagerSection = document.getElementById("section-surveyManager");
+      
+      // 点検が選択されているか
+      if (state.workType.includes("点検")) {
+        inspectionDetail.classList.remove("hidden");
+      } else {
+        inspectionDetail.classList.add("hidden");
+        state.inspectionAircon = 0;
+        state.inspectionOther = 0;
+        document.getElementById("inspectionAircon").value = 0;
+        document.getElementById("inspectionOther").value = 0;
+      }
+      
+      // 配達が選択されているか
+      if (state.workType.includes("配達")) {
+        deliveryDetail.classList.remove("hidden");
+      } else {
+        deliveryDetail.classList.add("hidden");
+        state.deliveryItems = [];
+        document.querySelectorAll("#group-deliveryItems .toggle-btn").forEach(btn => {
+          btn.classList.remove("active");
+        });
+      }
+      
+      // 工事が選択されているか
+      if (state.workType.includes("工事")) {
+        constructionDetail.classList.remove("hidden");
+      } else {
+        constructionDetail.classList.add("hidden");
+        state.constructionTypes = [];
+        document.querySelectorAll("#group-constructionTypes .toggle-btn").forEach(btn => {
+          btn.classList.remove("active");
+        });
+      }
+
+      // 販売担当者（サービスで販売系の作業）
+      if (state.staffType === "service" && 
+          (state.workType.includes("販売のみ（訪問なし）") || 
+           state.workType.includes("配達") || 
+           state.workType.includes("工事") ||
+           state.workType.includes("お困りごと対応"))) {
+        salesPersonSection.classList.remove("hidden");
+      } else {
+        salesPersonSection.classList.add("hidden");
+        state.salesPerson = "";
+        document.querySelectorAll("#group-salesPerson .toggle-btn").forEach(btn => {
+          btn.classList.remove("active");
+        });
+      }
+
+      // 工事/配達責任者（配達or工事）
+      if (state.workType.includes("配達") || state.workType.includes("工事")) {
+        workManagerSection.classList.remove("hidden");
+      } else {
+        workManagerSection.classList.add("hidden");
+        state.workManager = "";
+        document.querySelectorAll("#group-workManager .toggle-btn").forEach(btn => {
+          btn.classList.remove("active");
+        });
+      }
+
+      // 現調責任者（現調 or 現調のみ）
+      if (state.workType.includes("現調")) {
+        surveyManagerSection.classList.remove("hidden");
+      } else {
+        surveyManagerSection.classList.add("hidden");
+        state.surveyManager = "";
+        document.querySelectorAll("#group-surveyManager .toggle-btn").forEach(btn => {
+          btn.classList.remove("active");
+        });
+      }
+    }
+
+    // 初期設定
     createButtons("group-time", ["午前", "午後"], "time", true);
-    createButtons("group-sales", ["伊藤", "高山"], "sales");
-    createButtons("group-manager", ["渡辺", "高山"], "manager");
     createButtons("group-people", ["1人", "2人", "3人", "4人以上"], "people");
+    createButtons("group-payment", ["パナカード", "現金", "売掛", "なし"], "payment");
+    createButtons("group-deliveryItems", DELIVERY_ITEMS, "deliveryItems", true);
+    createButtons("group-constructionTypes", CONSTRUCTION_TYPES, "constructionTypes", true);
 
     document.getElementById("date").value = new Date().toISOString().split('T')[0];
 
+    // 職種選択
+    document.querySelectorAll(".staff-type-btn").forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll(".staff-type-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        state.staffType = btn.dataset.type;
+        
+        // フォーム表示
+        document.getElementById("mainForm").classList.remove("hidden");
+        
+        // 職種に応じて表示切替
+        if (state.staffType === "construction") {
+          // 工事スタッフ
+          document.getElementById("sales-amount-wrapper").classList.add("hidden");
+          createButtons("group-workType", WORK_TYPES.construction, "workType", true);
+        } else {
+          // サービススタッフ
+          document.getElementById("sales-amount-wrapper").classList.remove("hidden");
+          createButtons("group-workType", WORK_TYPES.service, "workType", true);
+        }
+        
+        // 共通ボタン生成
+        const staffList = STAFF_LIST[state.staffType];
+        const allStaff = [...STAFF_LIST.service, ...STAFF_LIST.construction];
+        createButtons("group-staff", staffList, "staff");
+        createButtons("group-salesPerson", allStaff, "salesPerson");
+        createButtons("group-workManager", allStaff, "workManager");
+        createButtons("group-surveyManager", allStaff, "surveyManager");
+        
+        // 状態リセット
+        state.workType = [];
+        state.deliveryItems = [];
+        state.constructionTypes = [];
+        state.salesPerson = "";
+        state.workManager = "";
+        state.surveyManager = "";
+        updateWorkDetails();
+      };
+    });
+
+    // 点検台数の入力
+    document.getElementById("inspectionAircon").oninput = (e) => {
+      state.inspectionAircon = parseInt(e.target.value) || 0;
+    };
+    document.getElementById("inspectionOther").oninput = (e) => {
+      state.inspectionOther = parseInt(e.target.value) || 0;
+    };
+
+    // 集金方法の選択で金額入力表示切替
+    document.getElementById("group-payment").addEventListener("click", (e) => {
+      if (e.target.classList.contains("toggle-btn")) {
+        const paymentType = e.target.textContent;
+        const wrapper = document.getElementById("payment-amount-wrapper");
+        if (paymentType === "なし") {
+          wrapper.classList.add("hidden");
+          document.getElementById("paymentAmount").value = "";
+        } else {
+          wrapper.classList.remove("hidden");
+        }
+      }
+    });
+
+    // 写真種別選択
+    document.querySelectorAll(".photo-type-btn").forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll(".photo-type-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        state.currentPhotoType = btn.dataset.photoType;
+      };
+    });
+    // デフォルトで現調を選択
+    document.querySelector(".photo-type-btn[data-photo-type='現調']").classList.add("active");
+
+    // 写真枚数更新
+    function updatePhotoCount() {
+      document.getElementById("gentyoCount").textContent = state.photos.現調.length;
+      document.getElementById("kanryoCount").textContent = state.photos.完了.length;
+    }
+
     // 写真プレビュー処理
     document.getElementById("files").onchange = (e) => {
-      const files = Array.from(e.target.files).slice(0, 5);
-      state.photos = [];
-      document.getElementById("preview").innerHTML = "";
+      const currentType = state.currentPhotoType;
+      const currentCount = state.photos[currentType].length;
+      const remaining = 5 - currentCount;
+      
+      if (remaining <= 0) {
+        alert(`${currentType}写真は5枚までです`);
+        e.target.value = "";
+        return;
+      }
+      
+      const files = Array.from(e.target.files).slice(0, remaining);
       
       files.forEach(file => {
         const reader = new FileReader();
@@ -118,36 +653,103 @@
             canvas.width = w; canvas.height = h;
             canvas.getContext("2d").drawImage(img, 0, 0, w, h);
             const base64 = canvas.toDataURL("image/jpeg", 0.7);
-            state.photos.push(base64);
-            const previewImg = document.createElement("img");
-            previewImg.src = base64;
-            document.getElementById("preview").appendChild(previewImg);
+            
+            state.photos[currentType].push(base64);
+            updatePhotoPreview();
+            updatePhotoCount();
           };
           img.src = event.target.result;
         };
         reader.readAsDataURL(file);
       });
+      
+      e.target.value = "";
     };
+
+    function updatePhotoPreview() {
+      const preview = document.getElementById("preview");
+      preview.innerHTML = "";
+      
+      ["現調", "完了"].forEach(type => {
+        state.photos[type].forEach((photo, index) => {
+          const div = document.createElement("div");
+          div.className = "photo-item";
+          const img = document.createElement("img");
+          img.src = photo;
+          const badge = document.createElement("span");
+          badge.className = "photo-badge";
+          badge.textContent = type;
+          div.appendChild(img);
+          div.appendChild(badge);
+          preview.appendChild(div);
+        });
+      });
+    }
 
     // 送信ボタン
     document.getElementById("sendBtn").onclick = async () => {
       const btn = document.getElementById("sendBtn");
-      const visitName = document.getElementById("visitName").value;
-      if (!visitName) { alert("訪問先名を入力してください"); return; }
+      const visitName = document.getElementById("visitName").value.trim();
+      
+      // バリデーション
+      if (!state.staffType) { 
+        alert("職種を選択してください"); 
+        return; 
+      }
+      if (!state.staff) { 
+        alert("あなたの名前を選択してください"); 
+        return; 
+      }
+      if (!visitName) { 
+        alert("訪問先名を入力してください"); 
+        return; 
+      }
+      if (state.workType.length === 0) {
+        alert("作業内容を選択してください");
+        return;
+      }
+      if (!state.people) { 
+        alert("作業人数を選択してください"); 
+        return; 
+      }
 
       btn.disabled = true;
       btn.textContent = "送信中...";
 
+      const salesAmount = parseInt(document.getElementById("salesAmount").value) || 0;
+      const workAmount = parseInt(document.getElementById("workAmount").value) || 0;
+      const paymentAmount = parseInt(document.getElementById("paymentAmount").value) || 0;
+
+      // 写真データを統合
+      const allPhotos = [];
+      state.photos.現調.forEach(photo => {
+        allPhotos.push({ type: "現調", data: photo });
+      });
+      state.photos.完了.forEach(photo => {
+        allPhotos.push({ type: "完了", data: photo });
+      });
+
       const entry = {
+        staffType: state.staffType,
         date: document.getElementById("date").value,
-        time: state.time, // GAS側でjoinします
-        sales: state.sales,
-        manager: state.manager,
+        time: state.time.join("・"),
+        staff: state.staff,
         visitName: visitName,
-        amount: document.getElementById("amount").value,
+        workType: state.workType.join("、"),
+        inspectionAircon: state.inspectionAircon,
+        inspectionOther: state.inspectionOther,
+        deliveryItems: state.deliveryItems.join("、"),
+        constructionTypes: state.constructionTypes.join("、"),
+        salesPerson: state.salesPerson,
+        workManager: state.workManager,
+        surveyManager: state.surveyManager,
+        salesAmount: salesAmount,
+        workAmount: workAmount,
         people: state.people,
+        payment: state.payment,
+        paymentAmount: paymentAmount,
         remarks: document.getElementById("remarks").value,
-        photos: state.photos
+        photos: allPhotos
       };
 
       try {
@@ -156,12 +758,13 @@
           mode: "no-cors",
           body: JSON.stringify(entry)
         });
-        alert("送信完了！お疲れ様です！");
+        alert("✅ 送信完了！お疲れ様です！");
         location.reload();
       } catch (err) {
-        alert("エラーが発生しました。");
+        alert("❌ エラーが発生しました。もう一度お試しください。");
+        console.error(err);
         btn.disabled = false;
-        btn.textContent = "報告書を送信する";
+        btn.textContent = "📤 報告書を送信する";
       }
     };
   </script>
