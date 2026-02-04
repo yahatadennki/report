@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>業務日報 - ㈲ヤハタ電機商会</title>
   <style>
-    /* 現場で見やすいPro仕様デザイン */
+    /* デザイン設定 */
     * { box-sizing: border-box; }
     body { font-family: -apple-system, sans-serif; background: #f0f2f5; margin: 0; padding: 15px; color: #333; }
     .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
@@ -36,7 +36,6 @@
     .amount-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .work-detail-box { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 10px; border: 1px solid #eee; }
     
-    /* 写真エリア */
     .photo-ctrl { display: flex; gap: 10px; margin-bottom: 12px; }
     .photo-type-btn { flex: 1; padding: 10px; border: 2px solid #ddd; border-radius: 8px; background: white; cursor: pointer; font-weight: bold; }
     .photo-type-btn.active { background: #17a2b8; color: white; border-color: #17a2b8; }
@@ -53,8 +52,8 @@
     <div class="section">
       <label>職種を選択してください</label>
       <div class="btn-group">
-        <button class="toggle-btn staff-type-btn" data-type="construction">🔧 工事スタッフ</button>
-        <button class="toggle-btn staff-type-btn" data-type="service">🛠️ サービススタッフ</button>
+        <button type="button" class="toggle-btn staff-type-btn" data-type="construction">🔧 工事スタッフ</button>
+        <button type="button" class="toggle-btn staff-type-btn" data-type="service">🛠️ サービススタッフ</button>
       </div>
     </div>
 
@@ -110,60 +109,4 @@
         <label>売上金額 <span class="label-sub">(千円単位)</span></label>
         <div class="amount-group">
           <div id="sales-amount-wrapper"><small>💰 販売売上</small><input type="number" id="salesAmount" value="0"></div>
-          <div><small>🔧 工事売上</small><input type="number" id="workAmount" value="0"></div>
-        </div>
-      </div>
-
-      <div class="section">
-        <label>作業人数</label><div class="btn-group" id="group-people"></div>
-      </div>
-
-      <div class="section">
-        <label>支払方法</label>
-        <div class="btn-group" id="group-payment"></div>
-        <div id="payment-amount-wrapper" class="hidden" style="margin-top:10px;">
-          <small>受領金額 (千円)</small><input type="number" id="paymentAmount">
-        </div>
-      </div>
-
-      <div class="section">
-        <label>写真撮影・添付</label>
-        <div class="photo-ctrl">
-          <button class="photo-type-btn" data-type="現調">📸 現調写真</button>
-          <button class="photo-type-btn" data-type="完了">✅ 完了写真</button>
-        </div>
-        <input type="file" id="files" accept="image/*" multiple>
-        <div class="photo-preview" id="preview"></div>
-      </div>
-
-      <div class="section">
-        <label>備考</label>
-        <textarea id="remarks" rows="3"></textarea>
-      </div>
-
-      <button type="button" id="sendBtn" class="submit-btn">📤 報告書を送信する</button>
-    </div>
-  </div>
-
-  <script>
-    // ★ GASのURLはここだけ書き換えてください ★
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbxrFUzdm4ZVBLa2JApaVBmHD7J-UNW9CiCltjeSVEeq6Bpi0rkLCHfOgqJiYTvuiP2v/exec";
-
-    // --- データ定義 ---
-    const STAFF_LIST = { 
-      service: ["伊藤", "高山"], 
-      construction: ["渡辺"] 
-    };
-    
-    // ご要望通り：工事→現調→配達の順
-    const WORK_TYPES = {
-      service: ["工事", "現調", "配達", "お困りごと対応", "点検", "販売のみ"],
-      construction: ["工事", "現調", "配達"]
-    };
-
-    // ご要望通り：指定のメンバーと順序
-    const SALES_STAFF_LIST = ["伊藤", "高山"];
-    const WORK_MANAGER_LIST = ["渡辺", "伊藤", "高山"];
-
-    const ITEMS_DELIVERY = ["TV・BD", "冷蔵庫", "洗濯機", "調理", "家事", "理美容", "修理品", "その他"];
-    const ITEMS_CONST = ["電気", "水道", "
+          <div><small>🔧 工事売上</small><input type="number" id="workAmount
