@@ -18,13 +18,11 @@
   <script>
     let orders = [];
     let currentDate = new Date().toISOString().slice(0, 10);
-    let scriptUrl = 'https://script.google.com/macros/s/AKfycbytINNeg-CN7WM01RzIBvcZuTTCJosms7O1TOc8Mt0kUobdlwRof-22ug3CpW5VeLhx7g/exec';
-    let selectedService = '';
-    let selectedProduct = '';
+    // ★ここに新しいデプロイのURLを貼り付けてください！
+    let scriptUrl = 'https://script.google.com/macros/s/ここにURLを貼る/exec';
 
     const 担当者リスト = ['宇留野', '石橋', '角井', '櫻井', '渡邊', '高山'];
     const 種類リスト = ['電話', 'LINE', '来店', '訪問'];
-
     const サービスリスト = [
       { name: '修理', icon: 'wrench' },
       { name: 'エアコンクリーニング', icon: 'wind' }
@@ -76,32 +74,17 @@
     }
 
     async function sendToSpreadsheet(order) {
-      if (!scriptUrl) {
-        console.log('URL未設定');
+      if (!scriptUrl || scriptUrl.includes('ここにURLを貼る')) {
+        alert('URLが設定されていません');
         return;
       }
       try {
-        console.log('送信中...', JSON.stringify(order));
         await fetch(scriptUrl, {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            日付: order.日付,
-            登録時刻: order.登録時刻,
-            担当: order.担当,
-            種類: order.種類,
-            顧客名: order.顧客名,
-            電話番号: order.電話番号 || '',
-            住所: order.住所 || '',
-            サービス種別: order.サービス種別 || '',
-            商品区分: order.商品区分 || '',
-            商品詳細: order.商品詳細 || '',
-            訪問日時: order.訪問日時 || '',
-            内容: order.内容 || ''
-          })
+          body: JSON.stringify(order)
         });
-        console.log('スプレッドシートに送信しました');
       } catch (error) {
         console.error('送信エラー:', error);
       }
@@ -129,316 +112,43 @@
 
     function selectService(btn) {
       const name = btn.dataset.name;
-      if (selectedService === name) {
-        selectedService = '';
-        selectedProduct = '';
-        document.querySelectorAll('.service-btn').forEach((b, i) => {
-          const color = getColorForService(サービスリスト[i].name);
-          b.classList.remove('active');
-          b.className = `service-btn btn-select p-3 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center ${color.normal}`;
-        });
-      } else {
-        selectedService = name;
-        selectedProduct = '';
-        document.querySelectorAll('.service-btn').forEach((b, i) => {
-          const color = getColorForService(サービスリスト[i].name);
-          if (b.dataset.name === name) {
-            b.classList.add('active');
-            b.className = `service-btn active btn-select p-3 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center shadow-md ${color.active}`;
-          } else {
-            b.classList.remove('active');
-            b.className = `service-btn btn-select p-3 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center ${color.normal}`;
-          }
-        });
+      const isActive = btn.classList.contains('active');
+      
+      document.querySelectorAll('.service-btn').forEach((b, i) => {
+        const color = getColorForService(サービスリスト[i].name);
+        b.classList.remove('active');
+        b.className = `service-btn btn-select p-3 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center ${color.normal}`;
+      });
+
+      if (!isActive) {
+        btn.classList.add('active');
+        const color = getColorForService(name);
+        btn.className = `service-btn active btn-select p-3 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center shadow-md ${color.active}`;
       }
       renderProductSection();
     }
 
     function selectProduct(btn) {
       const name = btn.dataset.name;
-      selectedProduct = name;
       document.querySelectorAll('.product-btn').forEach(b => {
-        if (b.dataset.name === name) {
-          b.classList.add('active');
-          b.className = 'product-btn active btn-select p-2 px-4 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center bg-orange-200 text-orange-900 border-orange-400 shadow-md';
-        } else {
-          b.classList.remove('active');
-          b.className = 'product-btn btn-select p-2 px-4 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100';
-        }
+        b.classList.remove('active');
+        b.className = 'product-btn btn-select p-2 px-4 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100';
       });
+      btn.classList.add('active');
+      btn.className = 'product-btn active btn-select p-2 px-4 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center bg-orange-200 text-orange-900 border-orange-400 shadow-md';
+      
       const detailArea = document.getElementById('productDetailArea');
-      if (detailArea) {
-        detailArea.style.display = (name === 'パナ以外') ? 'block' : 'none';
-      }
+      if (detailArea) detailArea.style.display = (name === 'パナ以外') ? 'block' : 'none';
     }
 
     function renderProductSection() {
       const container = document.getElementById('productSection');
+      const isServiceSelected = document.querySelector('.service-btn.active');
       if (!container) return;
-      if (selectedService) {
+      if (isServiceSelected) {
         container.style.display = 'block';
         container.innerHTML = `
           <label class="block text-sm font-semibold text-gray-700 mb-2">商品区分</label>
           <div class="flex gap-2 mb-3">
             <button class="product-btn btn-select p-2 px-4 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100" data-name="パナソニック" onclick="selectProduct(this)">パナソニック</button>
-            <button class="product-btn btn-select p-2 px-4 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100" data-name="パナ以外" onclick="selectProduct(this)">パナ以外</button>
-          </div>
-          <div id="productDetailArea" style="display:none;">
-            <label class="block text-sm font-semibold text-gray-700 mb-2">商品詳細</label>
-            <input type="text" id="商品詳細" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="商品名・メーカーなど">
-          </div>
-        `;
-      } else {
-        container.style.display = 'none';
-        container.innerHTML = '';
-      }
-    }
-
-    function handleAddOrder() {
-      const 担当 = document.querySelector('.staff-btn.active')?.dataset.name;
-      const 種類 = document.querySelector('.type-btn.active')?.dataset.name;
-      const 顧客名 = document.getElementById('顧客名').value;
-      const 電話番号 = document.getElementById('電話番号').value;
-      const 住所 = document.getElementById('住所text').value;
-      const サービス種別 = selectedService;
-      const 商品区分 = selectedProduct;
-      const 商品詳細 = document.getElementById('商品詳細')?.value || '';
-      const 訪問日 = document.getElementById('訪問日').value;
-      const 訪問時刻 = document.getElementById('訪問時刻').value;
-      const 訪問日時 = (訪問日 && 訪問時刻) ? `${訪問日} ${訪問時刻}` : '';
-      const 内容 = document.getElementById('内容').value;
-
-      if (!担当 || !種類 || !顧客名) {
-        alert('担当、種類、顧客名は必須項目です');
-        return;
-      }
-
-      const newOrder = {
-        id: Date.now(),
-        日付: currentDate,
-        登録時刻: new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }),
-        担当, 種類, 顧客名, 電話番号, 住所, サービス種別, 商品区分, 商品詳細, 訪問日時, 内容
-      };
-
-      orders.push(newOrder);
-      sendToSpreadsheet(newOrder);
-
-      // リセット
-      document.getElementById('顧客名').value = '';
-      document.getElementById('電話番号').value = '';
-      document.getElementById('住所text').value = '';
-      document.getElementById('訪問日').value = '';
-      document.getElementById('訪問時刻').value = '';
-      document.getElementById('内容').value = '';
-      selectedService = '';
-      selectedProduct = '';
-      render();
-    }
-
-    function deleteOrder(id) {
-      if (confirm('この受注を削除しますか？')) {
-        orders = orders.filter(o => o.id !== id);
-        render();
-      }
-    }
-
-    function exportCSV() {
-      const todayOrders = orders.filter(o => o.日付 === currentDate);
-      if (todayOrders.length === 0) {
-        alert('エクスポートするデータがありません');
-        return;
-      }
-      const headers = ['日付', '登録時刻', '担当', '種類', '顧客名', '電話番号', '住所', 'メーカーサービス', '商品区分', '商品詳細', '訪問日時', '受注内容'];
-      const csvData = todayOrders.map(o => [
-        o.日付, o.登録時刻, o.担当, o.種類, o.顧客名, o.電話番号 || '', o.住所 || '',
-        o.サービス種別 || '', o.商品区分 || '', o.商品詳細 || '', o.訪問日時 || '', o.内容 || ''
-      ]);
-      const csvContent = [
-        headers.join(','),
-        ...csvData.map(row => row.map(cell => `"${cell}"`).join(','))
-      ].join('\n');
-      const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `受注日報_${currentDate}.csv`;
-      link.click();
-    }
-
-    function render() {
-      const todayOrders = orders.filter(o => o.日付 === currentDate);
-
-      document.getElementById('app').innerHTML = `
-        <!-- ヘッダー -->
-        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <div class="flex items-center justify-between mb-4">
-            <h1 class="text-3xl font-bold text-gray-800 flex items-center gap-3">
-              <div class="bg-orange-500 p-2 rounded-lg text-white">${icons.calendar}</div>
-              受注日報
-            </h1>
-            <div class="flex gap-2">
-              ${todayOrders.length > 0 ? `<button onclick="exportCSV()" class="bg-green-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center gap-2">${icons.download} CSV</button>` : ''}
-            </div>
-          </div>
-
-          <!-- 日付選択 -->
-          <div class="flex items-center gap-4 bg-orange-50 p-4 rounded-lg border-2 border-orange-200">
-            <div class="text-orange-600">${icons.calendar}</div>
-            <div class="flex-1">
-              <label class="block text-sm font-semibold text-gray-700 mb-2">日付</label>
-              <input type="date" id="dateInput" value="${currentDate}" onchange="currentDate = this.value; render()" class="w-full p-3 border-2 border-orange-300 rounded-lg focus:border-orange-500 focus:outline-none text-lg font-semibold">
-            </div>
-            <div class="text-right">
-              <div class="text-sm text-gray-600">本日の受注</div>
-              <div class="text-3xl font-bold text-orange-600">${todayOrders.length}件</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 受注入力 -->
-        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">${icons.plus} 受注入力</h2>
-          <div class="space-y-4">
-
-            <!-- 担当者 -->
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2">担当者 <span class="text-red-500">*</span></label>
-              <div class="grid grid-cols-6 gap-2">
-                ${担当者リスト.map((name, i) => `
-                  <button class="staff-btn btn-select p-2 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center ${staffColors[i].normal}" data-name="${name}" data-index="${i}" onclick="selectStaff(this)">
-                    <div class="flex justify-center text-gray-500 mb-1">${icons.person}</div>
-                    <div class="text-xs">${name}</div>
-                  </button>
-                `).join('')}
-              </div>
-            </div>
-
-            <!-- 受注種類 -->
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2">受注種類 <span class="text-red-500">*</span></label>
-              <div class="grid grid-cols-4 gap-2">
-                ${種類リスト.map(type => `
-                  <button class="type-btn btn-select p-3 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100" data-name="${type}" onclick="selectType(this)">
-                    <div class="flex items-center justify-center gap-1">${getIconForType(type)} ${type}</div>
-                  </button>
-                `).join('')}
-              </div>
-            </div>
-
-            <!-- 顧客名・電話番号 -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">顧客名 <span class="text-red-500">*</span></label>
-                <input type="text" id="顧客名" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="顧客名を入力">
-              </div>
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">${icons.phone} 電話番号</label>
-                <input type="tel" id="電話番号" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="例: 043-123-4567">
-              </div>
-            </div>
-
-            <!-- 住所 -->
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2">${icons.mapPin} 住所</label>
-              <input type="text" id="住所text" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="例: 長沼町 または ◯◯マンション101号室">
-            </div>
-
-            <!-- メーカーサービス -->
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2">メーカーサービス</label>
-              <div class="grid grid-cols-2 gap-3">
-                ${サービスリスト.map(s => {
-                  const color = getColorForService(s.name);
-                  return `
-                    <button class="service-btn btn-select p-3 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center ${color.normal}" data-name="${s.name}" onclick="selectService(this)">
-                      <div class="flex items-center justify-center gap-2 text-lg">${icons[s.icon]} ${s.name}</div>
-                    </button>
-                  `;
-                }).join('')}
-              </div>
-            </div>
-
-            <!-- 商品区分（サービス選択後に表示） -->
-            <div id="productSection" style="display:none;"></div>
-
-            <!-- 訪問日時 -->
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2">訪問日時</label>
-              <div class="grid grid-cols-2 gap-2">
-                <input type="date" id="訪問日" class="p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
-                <select id="訪問時刻" class="p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
-                  <option value="">時刻を選択</option>
-                  ${Array.from({length: 14}, (_, i) => {
-                    const h = String(i + 8).padStart(2, '0');
-                    return `<option value="${h}:00">${h}:00</option><option value="${h}:30">${h}:30</option>`;
-                  }).join('')}
-                </select>
-              </div>
-            </div>
-
-            <!-- 受注内容 -->
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2">受注内容</label>
-              <textarea id="内容" rows="3" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="受注内容を入力"></textarea>
-            </div>
-
-            <!-- 送信ボタン -->
-            <button onclick="handleAddOrder()" class="w-full bg-orange-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center gap-2">
-              ${icons.plus} 受注を追加
-            </button>
-          </div>
-        </div>
-
-        <!-- 受注一覧 -->
-        <div class="bg-white rounded-lg shadow-lg p-6">
-          <h2 class="text-xl font-bold text-gray-800 mb-4">${currentDate} の受注一覧 (${todayOrders.length}件)</h2>
-          ${todayOrders.length === 0 ? `
-            <div class="text-center py-12 text-gray-500">
-              <div class="text-6xl mb-4">📋</div>
-              <p class="text-lg">この日の受注はまだありません</p>
-            </div>
-          ` : `
-            <div class="space-y-3">
-              ${todayOrders.map((order, index) => {
-                const typeColor = getColorForType(order.種類);
-                const staffIdx = 担当者リスト.indexOf(order.担当);
-                const sColor = staffIdx >= 0 ? staffColors[staffIdx].normal : 'bg-gray-100 text-gray-800 border-gray-300';
-                return `
-                  <div class="border-2 border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                    <div class="flex items-start justify-between">
-                      <div class="flex-1">
-                        <div class="flex flex-wrap items-center gap-2 mb-2">
-                          <span class="px-2 py-1 bg-gray-200 text-gray-700 rounded text-sm font-bold">#${index + 1}</span>
-                          <span class="px-2 py-1 bg-orange-100 text-orange-800 rounded text-sm font-semibold">${order.登録時刻}</span>
-                          <span class="px-3 py-1 rounded-full text-sm font-semibold border-2 flex items-center gap-1 ${typeColor.bg} ${typeColor.text} ${typeColor.border}">
-                            ${getIconForType(order.種類)} ${order.種類}
-                          </span>
-                          <span class="px-3 py-1 rounded-full text-sm font-semibold border-2 ${sColor}">${order.担当}</span>
-                          ${order.サービス種別 ? `<span class="px-3 py-1 rounded-full text-sm font-semibold border-2 bg-gray-100 text-gray-800 border-gray-300">${order.サービス種別}</span>` : ''}
-                          ${order.商品区分 ? `<span class="px-3 py-1 rounded-full text-sm font-semibold border-2 ${order.商品区分 === 'パナソニック' ? 'bg-sky-100 text-sky-800 border-sky-300' : 'bg-amber-100 text-amber-800 border-amber-300'}">${order.商品区分}</span>` : ''}
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">${order.顧客名}</h3>
-                        <div class="space-y-1 mb-2">
-                          ${order.電話番号 ? `<p class="text-gray-700 flex items-center gap-2">${icons.phone} ${order.電話番号}</p>` : ''}
-                          ${order.住所 ? `<p class="text-gray-700 flex items-center gap-2">${icons.mapPin} ${order.住所}</p>` : ''}
-                          ${order.商品詳細 ? `<p class="text-gray-700">商品詳細: ${order.商品詳細}</p>` : ''}
-                        </div>
-                        ${order.訪問日時 ? `<p class="text-gray-700 mb-2 flex items-center gap-2">${icons.calendar} 訪問予定: ${order.訪問日時}</p>` : ''}
-                        ${order.内容 ? `<div class="bg-gray-50 p-3 rounded border border-gray-200 mt-2"><p class="text-gray-700 whitespace-pre-wrap">${order.内容}</p></div>` : ''}
-                      </div>
-                      <button onclick="deleteOrder(${order.id})" class="text-red-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-colors ml-4">${icons.trash}</button>
-                    </div>
-                  </div>
-                `;
-              }).join('')}
-            </div>
-          `}
-        </div>
-      `;
-      renderProductSection();
-    }
-
-    // 初期表示
-    render();
-  </script>
-</body>
-</html>
+            <button class="product-btn btn-select p-2 px-4 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100" data-name="パナ
