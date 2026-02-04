@@ -338,8 +338,8 @@
 
             <!-- 住所 -->
             <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2">${icons.mapPin} 住所（◯◯町orマンション名＋部屋番号）</label>
-              <input type="text" id="住所text" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="例: 長沼町330-24 または ◯◯マンション101号室">
+              <label class="block text-sm font-semibold text-gray-700 mb-2">${icons.mapPin} 住所</label>
+              <input type="text" id="住所text" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="例: 長沼町 または ◯◯マンション101号室">
             </div>
 
             <!-- メーカーサービス -->
@@ -367,8 +367,8 @@
                 <input type="date" id="訪問日" class="p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
                 <select id="訪問時刻" class="p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
                   <option value="">時刻を選択</option>
-                  ${Array.from({length: 24}, (_, i) => {
-                    const h = String(i).padStart(2, '0');
+                  ${Array.from({length: 14}, (_, i) => {
+                    const h = String(i + 8).padStart(2, '0');
                     return `<option value="${h}:00">${h}:00</option><option value="${h}:30">${h}:30</option>`;
                   }).join('')}
                 </select>
