@@ -18,13 +18,21 @@
   <script>
     let orders = [];
     let currentDate = new Date().toISOString().slice(0, 10);
-    // 🔥 新しいURLに変更
-    let scriptUrl = 'https://script.google.com/macros/s/AKfycbzZQqaMhIPjxnP2avVlFBhQ1O5RzrW4FQdwTSgNcruV6zl96Z-pb2J05Er-6ROQo6sg/exec';
+    let scriptUrl = 'https://script.google.com/macros/s/AKfycbwkGcJAHlmhBcFypJtBTTV_q21Omr6GOATopIZH8uGuQyM5fGX2PAGYiuuD8z8swTWC/exec';
     let selectedService = '';
     let selectedProduct = '';
 
     const 担当者リスト = ['宇留野', '石橋', '角井', '櫻井', '渡邊', '高山'];
     const 種類リスト = ['電話', 'LINE', '来店', '訪問'];
+
+    const 訪問担当者リスト = [
+      { name: '高山', email: 'yawata51@gmail.com' },
+      { name: '渡邊', email: 'yahata.watanabe@gmail.com' },
+      { name: '石橋', email: 'yahata.ishibashi@gmail.com' },
+      { name: '角井', email: 'yahata.kakui@gmail.com' }
+    ];
+
+    const 予定時間リスト = ['0.5時間', '1時間', '1.5時間', '2時間', '2.5時間', '3時間', '4時間', '5時間'];
 
     const サービスリスト = [
       { name: '修理', icon: 'wrench' },
@@ -82,11 +90,12 @@
         return;
       }
       try {
-        // 🔥 デバッグ用：送信データを詳細表示
         console.log('=== 送信データ詳細 ===');
         console.log('サービス種別:', order.サービス種別);
         console.log('商品区分:', order.商品区分);
         console.log('商品詳細:', order.商品詳細);
+        console.log('訪問担当:', order.訪問担当);
+        console.log('予定時間:', order.予定時間);
         console.log('完全なデータ:', JSON.stringify(order));
         
         await fetch(scriptUrl, {
@@ -105,6 +114,9 @@
             商品区分: order.商品区分 || '',
             商品詳細: order.商品詳細 || '',
             訪問日時: order.訪問日時 || '',
+            訪問担当: order.訪問担当 || '',
+            訪問担当メール: order.訪問担当メール || '',
+            予定時間: order.予定時間 || '',
             内容: order.内容 || ''
           })
         });
@@ -158,7 +170,6 @@
           }
         });
       }
-      // 🔥 デバッグ用
       console.log('selectedService設定:', selectedService);
       renderProductSection();
     }
@@ -179,7 +190,6 @@
       if (detailArea) {
         detailArea.style.display = (name === 'パナ以外') ? 'block' : 'none';
       }
-      // 🔥 デバッグ用
       console.log('selectedProduct設定:', selectedProduct);
     }
 
@@ -217,13 +227,17 @@
       const 訪問日 = document.getElementById('訪問日').value;
       const 訪問時刻 = document.getElementById('訪問時刻').value;
       const 訪問日時 = (訪問日 && 訪問時刻) ? `${訪問日} ${訪問時刻}` : '';
+      const 訪問担当 = document.getElementById('訪問担当')?.value || '';
+      const 訪問担当メール = 訪問担当 ? 訪問担当者リスト.find(t => t.name === 訪問担当)?.email || '' : '';
+      const 予定時間 = document.getElementById('予定時間')?.value || '';
       const 内容 = document.getElementById('内容').value;
 
-      // 🔥 デバッグ用
       console.log('=== handleAddOrder実行 ===');
       console.log('サービス種別:', サービス種別);
       console.log('商品区分:', 商品区分);
       console.log('商品詳細:', 商品詳細);
+      console.log('訪問担当:', 訪問担当);
+      console.log('予定時間:', 予定時間);
 
       if (!担当 || !種類 || !顧客名) {
         alert('担当、種類、顧客名は必須項目です');
@@ -234,7 +248,7 @@
         id: Date.now(),
         日付: currentDate,
         登録時刻: new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }),
-        担当, 種類, 顧客名, 電話番号, 住所, サービス種別, 商品区分, 商品詳細, 訪問日時, 内容
+        担当, 種類, 顧客名, 電話番号, 住所, サービス種別, 商品区分, 商品詳細, 訪問日時, 訪問担当, 訪問担当メール, 予定時間, 内容
       };
 
       orders.push(newOrder);
@@ -246,6 +260,8 @@
       document.getElementById('住所text').value = '';
       document.getElementById('訪問日').value = '';
       document.getElementById('訪問時刻').value = '';
+      document.getElementById('訪問担当').value = '';
+      document.getElementById('予定時間').value = '';
       document.getElementById('内容').value = '';
       selectedService = '';
       selectedProduct = '';
@@ -265,10 +281,10 @@
         alert('エクスポートするデータがありません');
         return;
       }
-      const headers = ['日付', '登録時刻', '担当', '種類', '顧客名', '電話番号', '住所', 'メーカーサービス', '商品区分', '商品詳細', '訪問日時', '受注内容'];
+      const headers = ['日付', '登録時刻', '担当', '種類', '顧客名', '電話番号', '住所', 'メーカーサービス', '商品区分', '商品詳細', '訪問日時', '訪問担当', '予定時間', '受注内容'];
       const csvData = todayOrders.map(o => [
         o.日付, o.登録時刻, o.担当, o.種類, o.顧客名, o.電話番号 || '', o.住所 || '',
-        o.サービス種別 || '', o.商品区分 || '', o.商品詳細 || '', o.訪問日時 || '', o.内容 || ''
+        o.サービス種別 || '', o.商品区分 || '', o.商品詳細 || '', o.訪問日時 || '', o.訪問担当 || '', o.予定時間 || '', o.内容 || ''
       ]);
       const csvContent = [
         headers.join(','),
@@ -318,7 +334,7 @@
 
             <!-- 担当者 -->
             <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2">担当者 <span class="text-red-500">*</span></label>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">受注担当者 <span class="text-red-500">*</span></label>
               <div class="grid grid-cols-6 gap-2">
                 ${担当者リスト.map((name, i) => `
                   <button class="staff-btn btn-select p-2 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center ${staffColors[i].normal}" data-name="${name}" data-index="${i}" onclick="selectStaff(this)">
@@ -379,8 +395,8 @@
 
             <!-- 訪問日時 -->
             <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2">訪問日時</label>
-              <div class="grid grid-cols-2 gap-2">
+              <label class="block text-sm font-semibold text-gray-700 mb-2">訪問日時・担当</label>
+              <div class="grid grid-cols-2 gap-2 mb-3">
                 <input type="date" id="訪問日" class="p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
                 <select id="訪問時刻" class="p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
                   <option value="">時刻を選択</option>
@@ -388,6 +404,16 @@
                     const h = String(i + 8).padStart(2, '0');
                     return `<option value="${h}:00">${h}:00</option><option value="${h}:30">${h}:30</option>`;
                   }).join('')}
+                </select>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <select id="訪問担当" class="p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
+                  <option value="">訪問担当者を選択</option>
+                  ${訪問担当者リスト.map(t => `<option value="${t.name}">${t.name}</option>`).join('')}
+                </select>
+                <select id="予定時間" class="p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
+                  <option value="">予定時間を選択</option>
+                  ${予定時間リスト.map(t => `<option value="${t}">${t}</option>`).join('')}
                 </select>
               </div>
             </div>
@@ -439,7 +465,8 @@
                           ${order.住所 ? `<p class="text-gray-700 flex items-center gap-2">${icons.mapPin} ${order.住所}</p>` : ''}
                           ${order.商品詳細 ? `<p class="text-gray-700">商品詳細: ${order.商品詳細}</p>` : ''}
                         </div>
-                        ${order.訪問日時 ? `<p class="text-gray-700 mb-2 flex items-center gap-2">${icons.calendar} 訪問予定: ${order.訪問日時}</p>` : ''}
+                        ${order.訪問日時 ? `<p class="text-gray-700 mb-1 flex items-center gap-2">${icons.calendar} 訪問予定: ${order.訪問日時}</p>` : ''}
+                        ${order.訪問担当 ? `<p class="text-gray-700 mb-2">👤 訪問担当: ${order.訪問担当}${order.予定時間 ? ` (${order.予定時間})` : ''}</p>` : ''}
                         ${order.内容 ? `<div class="bg-gray-50 p-3 rounded border border-gray-200 mt-2"><p class="text-gray-700 whitespace-pre-wrap">${order.内容}</p></div>` : ''}
                       </div>
                       <button onclick="deleteOrder(${order.id})" class="text-red-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-colors ml-4">${icons.trash}</button>
