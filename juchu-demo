@@ -20,7 +20,7 @@
     let orders = [];
     let currentDate = new Date().toISOString().slice(0, 10);
     // 🔥 新しいURLに変更
-    let scriptUrl = 'https://script.google.com/macros/s/AKfycbzZQqaMhIPjxnP2avVlFBhQ1O5RzrW4FQdwTSgNcruV6zl96Z-pb2J05Er-6ROQo6sg/exec';
+    let scriptUrl = 'https://script.google.com/macros/s/AKfycbwkGcJAHlmhBcFypJtBTTV_q21Omr6GOATopIZH8uGuQyM5fGX2PAGYiuuD8z8swTWC/exec';
     let selectedService = '';
     let selectedProduct = '';
 
