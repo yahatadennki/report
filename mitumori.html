@@ -189,9 +189,11 @@
             position: absolute;
             left: -9999px;
             width: 794px;
+            min-height: 1123px;
             background: white;
-            padding: 40px;
+            padding: 50px 60px;
             font-family: 'Yu Gothic', 'MS Gothic', sans-serif;
+            box-sizing: border-box;
         }
 
         .pdf-header {
@@ -202,7 +204,7 @@
         }
 
         .pdf-title {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: bold;
             color: #333;
         }
@@ -210,8 +212,8 @@
         .pdf-info {
             display: flex;
             justify-content: space-between;
-            margin: 20px 0;
-            font-size: 14px;
+            margin: 25px 0;
+            font-size: 15px;
         }
 
         .pdf-section {
@@ -221,48 +223,49 @@
         .pdf-section-title {
             background: #667eea;
             color: white;
-            padding: 10px;
+            padding: 10px 15px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            font-size: 16px;
         }
 
         .pdf-item {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
+            padding: 10px 15px;
             border-bottom: 1px solid #ddd;
+            font-size: 14px;
         }
 
         .pdf-subtotal {
             display: flex;
             justify-content: space-between;
-            padding: 12px 0;
+            padding: 12px 15px;
             margin-top: 5px;
             border-top: 2px solid #333;
             font-weight: bold;
             background: #f5f5f5;
-            padding-left: 10px;
-            padding-right: 10px;
+            font-size: 15px;
         }
 
         .pdf-total {
-            margin-top: 20px;
+            margin-top: 30px;
             border: 3px solid #1976d2;
             background: #e3f2fd;
-            padding: 15px;
+            padding: 18px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .pdf-total-label {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
             color: #1976d2;
         }
 
         .pdf-total-amount {
-            font-size: 24px;
+            font-size: 26px;
             font-weight: bold;
             color: #1976d2;
         }
@@ -576,7 +579,7 @@
             // PDFコンテンツHTML作成
             let productHTML = `
                 <div class="pdf-item">
-                    <span>${modelName}（${modelCode}）</span>
+                    <span>本体：${modelName}（${modelCode}）</span>
                     <span>¥${modelPrice.toLocaleString()}</span>
                 </div>
                 <div class="pdf-item">
@@ -588,7 +591,7 @@
             if (washPrice > 0) {
                 productHTML += `
                     <div class="pdf-item">
-                        <span>手洗い器（${washName}）</span>
+                        <span>手洗い器：${washName}</span>
                         <span>¥${washPrice.toLocaleString()}</span>
                     </div>
                 `;
@@ -641,9 +644,13 @@
             const element = document.getElementById('pdfContent');
 
             const canvas = await html2canvas(element, {
-                scale: 2,
+                scale: 2.5,
                 useCORS: true,
-                logging: false
+                logging: false,
+                width: 794,
+                height: 1123,
+                windowWidth: 794,
+                windowHeight: 1123
             });
 
             const imgData = canvas.toDataURL('image/jpeg', 1.0);
@@ -673,9 +680,28 @@
 
             let lightsHTML = '';
             ledLights.forEach((light, index) => {
+                const itemPrice = light.price * light.quantity;
                 lightsHTML += `
-                    <div class="pdf-item">
-                        <span>${index + 1}. ${light.room} - ${light.name}（${light.code !== '-' ? light.code : ''}）× ${light.quantity}個</span>
+                    <div class="pdf-item" style="border-bottom: none; padding-bottom: 5px;">
+                        <span><strong>${index + 1}. ${light.room}</strong></span>
+                        <span></span>
+                    </div>
+                    <div class="pdf-item" style="padding-left: 30px; padding-top: 5px;">
+                        <span>${light.name}${light.code !== '-' ? '（' + light.code + '）' : ''}</span>
+                        <span></span>
+                    </div>
+                    <div class="pdf-item" style="padding-left: 30px; padding-top: 5px; padding-bottom: 5px;">
+                        <span>個数：${light.quantity}個 × ¥${light.price.toLocaleString()}</span>
+                        <span>¥${itemPrice.toLocaleString()}</span>
+                    </div>
+                    ${light.workPrice > 0 ? `
+                    <div class="pdf-item" style="padding-left: 30px; padding-top: 5px;">
+                        <span>工事費</span>
+                        <span>¥${light.workPrice.toLocaleString()}</span>
+                    </div>
+                    ` : ''}
+                    <div class="pdf-item" style="padding-left: 30px; font-weight: 600; background: #fafafa;">
+                        <span>小計</span>
                         <span>¥${light.total.toLocaleString()}</span>
                     </div>
                 `;
@@ -706,9 +732,13 @@
             const element = document.getElementById('pdfContent');
 
             const canvas = await html2canvas(element, {
-                scale: 2,
+                scale: 2.5,
                 useCORS: true,
-                logging: false
+                logging: false,
+                width: 794,
+                height: 1123,
+                windowWidth: 794,
+                windowHeight: 1123
             });
 
             const imgData = canvas.toDataURL('image/jpeg', 1.0);
