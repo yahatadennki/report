@@ -394,7 +394,6 @@
             position: absolute;
             left: -9999px;
             width: 794px;
-            min-height: 1123px;
             background: white;
             padding: 50px 60px;
             font-family: 'Yu Gothic', 'MS Gothic', sans-serif;
@@ -1486,19 +1485,30 @@
             const canvas = await html2canvas(element, {
                 scale: 2.5,
                 useCORS: true,
-                logging: false,
-                width: 794,
-                height: 1123,
-                windowWidth: 794,
-                windowHeight: 1123
+                logging: false
             });
 
             const imgData = canvas.toDataURL('image/jpeg', 1.0);
             const pdf = new jsPDF('p', 'mm', 'a4');
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = pdf.internal.pageSize.getHeight();
             
-            pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+            const imgWidth = 210; // A4幅
+            const pageHeight = 297; // A4高さ
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            // 1ページ目
+            pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            // 2ページ目以降
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+            
             pdf.save('アラウーノ見積書_' + customerName + '_' + new Date().toLocaleDateString('ja-JP').replace(/\//g, '') + '.pdf');
             
             container.innerHTML = '';
@@ -2013,19 +2023,30 @@
             const canvas = await html2canvas(element, {
                 scale: 2.5,
                 useCORS: true,
-                logging: false,
-                width: 794,
-                height: 1123,
-                windowWidth: 794,
-                windowHeight: 1123
+                logging: false
             });
 
             const imgData = canvas.toDataURL('image/jpeg', 1.0);
             const pdf = new jsPDF('p', 'mm', 'a4');
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = pdf.internal.pageSize.getHeight();
             
-            pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+            const imgWidth = 210; // A4幅
+            const pageHeight = 297; // A4高さ
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            // 1ページ目
+            pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            // 2ページ目以降
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+            
             pdf.save('LED照明見積書_' + customerName + '_' + new Date().toLocaleDateString('ja-JP').replace(/\//g, '') + '.pdf');
             
             container.innerHTML = '';
