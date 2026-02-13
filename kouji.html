@@ -51,7 +51,8 @@
     input[type="text"],
     input[type="date"],
     input[type="number"],
-    textarea { 
+    textarea,
+    select { 
       width: 100%; 
       padding: 12px; 
       border: 1px solid #ddd; 
@@ -59,7 +60,7 @@
       font-size: 16px; 
       transition: border-color 0.2s;
     }
-    input:focus, textarea:focus {
+    input:focus, textarea:focus, select:focus {
       outline: none;
       border-color: #007bff;
     }
@@ -243,6 +244,94 @@
     .inspection-item input {
       padding: 8px;
     }
+
+    .work-amount-info {
+      background: #e7f3ff;
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 8px;
+      font-size: 13px;
+      color: #0066cc;
+    }
+
+    .payment-detail-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .payment-detail-item label {
+      font-weight: normal;
+      font-size: 13px;
+      margin: 0 0 6px 0;
+    }
+
+    .prospect-item {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .prospect-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .prospect-item-number {
+      font-weight: bold;
+      color: #007bff;
+      font-size: 14px;
+    }
+    .prospect-delete-btn {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .prospect-delete-btn:hover {
+      background: #c82333;
+    }
+    .prospect-item label {
+      font-size: 13px;
+      margin-top: 10px;
+    }
+    .prospect-item label:first-of-type {
+      margin-top: 0;
+    }
+    .prospect-location-group,
+    .prospect-product-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .prospect-btn {
+      padding: 8px 12px;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      background: white;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    .prospect-btn:hover {
+      border-color: #17a2b8;
+      background: #e6f7f9;
+    }
+    .prospect-btn.active {
+      background: #17a2b8;
+      color: white;
+      border-color: #17a2b8;
+    }
+    .prospect-content {
+      margin-top: 8px;
+    }
   </style>
 </head>
 <body>
@@ -314,12 +403,6 @@
           <label>販売担当者 <span class="label-optional">（販売した人）</span></label>
           <div class="btn-group" id="group-salesPerson"></div>
         </div>
-
-        <!-- 工事/配達責任者 -->
-        <div id="section-workManager" class="hidden">
-          <label>工事/配達責任者</label>
-          <div class="btn-group" id="group-workManager"></div>
-        </div>
       </div>
 
       <!-- 売上情報 -->
@@ -335,7 +418,7 @@
             <input type="number" id="workAmount" placeholder="例：50" value="0">
           </div>
         </div>
-        <p class="info-text">※ 工事/配達売上は作業人数で自動的に按分されます</p>
+        <div id="work-amount-info" class="work-amount-info hidden"></div>
       </div>
 
       <!-- 作業人数 -->
@@ -349,28 +432,60 @@
         <label>集金方法</label>
         <div class="btn-group" id="group-payment"></div>
         
+        <!-- 現金時の集金額 -->
         <div id="payment-amount-wrapper" class="hidden">
           <label style="margin-top: 12px;">集金額（千円単位）</label>
           <input type="number" id="paymentAmount" placeholder="例：50">
+        </div>
+
+        <!-- 売掛時の詳細 -->
+        <div id="credit-detail-wrapper" class="hidden">
+          <div class="payment-detail-group">
+            <div class="payment-detail-item">
+              <label>集金方法</label>
+              <select id="creditMethod">
+                <option value="">選択してください</option>
+                <option value="集金">集金</option>
+                <option value="振込">振込</option>
+              </select>
+            </div>
+            <div class="payment-detail-item">
+              <label>入金時期</label>
+              <select id="creditTiming">
+                <option value="">選択してください</option>
+                <option value="今週中">今週中</option>
+                <option value="来週中">来週中</option>
+                <option value="月末">月末</option>
+                <option value="来月以降">来月以降</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- 写真 -->
       <div class="section">
-        <label>写真アップロード</label>
+        <label>写真アップロード <span class="label-optional" id="photo-required-note"></span></label>
         <div class="photo-type-group">
           <button type="button" class="photo-type-btn" data-photo-type="現調">📸 現調写真</button>
           <button type="button" class="photo-type-btn" data-photo-type="完了">✅ 完了写真</button>
         </div>
         <input type="file" id="files" accept="image/*" multiple>
-        <div class="photo-count">現調: <span id="gentyoCount">0</span>/5枚　完了: <span id="kanryoCount">0</span>/5枚</div>
+        <div class="photo-count">現調: <span id="gentyoCount">0</span>/10枚　完了: <span id="kanryoCount">0</span>/10枚</div>
         <div class="photo-preview" id="preview"></div>
       </div>
 
-      <!-- 備考 -->
+      <!-- 見込商品 -->
       <div class="section">
-        <label>備考 <span class="label-optional">（任意）</span></label>
-        <textarea id="remarks" rows="3" placeholder="特記事項があればご記入ください"></textarea>
+        <label>見込商品 <span class="label-optional">（任意）</span></label>
+        <div id="prospectItems"></div>
+        <button type="button" id="addProspectBtn" class="toggle-btn" style="width: 100%; margin-top: 10px;">➕ 見込商品を追加</button>
+      </div>
+
+      <!-- メモ -->
+      <div class="section">
+        <label>メモ <span class="label-optional">（任意）</span></label>
+        <textarea id="remarks" rows="3" placeholder="気が付いた点はなんでも記入してください"></textarea>
       </div>
 
       <button type="button" id="sendBtn" class="submit-btn">📤 報告書を送信する</button>
@@ -399,6 +514,12 @@
     // 工事種類リスト
     const CONSTRUCTION_TYPES = ["電気", "水道", "アンテナ", "エアコン", "照明", "レンジフード", "換気扇", "ドアホン", "トイレ", "洗面台", "IH", "エコキュート", "管球", "その他"];
 
+    // 見込商品の場所リスト
+    const PROSPECT_LOCATIONS = ["リビング", "台所", "寝室", "洗面所", "トイレ", "玄関", "廊下", "その他"];
+
+    // 見込商品の品名リスト
+    const PROSPECT_PRODUCTS = ["エアコン", "冷蔵庫", "洗濯機", "TV", "照明", "換気扇", "レンジフード", "IH", "エコキュート", "温水器", "その他"];
+
     const state = {
       staffType: "",
       time: [],
@@ -409,11 +530,13 @@
       deliveryItems: [],
       constructionTypes: [],
       salesPerson: "",
-      workManager: "",
       people: "",
       payment: "",
+      creditMethod: "",
+      creditTiming: "",
       currentPhotoType: "現調",
-      photos: { 現調: [], 完了: [] }
+      photos: { 現調: [], 完了: [] },
+      prospectItems: []
     };
 
     // ボタン生成ヘルパー
@@ -446,9 +569,30 @@
           if (stateKey === "workType") {
             updateWorkDetails();
           }
+
+          // 作業人数が変更されたら按分表示を更新
+          if (stateKey === "people") {
+            updateWorkAmountInfo();
+          }
         };
         container.appendChild(btn);
       });
+    }
+
+    // 作業人数による按分情報を表示
+    function updateWorkAmountInfo() {
+      const workAmount = parseInt(document.getElementById("workAmount").value) || 0;
+      const people = state.people;
+      const infoDiv = document.getElementById("work-amount-info");
+      
+      if (workAmount > 0 && people) {
+        const peopleNum = people === "4人以上" ? 4 : parseInt(people);
+        const perPerson = Math.floor(workAmount / peopleNum);
+        infoDiv.textContent = `💡 1人あたりの工事/配達売上: ${perPerson}千円`;
+        infoDiv.classList.remove("hidden");
+      } else {
+        infoDiv.classList.add("hidden");
+      }
     }
 
     // 作業内容の詳細表示を更新
@@ -457,7 +601,7 @@
       const deliveryDetail = document.getElementById("delivery-detail");
       const constructionDetail = document.getElementById("construction-detail");
       const salesPersonSection = document.getElementById("section-salesPerson");
-      const workManagerSection = document.getElementById("section-workManager");
+      const photoRequiredNote = document.getElementById("photo-required-note");
       
       // 点検が選択されているか
       if (state.workType.includes("点検")) {
@@ -503,15 +647,13 @@
         });
       }
 
-      // 工事/配達責任者（配達or工事）
-      if (state.workType.includes("配達") || state.workType.includes("工事")) {
-        workManagerSection.classList.remove("hidden");
+      // 工事・現調時は写真必須の注記
+      if (state.workType.includes("工事") || state.workType.includes("現調")) {
+        photoRequiredNote.textContent = "（※ 写真必須）";
+        photoRequiredNote.style.color = "#dc3545";
+        photoRequiredNote.style.fontWeight = "bold";
       } else {
-        workManagerSection.classList.add("hidden");
-        state.workManager = "";
-        document.querySelectorAll("#group-workManager .toggle-btn").forEach(btn => {
-          btn.classList.remove("active");
-        });
+        photoRequiredNote.textContent = "";
       }
     }
 
@@ -547,17 +689,15 @@
         
         // 共通ボタン生成
         const staffList = STAFF_LIST[state.staffType];
-        const allStaff = ["渡辺", "伊藤", "高山"];
+        const salesPersonList = [...STAFF_LIST.service, "その他"];
         createButtons("group-staff", staffList, "staff");
-        createButtons("group-salesPerson", STAFF_LIST.service, "salesPerson");
-        createButtons("group-workManager", allStaff, "workManager");
+        createButtons("group-salesPerson", salesPersonList, "salesPerson");
         
         // 状態リセット
         state.workType = [];
         state.deliveryItems = [];
         state.constructionTypes = [];
         state.salesPerson = "";
-        state.workManager = "";
         updateWorkDetails();
       };
     });
@@ -570,19 +710,44 @@
       state.inspectionOther = parseInt(e.target.value) || 0;
     };
 
-    // 集金方法の選択で金額入力表示切替
+    // 工事/配達売上の入力で按分表示を更新
+    document.getElementById("workAmount").oninput = () => {
+      updateWorkAmountInfo();
+    };
+
+    // 集金方法の選択で入力欄表示切替
     document.getElementById("group-payment").addEventListener("click", (e) => {
       if (e.target.classList.contains("toggle-btn")) {
         const paymentType = e.target.textContent;
-        const wrapper = document.getElementById("payment-amount-wrapper");
-        if (paymentType === "なし") {
-          wrapper.classList.add("hidden");
-          document.getElementById("paymentAmount").value = "";
+        const cashWrapper = document.getElementById("payment-amount-wrapper");
+        const creditWrapper = document.getElementById("credit-detail-wrapper");
+        
+        if (paymentType === "現金") {
+          // 現金のみ集金額入力を表示
+          cashWrapper.classList.remove("hidden");
+          creditWrapper.classList.add("hidden");
+        } else if (paymentType === "売掛") {
+          // 売掛時は詳細入力を表示
+          cashWrapper.classList.add("hidden");
+          creditWrapper.classList.remove("hidden");
         } else {
-          wrapper.classList.remove("hidden");
+          // その他は非表示
+          cashWrapper.classList.add("hidden");
+          creditWrapper.classList.add("hidden");
+          document.getElementById("paymentAmount").value = "";
+          document.getElementById("creditMethod").value = "";
+          document.getElementById("creditTiming").value = "";
         }
       }
     });
+
+    // 売掛詳細の変更
+    document.getElementById("creditMethod").onchange = (e) => {
+      state.creditMethod = e.target.value;
+    };
+    document.getElementById("creditTiming").onchange = (e) => {
+      state.creditTiming = e.target.value;
+    };
 
     // 写真種別選択
     document.querySelectorAll(".photo-type-btn").forEach(btn => {
@@ -605,10 +770,10 @@
     document.getElementById("files").onchange = (e) => {
       const currentType = state.currentPhotoType;
       const currentCount = state.photos[currentType].length;
-      const remaining = 5 - currentCount;
+      const remaining = 10 - currentCount;
       
       if (remaining <= 0) {
-        alert(`${currentType}写真は5枚までです`);
+        alert(`${currentType}写真は10枚までです`);
         e.target.value = "";
         return;
       }
@@ -661,6 +826,107 @@
       });
     }
 
+    // 見込商品の表示更新
+    function updateProspectItems() {
+      const container = document.getElementById("prospectItems");
+      container.innerHTML = "";
+      
+      state.prospectItems.forEach((item, index) => {
+        const itemDiv = document.createElement("div");
+        itemDiv.className = "prospect-item";
+        
+        // ヘッダー（番号と削除ボタン）
+        const header = document.createElement("div");
+        header.className = "prospect-item-header";
+        
+        const number = document.createElement("span");
+        number.className = "prospect-item-number";
+        number.textContent = `見込商品 ${index + 1}`;
+        
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "prospect-delete-btn";
+        deleteBtn.textContent = "✕ 削除";
+        deleteBtn.onclick = () => {
+          state.prospectItems.splice(index, 1);
+          updateProspectItems();
+        };
+        
+        header.appendChild(number);
+        header.appendChild(deleteBtn);
+        itemDiv.appendChild(header);
+        
+        // 場所
+        const locationLabel = document.createElement("label");
+        locationLabel.textContent = "場所";
+        itemDiv.appendChild(locationLabel);
+        
+        const locationGroup = document.createElement("div");
+        locationGroup.className = "prospect-location-group";
+        PROSPECT_LOCATIONS.forEach(loc => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "prospect-btn";
+          btn.textContent = loc;
+          if (item.location === loc) btn.classList.add("active");
+          btn.onclick = () => {
+            item.location = loc;
+            updateProspectItems();
+          };
+          locationGroup.appendChild(btn);
+        });
+        itemDiv.appendChild(locationGroup);
+        
+        // 品名
+        const productLabel = document.createElement("label");
+        productLabel.textContent = "品名";
+        itemDiv.appendChild(productLabel);
+        
+        const productGroup = document.createElement("div");
+        productGroup.className = "prospect-product-group";
+        PROSPECT_PRODUCTS.forEach(prod => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "prospect-btn";
+          btn.textContent = prod;
+          if (item.product === prod) btn.classList.add("active");
+          btn.onclick = () => {
+            item.product = prod;
+            updateProspectItems();
+          };
+          productGroup.appendChild(btn);
+        });
+        itemDiv.appendChild(productGroup);
+        
+        // 内容
+        const contentLabel = document.createElement("label");
+        contentLabel.textContent = "内容";
+        itemDiv.appendChild(contentLabel);
+        
+        const contentInput = document.createElement("input");
+        contentInput.type = "text";
+        contentInput.className = "prospect-content";
+        contentInput.placeholder = "例：省エネに変えたい、古い";
+        contentInput.value = item.content || "";
+        contentInput.oninput = (e) => {
+          item.content = e.target.value;
+        };
+        itemDiv.appendChild(contentInput);
+        
+        container.appendChild(itemDiv);
+      });
+    }
+
+    // 見込商品を追加
+    document.getElementById("addProspectBtn").onclick = () => {
+      state.prospectItems.push({
+        location: "",
+        product: "",
+        content: ""
+      });
+      updateProspectItems();
+    };
+
     // 送信ボタン
     document.getElementById("sendBtn").onclick = async () => {
       const btn = document.getElementById("sendBtn");
@@ -686,6 +952,23 @@
       if (!state.people) { 
         alert("作業人数を選択してください"); 
         return; 
+      }
+
+      // 工事・現調時の写真必須チェック
+      if (state.workType.includes("工事") || state.workType.includes("現調")) {
+        const totalPhotos = state.photos.現調.length + state.photos.完了.length;
+        if (totalPhotos === 0) {
+          alert("工事・現調の場合は写真を1枚以上アップロードしてください");
+          return;
+        }
+      }
+
+      // 売掛時の詳細チェック
+      if (state.payment === "売掛") {
+        if (!state.creditMethod || !state.creditTiming) {
+          alert("売掛の場合は集金方法と入金時期を選択してください");
+          return;
+        }
       }
 
       btn.disabled = true;
@@ -716,12 +999,14 @@
         deliveryItems: state.deliveryItems.join("、"),
         constructionTypes: state.constructionTypes.join("、"),
         salesPerson: state.salesPerson,
-        workManager: state.workManager,
         salesAmount: salesAmount,
         workAmount: workAmount,
         people: state.people,
         payment: state.payment,
         paymentAmount: paymentAmount,
+        creditMethod: state.creditMethod,
+        creditTiming: state.creditTiming,
+        prospectItems: state.prospectItems,
         remarks: document.getElementById("remarks").value,
         photos: allPhotos
       };
