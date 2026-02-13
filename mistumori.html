@@ -428,6 +428,13 @@
             margin-bottom: 5px;
         }
 
+        .pdf-estimate-no {
+            text-align: left;
+            font-size: 13px;
+            margin-bottom: 15px;
+            color: #666;
+        }
+
         .pdf-info {
             display: flex;
             justify-content: space-between;
@@ -914,6 +921,18 @@
     <script>
         window.jsPDF = window.jspdf.jsPDF;
         
+        // 見積番号生成関数
+        function generateEstimateNumber() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            return `${year}${month}${day}-${hours}${minutes}${seconds}`;
+        }
+        
         // ======== 共通変数 ========
         let selectedProduct = '';
         
@@ -1399,6 +1418,7 @@
             productList.push({ name: `排水芯部品：${selectedData.drainParts}`, price: selectedData.partsCost });
 
             const grandTotal = totalProduct + totalWork;
+            const estimateNo = generateEstimateNumber();
 
             // PDFコンテンツHTML作成
             let productHTML = '';
@@ -1431,6 +1451,7 @@
                             <div>TEL: 043-259-0463</div>
                         </div>
                     </div>
+                    <div class="pdf-estimate-no">見積番号：${estimateNo}</div>
                     <div class="pdf-info">
                         <span><strong>${customerName}</strong> 様</span>
                         <span>作成日：${new Date().toLocaleDateString('ja-JP')}</span>
@@ -1927,6 +1948,7 @@
             }
 
             const grandTotal = selectedLights.reduce((sum, light) => sum + light.total, 0);
+            const estimateNo = generateEstimateNumber();
 
             // 照明リストHTML生成
             let lightsHTML = '';
@@ -1968,6 +1990,7 @@
                             <div>TEL: 043-259-0463</div>
                         </div>
                     </div>
+                    <div class="pdf-estimate-no">見積番号：${estimateNo}</div>
                     <div class="pdf-info">
                         <span><strong>${customerName}</strong> 様</span>
                         <span>作成日：${new Date().toLocaleDateString('ja-JP')}</span>
