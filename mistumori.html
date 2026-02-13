@@ -1300,43 +1300,81 @@
                 <head>
                     <meta charset="UTF-8">
                     <style>
-                        body { font-family: 'Yu Gothic', sans-serif; padding: 30px; }
-                        .header { text-align: center; margin-bottom: 25px; }
-                        .title { font-size: 26px; font-weight: bold; margin-bottom: 8px; }
-                        .customer { margin-bottom: 20px; }
-                        .customer-line { margin: 5px 0; font-size: 13px; }
-                        .section { margin: 20px 0; }
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                        body { 
+                            font-family: 'Yu Gothic', sans-serif; 
+                            padding: 15px;
+                            font-size: 11px;
+                        }
+                        .header { 
+                            text-align: center; 
+                            margin-bottom: 15px;
+                            border-bottom: 2px solid #667eea;
+                            padding-bottom: 8px;
+                        }
+                        .title { 
+                            font-size: 22px; 
+                            font-weight: bold; 
+                            margin-bottom: 5px;
+                            color: #333;
+                        }
+                        .customer { 
+                            margin-bottom: 12px;
+                            display: flex;
+                            justify-content: space-between;
+                            font-size: 12px;
+                        }
+                        .section { 
+                            margin: 12px 0;
+                        }
                         .section-title { 
                             background: #667eea; 
                             color: white; 
-                            padding: 8px; 
+                            padding: 5px 8px;
                             font-weight: bold; 
-                            margin-bottom: 10px;
-                            font-size: 14px;
-                        }
-                        table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-                        th, td { 
-                            border: 1px solid #ddd; 
-                            padding: 8px; 
-                            text-align: left;
+                            margin-bottom: 5px;
                             font-size: 12px;
                         }
-                        th { background: #f5f5f5; font-weight: bold; }
-                        .right { text-align: right; }
-                        .total-section { margin-top: 15px; }
-                        .total-row { 
-                            display: flex; 
-                            justify-content: space-between; 
-                            padding: 10px; 
-                            border-bottom: 1px solid #ddd;
+                        table { 
+                            width: 100%; 
+                            border-collapse: collapse;
+                            margin-top: 3px;
                         }
-                        .total-row.grand { 
-                            border-top: 3px solid #333; 
-                            padding-top: 12px;
-                            font-size: 18px; 
-                            font-weight: bold; 
+                        th, td { 
+                            border: 1px solid #ccc;
+                            padding: 5px 6px;
+                            text-align: left;
+                            font-size: 11px;
+                        }
+                        th { 
+                            background: #f0f0f0;
+                            font-weight: bold;
+                        }
+                        .right { text-align: right; }
+                        .total-box {
+                            margin-top: 10px;
+                            border: 2px solid #1976d2;
                             background: #e3f2fd;
+                            padding: 8px 12px;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                        }
+                        .total-label {
+                            font-size: 14px;
+                            font-weight: bold;
                             color: #1976d2;
+                        }
+                        .total-amount {
+                            font-size: 16px;
+                            font-weight: bold;
+                            color: #1976d2;
+                        }
+                        .footer {
+                            margin-top: 10px;
+                            text-align: center;
+                            font-size: 9px;
+                            color: #999;
                         }
                     </style>
                 </head>
@@ -1346,8 +1384,8 @@
                     </div>
 
                     <div class="customer">
-                        <div class="customer-line">${customerName} 様</div>
-                        <div class="customer-line">作成日：${new Date().toLocaleDateString('ja-JP')}</div>
+                        <span><strong>${customerName}</strong> 様</span>
+                        <span>作成日：${new Date().toLocaleDateString('ja-JP')}</span>
                     </div>
 
                     <div class="section">
@@ -1355,8 +1393,8 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>商品名</th>
-                                    <th class="right">金額</th>
+                                    <th style="width: 60%;">商品名</th>
+                                    <th class="right" style="width: 40%;">金額</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1379,8 +1417,8 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>工事内容</th>
-                                    <th class="right">金額</th>
+                                    <th style="width: 60%;">工事内容</th>
+                                    <th class="right" style="width: 40%;">金額</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1398,16 +1436,12 @@
                         </table>
                     </div>
 
-                    <div class="section">
-                        <div class="total-section">
-                            <div class="total-row grand">
-                                <span>合計金額（税込）</span>
-                                <span>¥${grandTotal.toLocaleString()}</span>
-                            </div>
-                        </div>
+                    <div class="total-box">
+                        <span class="total-label">合計金額（税込）</span>
+                        <span class="total-amount">¥${grandTotal.toLocaleString()}</span>
                     </div>
 
-                    <div style="margin-top: 20px; font-size: 10px; color: #999; text-align: center;">
+                    <div class="footer">
                         本見積書は ${new Date().toLocaleDateString('ja-JP')} に作成されました
                     </div>
                 </body>
@@ -1418,12 +1452,12 @@
             element.innerHTML = pdfContent;
             
             const opt = {
-                margin: [10, 10, 10, 10],
+                margin: [8, 8, 8, 8],
                 filename: `アラウーノ見積書_${customerName}_${new Date().toLocaleDateString('ja-JP').replace(/\//g, '')}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, letterRendering: true },
+                image: { type: 'jpeg', quality: 0.95 },
+                html2canvas: { scale: 1.8, useCORS: true },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+                pagebreak: { mode: 'avoid-all' }
             };
 
             html2pdf().set(opt).from(element).save();
@@ -1880,43 +1914,81 @@
                 <head>
                     <meta charset="UTF-8">
                     <style>
-                        body { font-family: 'Yu Gothic', sans-serif; padding: 30px; }
-                        .header { text-align: center; margin-bottom: 25px; }
-                        .title { font-size: 26px; font-weight: bold; margin-bottom: 8px; }
-                        .customer { margin-bottom: 20px; }
-                        .customer-line { margin: 5px 0; font-size: 13px; }
-                        .section { margin: 20px 0; }
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                        body { 
+                            font-family: 'Yu Gothic', sans-serif; 
+                            padding: 15px;
+                            font-size: 10px;
+                        }
+                        .header { 
+                            text-align: center; 
+                            margin-bottom: 15px;
+                            border-bottom: 2px solid #667eea;
+                            padding-bottom: 8px;
+                        }
+                        .title { 
+                            font-size: 22px; 
+                            font-weight: bold; 
+                            margin-bottom: 5px;
+                            color: #333;
+                        }
+                        .customer { 
+                            margin-bottom: 12px;
+                            display: flex;
+                            justify-content: space-between;
+                            font-size: 12px;
+                        }
+                        .section { 
+                            margin: 10px 0;
+                        }
                         .section-title { 
                             background: #667eea; 
                             color: white; 
-                            padding: 8px; 
+                            padding: 5px 8px;
                             font-weight: bold; 
-                            margin-bottom: 10px;
-                            font-size: 14px;
+                            margin-bottom: 5px;
+                            font-size: 12px;
                         }
-                        table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+                        table { 
+                            width: 100%; 
+                            border-collapse: collapse;
+                            margin-top: 3px;
+                        }
                         th, td { 
-                            border: 1px solid #ddd; 
-                            padding: 8px; 
+                            border: 1px solid #ccc;
+                            padding: 4px 5px;
                             text-align: left;
-                            font-size: 11px;
+                            font-size: 10px;
                         }
-                        th { background: #f5f5f5; font-weight: bold; }
+                        th { 
+                            background: #f0f0f0;
+                            font-weight: bold;
+                        }
                         .right { text-align: right; }
-                        .total-section { margin-top: 15px; }
-                        .total-row { 
-                            display: flex; 
-                            justify-content: space-between; 
-                            padding: 10px; 
-                            border-bottom: 1px solid #ddd;
-                        }
-                        .total-row.grand { 
-                            border-top: 3px solid #333; 
-                            padding-top: 12px;
-                            font-size: 18px; 
-                            font-weight: bold; 
+                        .total-box {
+                            margin-top: 10px;
+                            border: 2px solid #1976d2;
                             background: #e3f2fd;
+                            padding: 8px 12px;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                        }
+                        .total-label {
+                            font-size: 14px;
+                            font-weight: bold;
                             color: #1976d2;
+                        }
+                        .total-amount {
+                            font-size: 16px;
+                            font-weight: bold;
+                            color: #1976d2;
+                        }
+                        .footer {
+                            margin-top: 8px;
+                            text-align: center;
+                            font-size: 9px;
+                            color: #999;
                         }
                     </style>
                 </head>
@@ -1926,8 +1998,8 @@
                     </div>
 
                     <div class="customer">
-                        <div class="customer-line">${customerName} 様</div>
-                        <div class="customer-line">作成日：${new Date().toLocaleDateString('ja-JP')}</div>
+                        <span><strong>${customerName}</strong> 様</span>
+                        <span>作成日：${new Date().toLocaleDateString('ja-JP')}</span>
                     </div>
 
                     <div class="section">
@@ -1935,13 +2007,13 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>部屋・場所</th>
-                                    <th>照明種</th>
-                                    <th>型番</th>
-                                    <th class="right">個数</th>
-                                    <th class="right">単価</th>
-                                    <th class="right">工事費</th>
-                                    <th class="right">小計</th>
+                                    <th style="width: 15%;">部屋</th>
+                                    <th style="width: 20%;">照明種</th>
+                                    <th style="width: 20%;">型番</th>
+                                    <th class="right" style="width: 8%;">個数</th>
+                                    <th class="right" style="width: 13%;">単価</th>
+                                    <th class="right" style="width: 11%;">工事費</th>
+                                    <th class="right" style="width: 13%;">小計</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1960,16 +2032,12 @@
                         </table>
                     </div>
 
-                    <div class="section">
-                        <div class="total-section">
-                            <div class="total-row grand">
-                                <span>合計金額（税込）</span>
-                                <span>¥${grandTotal.toLocaleString()}</span>
-                            </div>
-                        </div>
+                    <div class="total-box">
+                        <span class="total-label">合計金額（税込）</span>
+                        <span class="total-amount">¥${grandTotal.toLocaleString()}</span>
                     </div>
 
-                    <div style="margin-top: 20px; font-size: 10px; color: #999; text-align: center;">
+                    <div class="footer">
                         本見積書は ${new Date().toLocaleDateString('ja-JP')} に作成されました
                     </div>
                 </body>
@@ -1980,12 +2048,12 @@
             element.innerHTML = pdfContent;
             
             const opt = {
-                margin: [10, 10, 10, 10],
+                margin: [8, 8, 8, 8],
                 filename: `LED照明見積書_${customerName}_${new Date().toLocaleDateString('ja-JP').replace(/\//g, '')}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, letterRendering: true },
+                image: { type: 'jpeg', quality: 0.95 },
+                html2canvas: { scale: 1.8, useCORS: true },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+                pagebreak: { mode: 'avoid-all' }
             };
 
             html2pdf().set(opt).from(element).save();
