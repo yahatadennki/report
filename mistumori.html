@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>見積書作成ツール</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -385,6 +386,92 @@
             justify-content: space-between;
             font-size: 20px;
             font-weight: 700;
+            color: #1976d2;
+        }
+
+        /* PDF用のスタイル */
+        .pdf-content {
+            position: absolute;
+            left: -9999px;
+            width: 794px;
+            min-height: 1123px;
+            background: white;
+            padding: 50px 60px;
+            font-family: 'Yu Gothic', 'MS Gothic', sans-serif;
+            box-sizing: border-box;
+        }
+
+        .pdf-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .pdf-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .pdf-info {
+            display: flex;
+            justify-content: space-between;
+            margin: 25px 0;
+            font-size: 15px;
+        }
+
+        .pdf-section {
+            margin: 25px 0;
+        }
+
+        .pdf-section-title {
+            background: #667eea;
+            color: white;
+            padding: 10px 15px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .pdf-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            border-bottom: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        .pdf-subtotal {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 15px;
+            margin-top: 5px;
+            border-top: 2px solid #333;
+            font-weight: bold;
+            background: #f5f5f5;
+            font-size: 15px;
+        }
+
+        .pdf-total {
+            margin-top: 30px;
+            border: 3px solid #1976d2;
+            background: #e3f2fd;
+            padding: 18px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pdf-total-label {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1976d2;
+        }
+
+        .pdf-total-amount {
+            font-size: 26px;
+            font-weight: bold;
             color: #1976d2;
         }
     </style>
@@ -807,7 +894,12 @@
         </div>
     </div>
 
+    <!-- PDF生成用の非表示エリア -->
+    <div id="pdfContainer"></div>
+
     <script>
+        window.jsPDF = window.jspdf.jsPDF;
+        
         // ======== 共通変数 ========
         let selectedProduct = '';
         
@@ -1244,7 +1336,7 @@
             preview.innerHTML = html;
         }
 
-        function generateArawunoPDF() {
+        async function generateArawunoPDF() {
             const customerName = document.getElementById('customerNameArawuno').value.trim();
             if (!customerName) {
                 alert('顧客名を入力してください');
@@ -1253,8 +1345,8 @@
 
             let totalWork = workCosts.install + workCosts.water;
             let workList = [
-                { name: 'アラウーノ本体設置工事', price: workCosts.install },
-                { name: 'アラウーノ給水接続工事', price: workCosts.water }
+                { name: '本体設置工事', price: workCosts.install },
+                { name: '給水接続工事', price: workCosts.water }
             ];
 
             if (selectedData.washbasin === 'with') {
@@ -1268,199 +1360,108 @@
             }
             if (document.getElementById('work_removal').checked) {
                 totalWork += workCosts.removal;
-                workList.push({ name: '既設トイレ撤去工事', price: workCosts.removal });
+                workList.push({ name: '既設撤去工事', price: workCosts.removal });
             }
             if (document.getElementById('work_disposal').checked) {
                 totalWork += workCosts.disposal;
-                workList.push({ name: '既設トイレ処分費', price: workCosts.disposal });
+                workList.push({ name: '既設処分費', price: workCosts.disposal });
             }
 
             let totalProduct = selectedData.modelPrice + selectedData.partsCost;
             let productList = [
-                { name: `${selectedData.modelName}（${selectedData.modelCode}）`, price: selectedData.modelPrice }
+                { name: `本体：${selectedData.modelName}（${selectedData.modelCode}）`, price: selectedData.modelPrice }
             ];
 
             if (selectedData.washbasinPrice > 0) {
                 totalProduct += selectedData.washbasinPrice;
-                productList.push({ name: '手洗い器（XCH10EH）', price: selectedData.washbasinPrice });
+                productList.push({ name: '手洗い器：XCH10EH', price: selectedData.washbasinPrice });
             }
 
             if (selectedData.vSeatPrice > 0) {
                 totalProduct += selectedData.vSeatPrice;
-                productList.push({ name: `便座（${selectedData.vSeatName}）`, price: selectedData.vSeatPrice });
+                productList.push({ name: `便座：${selectedData.vSeatName}`, price: selectedData.vSeatPrice });
             }
 
-            productList.push({ name: `排水芯部品（${selectedData.drainParts}）`, price: selectedData.partsCost });
+            productList.push({ name: `排水芯部品：${selectedData.drainParts}`, price: selectedData.partsCost });
 
             const grandTotal = totalProduct + totalWork;
 
-            const pdfContent = `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <style>
-                        * { margin: 0; padding: 0; box-sizing: border-box; }
-                        body { 
-                            font-family: 'Yu Gothic', sans-serif; 
-                            padding: 15px;
-                            font-size: 11px;
-                        }
-                        .header { 
-                            text-align: center; 
-                            margin-bottom: 15px;
-                            border-bottom: 2px solid #667eea;
-                            padding-bottom: 8px;
-                        }
-                        .title { 
-                            font-size: 22px; 
-                            font-weight: bold; 
-                            margin-bottom: 5px;
-                            color: #333;
-                        }
-                        .customer { 
-                            margin-bottom: 12px;
-                            display: flex;
-                            justify-content: space-between;
-                            font-size: 12px;
-                        }
-                        .section { 
-                            margin: 12px 0;
-                        }
-                        .section-title { 
-                            background: #667eea; 
-                            color: white; 
-                            padding: 5px 8px;
-                            font-weight: bold; 
-                            margin-bottom: 5px;
-                            font-size: 12px;
-                        }
-                        table { 
-                            width: 100%; 
-                            border-collapse: collapse;
-                            margin-top: 3px;
-                        }
-                        th, td { 
-                            border: 1px solid #ccc;
-                            padding: 5px 6px;
-                            text-align: left;
-                            font-size: 11px;
-                        }
-                        th { 
-                            background: #f0f0f0;
-                            font-weight: bold;
-                        }
-                        .right { text-align: right; }
-                        .total-box {
-                            margin-top: 10px;
-                            border: 2px solid #1976d2;
-                            background: #e3f2fd;
-                            padding: 8px 12px;
-                            display: flex;
-                            justify-content: space-between;
-                            align-items: center;
-                        }
-                        .total-label {
-                            font-size: 14px;
-                            font-weight: bold;
-                            color: #1976d2;
-                        }
-                        .total-amount {
-                            font-size: 16px;
-                            font-weight: bold;
-                            color: #1976d2;
-                        }
-                        .footer {
-                            margin-top: 10px;
-                            text-align: center;
-                            font-size: 9px;
-                            color: #999;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <div class="title">お見積書</div>
+            // PDFコンテンツHTML作成
+            let productHTML = '';
+            productList.forEach(item => {
+                productHTML += `
+                    <div class="pdf-item">
+                        <span>${item.name}</span>
+                        <span>¥${item.price.toLocaleString()}</span>
                     </div>
+                `;
+            });
 
-                    <div class="customer">
+            let workHTML = '';
+            workList.forEach(work => {
+                workHTML += `
+                    <div class="pdf-item">
+                        <span>${work.name}</span>
+                        <span>¥${work.price.toLocaleString()}</span>
+                    </div>
+                `;
+            });
+
+            const pdfHTML = `
+                <div class="pdf-content" id="pdfContent">
+                    <div class="pdf-header">
+                        <div class="pdf-title">お見積書</div>
+                    </div>
+                    <div class="pdf-info">
                         <span><strong>${customerName}</strong> 様</span>
                         <span>作成日：${new Date().toLocaleDateString('ja-JP')}</span>
                     </div>
-
-                    <div class="section">
-                        <div class="section-title">商品明細</div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th style="width: 60%;">商品名</th>
-                                    <th class="right" style="width: 40%;">金額</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${productList.map(item => `
-                                    <tr>
-                                        <td>${item.name}</td>
-                                        <td class="right">¥${item.price.toLocaleString()}</td>
-                                    </tr>
-                                `).join('')}
-                                <tr style="background: #f5f5f5; font-weight: bold;">
-                                    <td>商品代 小計</td>
-                                    <td class="right">¥${totalProduct.toLocaleString()}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="pdf-section">
+                        <div class="pdf-section-title">商品明細</div>
+                        ${productHTML}
+                        <div class="pdf-subtotal">
+                            <span>商品代 小計</span>
+                            <span>¥${totalProduct.toLocaleString()}</span>
+                        </div>
                     </div>
-
-                    <div class="section">
-                        <div class="section-title">工事費明細</div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th style="width: 60%;">工事内容</th>
-                                    <th class="right" style="width: 40%;">金額</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${workList.map(work => `
-                                    <tr>
-                                        <td>${work.name}</td>
-                                        <td class="right">¥${work.price.toLocaleString()}</td>
-                                    </tr>
-                                `).join('')}
-                                <tr style="background: #f5f5f5; font-weight: bold;">
-                                    <td>工事費 小計</td>
-                                    <td class="right">¥${totalWork.toLocaleString()}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="pdf-section">
+                        <div class="pdf-section-title">工事費明細</div>
+                        ${workHTML}
+                        <div class="pdf-subtotal">
+                            <span>工事費 小計</span>
+                            <span>¥${totalWork.toLocaleString()}</span>
+                        </div>
                     </div>
-
-                    <div class="total-box">
-                        <span class="total-label">合計金額（税込）</span>
-                        <span class="total-amount">¥${grandTotal.toLocaleString()}</span>
+                    <div class="pdf-total">
+                        <span class="pdf-total-label">合計金額（税込）</span>
+                        <span class="pdf-total-amount">¥${grandTotal.toLocaleString()}</span>
                     </div>
-
-                    <div class="footer">
-                        本見積書は ${new Date().toLocaleDateString('ja-JP')} に作成されました
-                    </div>
-                </body>
-                </html>
+                </div>
             `;
 
-            const element = document.createElement('div');
-            element.innerHTML = pdfContent;
-            
-            const opt = {
-                margin: [8, 8, 8, 8],
-                filename: `アラウーノ見積書_${customerName}_${new Date().toLocaleDateString('ja-JP').replace(/\//g, '')}.pdf`,
-                image: { type: 'jpeg', quality: 0.95 },
-                html2canvas: { scale: 1.8, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: 'avoid-all' }
-            };
+            const container = document.getElementById('pdfContainer');
+            container.innerHTML = pdfHTML;
+            const element = document.getElementById('pdfContent');
 
-            html2pdf().set(opt).from(element).save();
+            const canvas = await html2canvas(element, {
+                scale: 2.5,
+                useCORS: true,
+                logging: false,
+                width: 794,
+                height: 1123,
+                windowWidth: 794,
+                windowHeight: 1123
+            });
+
+            const imgData = canvas.toDataURL('image/jpeg', 1.0);
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            
+            pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+            pdf.save('アラウーノ見積書_' + customerName + '_' + new Date().toLocaleDateString('ja-JP').replace(/\//g, '') + '.pdf');
+            
+            container.innerHTML = '';
         }
 
         // ======== LED用関数 ========
@@ -1894,7 +1895,7 @@
             showStep('step2_led');
         }
 
-        function generateLedPDF() {
+        async function generateLedPDF() {
             const customerName = document.getElementById('customerNameLed').value.trim();
             if (!customerName) {
                 alert('顧客名を入力してください');
@@ -1908,155 +1909,79 @@
 
             const grandTotal = selectedLights.reduce((sum, light) => sum + light.total, 0);
 
-            const pdfContent = `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <style>
-                        * { margin: 0; padding: 0; box-sizing: border-box; }
-                        body { 
-                            font-family: 'Yu Gothic', sans-serif; 
-                            padding: 15px;
-                            font-size: 10px;
-                        }
-                        .header { 
-                            text-align: center; 
-                            margin-bottom: 15px;
-                            border-bottom: 2px solid #667eea;
-                            padding-bottom: 8px;
-                        }
-                        .title { 
-                            font-size: 22px; 
-                            font-weight: bold; 
-                            margin-bottom: 5px;
-                            color: #333;
-                        }
-                        .customer { 
-                            margin-bottom: 12px;
-                            display: flex;
-                            justify-content: space-between;
-                            font-size: 12px;
-                        }
-                        .section { 
-                            margin: 10px 0;
-                        }
-                        .section-title { 
-                            background: #667eea; 
-                            color: white; 
-                            padding: 5px 8px;
-                            font-weight: bold; 
-                            margin-bottom: 5px;
-                            font-size: 12px;
-                        }
-                        table { 
-                            width: 100%; 
-                            border-collapse: collapse;
-                            margin-top: 3px;
-                        }
-                        th, td { 
-                            border: 1px solid #ccc;
-                            padding: 4px 5px;
-                            text-align: left;
-                            font-size: 10px;
-                        }
-                        th { 
-                            background: #f0f0f0;
-                            font-weight: bold;
-                        }
-                        .right { text-align: right; }
-                        .total-box {
-                            margin-top: 10px;
-                            border: 2px solid #1976d2;
-                            background: #e3f2fd;
-                            padding: 8px 12px;
-                            display: flex;
-                            justify-content: space-between;
-                            align-items: center;
-                        }
-                        .total-label {
-                            font-size: 14px;
-                            font-weight: bold;
-                            color: #1976d2;
-                        }
-                        .total-amount {
-                            font-size: 16px;
-                            font-weight: bold;
-                            color: #1976d2;
-                        }
-                        .footer {
-                            margin-top: 8px;
-                            text-align: center;
-                            font-size: 9px;
-                            color: #999;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <div class="title">お見積書</div>
+            // 照明リストHTML生成
+            let lightsHTML = '';
+            selectedLights.forEach((light, index) => {
+                const itemPrice = light.price * light.quantity;
+                lightsHTML += `
+                    <div class="pdf-item" style="border-bottom: none; padding-bottom: 5px;">
+                        <span><strong>${index + 1}. ${light.room}</strong></span>
+                        <span></span>
                     </div>
+                    <div class="pdf-item" style="padding-left: 30px; padding-top: 5px;">
+                        <span>${light.type}${light.code && light.code !== '-' ? '（' + light.code + '）' : ''}</span>
+                        <span></span>
+                    </div>
+                    <div class="pdf-item" style="padding-left: 30px; padding-top: 5px; padding-bottom: 5px;">
+                        <span>個数：${light.quantity}個 × ¥${light.price.toLocaleString()}</span>
+                        <span>¥${itemPrice.toLocaleString()}</span>
+                    </div>
+                    ${light.workCost > 0 ? `
+                    <div class="pdf-item" style="padding-left: 30px; padding-top: 5px;">
+                        <span>工事費</span>
+                        <span>¥${(light.workCost * light.quantity).toLocaleString()}</span>
+                    </div>
+                    ` : ''}
+                    <div class="pdf-item" style="padding-left: 30px; font-weight: 600; background: #fafafa;">
+                        <span>小計</span>
+                        <span>¥${light.total.toLocaleString()}</span>
+                    </div>
+                `;
+            });
 
-                    <div class="customer">
+            const pdfHTML = `
+                <div class="pdf-content" id="pdfContent">
+                    <div class="pdf-header">
+                        <div class="pdf-title">お見積書</div>
+                    </div>
+                    <div class="pdf-info">
                         <span><strong>${customerName}</strong> 様</span>
                         <span>作成日：${new Date().toLocaleDateString('ja-JP')}</span>
                     </div>
-
-                    <div class="section">
-                        <div class="section-title">照明明細</div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th style="width: 15%;">部屋</th>
-                                    <th style="width: 20%;">照明種</th>
-                                    <th style="width: 20%;">型番</th>
-                                    <th class="right" style="width: 8%;">個数</th>
-                                    <th class="right" style="width: 13%;">単価</th>
-                                    <th class="right" style="width: 11%;">工事費</th>
-                                    <th class="right" style="width: 13%;">小計</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${selectedLights.map(light => `
-                                    <tr>
-                                        <td>${light.room}</td>
-                                        <td>${light.type}</td>
-                                        <td>${light.code || '-'}</td>
-                                        <td class="right">${light.quantity}</td>
-                                        <td class="right">¥${light.price.toLocaleString()}</td>
-                                        <td class="right">¥${(light.workCost * light.quantity).toLocaleString()}</td>
-                                        <td class="right">¥${light.total.toLocaleString()}</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
+                    <div class="pdf-section">
+                        <div class="pdf-section-title">照明明細</div>
+                        ${lightsHTML}
                     </div>
-
-                    <div class="total-box">
-                        <span class="total-label">合計金額（税込）</span>
-                        <span class="total-amount">¥${grandTotal.toLocaleString()}</span>
+                    <div class="pdf-total">
+                        <span class="pdf-total-label">合計金額（税込）</span>
+                        <span class="pdf-total-amount">¥${grandTotal.toLocaleString()}</span>
                     </div>
-
-                    <div class="footer">
-                        本見積書は ${new Date().toLocaleDateString('ja-JP')} に作成されました
-                    </div>
-                </body>
-                </html>
+                </div>
             `;
 
-            const element = document.createElement('div');
-            element.innerHTML = pdfContent;
-            
-            const opt = {
-                margin: [8, 8, 8, 8],
-                filename: `LED照明見積書_${customerName}_${new Date().toLocaleDateString('ja-JP').replace(/\//g, '')}.pdf`,
-                image: { type: 'jpeg', quality: 0.95 },
-                html2canvas: { scale: 1.8, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: 'avoid-all' }
-            };
+            const container = document.getElementById('pdfContainer');
+            container.innerHTML = pdfHTML;
+            const element = document.getElementById('pdfContent');
 
-            html2pdf().set(opt).from(element).save();
+            const canvas = await html2canvas(element, {
+                scale: 2.5,
+                useCORS: true,
+                logging: false,
+                width: 794,
+                height: 1123,
+                windowWidth: 794,
+                windowHeight: 1123
+            });
+
+            const imgData = canvas.toDataURL('image/jpeg', 1.0);
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            
+            pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+            pdf.save('LED照明見積書_' + customerName + '_' + new Date().toLocaleDateString('ja-JP').replace(/\//g, '') + '.pdf');
+            
+            container.innerHTML = '';
         }
     </script>
 </body>
