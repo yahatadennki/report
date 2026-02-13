@@ -1300,38 +1300,40 @@
                 <head>
                     <meta charset="UTF-8">
                     <style>
-                        body { font-family: 'Yu Gothic', sans-serif; padding: 40px; }
-                        .header { text-align: center; margin-bottom: 40px; }
-                        .title { font-size: 28px; font-weight: bold; margin-bottom: 10px; }
-                        .customer { margin-bottom: 30px; }
-                        .customer-line { margin: 8px 0; font-size: 14px; }
-                        .section { margin: 30px 0; }
+                        body { font-family: 'Yu Gothic', sans-serif; padding: 30px; }
+                        .header { text-align: center; margin-bottom: 25px; }
+                        .title { font-size: 26px; font-weight: bold; margin-bottom: 8px; }
+                        .customer { margin-bottom: 20px; }
+                        .customer-line { margin: 5px 0; font-size: 13px; }
+                        .section { margin: 20px 0; }
                         .section-title { 
                             background: #667eea; 
                             color: white; 
-                            padding: 10px; 
+                            padding: 8px; 
                             font-weight: bold; 
-                            margin-bottom: 15px;
+                            margin-bottom: 10px;
+                            font-size: 14px;
                         }
-                        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 8px; }
                         th, td { 
                             border: 1px solid #ddd; 
-                            padding: 12px; 
+                            padding: 8px; 
                             text-align: left;
+                            font-size: 12px;
                         }
                         th { background: #f5f5f5; font-weight: bold; }
                         .right { text-align: right; }
-                        .total-section { margin-top: 20px; }
+                        .total-section { margin-top: 15px; }
                         .total-row { 
                             display: flex; 
                             justify-content: space-between; 
-                            padding: 12px; 
+                            padding: 10px; 
                             border-bottom: 1px solid #ddd;
                         }
                         .total-row.grand { 
                             border-top: 3px solid #333; 
-                            padding-top: 15px;
-                            font-size: 20px; 
+                            padding-top: 12px;
+                            font-size: 18px; 
                             font-weight: bold; 
                             background: #e3f2fd;
                             color: #1976d2;
@@ -1405,7 +1407,7 @@
                         </div>
                     </div>
 
-                    <div style="margin-top: 50px; font-size: 11px; color: #666; text-align: center;">
+                    <div style="margin-top: 20px; font-size: 10px; color: #999; text-align: center;">
                         本見積書は ${new Date().toLocaleDateString('ja-JP')} に作成されました
                     </div>
                 </body>
@@ -1416,11 +1418,12 @@
             element.innerHTML = pdfContent;
             
             const opt = {
-                margin: 10,
+                margin: [10, 10, 10, 10],
                 filename: `アラウーノ見積書_${customerName}_${new Date().toLocaleDateString('ja-JP').replace(/\//g, '')}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                html2canvas: { scale: 2, letterRendering: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
             };
 
             html2pdf().set(opt).from(element).save();
@@ -1877,38 +1880,39 @@
                 <head>
                     <meta charset="UTF-8">
                     <style>
-                        body { font-family: 'Yu Gothic', sans-serif; padding: 40px; }
-                        .header { text-align: center; margin-bottom: 40px; }
-                        .title { font-size: 28px; font-weight: bold; margin-bottom: 10px; }
-                        .customer { margin-bottom: 30px; }
-                        .customer-line { margin: 8px 0; font-size: 14px; }
-                        .section { margin: 30px 0; }
+                        body { font-family: 'Yu Gothic', sans-serif; padding: 30px; }
+                        .header { text-align: center; margin-bottom: 25px; }
+                        .title { font-size: 26px; font-weight: bold; margin-bottom: 8px; }
+                        .customer { margin-bottom: 20px; }
+                        .customer-line { margin: 5px 0; font-size: 13px; }
+                        .section { margin: 20px 0; }
                         .section-title { 
                             background: #667eea; 
                             color: white; 
-                            padding: 10px; 
+                            padding: 8px; 
                             font-weight: bold; 
-                            margin-bottom: 15px;
+                            margin-bottom: 10px;
+                            font-size: 14px;
                         }
-                        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 8px; }
                         th, td { 
                             border: 1px solid #ddd; 
-                            padding: 10px; 
+                            padding: 8px; 
                             text-align: left;
-                            font-size: 12px;
+                            font-size: 11px;
                         }
                         th { background: #f5f5f5; font-weight: bold; }
                         .right { text-align: right; }
-                        .total-section { margin-top: 20px; }
+                        .total-section { margin-top: 15px; }
                         .total-row { 
                             display: flex; 
                             justify-content: space-between; 
-                            padding: 12px; 
+                            padding: 10px; 
                             border-bottom: 1px solid #ddd;
                         }
                         .total-row.grand { 
                             border-top: 3px solid #333; 
-                            padding-top: 15px;
+                            padding-top: 12px;
                             font-size: 18px; 
                             font-weight: bold; 
                             background: #e3f2fd;
@@ -1965,7 +1969,7 @@
                         </div>
                     </div>
 
-                    <div style="margin-top: 50px; font-size: 11px; color: #666; text-align: center;">
+                    <div style="margin-top: 20px; font-size: 10px; color: #999; text-align: center;">
                         本見積書は ${new Date().toLocaleDateString('ja-JP')} に作成されました
                     </div>
                 </body>
@@ -1976,11 +1980,12 @@
             element.innerHTML = pdfContent;
             
             const opt = {
-                margin: 10,
+                margin: [10, 10, 10, 10],
                 filename: `LED照明見積書_${customerName}_${new Date().toLocaleDateString('ja-JP').replace(/\//g, '')}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                html2canvas: { scale: 2, letterRendering: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
             };
 
             html2pdf().set(opt).from(element).save();
