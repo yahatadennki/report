@@ -106,6 +106,10 @@
             background: #e8eeff;
         }
 
+        .option-card input[type="radio"] {
+            margin-right: 10px;
+        }
+
         .option-title {
             font-weight: 600;
             color: #333;
@@ -116,6 +120,13 @@
             color: #888;
             font-size: 13px;
             margin-top: 3px;
+        }
+
+        .option-price {
+            color: #2196F3;
+            margin-top: 5px;
+            font-size: 15px;
+            font-weight: 600;
         }
 
         .product-selection {
@@ -159,6 +170,36 @@
             margin-top: 10px;
             color: #888;
             font-size: 14px;
+        }
+
+        .checkbox-group {
+            margin: 10px 0;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .checkbox-group label:hover {
+            border-color: #667eea;
+            background: #f5f7ff;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+        }
+
+        .checkbox-group input[type="checkbox"]:disabled {
+            opacity: 0.5;
         }
 
         .button-group {
@@ -374,6 +415,205 @@
             </div>
         </div>
 
+        <!-- ====== アラウーノのフロー ====== -->
+
+        <!-- ステップ1: アラウーノ機種選択 -->
+        <div class="step" id="step1_arawuno">
+            <div class="step-indicator">ステップ 2/6 - 機種を選択してください</div>
+            
+            <div class="form-group">
+                <div class="option-card" onclick="selectModel('arawuno')">
+                    <input type="radio" name="model" value="arawuno" id="model_arawuno">
+                    <label for="model_arawuno">
+                        <div class="option-title">アラウーノ</div>
+                        <div class="option-subtitle">CH150CWSK</div>
+                        <div class="option-price">¥313,800</div>
+                    </label>
+                </div>
+                <div class="option-card" onclick="selectModel('arawunoS')">
+                    <input type="radio" name="model" value="arawunoS" id="model_arawunoS">
+                    <label for="model_arawunoS">
+                        <div class="option-title">アラウーノS</div>
+                        <div class="option-subtitle">CH1601WSK</div>
+                        <div class="option-price">¥207,500</div>
+                    </label>
+                </div>
+                <div class="option-card" onclick="selectModel('arawunoV')">
+                    <input type="radio" name="model" value="arawunoV" id="model_arawunoV">
+                    <label for="model_arawunoV">
+                        <div class="option-title">アラウーノV</div>
+                        <div class="option-subtitle">手洗い・便座を次のステップで選択</div>
+                        <div class="option-price">¥100,000～</div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-back" onclick="goBackToStep0()">戻る</button>
+                <button class="btn-next" onclick="goToStep2_arawuno()">次へ</button>
+            </div>
+        </div>
+
+        <!-- ステップ2: アラウーノオプション選択 -->
+        <div class="step" id="step2_arawuno">
+            <div class="step-indicator">ステップ 3/6 - オプションを選択してください</div>
+            
+            <!-- アラウーノ・アラウーノS用 -->
+            <div id="options_arawuno_s" style="display:none;">
+                <div class="form-group">
+                    <label>手洗い器の有無</label>
+                    <div class="option-card" onclick="selectWashbasin('none')">
+                        <input type="radio" name="washbasin" value="none" id="washbasin_none">
+                        <label for="washbasin_none">
+                            <div class="option-title">トイレのみ（標準）</div>
+                            <div class="option-price">追加費用なし</div>
+                        </label>
+                    </div>
+                    <div class="option-card" onclick="selectWashbasin('with')">
+                        <input type="radio" name="washbasin" value="with" id="washbasin_with">
+                        <label for="washbasin_with">
+                            <div class="option-title">手洗い器有（連動）</div>
+                            <div class="option-subtitle">XCH10EH</div>
+                            <div class="option-price">本体 ¥55,000 + 取付工事 ¥11,000</div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- アラウーノV用 -->
+            <div id="options_arawunoV" style="display:none;">
+                <div class="form-group">
+                    <label>手洗いの有無</label>
+                    <div class="option-card" onclick="selectVWashbasin('without')">
+                        <input type="radio" name="v_washbasin" value="without" id="v_washbasin_without">
+                        <label for="v_washbasin_without">
+                            <div class="option-title">手洗い無</div>
+                            <div class="option-subtitle">CH3010WS</div>
+                            <div class="option-price">¥100,000</div>
+                        </label>
+                    </div>
+                    <div class="option-card" onclick="selectVWashbasin('with')">
+                        <input type="radio" name="v_washbasin" value="with" id="v_washbasin_with">
+                        <label for="v_washbasin_with">
+                            <div class="option-title">手洗い有</div>
+                            <div class="option-subtitle">CH3010WST</div>
+                            <div class="option-price">¥111,700</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group" id="v_seat_selection" style="display:none;">
+                    <label>便座を選択してください</label>
+                    <div class="option-card" onclick="selectVSeat('premium')">
+                        <input type="radio" name="v_seat" value="premium" id="v_seat_premium">
+                        <label for="v_seat_premium">
+                            <div class="option-title">快適機能（一体型）</div>
+                            <div class="option-price">+¥82,500</div>
+                        </label>
+                    </div>
+                    <div class="option-card" onclick="selectVSeat('standard')">
+                        <input type="radio" name="v_seat" value="standard" id="v_seat_standard">
+                        <label for="v_seat_standard">
+                            <div class="option-title">標準機能（一体型）</div>
+                            <div class="option-price">+¥65,800</div>
+                        </label>
+                    </div>
+                    <div class="option-card" onclick="selectVSeat('basic')">
+                        <input type="radio" name="v_seat" value="basic" id="v_seat_basic">
+                        <label for="v_seat_basic">
+                            <div class="option-title">基本機能</div>
+                            <div class="option-price">+¥52,500</div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-back" onclick="goBackToStep1_arawuno()">戻る</button>
+                <button class="btn-next" onclick="goToStep3_arawuno()">次へ</button>
+            </div>
+        </div>
+
+        <!-- ステップ3: 排水芯選択 -->
+        <div class="step" id="step3_arawuno">
+            <div class="step-indicator">ステップ 4/6 - 排水芯を選択してください</div>
+            
+            <div class="form-group">
+                <label>床排水 - 排水芯を選んでください</label>
+                <div class="option-card" onclick="selectDrain('120-200')">
+                    <input type="radio" name="drain" value="120-200" id="drain_120">
+                    <label for="drain_120">
+                        <div class="option-title">排水芯 120～200mm</div>
+                        <div class="option-price" id="price_120">部品代: ¥11,000</div>
+                    </label>
+                </div>
+                <div class="option-card" onclick="selectDrain('305-510')">
+                    <input type="radio" name="drain" value="305-510" id="drain_305">
+                    <label for="drain_305">
+                        <div class="option-title">排水芯 305～510mm</div>
+                        <div class="option-price" id="price_305">部品代: ¥22,000</div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-back" onclick="goBackToStep2_arawuno()">戻る</button>
+                <button class="btn-next" onclick="goToStep4_arawuno()">次へ</button>
+            </div>
+        </div>
+
+        <!-- ステップ4: 工事内容選択 -->
+        <div class="step" id="step4_arawuno">
+            <div class="step-indicator">ステップ 5/6 - 必要な工事を選択してください</div>
+            
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" id="work_install" checked disabled>
+                    <span>アラウーノ本体設置工事 ¥19,800（必須）</span>
+                </label>
+                <label>
+                    <input type="checkbox" id="work_water" checked disabled>
+                    <span>アラウーノ給水接続工事 ¥6,600（必須）</span>
+                </label>
+                <label>
+                    <input type="checkbox" id="work_flange" onchange="updateWorkSelection()">
+                    <span>フランジ交換工事 ¥8,800</span>
+                </label>
+                <label>
+                    <input type="checkbox" id="work_removal" onchange="updateWorkSelection()">
+                    <span>既設トイレ撤去工事 ¥6,600</span>
+                </label>
+                <label>
+                    <input type="checkbox" id="work_disposal" onchange="updateWorkSelection()">
+                    <span>既設トイレ処分費 ¥5,500</span>
+                </label>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-back" onclick="goBackToStep3_arawuno()">戻る</button>
+                <button class="btn-next" onclick="goToStep5_arawuno()">次へ</button>
+            </div>
+        </div>
+
+        <!-- ステップ5: 確認・顧客名入力 -->
+        <div class="step" id="step5_arawuno">
+            <div class="step-indicator">ステップ 6/6 - 内容確認と顧客名入力</div>
+            
+            <div class="form-group">
+                <label for="customerNameArawuno">顧客名 *</label>
+                <input type="text" id="customerNameArawuno" placeholder="例：山田太郎" required>
+            </div>
+
+            <div class="preview" id="previewArawuno">
+                <!-- プレビューがここに表示されます -->
+            </div>
+
+            <div class="button-group">
+                <button class="btn-back" onclick="goBackToStep4_arawuno()">戻る</button>
+            </div>
+            <button class="btn-generate" onclick="generateArawunoPDF()">📄 見積書PDF生成</button>
+        </div>
+
         <!-- ====== LED照明のフロー ====== -->
 
         <!-- ステップ1: 照明器具 or 電球 -->
@@ -554,8 +794,8 @@
             <div class="step-indicator">最終確認 - 顧客名を入力して見積書を生成</div>
             
             <div class="form-group">
-                <label for="customerName">顧客名 *</label>
-                <input type="text" id="customerName" placeholder="例：山田太郎" required>
+                <label for="customerNameLed">顧客名 *</label>
+                <input type="text" id="customerNameLed" placeholder="例：山田太郎" required>
             </div>
 
             <div class="preview" id="finalPreview"></div>
@@ -565,20 +805,88 @@
             </div>
             <button class="btn-generate" onclick="generateLedPDF()">📄 見積書PDF生成</button>
         </div>
-
-        <!-- ====== アラウーノのフロー（既存）簡略版 ====== -->
-        <div class="step" id="arawunoPlaceholder" style="text-align: center; color: #999; padding: 50px 0;">
-            <p>アラウーノの見積書機能は準備中です</p>
-            <button class="btn-back" onclick="goBackToStep0()" style="margin-top: 20px;">戻る</button>
-        </div>
     </div>
 
     <script>
+        // ======== 共通変数 ========
         let selectedProduct = '';
+        
+        // ======== アラウーノ用変数 ========
+        let selectedData = {
+            model: '',
+            modelName: '',
+            modelCode: '',
+            modelPrice: 0,
+            washbasin: '',
+            washbasinPrice: 0,
+            washbasinWorkPrice: 0,
+            vWashbasin: '',
+            vWashbasinCode: '',
+            vWashbasinPrice: 0,
+            vSeat: '',
+            vSeatName: '',
+            vSeatPrice: 0,
+            drain: '',
+            drainParts: '',
+            partsCost: 0
+        };
+
+        const modelData = {
+            'arawuno': {
+                name: 'アラウーノ',
+                code: 'CH150CWSK',
+                price: 313800
+            },
+            'arawunoS': {
+                name: 'アラウーノS',
+                code: 'CH1601WSK',
+                price: 207500
+            },
+            'arawunoV': {
+                name: 'アラウーノV',
+                code: '',
+                price: 0
+            }
+        };
+
+        const vWashbasinData = {
+            'without': { code: 'CH3010WS', price: 100000 },
+            'with': { code: 'CH3010WST', price: 111700 }
+        };
+
+        const vSeatData = {
+            'premium': { name: '快適機能（一体型）', price: 82500 },
+            'standard': { name: '標準機能（一体型）', price: 65800 },
+            'basic': { name: '基本機能', price: 52500 }
+        };
+
+        const partsData = {
+            'arawuno': {
+                '120-200': { code: 'CH150F', price: 11000 },
+                '305-510': { code: 'CH150FW', price: 22000 }
+            },
+            'arawunoS': {
+                '120-200': { code: 'CH160F', price: 11000 },
+                '305-510': { code: 'CH160FW', price: 22000 }
+            },
+            'arawunoV': {
+                '120-200': { code: 'CH301F', price: 11000 },
+                '305-510': { code: 'CH301FW', price: 22000 }
+            }
+        };
+
+        const workCosts = {
+            install: 19800,
+            water: 6600,
+            flange: 8800,
+            removal: 6600,
+            disposal: 5500
+        };
+
+        // ======== LED用変数 ========
         let selectedLedType = '';
         let selectedLights = [];
 
-        // LED照明のデータ
         const ledData = {
             fixture: {
                 '居室': {
@@ -633,6 +941,7 @@
             }
         };
 
+        // ======== 共通関数 ========
         function selectProduct(product) {
             selectedProduct = product;
             document.querySelectorAll('.product-card').forEach(card => {
@@ -648,10 +957,10 @@
             }
 
             showStep('step0');
-            if (selectedProduct === 'led') {
+            if (selectedProduct === 'arawuno') {
+                showStep('step1_arawuno');
+            } else if (selectedProduct === 'led') {
                 showStep('step1_led');
-            } else {
-                showStep('arawunoPlaceholder');
             }
         }
 
@@ -665,6 +974,459 @@
             showStep('step0');
         }
 
+        function showStep(stepId) {
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active');
+            });
+            document.getElementById(stepId).classList.add('active');
+        }
+
+        // ======== アラウーノ用関数 ========
+        function selectModel(model) {
+            selectedData.model = model;
+            selectedData.modelName = modelData[model].name;
+            selectedData.modelCode = modelData[model].code;
+            selectedData.modelPrice = modelData[model].price;
+            
+            selectedData.washbasin = '';
+            selectedData.vWashbasin = '';
+            selectedData.vSeat = '';
+            
+            document.getElementById('model_' + model).checked = true;
+            document.querySelectorAll('#step1_arawuno .option-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+        }
+
+        function goToStep2_arawuno() {
+            if (!selectedData.model) {
+                alert('機種を選択してください');
+                return;
+            }
+            
+            if (selectedData.model === 'arawunoV') {
+                document.getElementById('options_arawuno_s').style.display = 'none';
+                document.getElementById('options_arawunoV').style.display = 'block';
+            } else {
+                document.getElementById('options_arawuno_s').style.display = 'block';
+                document.getElementById('options_arawunoV').style.display = 'none';
+            }
+            
+            showStep('step1_arawuno');
+            showStep('step2_arawuno');
+        }
+
+        function selectWashbasin(type) {
+            selectedData.washbasin = type;
+            if (type === 'none') {
+                selectedData.washbasinPrice = 0;
+                selectedData.washbasinWorkPrice = 0;
+            } else {
+                selectedData.washbasinPrice = 55000;
+                selectedData.washbasinWorkPrice = 11000;
+            }
+            
+            document.getElementById('washbasin_' + type).checked = true;
+            document.querySelectorAll('#options_arawuno_s .option-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+        }
+
+        function selectVWashbasin(type) {
+            selectedData.vWashbasin = type;
+            selectedData.vWashbasinCode = vWashbasinData[type].code;
+            selectedData.vWashbasinPrice = vWashbasinData[type].price;
+            
+            selectedData.modelCode = vWashbasinData[type].code;
+            selectedData.modelPrice = vWashbasinData[type].price;
+            
+            document.getElementById('v_washbasin_' + type).checked = true;
+            document.querySelectorAll('#options_arawunoV .option-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            document.getElementById('v_seat_selection').style.display = 'block';
+        }
+
+        function selectVSeat(type) {
+            selectedData.vSeat = type;
+            selectedData.vSeatName = vSeatData[type].name;
+            selectedData.vSeatPrice = vSeatData[type].price;
+            
+            document.getElementById('v_seat_' + type).checked = true;
+            document.querySelectorAll('#v_seat_selection .option-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+        }
+
+        function selectDrain(drain) {
+            selectedData.drain = drain;
+            const parts = partsData[selectedData.model][drain];
+            selectedData.drainParts = parts.code;
+            selectedData.partsCost = parts.price;
+            
+            document.getElementById('drain_' + drain.split('-')[0]).checked = true;
+            document.querySelectorAll('#step3_arawuno .option-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+        }
+
+        function goToStep3_arawuno() {
+            if (selectedData.model === 'arawunoV') {
+                if (!selectedData.vWashbasin) {
+                    alert('手洗いの有無を選択してください');
+                    return;
+                }
+                if (!selectedData.vSeat) {
+                    alert('便座を選択してください');
+                    return;
+                }
+            } else {
+                if (!selectedData.washbasin) {
+                    alert('手洗い器の有無を選択してください');
+                    return;
+                }
+            }
+            
+            showStep('step2_arawuno');
+            showStep('step3_arawuno');
+        }
+
+        function goBackToStep2_arawuno() {
+            showStep('step3_arawuno');
+            showStep('step2_arawuno');
+        }
+
+        function goBackToStep1_arawuno() {
+            showStep('step2_arawuno');
+            showStep('step1_arawuno');
+        }
+
+        function goToStep4_arawuno() {
+            if (!selectedData.drain) {
+                alert('排水芯を選択してください');
+                return;
+            }
+            showStep('step3_arawuno');
+            showStep('step4_arawuno');
+        }
+
+        function goBackToStep3_arawuno() {
+            showStep('step4_arawuno');
+            showStep('step3_arawuno');
+        }
+
+        function goToStep5_arawuno() {
+            updateArawunoPreview();
+            showStep('step4_arawuno');
+            showStep('step5_arawuno');
+        }
+
+        function goBackToStep4_arawuno() {
+            showStep('step5_arawuno');
+            showStep('step4_arawuno');
+        }
+
+        function updateWorkSelection() {
+            if (document.getElementById('step5_arawuno').classList.contains('active')) {
+                updateArawunoPreview();
+            }
+        }
+
+        function updateArawunoPreview() {
+            const preview = document.getElementById('previewArawuno');
+            
+            let totalWork = workCosts.install + workCosts.water;
+            let workList = [
+                { name: 'アラウーノ本体設置工事', price: workCosts.install },
+                { name: 'アラウーノ給水接続工事', price: workCosts.water }
+            ];
+
+            if (selectedData.washbasin === 'with') {
+                totalWork += selectedData.washbasinWorkPrice;
+                workList.push({ name: '手洗い器取付工事', price: selectedData.washbasinWorkPrice });
+            }
+
+            if (document.getElementById('work_flange').checked) {
+                totalWork += workCosts.flange;
+                workList.push({ name: 'フランジ交換工事', price: workCosts.flange });
+            }
+            if (document.getElementById('work_removal').checked) {
+                totalWork += workCosts.removal;
+                workList.push({ name: '既設トイレ撤去工事', price: workCosts.removal });
+            }
+            if (document.getElementById('work_disposal').checked) {
+                totalWork += workCosts.disposal;
+                workList.push({ name: '既設トイレ処分費', price: workCosts.disposal });
+            }
+
+            let totalProduct = selectedData.modelPrice + selectedData.partsCost;
+            if (selectedData.washbasinPrice > 0) {
+                totalProduct += selectedData.washbasinPrice;
+            }
+            if (selectedData.vSeatPrice > 0) {
+                totalProduct += selectedData.vSeatPrice;
+            }
+
+            const grandTotal = totalProduct + totalWork;
+
+            let html = `<div class="preview-title">見積内容</div>`;
+            
+            html += `<div class="preview-section">
+                <div class="preview-section-title">機種情報</div>
+                <div class="preview-row">
+                    <span class="preview-label">機種</span>
+                    <span class="preview-value">${selectedData.modelName}</span>
+                </div>
+                <div class="preview-row">
+                    <span class="preview-label">型番</span>
+                    <span class="preview-value">${selectedData.modelCode}</span>
+                </div>
+                <div class="preview-row">
+                    <span class="preview-label">本体価格</span>
+                    <span class="preview-value">¥${selectedData.modelPrice.toLocaleString()}</span>
+                </div>`;
+
+            if (selectedData.model !== 'arawunoV' && selectedData.washbasin === 'with') {
+                html += `<div class="preview-row">
+                    <span class="preview-label">手洗い器（XCH10EH）</span>
+                    <span class="preview-value">¥${selectedData.washbasinPrice.toLocaleString()}</span>
+                </div>`;
+            }
+
+            if (selectedData.model === 'arawunoV') {
+                html += `<div class="preview-row">
+                    <span class="preview-label">便座（${selectedData.vSeatName}）</span>
+                    <span class="preview-value">¥${selectedData.vSeatPrice.toLocaleString()}</span>
+                </div>`;
+            }
+
+            html += `</div>`;
+
+            html += `<div class="preview-section">
+                <div class="preview-section-title">排水芯部品</div>
+                <div class="preview-row">
+                    <span class="preview-label">排水芯</span>
+                    <span class="preview-value">${selectedData.drain}mm</span>
+                </div>
+                <div class="preview-row">
+                    <span class="preview-label">部品型番</span>
+                    <span class="preview-value">${selectedData.drainParts}</span>
+                </div>
+                <div class="preview-row">
+                    <span class="preview-label">部品代</span>
+                    <span class="preview-value">¥${selectedData.partsCost.toLocaleString()}</span>
+                </div>
+            </div>`;
+
+            html += `<div class="preview-section">
+                <div class="preview-section-title">工事内容</div>`;
+            
+            workList.forEach(work => {
+                html += `<div class="preview-row">
+                    <span class="preview-label">${work.name}</span>
+                    <span class="preview-value">¥${work.price.toLocaleString()}</span>
+                </div>`;
+            });
+
+            html += `</div>`;
+
+            html += `<div class="total-row">
+                <span>合計金額（税込）</span>
+                <span>¥${grandTotal.toLocaleString()}</span>
+            </div>`;
+
+            preview.innerHTML = html;
+        }
+
+        function generateArawunoPDF() {
+            const customerName = document.getElementById('customerNameArawuno').value.trim();
+            if (!customerName) {
+                alert('顧客名を入力してください');
+                return;
+            }
+
+            let totalWork = workCosts.install + workCosts.water;
+            let workList = [
+                { name: 'アラウーノ本体設置工事', price: workCosts.install },
+                { name: 'アラウーノ給水接続工事', price: workCosts.water }
+            ];
+
+            if (selectedData.washbasin === 'with') {
+                totalWork += selectedData.washbasinWorkPrice;
+                workList.push({ name: '手洗い器取付工事', price: selectedData.washbasinWorkPrice });
+            }
+
+            if (document.getElementById('work_flange').checked) {
+                totalWork += workCosts.flange;
+                workList.push({ name: 'フランジ交換工事', price: workCosts.flange });
+            }
+            if (document.getElementById('work_removal').checked) {
+                totalWork += workCosts.removal;
+                workList.push({ name: '既設トイレ撤去工事', price: workCosts.removal });
+            }
+            if (document.getElementById('work_disposal').checked) {
+                totalWork += workCosts.disposal;
+                workList.push({ name: '既設トイレ処分費', price: workCosts.disposal });
+            }
+
+            let totalProduct = selectedData.modelPrice + selectedData.partsCost;
+            let productList = [
+                { name: `${selectedData.modelName}（${selectedData.modelCode}）`, price: selectedData.modelPrice }
+            ];
+
+            if (selectedData.washbasinPrice > 0) {
+                totalProduct += selectedData.washbasinPrice;
+                productList.push({ name: '手洗い器（XCH10EH）', price: selectedData.washbasinPrice });
+            }
+
+            if (selectedData.vSeatPrice > 0) {
+                totalProduct += selectedData.vSeatPrice;
+                productList.push({ name: `便座（${selectedData.vSeatName}）`, price: selectedData.vSeatPrice });
+            }
+
+            productList.push({ name: `排水芯部品（${selectedData.drainParts}）`, price: selectedData.partsCost });
+
+            const grandTotal = totalProduct + totalWork;
+
+            const pdfContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <style>
+                        body { font-family: 'Yu Gothic', sans-serif; padding: 40px; }
+                        .header { text-align: center; margin-bottom: 40px; }
+                        .title { font-size: 28px; font-weight: bold; margin-bottom: 10px; }
+                        .customer { margin-bottom: 30px; }
+                        .customer-line { margin: 8px 0; font-size: 14px; }
+                        .section { margin: 30px 0; }
+                        .section-title { 
+                            background: #667eea; 
+                            color: white; 
+                            padding: 10px; 
+                            font-weight: bold; 
+                            margin-bottom: 15px;
+                        }
+                        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                        th, td { 
+                            border: 1px solid #ddd; 
+                            padding: 12px; 
+                            text-align: left;
+                        }
+                        th { background: #f5f5f5; font-weight: bold; }
+                        .right { text-align: right; }
+                        .total-section { margin-top: 20px; }
+                        .total-row { 
+                            display: flex; 
+                            justify-content: space-between; 
+                            padding: 12px; 
+                            border-bottom: 1px solid #ddd;
+                        }
+                        .total-row.grand { 
+                            border-top: 3px solid #333; 
+                            padding-top: 15px;
+                            font-size: 20px; 
+                            font-weight: bold; 
+                            background: #e3f2fd;
+                            color: #1976d2;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <div class="title">お見積書</div>
+                    </div>
+
+                    <div class="customer">
+                        <div class="customer-line">${customerName} 様</div>
+                        <div class="customer-line">作成日：${new Date().toLocaleDateString('ja-JP')}</div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">商品明細</div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>商品名</th>
+                                    <th class="right">金額</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${productList.map(item => `
+                                    <tr>
+                                        <td>${item.name}</td>
+                                        <td class="right">¥${item.price.toLocaleString()}</td>
+                                    </tr>
+                                `).join('')}
+                                <tr style="background: #f5f5f5; font-weight: bold;">
+                                    <td>商品代 小計</td>
+                                    <td class="right">¥${totalProduct.toLocaleString()}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">工事費明細</div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>工事内容</th>
+                                    <th class="right">金額</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${workList.map(work => `
+                                    <tr>
+                                        <td>${work.name}</td>
+                                        <td class="right">¥${work.price.toLocaleString()}</td>
+                                    </tr>
+                                `).join('')}
+                                <tr style="background: #f5f5f5; font-weight: bold;">
+                                    <td>工事費 小計</td>
+                                    <td class="right">¥${totalWork.toLocaleString()}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="section">
+                        <div class="total-section">
+                            <div class="total-row grand">
+                                <span>合計金額（税込）</span>
+                                <span>¥${grandTotal.toLocaleString()}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 50px; font-size: 11px; color: #666; text-align: center;">
+                        本見積書は ${new Date().toLocaleDateString('ja-JP')} に作成されました
+                    </div>
+                </body>
+                </html>
+            `;
+
+            const element = document.createElement('div');
+            element.innerHTML = pdfContent;
+            
+            const opt = {
+                margin: 10,
+                filename: `アラウーノ見積書_${customerName}_${new Date().toLocaleDateString('ja-JP').replace(/\//g, '')}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+        }
+
+        // ======== LED用関数 ========
         function selectLedType(type) {
             selectedLedType = type;
             document.querySelectorAll('#step1_led .option-card').forEach(card => {
@@ -755,7 +1517,6 @@
             ballWattageDiv.style.display = 'none';
 
             if (base === 'E17') {
-                // E17は通常電球のみ
                 wattageDiv.style.display = 'block';
                 wattSelect.innerHTML = '<option value="">-- 選択してください --</option>';
                 
@@ -768,7 +1529,6 @@
                     });
                 }
             } else if (base === 'E26') {
-                // E26は通常電球とボール電球を選択可能
                 typeDiv.style.display = 'block';
             }
         }
@@ -800,7 +1560,7 @@
             }
         }
 
-        function resetForm() {
+        function resetLedForm() {
             document.getElementById('lightQuantity').value = '1';
             document.getElementById('roomDescription').value = '';
             document.getElementById('fixtureCategory').value = '';
@@ -927,7 +1687,6 @@
                 }
 
                 if (base === 'E17') {
-                    // E17は通常電球のみ
                     const watt = document.getElementById('bulbWatt').value;
                     if (!watt) {
                         alert('ワット数を選択してください');
@@ -938,7 +1697,6 @@
                     lightData.model = `${base} ${watt} (${color})`;
                     lightData.price = data.price;
                 } else {
-                    // E26は通常電球とボール電球を選択可能
                     const type = document.getElementById('bulbTypeOption').value;
                     if (!type) {
                         alert('電球の種類を選択してください');
@@ -974,7 +1732,7 @@
             lightData.total = (lightData.price + lightData.workCost) * quantity;
             selectedLights.push(lightData);
 
-            resetForm();
+            resetLedForm();
             updateAddedLightsPreview();
             showStep('step2_led');
             showStep('step3_led');
@@ -1030,7 +1788,7 @@
                 card.classList.remove('selected');
             });
             
-            resetForm();
+            resetLedForm();
             showStep('step3_led');
             showStep('step1_led');
         }
@@ -1100,7 +1858,7 @@
         }
 
         function generateLedPDF() {
-            const customerName = document.getElementById('customerName').value.trim();
+            const customerName = document.getElementById('customerNameLed').value.trim();
             if (!customerName) {
                 alert('顧客名を入力してください');
                 return;
@@ -1165,7 +1923,7 @@
 
                     <div class="customer">
                         <div class="customer-line">${customerName} 様</div>
-                        <div class="customer-line">作成日:${new Date().toLocaleDateString('ja-JP')}</div>
+                        <div class="customer-line">作成日：${new Date().toLocaleDateString('ja-JP')}</div>
                     </div>
 
                     <div class="section">
@@ -1226,13 +1984,6 @@
             };
 
             html2pdf().set(opt).from(element).save();
-        }
-
-        function showStep(stepId) {
-            document.querySelectorAll('.step').forEach(step => {
-                step.classList.remove('active');
-            });
-            document.getElementById(stepId).classList.add('active');
         }
     </script>
 </body>
