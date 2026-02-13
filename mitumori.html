@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>見積書作成ツール</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Yu Gothic', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        .step-indicator {
+            background: #e3f2fd;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+            color: #1976d2;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .option-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option-card:hover {
+            border-color: #667eea;
+            background: #f5f7ff;
+        }
+
+        .option-card.selected {
+            border-color: #667eea;
+            background: #e8eeff;
+        }
+
+        .option-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .option-subtitle {
+            color: #888;
+            font-size: 13px;
+            margin-top: 3px;
+        }
+
+        .option-price {
+            color: #2196F3;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        .product-selection {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .product-card {
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .product-card:hover {
+            border-color: #667eea;
+            background: #f5f7ff;
+        }
+
+        .product-card.selected {
+            border-color: #667eea;
+            background: #e8eeff;
+        }
+
+        .product-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .product-name {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .btn-back {
+            flex: 1;
+            padding: 14px;
+            background: #999;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn-next {
+            flex: 2;
+            padding: 14px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-generate {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .preview {
+            background: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .preview-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📋 見積書作成ツール</h1>
+
+        <!-- ステップ0: 製品選択 -->
+        <div class="step active" id="step0">
+            <div class="step-indicator">製品を選択してください</div>
+            
+            <div class="product-selection">
+                <div class="product-card" onclick="selectProduct('arawuno')">
+                    <div class="product-icon">🚽</div>
+                    <div class="product-name">アラウーノ</div>
+                </div>
+                <div class="product-card" onclick="selectProduct('led')">
+                    <div class="product-icon">💡</div>
+                    <div class="product-name">LED照明</div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-next" style="flex: 1;" onclick="goToStep1()">次へ</button>
+            </div>
+        </div>
+
+        <!-- アラウーノステップ -->
+        <div class="step" id="step_arawuno">
+            <div class="step-indicator">アラウーノ見積書作成</div>
+            
+            <div class="form-group">
+                <label>顧客名</label>
+                <input type="text" id="customerNameArawuno" placeholder="例：山田太郎">
+            </div>
+
+            <div class="form-group">
+                <label>機種</label>
+                <select id="arawunoModel">
+                    <option value="arawuno:313800">アラウーノ (CH150CWSK) - ¥313,800</option>
+                    <option value="arawunoS:207500">アラウーノS (CH1601WSK) - ¥207,500</option>
+                    <option value="arawunoV:100000">アラウーノV (CH3010WS) - ¥100,000</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>排水芯部品代</label>
+                <select id="drainParts">
+                    <option value="11000">120～200mm - ¥11,000</option>
+                    <option value="22000">305～510mm - ¥22,000</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>手洗い器</label>
+                <select id="washbasin">
+                    <option value="0">なし</option>
+                    <option value="55000">XCH10EH - ¥55,000</option>
+                </select>
+            </div>
+
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" id="work_install" checked disabled>
+                    <span>本体設置工事 ¥19,800（必須）</span>
+                </label>
+                <label>
+                    <input type="checkbox" id="work_water" checked disabled>
+                    <span>給水接続工事 ¥6,600（必須）</span>
+                </label>
+                <label>
+                    <input type="checkbox" id="work_flange">
+                    <span>フランジ交換工事 ¥8,800</span>
+                </label>
+                <label>
+                    <input type="checkbox" id="work_removal">
+                    <span>既設撤去工事 ¥6,600</span>
+                </label>
+                <label>
+                    <input type="checkbox" id="work_disposal">
+                    <span>既設処分費 ¥5,500</span>
+                </label>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-back" onclick="goBackToStep0()">戻る</button>
+            </div>
+            <button class="btn-generate" onclick="generateArawunoPDF()">📄 PDF生成</button>
+        </div>
+
+        <!-- LED照明ステップ -->
+        <div class="step" id="step_led">
+            <div class="step-indicator">LED照明見積書作成</div>
+            
+            <div class="form-group">
+                <label>部屋・場所</label>
+                <input type="text" id="ledRoom" placeholder="例：2階寝室">
+            </div>
+
+            <div class="form-group">
+                <label>照明種類</label>
+                <select id="ledType">
+                    <option value="居室8畳:21300:HH-CM0834A">居室8畳 HH-CM0834A - ¥21,300</option>
+                    <option value="居室10畳:27200:HH-CM1034A">居室10畳 HH-CM1034A - ¥27,200</option>
+                    <option value="居室12畳:32000:HH-CM1234A">居室12畳 HH-CM1234A - ¥32,000</option>
+                    <option value="外玄関センサあり:24700:HH-SL0010L">外玄関センサあり - ¥24,700</option>
+                    <option value="内玄関センサあり:28100:HH-SL0090N">内玄関センサあり - ¥28,100</option>
+                    <option value="台所ベースライト:26100:HH-SF0052N">台所ベースライト - ¥26,100</option>
+                    <option value="洗面所:14400:HH-SF0024N">洗面所 - ¥14,400</option>
+                    <option value="浴室:14400:HH-SF0024N">浴室 - ¥14,400</option>
+                    <option value="E17_40W:3570:-">電球E17 40W - ¥3,570</option>
+                    <option value="E17_60W:4770:-">電球E17 60W - ¥4,770</option>
+                    <option value="E26_40W:2280:-">電球E26 40W - ¥2,280</option>
+                    <option value="E26_60W:3470:-">電球E26 60W - ¥3,470</option>
+                    <option value="ボール40形:2980:-">ボール電球40形 - ¥2,980</option>
+                    <option value="ボール60形:3360:-">ボール電球60形 - ¥3,360</option>
+                    <option value="ボール100形:4770:-">ボール電球100形 - ¥4,770</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>個数</label>
+                <input type="number" id="ledQuantity" value="1" min="1">
+            </div>
+
+            <button class="btn-next" onclick="addLedLight()">➕ この照明を追加</button>
+
+            <div id="ledLightsList" style="margin-top: 20px;"></div>
+
+            <div class="form-group" id="customerNameSection" style="display:none; margin-top: 30px; border-top: 2px solid #667eea; padding-top: 20px;">
+                <label>顧客名</label>
+                <input type="text" id="customerNameLed" placeholder="例：山田太郎">
+            </div>
+
+            <div class="button-group">
+                <button class="btn-back" onclick="goBackToStep0()">戻る</button>
+            </div>
+            <button class="btn-generate" id="generateLedBtn" style="display:none;" onclick="generateLedPDF()">📄 PDF生成</button>
+        </div>
+    </div>
+
+    <script>
+        window.jsPDF = window.jspdf.jsPDF;
+        let selectedProduct = '';
+        let ledLights = [];
+
+        function selectProduct(product) {
+            selectedProduct = product;
+            document.querySelectorAll('.product-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+        }
+
+        function goToStep1() {
+            if (!selectedProduct) {
+                alert('製品を選択してください');
+                return;
+            }
+
+            document.getElementById('step0').classList.remove('active');
+            if (selectedProduct === 'arawuno') {
+                document.getElementById('step_arawuno').classList.add('active');
+            } else {
+                ledLights = [];
+                document.getElementById('step_led').classList.add('active');
+            }
+        }
+
+        function goBackToStep0() {
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active');
+            });
+            document.getElementById('step0').classList.add('active');
+            selectedProduct = '';
+            ledLights = [];
+            document.querySelectorAll('.product-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+        }
+
+        function addLedLight() {
+            const room = document.getElementById('ledRoom').value.trim();
+            if (!room) {
+                alert('部屋・場所を入力してください');
+                return;
+            }
+
+            const ledInfo = document.getElementById('ledType').value.split(':');
+            const ledName = document.getElementById('ledType').options[document.getElementById('ledType').selectedIndex].text;
+            const ledPrice = parseInt(ledInfo[1]);
+            const ledCode = ledInfo[2];
+            const quantity = parseInt(document.getElementById('ledQuantity').value) || 1;
+            
+            const isBulb = ledName.includes('電球') || ledName.includes('ボール');
+            const workPrice = isBulb ? 0 : 3300 * quantity;
+            const total = (ledPrice * quantity) + workPrice;
+
+            ledLights.push({
+                room: room,
+                name: ledName,
+                code: ledCode,
+                price: ledPrice,
+                quantity: quantity,
+                workPrice: workPrice,
+                total: total
+            });
+
+            updateLedLightsList();
+            
+            // フォームをリセット
+            document.getElementById('ledRoom').value = '';
+            document.getElementById('ledQuantity').value = '1';
+        }
+
+        function removeLedLight(index) {
+            ledLights.splice(index, 1);
+            updateLedLightsList();
+        }
+
+        function updateLedLightsList() {
+            const listDiv = document.getElementById('ledLightsList');
+            
+            if (ledLights.length === 0) {
+                listDiv.innerHTML = '';
+                document.getElementById('customerNameSection').style.display = 'none';
+                document.getElementById('generateLedBtn').style.display = 'none';
+                return;
+            }
+
+            let html = '<div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-top: 20px;">';
+            html += '<div style="font-weight: 600; margin-bottom: 15px; color: #667eea;">追加済み照明一覧</div>';
+            
+            ledLights.forEach((light, index) => {
+                html += `
+                    <div style="background: white; padding: 12px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ddd;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; margin-bottom: 5px;">${light.room}</div>
+                                <div style="font-size: 14px; color: #666;">${light.name} × ${light.quantity}個</div>
+                                <div style="font-size: 13px; color: #888; margin-top: 3px;">
+                                    単価: ¥${light.price.toLocaleString()} / 工事費: ¥${light.workPrice.toLocaleString()}
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-weight: 600; color: #1976d2; margin-bottom: 8px;">¥${light.total.toLocaleString()}</div>
+                                <button onclick="removeLedLight(${index})" style="padding: 4px 10px; background: #ff6b6b; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">削除</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            const grandTotal = ledLights.reduce((sum, light) => sum + light.total, 0);
+            html += `<div style="margin-top: 15px; padding: 12px; background: #e3f2fd; border-radius: 6px; font-weight: 600; font-size: 16px; color: #1976d2; text-align: right;">合計: ¥${grandTotal.toLocaleString()}</div>`;
+            html += '</div>';
+
+            listDiv.innerHTML = html;
+            document.getElementById('customerNameSection').style.display = 'block';
+            document.getElementById('generateLedBtn').style.display = 'block';
+        }
+
+        function generateArawunoPDF() {
+            const customerName = document.getElementById('customerNameArawuno').value.trim();
+            if (!customerName) {
+                alert('顧客名を入力してください');
+                return;
+            }
+
+            const modelInfo = document.getElementById('arawunoModel').value.split(':');
+            const modelName = document.getElementById('arawunoModel').options[document.getElementById('arawunoModel').selectedIndex].text;
+            const modelPrice = parseInt(modelInfo[1]);
+            
+            const drainPrice = parseInt(document.getElementById('drainParts').value);
+            const washbasinPrice = parseInt(document.getElementById('washbasin').value);
+            
+            let workPrice = 19800 + 6600; // 必須工事
+            if (washbasinPrice > 0) workPrice += 11000; // 手洗い器工事
+            if (document.getElementById('work_flange').checked) workPrice += 8800;
+            if (document.getElementById('work_removal').checked) workPrice += 6600;
+            if (document.getElementById('work_disposal').checked) workPrice += 5500;
+
+            const productTotal = modelPrice + drainPrice + washbasinPrice;
+            const grandTotal = productTotal + workPrice;
+
+            const doc = new jsPDF();
+            
+            // タイトル
+            doc.setFontSize(22);
+            doc.text('お見積書', 105, 25, { align: 'center' });
+            
+            // 線
+            doc.setLineWidth(0.5);
+            doc.line(20, 30, 190, 30);
+            
+            // 顧客情報
+            doc.setFontSize(13);
+            doc.text(customerName + ' 様', 20, 40);
+            doc.setFontSize(11);
+            doc.text('作成日：' + new Date().toLocaleDateString('ja-JP'), 150, 40);
+            
+            // 商品明細
+            let y = 55;
+            doc.setFontSize(14);
+            doc.setFillColor(102, 126, 234);
+            doc.rect(20, y, 170, 8, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.text('商品明細', 22, y + 6);
+            
+            y += 15;
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(11);
+            doc.text(modelName, 25, y);
+            doc.text('¥' + modelPrice.toLocaleString(), 160, y, { align: 'right' });
+            
+            y += 8;
+            doc.text('排水芯部品', 25, y);
+            doc.text('¥' + drainPrice.toLocaleString(), 160, y, { align: 'right' });
+            
+            if (washbasinPrice > 0) {
+                y += 8;
+                doc.text('手洗い器（XCH10EH）', 25, y);
+                doc.text('¥' + washbasinPrice.toLocaleString(), 160, y, { align: 'right' });
+            }
+            
+            y += 10;
+            doc.setLineWidth(0.3);
+            doc.line(25, y, 190, y);
+            y += 6;
+            doc.setFont(undefined, 'bold');
+            doc.text('商品代 小計', 25, y);
+            doc.text('¥' + productTotal.toLocaleString(), 160, y, { align: 'right' });
+            
+            // 工事明細
+            y += 15;
+            doc.setFont(undefined, 'normal');
+            doc.setFontSize(14);
+            doc.setFillColor(102, 126, 234);
+            doc.rect(20, y, 170, 8, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.text('工事費明細', 22, y + 6);
+            
+            y += 15;
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(11);
+            doc.text('本体設置工事', 25, y);
+            doc.text('¥19,800', 160, y, { align: 'right' });
+            y += 8;
+            doc.text('給水接続工事', 25, y);
+            doc.text('¥6,600', 160, y, { align: 'right' });
+            
+            if (washbasinPrice > 0) {
+                y += 8;
+                doc.text('手洗い器取付工事', 25, y);
+                doc.text('¥11,000', 160, y, { align: 'right' });
+            }
+            
+            if (document.getElementById('work_flange').checked) {
+                y += 8;
+                doc.text('フランジ交換工事', 25, y);
+                doc.text('¥8,800', 160, y, { align: 'right' });
+            }
+            if (document.getElementById('work_removal').checked) {
+                y += 8;
+                doc.text('既設撤去工事', 25, y);
+                doc.text('¥6,600', 160, y, { align: 'right' });
+            }
+            if (document.getElementById('work_disposal').checked) {
+                y += 8;
+                doc.text('既設処分費', 25, y);
+                doc.text('¥5,500', 160, y, { align: 'right' });
+            }
+            
+            y += 10;
+            doc.line(25, y, 190, y);
+            y += 6;
+            doc.setFont(undefined, 'bold');
+            doc.text('工事費 小計', 25, y);
+            doc.text('¥' + workPrice.toLocaleString(), 160, y, { align: 'right' });
+            
+            // 合計
+            y += 15;
+            doc.setFillColor(227, 242, 253);
+            doc.rect(20, y - 5, 170, 12, 'F');
+            doc.setTextColor(25, 118, 210);
+            doc.setFontSize(16);
+            doc.text('合計金額（税込）', 25, y + 3);
+            doc.text('¥' + grandTotal.toLocaleString(), 160, y + 3, { align: 'right' });
+            
+            doc.save('アラウーノ見積書_' + customerName + '_' + new Date().toLocaleDateString('ja-JP').replace(/\//g, '') + '.pdf');
+        }
+
+        function generateLedPDF() {
+            const customerName = document.getElementById('customerNameLed').value.trim();
+            if (!customerName) {
+                alert('顧客名を入力してください');
+                return;
+            }
+
+            if (ledLights.length === 0) {
+                alert('照明を追加してください');
+                return;
+            }
+
+            const grandTotal = ledLights.reduce((sum, light) => sum + light.total, 0);
+
+            const doc = new jsPDF();
+            
+            // タイトル
+            doc.setFontSize(22);
+            doc.text('お見積書', 105, 25, { align: 'center' });
+            
+            doc.setLineWidth(0.5);
+            doc.line(20, 30, 190, 30);
+            
+            // 顧客情報
+            doc.setFontSize(13);
+            doc.text(customerName + ' 様', 20, 40);
+            doc.setFontSize(11);
+            doc.text('作成日：' + new Date().toLocaleDateString('ja-JP'), 150, 40);
+            
+            // 照明明細
+            let y = 55;
+            doc.setFontSize(14);
+            doc.setFillColor(102, 126, 234);
+            doc.rect(20, y, 170, 8, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.text('照明明細', 22, y + 6);
+            
+            y += 15;
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(11);
+
+            ledLights.forEach((light, index) => {
+                // ページが足りなくなったら新しいページ
+                if (y > 250) {
+                    doc.addPage();
+                    y = 20;
+                }
+
+                doc.setFont(undefined, 'bold');
+                doc.text(`${index + 1}. ${light.room}`, 25, y);
+                y += 6;
+                
+                doc.setFont(undefined, 'normal');
+                doc.text(light.name, 30, y);
+                y += 6;
+                doc.text(`個数: ${light.quantity}個 × ¥${light.price.toLocaleString()}`, 30, y);
+                doc.text('¥' + (light.price * light.quantity).toLocaleString(), 160, y, { align: 'right' });
+                y += 6;
+                
+                if (light.workPrice > 0) {
+                    doc.text('工事費', 30, y);
+                    doc.text('¥' + light.workPrice.toLocaleString(), 160, y, { align: 'right' });
+                    y += 6;
+                }
+                
+                doc.setFont(undefined, 'bold');
+                doc.text('小計', 30, y);
+                doc.text('¥' + light.total.toLocaleString(), 160, y, { align: 'right' });
+                y += 10;
+            });
+            
+            // 合計
+            y += 5;
+            doc.setFillColor(227, 242, 253);
+            doc.rect(20, y - 5, 170, 12, 'F');
+            doc.setTextColor(25, 118, 210);
+            doc.setFontSize(16);
+            doc.text('合計金額（税込）', 25, y + 3);
+            doc.text('¥' + grandTotal.toLocaleString(), 160, y + 3, { align: 'right' });
+            
+            doc.save('LED照明見積書_' + customerName + '_' + new Date().toLocaleDateString('ja-JP').replace(/\//g, '') + '.pdf');
+        }
+    </script>
+</body>
+</html>
