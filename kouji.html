@@ -422,7 +422,7 @@
       </div>
 
       <!-- 作業人数 -->
-      <div class="section">
+      <div class="section" id="section-people">
         <label>作業人数</label>
         <div class="btn-group" id="group-people"></div>
       </div>
@@ -494,7 +494,7 @@
 
   <script>
     // ★ ここをご自身の最新GAS URLに書き換えてください ★
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbzk1Wl5bQX-OmEo7uQB2uE14rffGEQjui4Q-UHTqGHKC-xmR9spID6A9ZvX440XwRzf/exec";
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbx9PCDNIWVoDLfjxQlijad3fWbUuFyf0s8duQbxqflZbWoQ1jKC07llA2jVpLy18ujTNQ/exec";
 
     // スタッフリスト
     const STAFF_LIST = {
@@ -504,7 +504,7 @@
 
     // 作業内容リスト
     const WORK_TYPES = {
-      service: ["お困りごと対応", "点検", "販売のみ（訪問なし）", "配達", "工事"],
+      service: ["お困りごと対応", "点検", "売上", "配達", "工事", "集金", "見積り"],
       construction: ["工事", "現調", "配達"]
     };
 
@@ -602,6 +602,7 @@
       const constructionDetail = document.getElementById("construction-detail");
       const salesPersonSection = document.getElementById("section-salesPerson");
       const photoRequiredNote = document.getElementById("photo-required-note");
+      const peopleSection = document.getElementById("section-people");
       
       // 点検が選択されているか
       if (state.workType.includes("点検")) {
@@ -645,6 +646,25 @@
         document.querySelectorAll("#group-salesPerson .toggle-btn").forEach(btn => {
           btn.classList.remove("active");
         });
+      }
+
+      // 作業人数の表示制御
+      if (state.staffType === "construction") {
+        // 工事スタッフは常に表示
+        peopleSection.classList.remove("hidden");
+      } else if (state.staffType === "service") {
+        // サービススタッフは工事・配達がある場合のみ表示
+        if (state.workType.includes("工事") || state.workType.includes("配達")) {
+          peopleSection.classList.remove("hidden");
+        } else {
+          peopleSection.classList.add("hidden");
+          state.people = "";
+          document.querySelectorAll("#group-people .toggle-btn").forEach(btn => {
+            btn.classList.remove("active");
+          });
+          // 按分表示も非表示
+          document.getElementById("work-amount-info").classList.add("hidden");
+        }
       }
 
       // 工事・現調時は写真必須の注記
@@ -949,7 +969,11 @@
         alert("作業内容を選択してください");
         return;
       }
-      if (!state.people) { 
+      
+      // 作業人数のチェック（工事スタッフ、またはサービススタッフで工事・配達がある場合のみ）
+      const needsPeople = state.staffType === "construction" || 
+                         (state.staffType === "service" && (state.workType.includes("工事") || state.workType.includes("配達")));
+      if (needsPeople && !state.people) { 
         alert("作業人数を選択してください"); 
         return; 
       }
