@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>レンジフード・IH見積書作成ツール</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', 'Yu Gothic', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-indicator {
+            background: #e3f2fd;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+            color: #1976d2;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .form-group select,
+        .form-group input[type="text"],
+        .form-group input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .option-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option-card:hover {
+            border-color: #667eea;
+            background: #f5f7ff;
+        }
+
+        .option-card.selected {
+            border-color: #667eea;
+            background: #e8eeff;
+        }
+
+        .option-card input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .option-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .option-subtitle {
+            color: #888;
+            font-size: 13px;
+            margin-top: 3px;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .checkbox-group label:hover {
+            border-color: #667eea;
+            background: #f5f7ff;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .btn-back {
+            flex: 1;
+            padding: 14px;
+            background: #999;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn-next {
+            flex: 2;
+            padding: 14px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-generate {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .preview {
+            background: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .preview-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .preview-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .preview-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+        }
+
+        .preview-section-title {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .total-row {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 20px;
+            font-weight: 700;
+            color: #1976d2;
+        }
+
+        .pdf-content {
+            position: absolute;
+            left: -9999px;
+            width: 794px;
+            background: white;
+            padding: 50px 60px;
+            font-family: 'Yu Gothic', 'MS Gothic', sans-serif;
+        }
+
+        .pdf-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .pdf-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .pdf-company {
+            text-align: right;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .pdf-company-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .pdf-estimate-no {
+            text-align: left;
+            font-size: 13px;
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        .pdf-info {
+            display: flex;
+            justify-content: space-between;
+            margin: 25px 0;
+            font-size: 15px;
+        }
+
+        .pdf-section {
+            margin: 25px 0;
+        }
+
+        .pdf-section-title {
+            background: #667eea;
+            color: white;
+            padding: 10px 15px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .pdf-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            border-bottom: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        .pdf-subtotal {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 15px;
+            margin-top: 5px;
+            border-top: 2px solid #333;
+            font-weight: bold;
+            background: #f5f5f5;
+            font-size: 15px;
+        }
+
+        .pdf-total {
+            margin-top: 30px;
+            border: 3px solid #1976d2;
+            background: #e3f2fd;
+            padding: 18px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pdf-total-label {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1976d2;
+        }
+
+        .pdf-total-amount {
+            font-size: 26px;
+            font-weight: bold;
+            color: #1976d2;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥🍳 レンジフード・IH見積書作成ツール</h1>
+
+        <!-- ステップ1: 何を設置するか -->
+        <div class="step active" id="step1">
+            <div class="step-indicator">ステップ 1/4 - 何を設置しますか？</div>
+            
+            <div class="form-group">
+                <div class="option-card" onclick="selectType('rangehood')">
+                    <input type="radio" name="productType" value="rangehood" id="type_rangehood">
+                    <label for="type_rangehood">
+                        <div class="option-title">🔥 レンジフードのみ</div>
+                        <div class="option-subtitle">レンジフードを設置</div>
+                    </label>
+                </div>
+                <div class="option-card" onclick="selectType('ih')">
+                    <input type="radio" name="productType" value="ih" id="type_ih">
+                    <label for="type_ih">
+                        <div class="option-title">🍳 IHのみ</div>
+                        <div class="option-subtitle">IHクッキングヒーターを設置</div>
+                    </label>
+                </div>
+                <div class="option-card" onclick="selectType('both')">
+                    <input type="radio" name="productType" value="both" id="type_both">
+                    <label for="type_both">
+                        <div class="option-title">🔥🍳 レンジフード＆IH（両方）</div>
+                        <div class="option-subtitle">両方を設置</div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-next" style="flex: 1;" onclick="goToStep2()">次へ</button>
+            </div>
+        </div>
+
+        <!-- ステップ2: レンジフード選択 -->
+        <div class="step" id="step2_rangehood">
+            <div class="step-indicator" id="rh_step_indicator">ステップ 2/4 - レンジフードを選択</div>
+            
+            <div class="form-group">
+                <label>幅を選択してください</label>
+                <div class="option-card" onclick="selectRhWidth('60')">
+                    <input type="radio" name="rh_width" value="60" id="rh_width_60">
+                    <label for="rh_width_60">
+                        <div class="option-title">60cm</div>
+                    </label>
+                </div>
+                <div class="option-card" onclick="selectRhWidth('75')">
+                    <input type="radio" name="rh_width" value="75" id="rh_width_75">
+                    <label for="rh_width_75">
+                        <div class="option-title">75cm</div>
+                    </label>
+                </div>
+                <div class="option-card" onclick="selectRhWidth('90')">
+                    <input type="radio" name="rh_width" value="90" id="rh_width_90">
+                    <label for="rh_width_90">
+                        <div class="option-title">90cm</div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>高さを選択してください</label>
+                <div class="option-card" onclick="selectRhHeight('50')">
+                    <input type="radio" name="rh_height" value="50" id="rh_height_50">
+                    <label for="rh_height_50">
+                        <div class="option-title">50cm</div>
+                    </label>
+                </div>
+                <div class="option-card" onclick="selectRhHeight('60')">
+                    <input type="radio" name="rh_height" value="60" id="rh_height_60">
+                    <label for="rh_height_60">
+                        <div class="option-title">60cm</div>
+                    </label>
+                </div>
+                <div class="option-card" onclick="selectRhHeight('70')">
+                    <input type="radio" name="rh_height" value="70" id="rh_height_70">
+                    <label for="rh_height_70">
+                        <div class="option-title">70cm</div>
+                    </label>
+                </div>
+                <div class="option-card" onclick="selectRhHeight('variable')">
+                    <input type="radio" name="rh_height" value="variable" id="rh_height_var">
+                    <label for="rh_height_var">
+                        <div class="option-title">46.5～76.5cm（可変）</div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>タイプを選択してください</label>
+                <div class="option-card" onclick="selectRhType('DWA5')">
+                    <input type="radio" name="rh_type" value="DWA5" id="rh_type_dwa5">
+                    <label for="rh_type_dwa5">
+                        <div class="option-title">🌟 自動洗浄付き（DWA5シリーズ）</div>
+                    </label>
+                </div>
+                <div class="option-card" onclick="selectRhType('DED3')">
+                    <input type="radio" name="rh_type" value="DED3" id="rh_type_ded3">
+                    <label for="rh_type_ded3">
+                        <div class="option-title">スタンダード（DED3シリーズ）</div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>横幕板の個数</label>
+                <select id="sideCurtainCount" onchange="updateRhPreview()">
+                    <option value="0">0個（なし）</option>
+                    <option value="1">1個</option>
+                    <option value="2">2個</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="adapterCheck" onchange="updateRhPreview()">
+                    取付枠アダプター（¥10,230）
+                </label>
+            </div>
+
+            <div class="preview" id="rhPreview" style="display:none;"></div>
+
+            <div class="button-group">
+                <button class="btn-back" onclick="backToStep1()">戻る</button>
+                <button class="btn-next" onclick="completeRangehood()">次へ</button>
+            </div>
+        </div>
+
+        <!-- ステップ3: IH選択 -->
+        <div class="step" id="step3_ih">
+            <div class="step-indicator" id="ih_step_indicator">ステップ 3/4 - IHを選択</div>
+            
+            <div class="form-group">
+                <label>現在の設備は？</label>
+                <div class="option-card" onclick="selectIhSource('gas')">
+                    <input type="radio" name="ih_source" value="gas" id="ih_source_gas">
+                    <label for="ih_source_gas">
+                        <div class="option-title">ガスから切替</div>
+                    </label>
+                </div>
+                <div class="option-card" onclick="selectIhSource('ih')">
+                    <input type="radio" name="ih_source" value="ih" id="ih_source_ih">
+                    <label for="ih_source_ih">
+                        <div class="option-title">IHから交換</div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>設置タイプ</label>
+                <div class="option-card" onclick="selectIhInstall('builtin')">
+                    <input type="radio" name="ih_install" value="builtin" id="ih_install_builtin">
+                    <label for="ih_install_builtin">
+                        <div class="option-title">ビルトイン</div>
+                    </label>
+                </div>
+                <div class="option-card" onclick="selectIhInstall('countertop')">
+                    <input type="radio" name="ih_install" value="countertop" id="ih_install_counter">
+                    <label for="ih_install_counter">
+                        <div class="option-title">据え置き</div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group" id="ih_series_selection" style="display:none;">
+                <label>シリーズを選択してください</label>
+                <div class="option-card" onclick="selectIhSeries('A')">
+                    <input type="radio" name="ih_series" value="A" id="ih_series_a">
+                    <label for="ih_series_a">
+                        <div class="option-title">オールメタルAシリーズ</div>
+                        <div class="option-subtitle">60cm: ¥365,500 / 75cm: ¥379,800</div>
+                    </label>
+                </div>
+                <div class="option-card" onclick="selectIhSeries('B')">
+                    <input type="radio" name="ih_series" value="B" id="ih_series_b">
+                    <label for="ih_series_b">
+                        <div class="option-title">鉄・ステンレスBシリーズ</div>
+                        <div class="option-subtitle">60cm: ¥284,300 / 75cm: ¥299,300</div>
+                    </label>
+                </div>
+                <div class="option-card" onclick="selectIhSeries('C')">
+                    <input type="radio" name="ih_series" value="C" id="ih_series_c">
+                    <label for="ih_series_c">
+                        <div class="option-title">鉄・ステンレスCシリーズ</div>
+                        <div class="option-subtitle">60cm: ¥219,400 / 75cm: ¥232,900</div>
+                    </label>
+                </div>
+                <div class="option-card" onclick="selectIhSeries('F')">
+                    <input type="radio" name="ih_series" value="F" id="ih_series_f">
+                    <label for="ih_series_f">
+                        <div class="option-title">鉄・ステンレスFシリーズ</div>
+                        <div class="option-subtitle">60cm: ¥166,300</div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group" id="ih_width_selection" style="display:none;">
+                <label>幅を選択してください</label>
+                <div class="option-card" onclick="selectIhWidth('60')">
+                    <input type="radio" name="ih_width" value="60" id="ih_width_60">
+                    <label for="ih_width_60">
+                        <div class="option-title">60cm</div>
+                    </label>
+                </div>
+                <div class="option-card" onclick="selectIhWidth('75')" id="ih_width_75_card">
+                    <input type="radio" name="ih_width" value="75" id="ih_width_75">
+                    <label for="ih_width_75">
+                        <div class="option-title">75cm</div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="checkbox-group" id="ih_work_selection" style="display:none;">
+                <label>
+                    <input type="checkbox" id="ih_work_install" checked disabled>
+                    <span id="ih_work_install_text">IH取付工事 ¥16,500（必須）</span>
+                </label>
+                <label id="ih_work_removal_label" style="display:none;">
+                    <input type="checkbox" id="ih_work_removal" onchange="updateIhPreview()">
+                    <span>既設撤去工事(ビルトイン) ¥11,000</span>
+                </label>
+                <label id="ih_work_outlet_label" style="display:none;">
+                    <input type="checkbox" id="ih_work_outlet" onchange="updateIhPreview()">
+                    <span>コンセント交換 ¥8,800</span>
+                </label>
+                <label id="ih_work_専用outlet_label" style="display:none;">
+                    <input type="checkbox" id="ih_work_専用outlet" checked disabled>
+                    <span>200V専用コンセント工事 ¥33,000（必須）</span>
+                </label>
+                <label id="ih_work_gas_label" style="display:none;">
+                    <input type="checkbox" id="ih_work_gas" checked disabled>
+                    <span>ガス管撤去（別途ガス会社見積）</span>
+                </label>
+                <label>
+                    <input type="checkbox" id="ih_work_earth_wiring" onchange="updateIhPreview()">
+                    <span>アース工事（配線工事） ¥13,200</span>
+                </label>
+                <label>
+                    <input type="checkbox" id="ih_work_earth_new" onchange="updateIhPreview()">
+                    <span>アース工事（新規） ¥17,600</span>
+                </label>
+                <label>
+                    <input type="checkbox" id="ih_work_mole" onchange="toggleMole()">
+                    <span>モール工事</span>
+                </label>
+                <div id="mole_input" style="display:none; margin-left:30px;">
+                    <label>モール長さ（m）</label>
+                    <input type="number" id="mole_length" min="0" value="0" onchange="updateIhPreview()" style="width:100px;">
+                    <small>※2mまで ¥4,400、以降1mごと ¥550</small>
+                </div>
+                <label>
+                    <input type="checkbox" id="ih_work_pipe" onchange="togglePipe()">
+                    <span>配管工事</span>
+                </label>
+                <div id="pipe_input" style="display:none; margin-left:30px;">
+                    <label>配管長さ（m）</label>
+                    <input type="number" id="pipe_length" min="0" value="0" onchange="updateIhPreview()" style="width:100px;">
+                    <small>※1mあたり ¥880</small>
+                </div>
+            </div>
+
+            <div class="preview" id="ihPreview" style="display:none;"></div>
+
+            <div class="button-group">
+                <button class="btn-back" onclick="backFromIh()">戻る</button>
+                <button class="btn-next" onclick="completeIh()">次へ</button>
+            </div>
+        </div>
+
+        <!-- ステップ4: 最終確認 -->
+        <div class="step" id="step4_final">
+            <div class="step-indicator">ステップ 4/4 - 最終確認と顧客名入力</div>
+            
+            <div class="form-group">
+                <label for="customerName">顧客名 *</label>
+                <input type="text" id="customerName" placeholder="例：山田太郎" required>
+            </div>
+
+            <div class="preview" id="finalPreview"></div>
+
+            <div class="button-group">
+                <button class="btn-back" onclick="backFromFinal()">戻る</button>
+            </div>
+            <button class="btn-generate" onclick="generatePDF()">📄 見積書PDF生成</button>
+        </div>
+    </div>
+
+    <div id="pdfContainer"></div>
+
+    <script>
+        window.jsPDF = window.jspdf.jsPDF;
+        
+        function generateEstimateNumber() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            return `${year}${month}${day}-${hours}${minutes}${seconds}`;
+        }
+
+        let productType = '';
+        
+        let rhData = {
+            width: '', height: '', type: '',
+            sideCurtainCount: 0, hasAdapter: false,
+            bodyPrice: 0, platePrice: 0, workPrice: 0,
+            sideCurtainPrice: 0, adapterPrice: 0, total: 0,
+            bodyModel: '', plateModel: '', sideCurtainModel: ''
+        };
+
+        const rhPrices = {
+            body: {
+                'DED3': { '60': {price: 145000, model: 'FY-60DED3-S'}, '75': {price: 168900, model: 'FY-75DED3-S'}, '90': {price: 191900, model: 'FY-90DED3-S'} },
+                'DWA5': { '60': {price: 229200, model: 'FY-60DWA5-S'}, '75': {price: 244500, model: 'FY-75DWA5-S'}, '90': {price: 258700, model: 'FY-90DWA5-S'} }
+            },
+            plate: {
+                '60': { '50': {price: 15290, model: 'FY-MH646C-S'}, '60': {price: 16280, model: 'FY-MH656C-S'}, '70': {price: 16830, model: 'FY-MH666C-S'}, 'variable': {price: 26510, model: 'FY-MH6SL-S'} },
+                '75': { '50': {price: 16390, model: 'FY-MH746C-S'}, '60': {price: 17160, model: 'FY-MH756C-S'}, '70': {price: 17930, model: 'FY-MH766C-S'}, 'variable': {price: 28270, model: 'FY-MH6SL-S'} },
+                '90': { '50': {price: 18590, model: 'FY-MH946C-S'}, '60': {price: 19360, model: 'FY-MH956C-S'}, '70': {price: 20240, model: 'FY-MH966C-S'}, 'variable': {price: 29810, model: 'FY-MH6SL-S'} }
+            },
+            work: { '60': 33000, '75': 33000, '90': 38500 },
+            sideCurtain: { 
+                '50': {price: 14520, model: 'FY-MYC46C-S'}, 
+                '60': {price: 16280, model: 'FY-MYC56C-S'}, 
+                '70': {price: 16280, model: 'FY-MYC66C-S'}, 
+                'variable': {price: 24200, model: 'FY-MYCSL-S'} 
+            },
+            adapter: {price: 10230, model: 'FY-AC256'}
+        };
+
+        let ihData = {
+            source: '', installType: '', series: '', width: '',
+            bodyPrice: 0, workPrice: 16500,
+            removalPrice: 0,
+            outletPrice: 0, 専用outletPrice: 0, hasGas: false,
+            earthWiringPrice: 0, earthNewPrice: 0,
+            molePrice: 0, pipePrice: 0, total: 0,
+            bodyModel: ''
+        };
+
+        const ihPrices = {
+            builtin: {
+                'A': { '60': {price: 365500, model: 'KZ-PA16VS'}, '75': {price: 379800, model: 'KZ-PA17VS'} },
+                'B': { '60': {price: 284300, model: 'KZ-CB16TS'}, '75': {price: 299300, model: 'KZ-CB17TS'} },
+                'C': { '60': {price: 219400, model: 'KZ-C36S'}, '75': {price: 232900, model: 'KZ-C37S'} },
+                'F': { '60': {price: 166300, model: 'KZ-F1T6XST'} }
+            },
+            countertop: {price: 140000, model: 'KZ-KB21E'}
+        };
+
+        function selectType(type) {
+            productType = type;
+            document.getElementById('type_' + type).checked = true;
+            document.querySelectorAll('input[name="productType"]').forEach(r => {
+                r.closest('.option-card').classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+        }
+
+        function goToStep2() {
+            if (!productType) {
+                alert('製品を選択してください');
+                return;
+            }
+            hideStep('step1');
+            
+            if (productType === 'rangehood') {
+                document.getElementById('rh_step_indicator').textContent = 'ステップ 2/3 - レンジフードを選択';
+                showStep('step2_rangehood');
+            } else if (productType === 'ih') {
+                document.getElementById('ih_step_indicator').textContent = 'ステップ 2/3 - IHを選択';
+                showStep('step3_ih');
+            } else {
+                document.getElementById('rh_step_indicator').textContent = 'ステップ 2/4 - レンジフードを選択';
+                showStep('step2_rangehood');
+            }
+        }
+
+        function selectRhWidth(width) {
+            rhData.width = width;
+            document.getElementById('rh_width_' + width).checked = true;
+            document.querySelectorAll('input[name="rh_width"]').forEach(r => {
+                r.closest('.option-card').classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            updateRhPreview();
+        }
+
+        function selectRhHeight(height) {
+            rhData.height = height;
+            document.getElementById('rh_height_' + (height === 'variable' ? 'var' : height)).checked = true;
+            document.querySelectorAll('input[name="rh_height"]').forEach(r => {
+                r.closest('.option-card').classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            updateRhPreview();
+        }
+
+        function selectRhType(type) {
+            rhData.type = type;
+            document.getElementById('rh_type_' + type.toLowerCase()).checked = true;
+            document.querySelectorAll('input[name="rh_type"]').forEach(r => {
+                r.closest('.option-card').classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            updateRhPreview();
+        }
+
+        function updateRhPreview() {
+            if (!rhData.width || !rhData.height || !rhData.type) {
+                document.getElementById('rhPreview').style.display = 'none';
+                return;
+            }
+
+            const bodyData = rhPrices.body[rhData.type][rhData.width];
+            rhData.bodyPrice = bodyData.price;
+            rhData.bodyModel = bodyData.model;
+            
+            const plateData = rhPrices.plate[rhData.width][rhData.height];
+            rhData.platePrice = plateData.price;
+            rhData.plateModel = plateData.model;
+            
+            rhData.workPrice = rhPrices.work[rhData.width];
+            
+            rhData.sideCurtainCount = parseInt(document.getElementById('sideCurtainCount').value);
+            if (rhData.sideCurtainCount > 0) {
+                const scData = rhPrices.sideCurtain[rhData.height];
+                rhData.sideCurtainPrice = rhData.sideCurtainCount * scData.price;
+                rhData.sideCurtainModel = scData.model;
+            } else {
+                rhData.sideCurtainPrice = 0;
+                rhData.sideCurtainModel = '';
+            }
+            
+            rhData.hasAdapter = document.getElementById('adapterCheck').checked;
+            rhData.adapterPrice = rhData.hasAdapter ? rhPrices.adapter.price : 0;
+            
+            rhData.total = rhData.bodyPrice + rhData.platePrice + rhData.workPrice + rhData.sideCurtainPrice + rhData.adapterPrice;
+
+            const typeName = rhData.type === 'DWA5' ? '自動洗浄付き' : 'スタンダード';
+            const heightText = rhData.height === 'variable' ? '46.5～76.5cm（可変）' : rhData.height + 'cm';
+            
+            let html = `<div class="preview-title">見積内容プレビュー</div>
+                <div class="preview-row">
+                    <span>本体（${typeName} ${rhData.width}cm）${rhData.bodyModel}</span>
+                    <span>¥${rhData.bodyPrice.toLocaleString()}</span>
+                </div>
+                <div class="preview-row">
+                    <span>幕板/縦（${rhData.width}cm × ${heightText}）${rhData.plateModel}</span>
+                    <span>¥${rhData.platePrice.toLocaleString()}</span>
+                </div>
+                <div class="preview-row">
+                    <span>取付工事費</span>
+                    <span>¥${rhData.workPrice.toLocaleString()}</span>
+                </div>`;
+            
+            if (rhData.sideCurtainCount > 0) {
+                html += `<div class="preview-row">
+                    <span>横幕板 ${rhData.sideCurtainModel} × ${rhData.sideCurtainCount}個</span>
+                    <span>¥${rhData.sideCurtainPrice.toLocaleString()}</span>
+                </div>`;
+            }
+            
+            if (rhData.hasAdapter) {
+                html += `<div class="preview-row">
+                    <span>取付枠アダプター ${rhPrices.adapter.model}</span>
+                    <span>¥${rhData.adapterPrice.toLocaleString()}</span>
+                </div>`;
+            }
+            
+            html += `<div class="total-row">
+                <span>合計</span>
+                <span>¥${rhData.total.toLocaleString()}</span>
+            </div>`;
+            
+            document.getElementById('rhPreview').innerHTML = html;
+            document.getElementById('rhPreview').style.display = 'block';
+        }
+
+        function completeRangehood() {
+            if (!rhData.width || !rhData.height || !rhData.type) {
+                alert('すべての項目を選択してください');
+                return;
+            }
+
+            hideStep('step2_rangehood');
+            
+            if (productType === 'both') {
+                document.getElementById('ih_step_indicator').textContent = 'ステップ 3/4 - IHを選択';
+                showStep('step3_ih');
+            } else {
+                updateFinalPreview();
+                showStep('step4_final');
+            }
+        }
+
+        function selectIhSource(source) {
+            ihData.source = source;
+            document.getElementById('ih_source_' + source).checked = true;
+            document.querySelectorAll('input[name="ih_source"]').forEach(r => {
+                r.closest('.option-card').classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            updateIhWorkOptions();
+        }
+
+        function selectIhInstall(type) {
+            ihData.installType = type;
+            document.getElementById('ih_install_' + (type === 'builtin' ? 'builtin' : 'counter')).checked = true;
+            document.querySelectorAll('input[name="ih_install"]').forEach(r => {
+                r.closest('.option-card').classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            if (type === 'builtin') {
+                document.getElementById('ih_series_selection').style.display = 'block';
+            } else {
+                document.getElementById('ih_series_selection').style.display = 'none';
+                document.getElementById('ih_width_selection').style.display = 'none';
+                ihData.bodyPrice = ihPrices.countertop.price;
+                ihData.bodyModel = ihPrices.countertop.model;
+                showIhWork();
+            }
+        }
+
+        function selectIhSeries(series) {
+            ihData.series = series;
+            document.getElementById('ih_series_' + series.toLowerCase()).checked = true;
+            document.querySelectorAll('input[name="ih_series"]').forEach(r => {
+                r.closest('.option-card').classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            document.getElementById('ih_width_selection').style.display = 'block';
+            
+            if (series === 'F') {
+                document.getElementById('ih_width_75_card').style.display = 'none';
+            } else {
+                document.getElementById('ih_width_75_card').style.display = 'block';
+            }
+        }
+
+        function selectIhWidth(width) {
+            ihData.width = width;
+            document.getElementById('ih_width_' + width).checked = true;
+            document.querySelectorAll('input[name="ih_width"]').forEach(r => {
+                r.closest('.option-card').classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            const data = ihPrices.builtin[ihData.series][width];
+            ihData.bodyPrice = data.price;
+            ihData.bodyModel = data.model;
+            showIhWork();
+        }
+
+        function showIhWork() {
+            document.getElementById('ih_work_selection').style.display = 'block';
+            updateIhWorkOptions();
+        }
+
+        function updateIhWorkOptions() {
+            const isGas = ihData.source === 'gas';
+            const isIH = ihData.source === 'ih';
+            const isBuiltin = ihData.installType === 'builtin';
+            
+            document.getElementById('ih_work_removal_label').style.display = isBuiltin ? 'block' : 'none';
+            document.getElementById('ih_work_outlet_label').style.display = isIH ? 'block' : 'none';
+            document.getElementById('ih_work_専用outlet_label').style.display = isGas ? 'block' : 'none';
+            document.getElementById('ih_work_gas_label').style.display = isGas ? 'block' : 'none';
+            
+            if (ihData.installType === 'builtin') {
+                document.getElementById('ih_work_install_text').textContent = 'IH取付工事 ¥16,500（必須）';
+            } else {
+                document.getElementById('ih_work_install_text').textContent = 'IH取付取外し工事 ¥16,500（必須）';
+            }
+            
+            updateIhPreview();
+        }
+
+        function toggleMole() {
+            const checked = document.getElementById('ih_work_mole').checked;
+            document.getElementById('mole_input').style.display = checked ? 'block' : 'none';
+            if (!checked) document.getElementById('mole_length').value = 0;
+            updateIhPreview();
+        }
+
+        function togglePipe() {
+            const checked = document.getElementById('ih_work_pipe').checked;
+            document.getElementById('pipe_input').style.display = checked ? 'block' : 'none';
+            if (!checked) document.getElementById('pipe_length').value = 0;
+            updateIhPreview();
+        }
+
+        function updateIhPreview() {
+            if (!ihData.source || !ihData.installType) {
+                document.getElementById('ihPreview').style.display = 'none';
+                return;
+            }
+            
+            if (ihData.installType === 'builtin' && (!ihData.series || !ihData.width)) {
+                document.getElementById('ihPreview').style.display = 'none';
+                return;
+            }
+
+            ihData.workPrice = 16500;
+            ihData.removalPrice = (ihData.installType === 'builtin' && document.getElementById('ih_work_removal').checked) ? 11000 : 0;
+            ihData.outletPrice = (ihData.source === 'ih' && document.getElementById('ih_work_outlet').checked) ? 8800 : 0;
+            ihData.専用outletPrice = (ihData.source === 'gas') ? 33000 : 0;
+            ihData.hasGas = ihData.source === 'gas';
+            ihData.earthWiringPrice = document.getElementById('ih_work_earth_wiring').checked ? 13200 : 0;
+            ihData.earthNewPrice = document.getElementById('ih_work_earth_new').checked ? 17600 : 0;
+            
+            const moleLength = parseFloat(document.getElementById('mole_length').value) || 0;
+            if (moleLength > 0) {
+                ihData.molePrice = moleLength <= 2 ? 4400 : 4400 + Math.ceil(moleLength - 2) * 550;
+            } else {
+                ihData.molePrice = 0;
+            }
+            
+            const pipeLength = parseFloat(document.getElementById('pipe_length').value) || 0;
+            ihData.pipePrice = pipeLength * 880;
+            
+            ihData.total = ihData.bodyPrice + ihData.workPrice + ihData.removalPrice + ihData.outletPrice + ihData.専用outletPrice +
+                          ihData.earthWiringPrice + ihData.earthNewPrice + ihData.molePrice + ihData.pipePrice;
+
+            let html = `<div class="preview-title">見積内容プレビュー</div>`;
+            
+            if (ihData.installType === 'builtin') {
+                const seriesName = {'A': 'オールメタルAシリーズ', 'B': '鉄・ステンレスBシリーズ', 
+                                   'C': '鉄・ステンレスCシリーズ', 'F': '鉄・ステンレスFシリーズ'}[ihData.series];
+                html += `<div class="preview-row">
+                    <span>本体（${seriesName} ${ihData.width}cm）${ihData.bodyModel}</span>
+                    <span>¥${ihData.bodyPrice.toLocaleString()}</span>
+                </div>`;
+            } else {
+                html += `<div class="preview-row">
+                    <span>本体（据え置き）${ihData.bodyModel}</span>
+                    <span>¥${ihData.bodyPrice.toLocaleString()}</span>
+                </div>`;
+            }
+            
+            html += `<div class="preview-row"><span>取付工事</span><span>¥${ihData.workPrice.toLocaleString()}</span></div>`;
+            
+            if (ihData.removalPrice > 0) {
+                html += `<div class="preview-row"><span>既設撤去工事(ビルトイン)</span><span>¥${ihData.removalPrice.toLocaleString()}</span></div>`;
+            }
+            if (ihData.outletPrice > 0) {
+                html += `<div class="preview-row"><span>コンセント交換</span><span>¥${ihData.outletPrice.toLocaleString()}</span></div>`;
+            }
+            if (ihData.専用outletPrice > 0) {
+                html += `<div class="preview-row"><span>200V専用コンセント工事</span><span>¥${ihData.専用outletPrice.toLocaleString()}</span></div>`;
+            }
+            if (ihData.hasGas) {
+                html += `<div class="preview-row"><span>ガス管撤去</span><span>別途ガス会社見積</span></div>`;
+            }
+            if (ihData.earthWiringPrice > 0) {
+                html += `<div class="preview-row"><span>アース工事（配線）</span><span>¥${ihData.earthWiringPrice.toLocaleString()}</span></div>`;
+            }
+            if (ihData.earthNewPrice > 0) {
+                html += `<div class="preview-row"><span>アース工事（新規）</span><span>¥${ihData.earthNewPrice.toLocaleString()}</span></div>`;
+            }
+            if (ihData.molePrice > 0) {
+                html += `<div class="preview-row"><span>モール工事（${moleLength}m）</span><span>¥${ihData.molePrice.toLocaleString()}</span></div>`;
+            }
+            if (ihData.pipePrice > 0) {
+                html += `<div class="preview-row"><span>配管工事（${pipeLength}m）</span><span>¥${ihData.pipePrice.toLocaleString()}</span></div>`;
+            }
+            
+            html += `<div class="total-row"><span>合計</span><span>¥${ihData.total.toLocaleString()}</span></div>`;
+            
+            document.getElementById('ihPreview').innerHTML = html;
+            document.getElementById('ihPreview').style.display = 'block';
+        }
+
+        function completeIh() {
+            if (!ihData.source || !ihData.installType) {
+                alert('すべての項目を選択してください');
+                return;
+            }
+            if (ihData.installType === 'builtin' && (!ihData.series || !ihData.width)) {
+                alert('シリーズと幅を選択してください');
+                return;
+            }
+
+            hideStep('step3_ih');
+            updateFinalPreview();
+            showStep('step4_final');
+        }
+
+        function updateFinalPreview() {
+            let html = '<div class="preview-title">見積内容</div>';
+            let grandTotal = 0;
+
+            if (productType === 'rangehood' || productType === 'both') {
+                const typeName = rhData.type === 'DWA5' ? '自動洗浄付き' : 'スタンダード';
+                const heightText = rhData.height === 'variable' ? '46.5～76.5cm（可変）' : rhData.height + 'cm';
+                
+                html += `<div class="preview-section">
+                    <div class="preview-section-title">レンジフード</div>
+                    <div class="preview-row">
+                        <span>本体（${typeName} ${rhData.width}cm）${rhData.bodyModel}</span>
+                        <span>¥${rhData.bodyPrice.toLocaleString()}</span>
+                    </div>
+                    <div class="preview-row">
+                        <span>幕板/縦（${rhData.width}cm × ${heightText}）${rhData.plateModel}</span>
+                        <span>¥${rhData.platePrice.toLocaleString()}</span>
+                    </div>
+                    <div class="preview-row">
+                        <span>取付工事費</span>
+                        <span>¥${rhData.workPrice.toLocaleString()}</span>
+                    </div>`;
+                
+                if (rhData.sideCurtainCount > 0) {
+                    html += `<div class="preview-row">
+                        <span>横幕板 ${rhData.sideCurtainModel} × ${rhData.sideCurtainCount}個</span>
+                        <span>¥${rhData.sideCurtainPrice.toLocaleString()}</span>
+                    </div>`;
+                }
+                if (rhData.hasAdapter) {
+                    html += `<div class="preview-row">
+                        <span>取付枠アダプター ${rhPrices.adapter.model}</span>
+                        <span>¥${rhData.adapterPrice.toLocaleString()}</span>
+                    </div>`;
+                }
+                
+                html += `<div class="preview-row" style="font-weight:bold; background:#f5f5f5;">
+                    <span>レンジフード小計</span>
+                    <span>¥${rhData.total.toLocaleString()}</span>
+                </div></div>`;
+                
+                grandTotal += rhData.total;
+            }
+
+            if (productType === 'ih' || productType === 'both') {
+                html += `<div class="preview-section"><div class="preview-section-title">IHクッキングヒーター</div>`;
+                
+                if (ihData.installType === 'builtin') {
+                    const seriesName = {'A': 'オールメタルAシリーズ', 'B': '鉄・ステンレスBシリーズ',
+                                       'C': '鉄・ステンレスCシリーズ', 'F': '鉄・ステンレスFシリーズ'}[ihData.series];
+                    html += `<div class="preview-row">
+                        <span>本体（${seriesName} ${ihData.width}cm）${ihData.bodyModel}</span>
+                        <span>¥${ihData.bodyPrice.toLocaleString()}</span>
+                    </div>`;
+                } else {
+                    html += `<div class="preview-row">
+                        <span>本体（据え置き）${ihData.bodyModel}</span>
+                        <span>¥${ihData.bodyPrice.toLocaleString()}</span>
+                    </div>`;
+                }
+                
+                html += `<div class="preview-row"><span>取付工事</span><span>¥${ihData.workPrice.toLocaleString()}</span></div>`;
+                
+                if (ihData.removalPrice > 0) {
+                    html += `<div class="preview-row"><span>既設撤去工事(ビルトイン)</span><span>¥${ihData.removalPrice.toLocaleString()}</span></div>`;
+                }
+                if (ihData.outletPrice > 0) {
+                    html += `<div class="preview-row"><span>コンセント交換</span><span>¥${ihData.outletPrice.toLocaleString()}</span></div>`;
+                }
+                if (ihData.専用outletPrice > 0) {
+                    html += `<div class="preview-row"><span>200V専用コンセント工事</span><span>¥${ihData.専用outletPrice.toLocaleString()}</span></div>`;
+                }
+                if (ihData.hasGas) {
+                    html += `<div class="preview-row"><span>ガス管撤去</span><span>別途ガス会社見積</span></div>`;
+                }
+                if (ihData.earthWiringPrice > 0) {
+                    html += `<div class="preview-row"><span>アース工事（配線）</span><span>¥${ihData.earthWiringPrice.toLocaleString()}</span></div>`;
+                }
+                if (ihData.earthNewPrice > 0) {
+                    html += `<div class="preview-row"><span>アース工事（新規）</span><span>¥${ihData.earthNewPrice.toLocaleString()}</span></div>`;
+                }
+                if (ihData.molePrice > 0) {
+                    const moleLength = parseFloat(document.getElementById('mole_length').value);
+                    html += `<div class="preview-row"><span>モール工事（${moleLength}m）</span><span>¥${ihData.molePrice.toLocaleString()}</span></div>`;
+                }
+                if (ihData.pipePrice > 0) {
+                    const pipeLength = parseFloat(document.getElementById('pipe_length').value);
+                    html += `<div class="preview-row"><span>配管工事（${pipeLength}m）</span><span>¥${ihData.pipePrice.toLocaleString()}</span></div>`;
+                }
+                
+                html += `<div class="preview-row" style="font-weight:bold; background:#f5f5f5;">
+                    <span>IH小計</span>
+                    <span>¥${ihData.total.toLocaleString()}</span>
+                </div></div>`;
+                
+                grandTotal += ihData.total;
+            }
+
+            html += `<div class="total-row"><span>合計金額（税込）</span><span>¥${grandTotal.toLocaleString()}</span></div>`;
+            document.getElementById('finalPreview').innerHTML = html;
+        }
+
+        function backToStep1() {
+            hideStep('step2_rangehood');
+            showStep('step1');
+        }
+
+        function backFromIh() {
+            hideStep('step3_ih');
+            if (productType === 'both') {
+                showStep('step2_rangehood');
+            } else {
+                showStep('step1');
+            }
+        }
+
+        function backFromFinal() {
+            hideStep('step4_final');
+            if (productType === 'both') {
+                showStep('step3_ih');
+            } else if (productType === 'rangehood') {
+                showStep('step2_rangehood');
+            } else {
+                showStep('step3_ih');
+            }
+        }
+
+        function showStep(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function hideStep(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        async function generatePDF() {
+            const customerName = document.getElementById('customerName').value.trim();
+            if (!customerName) {
+                alert('顧客名を入力してください');
+                return;
+            }
+
+            const estimateNo = generateEstimateNumber();
+            let grandTotal = 0;
+            let itemsHTML = '';
+
+            if (productType === 'rangehood' || productType === 'both') {
+                const typeName = rhData.type === 'DWA5' ? '自動洗浄付き' : 'スタンダード';
+                const heightText = rhData.height === 'variable' ? '46.5～76.5cm（可変）' : rhData.height + 'cm';
+                
+                itemsHTML += `<div class="pdf-section">
+                    <div class="pdf-section-title">レンジフード</div>
+                    <div class="pdf-item"><span>本体（${typeName} ${rhData.width}cm）${rhData.bodyModel}</span><span>¥${rhData.bodyPrice.toLocaleString()}</span></div>
+                    <div class="pdf-item"><span>幕板/縦（${rhData.width}cm × ${heightText}）${rhData.plateModel}</span><span>¥${rhData.platePrice.toLocaleString()}</span></div>
+                    <div class="pdf-item"><span>取付工事費</span><span>¥${rhData.workPrice.toLocaleString()}</span></div>`;
+                
+                if (rhData.sideCurtainCount > 0) {
+                    itemsHTML += `<div class="pdf-item"><span>横幕板 ${rhData.sideCurtainModel} × ${rhData.sideCurtainCount}個</span><span>¥${rhData.sideCurtainPrice.toLocaleString()}</span></div>`;
+                }
+                if (rhData.hasAdapter) {
+                    itemsHTML += `<div class="pdf-item"><span>取付枠アダプター ${rhPrices.adapter.model}</span><span>¥${rhData.adapterPrice.toLocaleString()}</span></div>`;
+                }
+                
+                itemsHTML += `<div class="pdf-subtotal"><span>レンジフード小計</span><span>¥${rhData.total.toLocaleString()}</span></div></div>`;
+                grandTotal += rhData.total;
+            }
+
+            if (productType === 'ih' || productType === 'both') {
+                itemsHTML += `<div class="pdf-section"><div class="pdf-section-title">IHクッキングヒーター</div>`;
+                
+                if (ihData.installType === 'builtin') {
+                    const seriesName = {'A': 'オールメタルAシリーズ', 'B': '鉄・ステンレスBシリーズ',
+                                       'C': '鉄・ステンレスCシリーズ', 'F': '鉄・ステンレスFシリーズ'}[ihData.series];
+                    itemsHTML += `<div class="pdf-item"><span>本体（${seriesName} ${ihData.width}cm）${ihData.bodyModel}</span><span>¥${ihData.bodyPrice.toLocaleString()}</span></div>`;
+                } else {
+                    itemsHTML += `<div class="pdf-item"><span>本体（据え置き）${ihData.bodyModel}</span><span>¥${ihData.bodyPrice.toLocaleString()}</span></div>`;
+                }
+                
+                itemsHTML += `<div class="pdf-item"><span>取付工事</span><span>¥${ihData.workPrice.toLocaleString()}</span></div>`;
+                
+                if (ihData.removalPrice > 0) {
+                    itemsHTML += `<div class="pdf-item"><span>既設撤去工事(ビルトイン)</span><span>¥${ihData.removalPrice.toLocaleString()}</span></div>`;
+                }
+                if (ihData.outletPrice > 0) {
+                    itemsHTML += `<div class="pdf-item"><span>コンセント交換</span><span>¥${ihData.outletPrice.toLocaleString()}</span></div>`;
+                }
+                if (ihData.専用outletPrice > 0) {
+                    itemsHTML += `<div class="pdf-item"><span>200V専用コンセント工事</span><span>¥${ihData.専用outletPrice.toLocaleString()}</span></div>`;
+                }
+                if (ihData.hasGas) {
+                    itemsHTML += `<div class="pdf-item"><span>ガス管撤去</span><span>別途ガス会社見積</span></div>`;
+                }
+                if (ihData.earthWiringPrice > 0) {
+                    itemsHTML += `<div class="pdf-item"><span>アース工事（配線）</span><span>¥${ihData.earthWiringPrice.toLocaleString()}</span></div>`;
+                }
+                if (ihData.earthNewPrice > 0) {
+                    itemsHTML += `<div class="pdf-item"><span>アース工事（新規）</span><span>¥${ihData.earthNewPrice.toLocaleString()}</span></div>`;
+                }
+                if (ihData.molePrice > 0) {
+                    const moleLength = parseFloat(document.getElementById('mole_length').value);
+                    itemsHTML += `<div class="pdf-item"><span>モール工事（${moleLength}m）</span><span>¥${ihData.molePrice.toLocaleString()}</span></div>`;
+                }
+                if (ihData.pipePrice > 0) {
+                    const pipeLength = parseFloat(document.getElementById('pipe_length').value);
+                    itemsHTML += `<div class="pdf-item"><span>配管工事（${pipeLength}m）</span><span>¥${ihData.pipePrice.toLocaleString()}</span></div>`;
+                }
+                
+                itemsHTML += `<div class="pdf-subtotal"><span>IH小計</span><span>¥${ihData.total.toLocaleString()}</span></div></div>`;
+                grandTotal += ihData.total;
+            }
+
+            const pdfHTML = `
+                <div class="pdf-content" id="pdfContent">
+                    <div class="pdf-header">
+                        <div class="pdf-title">お見積書</div>
+                        <div class="pdf-company">
+                            <div class="pdf-company-name">ヤハタデンキ</div>
+                            <div>〒263-0005 千葉市稲毛区長沼町330-24</div>
+                            <div>TEL: 043-259-0463</div>
+                        </div>
+                    </div>
+                    <div class="pdf-estimate-no">見積番号：${estimateNo}</div>
+                    <div class="pdf-info">
+                        <span><strong>${customerName}</strong> 様</span>
+                        <span>作成日：${new Date().toLocaleDateString('ja-JP')}</span>
+                    </div>
+                    ${itemsHTML}
+                    <div class="pdf-total">
+                        <span class="pdf-total-label">合計金額（税込）</span>
+                        <span class="pdf-total-amount">¥${grandTotal.toLocaleString()}</span>
+                    </div>
+                </div>
+            `;
+
+            const container = document.getElementById('pdfContainer');
+            container.innerHTML = pdfHTML;
+            const element = document.getElementById('pdfContent');
+
+            const canvas = await html2canvas(element, {
+                scale: 2.5,
+                useCORS: true,
+                logging: false
+            });
+
+            const imgData = canvas.toDataURL('image/jpeg', 1.0);
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            
+            const imgWidth = 210;
+            const pageHeight = 297;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+            
+            const productType2 = productType === 'both' ? 'レンジフード_IH' : 
+                               productType === 'rangehood' ? 'レンジフード' : 'IH';
+            pdf.save(`${productType2}見積書_${customerName}_${new Date().toLocaleDateString('ja-JP').replace(/\//g, '')}.pdf`);
+            
+            container.innerHTML = '';
+        }
+    </script>
+</body>
+</html>
