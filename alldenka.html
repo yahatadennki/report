@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>レンジフード・IH見積書作成ツール</title>
+    <title>設備見積書作成ツール</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
@@ -347,11 +347,52 @@
 </head>
 <body>
     <div class="container">
-        <h1>🔥🍳 レンジフード・IH見積書作成ツール</h1>
+        <h1>⚡ 設備見積書作成ツール</h1>
+
+        <!-- ステップ0: 製品カテゴリ選択 -->
+        <div class="step active" id="step0">
+            <div class="step-indicator">ステップ 1/5 - 製品カテゴリを選択してください</div>
+            
+            <div class="form-group">
+                <div class="option-card" onclick="selectCategory('ecocute')">
+                    <input type="radio" name="category" value="ecocute" id="cat_ecocute">
+                    <label for="cat_ecocute">
+                        <div class="option-title">💧 エコキュート</div>
+                        <div class="option-subtitle">給湯システム</div>
+                    </label>
+                </div>
+                <div class="option-card" onclick="selectCategory('kitchen')">
+                    <input type="radio" name="category" value="kitchen" id="cat_kitchen">
+                    <label for="cat_kitchen">
+                        <div class="option-title">🔥🍳 レンジフード・IH</div>
+                        <div class="option-subtitle">キッチン設備</div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-next" style="flex: 1;" onclick="goToStep1()">次へ</button>
+            </div>
+        </div>
+
+        <!-- エコキュート工事中メッセージ -->
+        <div class="step" id="step_ecocute">
+            <div class="step-indicator">エコキュート</div>
+            
+            <div style="text-align: center; padding: 60px 20px;">
+                <div style="font-size: 48px; margin-bottom: 20px;">🚧</div>
+                <h2 style="color: #666; margin-bottom: 15px;">工事中</h2>
+                <p style="color: #888;">エコキュートの見積機能は現在開発中です。</p>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-back" onclick="backToStep0()">戻る</button>
+            </div>
+        </div>
 
         <!-- ステップ1: 何を設置するか -->
-        <div class="step active" id="step1">
-            <div class="step-indicator">ステップ 1/4 - 何を設置しますか？</div>
+        <div class="step" id="step1">
+            <div class="step-indicator">ステップ 2/5 - 何を設置しますか？</div>
             
             <div class="form-group">
                 <div class="option-card" onclick="selectType('rangehood')">
@@ -384,7 +425,7 @@
 
         <!-- ステップ2: レンジフード選択 -->
         <div class="step" id="step2_rangehood">
-            <div class="step-indicator" id="rh_step_indicator">ステップ 2/4 - レンジフードを選択</div>
+            <div class="step-indicator" id="rh_step_indicator">ステップ 3/5 - レンジフードを選択</div>
             
             <div class="form-group">
                 <label>幅を選択してください</label>
@@ -478,7 +519,7 @@
 
         <!-- ステップ3: IH選択 -->
         <div class="step" id="step3_ih">
-            <div class="step-indicator" id="ih_step_indicator">ステップ 3/4 - IHを選択</div>
+            <div class="step-indicator" id="ih_step_indicator">ステップ 4/5 - IHを選択</div>
             
             <div class="form-group">
                 <label>現在の設備は？</label>
@@ -619,7 +660,7 @@
 
         <!-- ステップ4: 最終確認 -->
         <div class="step" id="step4_final">
-            <div class="step-indicator">ステップ 4/4 - 最終確認と顧客名入力</div>
+            <div class="step-indicator">ステップ 5/5 - 最終確認と顧客名入力</div>
             
             <div class="form-group">
                 <label for="customerName">顧客名 *</label>
@@ -651,6 +692,7 @@
             return `${year}${month}${day}-${hours}${minutes}${seconds}`;
         }
 
+        let selectedCategory = '';
         let productType = '';
         
         let rhData = {
@@ -701,6 +743,36 @@
             countertop: {price: 140000, model: 'KZ-KB21E'}
         };
 
+        function selectCategory(category) {
+            selectedCategory = category;
+            document.getElementById('cat_' + category).checked = true;
+            document.querySelectorAll('input[name="category"]').forEach(r => {
+                r.closest('.option-card').classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+        }
+
+        function goToStep1() {
+            if (!selectedCategory) {
+                alert('製品カテゴリを選択してください');
+                return;
+            }
+            hideStep('step0');
+            
+            if (selectedCategory === 'ecocute') {
+                showStep('step_ecocute');
+            } else {
+                showStep('step1');
+            }
+        }
+
+        function backToStep0() {
+            hideAllSteps();
+            showStep('step0');
+            selectedCategory = '';
+            productType = '';
+        }
+
         function selectType(type) {
             productType = type;
             document.getElementById('type_' + type).checked = true;
@@ -718,13 +790,13 @@
             hideStep('step1');
             
             if (productType === 'rangehood') {
-                document.getElementById('rh_step_indicator').textContent = 'ステップ 2/3 - レンジフードを選択';
+                document.getElementById('rh_step_indicator').textContent = 'ステップ 3/4 - レンジフードを選択';
                 showStep('step2_rangehood');
             } else if (productType === 'ih') {
-                document.getElementById('ih_step_indicator').textContent = 'ステップ 2/3 - IHを選択';
+                document.getElementById('ih_step_indicator').textContent = 'ステップ 3/4 - IHを選択';
                 showStep('step3_ih');
             } else {
-                document.getElementById('rh_step_indicator').textContent = 'ステップ 2/4 - レンジフードを選択';
+                document.getElementById('rh_step_indicator').textContent = 'ステップ 3/5 - レンジフードを選択';
                 showStep('step2_rangehood');
             }
         }
@@ -839,7 +911,7 @@
             hideStep('step2_rangehood');
             
             if (productType === 'both') {
-                document.getElementById('ih_step_indicator').textContent = 'ステップ 3/4 - IHを選択';
+                document.getElementById('ih_step_indicator').textContent = 'ステップ 4/5 - IHを選択';
                 showStep('step3_ih');
             } else {
                 updateFinalPreview();
@@ -1146,6 +1218,12 @@
         function backToStep1() {
             hideStep('step2_rangehood');
             showStep('step1');
+        }
+
+        function hideAllSteps() {
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active');
+            });
         }
 
         function backFromIh() {
