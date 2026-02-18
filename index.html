@@ -68,7 +68,7 @@
     <div class="tags" id="itemTags"></div>
 
     <label>備考</label>
-    <textarea id="remarks" rows="3" placeholder="お客様からの要望など"></textarea>
+    <input type="text" id="remarks" placeholder="お客様からの要望など">
 
     <button class="btn" id="submitBtn">送信</button>
     <div class="msg" id="msg"></div>
@@ -92,7 +92,9 @@ function createStaffTags() {
     btn.className = "tag";
     btn.textContent = val;
     btn.onclick = () => {
+      // 他の担当者ボタンを全てオフにする
       document.querySelectorAll("#staffTags .tag").forEach(t => t.classList.remove("on"));
+      // クリックしたボタンだけオンにする
       btn.classList.add("on");
       selected.staff = val;
     };
@@ -124,6 +126,7 @@ createStaffTags();
 createTags(AREAS, "areaTags", "areas", "blue");
 createTags(ITEMS, "itemTags", "items", "orange");
 
+// 今日の日付をセット
 const today = new Date();
 document.getElementById("date").value = today.toISOString().split("T")[0];
 
@@ -161,6 +164,7 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
     msg.textContent = "✅ " + selected.staff + "のシートに送信しました！";
     logs.push(entry);
     renderLogs();
+    // リセット
     document.getElementById("date").value = today.toISOString().split("T")[0];
     document.getElementById("visits").value = "";
     document.getElementById("postings").value = "";
