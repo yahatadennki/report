@@ -68,7 +68,7 @@
   <script>
     let orders = [];
     let currentDate = new Date().toISOString().slice(0, 10);
-    let scriptUrl = 'https://script.google.com/macros/s/AKfycbybHVTvastbYdcePLc-WxDZtChBKtpcEPF7IYqMX4UPVs1TbfKnIhvnhlIJGtIfK8Y/exec';
+    let scriptUrl = 'https://script.google.com/macros/s/AKfycbxobR2CPCrPNQ4eHn0-u9_X3Po-11t6xRWZ1kZlbGQKUppOzvOxV0KswH4Lo6PlnO4A/exec';
     let selectedService = '';
     let selectedProduct = '';
 
@@ -621,7 +621,7 @@
                         ${order.訪問日時 ? `<p class="text-gray-700 mb-1 flex items-center gap-2">${icons.calendar} 訪問予定: ${order.訪問日時}</p>` : ''}
                         ${order.訪問担当 ? `<p class="text-gray-700 mb-2">👤 訪問担当: ${order.訪問担当}${order.予定時間 ? ` (${order.予定時間})` : ''}</p>` : ''}
                         ${見込表示 ? `<div class="bg-orange-50 p-3 rounded border border-orange-200 mt-2"><p class="text-sm font-semibold text-orange-800 mb-1">💡 見込商品:</p><p class="text-gray-700 text-sm">${見込表示}</p></div>` : ''}
-                        ${order.内容 ? `<div class="bg-gray-50 p-3 rounded border border-gray-200 mt-2"><p class="text-gray-700 whitespace-pre-wrap">${order.内容}</p></div>` : ''}
+                        ${order.内容 ? `<div class="bg-gray-50 p-3 rounded border border-gray-200 mt-2"><p class="text-gray-700">${order.内容}</p></div>` : ''}
                       </div>
                       <button onclick="deleteOrder(${order.id})" class="text-red-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-colors ml-4">${icons.trash}</button>
                     </div>
