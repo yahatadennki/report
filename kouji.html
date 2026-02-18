@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>業務日報 - ㈲ヤハタ電機商会</title>
+  <title>工事＆サービススタッフ日報 - ㈲ヤハタ電機商会</title>
   <style>
     * { box-sizing: border-box; }
     body { 
@@ -336,7 +336,7 @@
 </head>
 <body>
   <div class="container">
-    <h2>📋 業務日報</h2>
+    <h2>📋 工事＆サービススタッフ日報</h2>
     
     <!-- 職種選択 -->
     <div class="section">
@@ -485,7 +485,7 @@
       <!-- メモ -->
       <div class="section">
         <label>メモ <span class="label-optional">（任意）</span></label>
-        <textarea id="remarks" rows="3" placeholder="気が付いた点はなんでも記入してください"></textarea>
+        <input type="text" id="remarks" placeholder="気が付いた点はなんでも記入してください">
       </div>
 
       <button type="button" id="sendBtn" class="submit-btn">📤 報告書を送信する</button>
@@ -494,7 +494,7 @@
 
   <script>
     // ★ ここをご自身の最新GAS URLに書き換えてください ★
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbzk1Wl5bQX-OmEo7uQB2uE14rffGEQjui4Q-UHTqGHKC-xmR9spID6A9ZvX440XwRzf/exec";
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbx9PCDNIWVoDLfjxQlijad3fWbUuFyf0s8duQbxqflZbWoQ1jKC07llA2jVpLy18ujTNQ/exec";
 
     // スタッフリスト
     const STAFF_LIST = {
