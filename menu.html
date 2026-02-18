@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>㈲ヤハタ電機商会 メニュー</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      padding: 20px 16px 40px;
+    }
+    h1 {
+      text-align: center;
+      color: #1a3c5e;
+      font-size: 1.2rem;
+      margin: 16px 0 24px;
+      letter-spacing: 0.05em;
+    }
+    .section-title {
+      font-size: 0.75rem;
+      color: #888;
+      font-weight: bold;
+      letter-spacing: 0.08em;
+      margin: 20px 0 8px 4px;
+    }
+
+    /* 横並びボタン */
+    .row {
+      display: flex;
+      gap: 8px;
+    }
+    .row a.btn {
+      flex: 1;
+    }
+
+    /* 共通ボタン */
+    a.btn {
+      display: block;
+      background: white;
+      color: #1a3c5e;
+      text-decoration: none;
+      padding: 14px 12px;
+      border-radius: 10px;
+      border: 1px solid #cdd6e0;
+      font-size: 0.85rem;
+      font-weight: bold;
+      text-align: center;
+      transition: background 0.15s, border-color 0.15s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    a.btn:hover {
+      background: #e8f0fb;
+      border-color: #007bff;
+    }
+    a.btn span {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: normal;
+      color: #888;
+      margin-top: 3px;
+    }
+
+    /* アコーディオン */
+    .accordion-btn {
+      background: #1a3c5e;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .accordion-btn:hover {
+      background: #243f5e;
+    }
+    .accordion-btn .arrow {
+      font-size: 0.75rem;
+      transition: transform 0.2s;
+    }
+    .accordion-btn.open .arrow {
+      transform: rotate(180deg);
+    }
+    .accordion-body {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      padding-top: 8px;
+    }
+    .accordion-body.open {
+      display: flex;
+    }
+    a.btn.disabled {
+      opacity: 0.45;
+      pointer-events: none;
+      background: #f0f0f0;
+    }
+
+    /* スプレッドシートボタン */
+    a.btn.sheet-btn {
+      background: #e8f0fb;
+      border-color: #a8c0e0;
+      font-size: 0.78rem;
+    }
+    a.btn.sheet-btn:hover {
+      background: #d0e3fb;
+      border-color: #007bff;
+    }
+    a.btn.sheet-btn span {
+      color: #6699bb;
+    }
+
+    /* 写真ボタン */
+    .photo-row {
+      display: flex;
+      gap: 8px;
+    }
+    .photo-row a.btn {
+      flex: 1;
+      background: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
+    .photo-row a.btn:hover {
+      background: #0069d9;
+      border-color: #0069d9;
+    }
+    .photo-row a.btn span {
+      color: #cce0ff;
+    }
+  </style>
+</head>
+<body>
+  <h1>㈲ヤハタ電機商会</h1>
+
+  <!-- 日報 -->
+  <div class="section-title">📋 日報</div>
+  <div class="row">
+    <a class="btn" href="juchu.html">受注日報<span>受注内容</span></a>
+    <a class="btn" href="kouji.html">工事・サービス<span>作業報告</span></a>
+    <a class="btn" href="index.html">ひまわり<span>活動報告</span></a>
+  </div>
+  <div class="row" style="margin-top:8px;">
+    <a class="btn sheet-btn" href="https://docs.google.com/spreadsheets/d/1Cg5FACS_HqpAlchsU6O4ansNHc7GO_FOWAYhpX_72_w/edit?gid=0#gid=0" target="_blank">📊 受注<span>スプレッドシート</span></a>
+    <a class="btn sheet-btn" href="https://docs.google.com/spreadsheets/d/1L57wd6u7MaX0Nw4SdpPtbCgVEbtLJkx6Pa1dvJpeZqg/edit?gid=0#gid=0" target="_blank">📊 工事・サービス<span>スプレッドシート</span></a>
+    <a class="btn sheet-btn" href="https://docs.google.com/spreadsheets/d/1WMsviRURr3Lwfi4zy4-dvH7DHO3uq4WXb4NBScwLqi4/edit?gid=1553369589#gid=1553369589" target="_blank">📊 ひまわり<span>スプレッドシート</span></a>
+  </div>
+
+  <!-- 見積書 -->
+  <div class="section-title">📄 見積書</div>
+  <button class="accordion-btn" onclick="toggleAccordion('acc-mitsumori', this)">
+    見積書を選ぶ <span class="arrow">▼</span>
+  </button>
+  <div class="accordion-body" id="acc-mitsumori">
+    <div class="row">
+      <a class="btn" href="mistumori.html">アラウーノ＆LED<span>見積書</span></a>
+      <a class="btn" href="alldenka.html">IH・レンジフード<br>&エコキュート<span>見積書</span></a>
+      <a class="btn disabled" href="#">電気工事<span>製作中</span></a>
+    </div>
+  </div>
+
+  <!-- 写真 -->
+  <div class="section-title">📷 写真フォルダ</div>
+  <div class="photo-row">
+    <a class="btn" href="https://drive.google.com/drive/u/0/folders/1--gy-_U-U-onPEZd3i8oWo290NDMZC9w" target="_blank">現調写真</a>
+    <a class="btn" href="https://drive.google.com/drive/u/0/folders/17R6uVjwN6kei_VdLjNJX4LeA6TEINwc4" target="_blank">完了写真</a>
+  </div>
+
+  <script>
+    function toggleAccordion(id, btn) {
+      const body = document.getElementById(id);
+      const isOpen = body.classList.contains('open');
+      body.classList.toggle('open', !isOpen);
+      btn.classList.toggle('open', !isOpen);
+    }
+  </script>
+</body>
+</html>
