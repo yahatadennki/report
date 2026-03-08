@@ -18,10 +18,6 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            /* タッチスクロール最適化 */
-            -webkit-overflow-scrolling: touch;
         }
 
         .container {
@@ -111,10 +107,6 @@
             background: #e8eeff;
         }
 
-        .option-card input[type="radio"] {
-            margin-right: 10px;
-        }
-
         .option-title {
             font-weight: 600;
             color: #333;
@@ -125,13 +117,6 @@
             color: #888;
             font-size: 13px;
             margin-top: 3px;
-        }
-
-        .option-price {
-            color: #2196F3;
-            margin-top: 5px;
-            font-size: 15px;
-            font-weight: 600;
         }
 
         .product-selection {
@@ -175,36 +160,6 @@
             margin-top: 10px;
             color: #888;
             font-size: 14px;
-        }
-
-        .checkbox-group {
-            margin: 10px 0;
-        }
-
-        .checkbox-group label {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 6px;
-            margin-bottom: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .checkbox-group label:hover {
-            border-color: #667eea;
-            background: #f5f7ff;
-        }
-
-        .checkbox-group input[type="checkbox"] {
-            margin-right: 10px;
-            width: 18px;
-            height: 18px;
-        }
-
-        .checkbox-group input[type="checkbox"]:disabled {
-            opacity: 0.5;
         }
 
         .button-group {
@@ -393,359 +348,16 @@
             color: #1976d2;
         }
 
-        /* PDF用のスタイル */
-        .pdf-content {
+        #pdfContainer {
             position: absolute;
             left: -9999px;
-            width: 794px;
-            background: white;
-            padding: 50px 60px;
-            font-family: 'Yu Gothic', 'MS Gothic', sans-serif;
-            box-sizing: border-box;
-        }
-
-        .pdf-header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 3px solid #667eea;
-        }
-
-        .pdf-title {
-            font-size: 32px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        .pdf-company {
-            text-align: right;
-            font-size: 13px;
-            line-height: 1.6;
-            margin-bottom: 10px;
-        }
-
-        .pdf-company-name {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .pdf-estimate-no {
-            text-align: left;
-            font-size: 13px;
-            margin-bottom: 15px;
-            color: #666;
-        }
-
-        .pdf-info {
-            display: flex;
-            justify-content: space-between;
-            margin: 25px 0;
-            font-size: 15px;
-        }
-
-        .pdf-section {
-            margin: 25px 0;
-        }
-
-        .pdf-section-title {
-            background: #667eea;
-            color: white;
-            padding: 10px 15px;
-            font-weight: bold;
-            margin-bottom: 12px;
-            font-size: 16px;
-        }
-
-        .pdf-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 15px;
-            border-bottom: 1px solid #ddd;
-            font-size: 14px;
-        }
-
-        .pdf-subtotal {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 15px;
-            margin-top: 5px;
-            border-top: 2px solid #333;
-            font-weight: bold;
-            background: #f5f5f5;
-            font-size: 15px;
-        }
-
-        .pdf-total {
-            margin-top: 30px;
-            border: 3px solid #1976d2;
-            background: #e3f2fd;
-            padding: 18px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .pdf-total-label {
-            font-size: 20px;
-            font-weight: bold;
-            color: #1976d2;
-        }
-
-        .pdf-total-amount {
-            font-size: 26px;
-            font-weight: bold;
-            color: #1976d2;
-        }
-
-        /* =========================
-           レスポンシブ対応
-           ========================= */
-
-        /* タブレット（768px以下） */
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-
-            .container {
-                padding: 20px;
-                border-radius: 8px;
-            }
-
-            h1 {
-                font-size: 22px;
-                margin-bottom: 20px;
-            }
-
-            .step-indicator {
-                font-size: 14px;
-                padding: 10px;
-            }
-
-            .product-selection {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-
-            .product-card {
-                padding: 30px 20px;
-            }
-
-            .product-icon {
-                font-size: 48px;
-            }
-
-            .product-name {
-                font-size: 18px;
-            }
-
-            .option-card {
-                padding: 12px;
-            }
-
-            .option-title {
-                font-size: 14px;
-            }
-
-            .option-price {
-                font-size: 16px;
-            }
-
-            .form-group label {
-                font-size: 14px;
-            }
-
-            .form-group input,
-            .form-group select {
-                font-size: 16px; /* iOS対策：16px以上でズーム防止 */
-                padding: 12px;
-            }
-
-            .checkbox-group label {
-                padding: 10px;
-                font-size: 14px;
-            }
-
-            .btn-back,
-            .btn-next,
-            .btn-add,
-            .btn-complete,
-            .btn-generate {
-                padding: 14px;
-                font-size: 16px;
-                /* タッチ操作しやすいように最小44px確保 */
-                min-height: 44px;
-            }
-
-            .button-group {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .button-group .btn-back,
-            .button-group .btn-next {
-                width: 100%;
-            }
-
-            .preview {
-                padding: 15px;
-            }
-
-            .preview-title {
-                font-size: 16px;
-            }
-
-            .light-item {
-                padding: 12px;
-            }
-
-            .light-item-header {
-                font-size: 14px;
-            }
-
-            .total-row {
-                font-size: 18px;
-                padding: 12px;
-            }
-        }
-
-        /* スマホ（480px以下） */
-        @media (max-width: 480px) {
-            body {
-                padding: 5px;
-            }
-
-            .container {
-                padding: 15px;
-                border-radius: 6px;
-            }
-
-            h1 {
-                font-size: 20px;
-                margin-bottom: 15px;
-            }
-
-            .step-indicator {
-                font-size: 13px;
-                padding: 8px;
-            }
-
-            .product-card {
-                padding: 25px 15px;
-            }
-
-            .product-icon {
-                font-size: 40px;
-            }
-
-            .product-name {
-                font-size: 16px;
-            }
-
-            .form-group {
-                margin-bottom: 15px;
-            }
-
-            .option-card {
-                padding: 10px;
-            }
-
-            .option-title {
-                font-size: 13px;
-            }
-
-            .option-price {
-                font-size: 14px;
-            }
-
-            .checkbox-group label {
-                padding: 8px;
-                font-size: 13px;
-            }
-
-            .preview {
-                padding: 12px;
-            }
-
-            .preview-title {
-                font-size: 15px;
-            }
-
-            .preview-row {
-                padding: 8px 0;
-                font-size: 13px;
-            }
-
-            .light-item {
-                padding: 10px;
-            }
-
-            .total-row {
-                font-size: 16px;
-                padding: 10px;
-            }
-
-            /* テーブルをスクロール可能に */
-            .summary-table-container {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            table {
-                font-size: 13px;
-            }
-        }
-
-        /* 横向きスマホ対応 */
-        @media (max-width: 768px) and (orientation: landscape) {
-            .container {
-                max-width: 100%;
-            }
-        }
-
-        /* タッチデバイス用の調整 */
-        @media (hover: none) and (pointer: coarse) {
-            /* タッチ操作しやすいように */
-            .option-card,
-            .product-card,
-            button,
-            .checkbox-group label {
-                cursor: pointer;
-                -webkit-tap-highlight-color: rgba(102, 126, 234, 0.2);
-            }
-
-            /* ホバー効果をタップ用に調整 */
-            .option-card:active,
-            .product-card:active {
-                transform: scale(0.98);
-            }
-
-            button:active {
-                transform: translateY(1px);
-            }
-        }
-
-        /* iOS Safari対策 */
-        input[type="text"],
-        input[type="number"],
-        select,
-        textarea {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            border-radius: 6px;
-        }
-
-        /* 数値入力のスピナーを維持 */
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-            opacity: 1;
+            top: 0;
         }
     </style>
 </head>
 <body>
+    <div id="pdfContainer"></div>
+    
     <div class="container">
         <h1>📋 見積書作成ツール</h1>
 
@@ -769,206 +381,6 @@
             <div class="button-group">
                 <button class="btn-next" style="flex: 1;" onclick="goToStep1()">次へ</button>
             </div>
-        </div>
-
-        <!-- ====== アラウーノのフロー ====== -->
-
-        <!-- ステップ1: アラウーノ機種選択 -->
-        <div class="step" id="step1_arawuno">
-            <div class="step-indicator">ステップ 2/6 - 機種を選択してください</div>
-            
-            <div class="form-group">
-                <div class="option-card" onclick="selectModel('arawuno')">
-                    <input type="radio" name="model" value="arawuno" id="model_arawuno">
-                    <label for="model_arawuno">
-                        <div class="option-title">アラウーノ</div>
-                        <div class="option-subtitle">CH150CWSK</div>
-                        <div class="option-price">¥313,800</div>
-                    </label>
-                </div>
-                <div class="option-card" onclick="selectModel('arawunoS')">
-                    <input type="radio" name="model" value="arawunoS" id="model_arawunoS">
-                    <label for="model_arawunoS">
-                        <div class="option-title">アラウーノS</div>
-                        <div class="option-subtitle">CH1601WSK</div>
-                        <div class="option-price">¥207,500</div>
-                    </label>
-                </div>
-                <div class="option-card" onclick="selectModel('arawunoV')">
-                    <input type="radio" name="model" value="arawunoV" id="model_arawunoV">
-                    <label for="model_arawunoV">
-                        <div class="option-title">アラウーノV</div>
-                        <div class="option-subtitle">手洗い・便座を次のステップで選択</div>
-                        <div class="option-price">¥100,000～</div>
-                    </label>
-                </div>
-            </div>
-
-            <div class="button-group">
-                <button class="btn-back" onclick="goBackToStep0()">戻る</button>
-                <button class="btn-next" onclick="goToStep2_arawuno()">次へ</button>
-            </div>
-        </div>
-
-        <!-- ステップ2: アラウーノオプション選択 -->
-        <div class="step" id="step2_arawuno">
-            <div class="step-indicator">ステップ 3/6 - オプションを選択してください</div>
-            
-            <!-- アラウーノ・アラウーノS用 -->
-            <div id="options_arawuno_s" style="display:none;">
-                <div class="form-group">
-                    <label>手洗い器の有無</label>
-                    <div class="option-card" onclick="selectWashbasin('none')">
-                        <input type="radio" name="washbasin" value="none" id="washbasin_none">
-                        <label for="washbasin_none">
-                            <div class="option-title">トイレのみ（標準）</div>
-                            <div class="option-price">追加費用なし</div>
-                        </label>
-                    </div>
-                    <div class="option-card" onclick="selectWashbasin('with')">
-                        <input type="radio" name="washbasin" value="with" id="washbasin_with">
-                        <label for="washbasin_with">
-                            <div class="option-title">手洗い器有（連動）</div>
-                            <div class="option-subtitle">XCH10EH</div>
-                            <div class="option-price">本体 ¥55,000 + 取付工事 ¥11,000</div>
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <!-- アラウーノV用 -->
-            <div id="options_arawunoV" style="display:none;">
-                <div class="form-group">
-                    <label>手洗いの有無</label>
-                    <div class="option-card" onclick="selectVWashbasin('without')">
-                        <input type="radio" name="v_washbasin" value="without" id="v_washbasin_without">
-                        <label for="v_washbasin_without">
-                            <div class="option-title">手洗い無</div>
-                            <div class="option-subtitle">CH3010WS</div>
-                            <div class="option-price">¥100,000</div>
-                        </label>
-                    </div>
-                    <div class="option-card" onclick="selectVWashbasin('with')">
-                        <input type="radio" name="v_washbasin" value="with" id="v_washbasin_with">
-                        <label for="v_washbasin_with">
-                            <div class="option-title">手洗い有</div>
-                            <div class="option-subtitle">CH3010WST</div>
-                            <div class="option-price">¥111,700</div>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="form-group" id="v_seat_selection" style="display:none;">
-                    <label>便座を選択してください</label>
-                    <div class="option-card" onclick="selectVSeat('premium')">
-                        <input type="radio" name="v_seat" value="premium" id="v_seat_premium">
-                        <label for="v_seat_premium">
-                            <div class="option-title">快適機能（一体型）</div>
-                            <div class="option-subtitle">CH323WSK</div>
-                            <div class="option-price">+¥74,200</div>
-                        </label>
-                    </div>
-                    <div class="option-card" onclick="selectVSeat('standard')">
-                        <input type="radio" name="v_seat" value="standard" id="v_seat_standard">
-                        <label for="v_seat_standard">
-                            <div class="option-title">標準機能（一体型）</div>
-                            <div class="option-price">+¥65,800</div>
-                        </label>
-                    </div>
-                    <div class="option-card" onclick="selectVSeat('basic')">
-                        <input type="radio" name="v_seat" value="basic" id="v_seat_basic">
-                        <label for="v_seat_basic">
-                            <div class="option-title">基本機能</div>
-                            <div class="option-price">+¥52,500</div>
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="button-group">
-                <button class="btn-back" onclick="goBackToStep1_arawuno()">戻る</button>
-                <button class="btn-next" onclick="goToStep3_arawuno()">次へ</button>
-            </div>
-        </div>
-
-        <!-- ステップ3: 排水芯選択 -->
-        <div class="step" id="step3_arawuno">
-            <div class="step-indicator">ステップ 4/6 - 排水芯を選択してください</div>
-            
-            <div class="form-group">
-                <label>床排水 - 排水芯を選んでください</label>
-                <div class="option-card" onclick="selectDrain('120-200')">
-                    <input type="radio" name="drain" value="120-200" id="drain_120">
-                    <label for="drain_120">
-                        <div class="option-title">排水芯 120～200mm</div>
-                        <div class="option-price" id="price_120">部品代: ¥11,000</div>
-                    </label>
-                </div>
-                <div class="option-card" onclick="selectDrain('305-510')">
-                    <input type="radio" name="drain" value="305-510" id="drain_305">
-                    <label for="drain_305">
-                        <div class="option-title">排水芯 305～510mm</div>
-                        <div class="option-price" id="price_305">部品代: ¥22,000</div>
-                    </label>
-                </div>
-            </div>
-
-            <div class="button-group">
-                <button class="btn-back" onclick="goBackToStep2_arawuno()">戻る</button>
-                <button class="btn-next" onclick="goToStep4_arawuno()">次へ</button>
-            </div>
-        </div>
-
-        <!-- ステップ4: 工事内容選択 -->
-        <div class="step" id="step4_arawuno">
-            <div class="step-indicator">ステップ 5/6 - 必要な工事を選択してください</div>
-            
-            <div class="checkbox-group">
-                <label>
-                    <input type="checkbox" id="work_install" checked disabled>
-                    <span>アラウーノ本体設置工事 ¥19,800（必須）</span>
-                </label>
-                <label>
-                    <input type="checkbox" id="work_water" checked disabled>
-                    <span>アラウーノ給水接続工事 ¥6,600（必須）</span>
-                </label>
-                <label>
-                    <input type="checkbox" id="work_flange" onchange="updateWorkSelection()">
-                    <span>フランジ交換工事 ¥8,800</span>
-                </label>
-                <label>
-                    <input type="checkbox" id="work_removal" onchange="updateWorkSelection()">
-                    <span>既設トイレ撤去工事 ¥6,600</span>
-                </label>
-                <label>
-                    <input type="checkbox" id="work_disposal" onchange="updateWorkSelection()">
-                    <span>既設トイレ処分費 ¥5,500</span>
-                </label>
-            </div>
-
-            <div class="button-group">
-                <button class="btn-back" onclick="goBackToStep3_arawuno()">戻る</button>
-                <button class="btn-next" onclick="goToStep5_arawuno()">次へ</button>
-            </div>
-        </div>
-
-        <!-- ステップ5: 確認・顧客名入力 -->
-        <div class="step" id="step5_arawuno">
-            <div class="step-indicator">ステップ 6/6 - 内容確認と顧客名入力</div>
-            
-            <div class="form-group">
-                <label for="customerNameArawuno">顧客名 *</label>
-                <input type="text" id="customerNameArawuno" placeholder="例：山田太郎" required>
-            </div>
-
-            <div class="preview" id="previewArawuno">
-                <!-- プレビューがここに表示されます -->
-            </div>
-
-            <div class="button-group">
-                <button class="btn-back" onclick="goBackToStep4_arawuno()">戻る</button>
-            </div>
-            <button class="btn-generate" onclick="generateArawunoPDF()">📄 見積書PDF生成</button>
         </div>
 
         <!-- ====== LED照明のフロー ====== -->
@@ -1151,8 +563,8 @@
             <div class="step-indicator">最終確認 - 顧客名を入力して見積書を生成</div>
             
             <div class="form-group">
-                <label for="customerNameLed">顧客名 *</label>
-                <input type="text" id="customerNameLed" placeholder="例：山田太郎" required>
+                <label for="customerName">顧客名 *</label>
+                <input type="text" id="customerName" placeholder="例：山田太郎" required>
             </div>
 
             <div class="preview" id="finalPreview"></div>
@@ -1162,105 +574,22 @@
             </div>
             <button class="btn-generate" onclick="generateLedPDF()">📄 見積書PDF生成</button>
         </div>
+
+        <!-- ====== アラウーノのフロー（既存）簡略版 ====== -->
+        <div class="step" id="arawunoPlaceholder" style="text-align: center; color: #999; padding: 50px 0;">
+            <p>アラウーノの見積書機能は準備中です</p>
+            <button class="btn-back" onclick="goBackToStep0()" style="margin-top: 20px;">戻る</button>
+        </div>
     </div>
 
-    <!-- PDF生成用の非表示エリア -->
-    <div id="pdfContainer"></div>
-
     <script>
-        window.jsPDF = window.jspdf.jsPDF;
+        const { jsPDF } = window.jspdf;
         
-        // 見積番号生成関数
-        function generateEstimateNumber() {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            return `${year}${month}${day}-${hours}${minutes}${seconds}`;
-        }
-        
-        // ======== 共通変数 ========
         let selectedProduct = '';
-        
-        // ======== アラウーノ用変数 ========
-        let selectedData = {
-            model: '',
-            modelName: '',
-            modelCode: '',
-            modelPrice: 0,
-            washbasin: '',
-            washbasinPrice: 0,
-            washbasinWorkPrice: 0,
-            vWashbasin: '',
-            vWashbasinCode: '',
-            vWashbasinPrice: 0,
-            vSeat: '',
-            vSeatName: '',
-            vSeatPrice: 0,
-            drain: '',
-            drainParts: '',
-            partsCost: 0
-        };
-
-        const modelData = {
-            'arawuno': {
-                name: 'アラウーノ',
-                code: 'CH150CWSK',
-                price: 313800
-            },
-            'arawunoS': {
-                name: 'アラウーノS',
-                code: 'CH1601WSK',
-                price: 207500
-            },
-            'arawunoV': {
-                name: 'アラウーノV',
-                code: '',
-                price: 0
-            }
-        };
-
-        const vWashbasinData = {
-            'without': { code: 'CH3010WS', price: 100000 },
-            'with': { code: 'CH3010WST', price: 111700 }
-        };
-
-        const vSeatData = {
-            'premium': { name: '快適機能（一体型）', code: 'CH323WSK', price: 74200 },
-            'standard': { name: '標準機能（一体型）', price: 65800 },
-            'basic': { name: '基本機能', price: 52500 }
-        };
-
-        const partsData = {
-            'arawuno': {
-                '120-200': { code: 'CH150F', price: 11000 },
-                '305-510': { code: 'CH150FW', price: 22000 }
-            },
-            'arawunoS': {
-                '120-200': { code: 'CH160F', price: 11000 },
-                '305-510': { code: 'CH160FW', price: 22000 }
-            },
-            'arawunoV': {
-                '120-200': { code: 'CH301F', price: 11000 },
-                '305-510': { code: 'CH301FW', price: 22000 }
-            }
-        };
-
-        const workCosts = {
-            install: 19800,
-            water: 6600,
-            flange: 8800,
-            removal: 8800,
-            disposal: 5500
-        };
-
-        // ======== LED用変数 ========
         let selectedLedType = '';
         let selectedLights = [];
 
+        // LED照明のデータ
         const ledData = {
             fixture: {
                 '居室': {
@@ -1315,7 +644,59 @@
             }
         };
 
-        // ======== 共通関数 ========
+        // 見積番号生成
+        function generateEstimateNumber() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            return `${year}${month}${day}-${hours}${minutes}${seconds}`;
+        }
+
+        // Google Drive自動保存関数
+        async function savePdfToDrive(pdfBlob, fileName, customerName, productType, totalAmount) {
+            try {
+                const reader = new FileReader();
+                
+                return new Promise((resolve, reject) => {
+                    reader.onloadend = async function() {
+                        const base64data = reader.result.split(',')[1];
+                        
+                        await fetch('https://script.google.com/macros/s/AKfycbxfU8a1-PpblTVMc7HDE7Bx9q1LbgOCSmhxoQNZLNZhiIVLEm28x8iEHrtQS7wXAhbB/exec', {
+                            method: 'POST',
+                            mode: 'no-cors',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                pdfData: base64data,
+                                fileName: fileName,
+                                customerName: customerName,
+                                productType: productType,
+                                totalAmount: totalAmount,
+                                timestamp: new Date().toISOString()
+                            })
+                        });
+                        
+                        resolve(true);
+                    };
+                    
+                    reader.onerror = function() {
+                        reject(new Error('PDF読み込みエラー'));
+                    };
+                    
+                    reader.readAsDataURL(pdfBlob);
+                });
+            } catch (error) {
+                console.error('Google Drive保存エラー:', error);
+                alert('Google Driveへの保存に失敗しました。PDFはダウンロードされました。');
+                return false;
+            }
+        }
+
         function selectProduct(product) {
             selectedProduct = product;
             document.querySelectorAll('.product-card').forEach(card => {
@@ -1331,10 +712,10 @@
             }
 
             showStep('step0');
-            if (selectedProduct === 'arawuno') {
-                showStep('step1_arawuno');
-            } else if (selectedProduct === 'led') {
+            if (selectedProduct === 'led') {
                 showStep('step1_led');
+            } else {
+                showStep('arawunoPlaceholder');
             }
         }
 
@@ -1348,423 +729,6 @@
             showStep('step0');
         }
 
-        function showStep(stepId) {
-            document.querySelectorAll('.step').forEach(step => {
-                step.classList.remove('active');
-            });
-            document.getElementById(stepId).classList.add('active');
-        }
-
-        // ======== アラウーノ用関数 ========
-        function selectModel(model) {
-            selectedData.model = model;
-            selectedData.modelName = modelData[model].name;
-            selectedData.modelCode = modelData[model].code;
-            selectedData.modelPrice = modelData[model].price;
-            
-            selectedData.washbasin = '';
-            selectedData.vWashbasin = '';
-            selectedData.vSeat = '';
-            
-            document.getElementById('model_' + model).checked = true;
-            document.querySelectorAll('#step1_arawuno .option-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-            event.currentTarget.classList.add('selected');
-        }
-
-        function goToStep2_arawuno() {
-            if (!selectedData.model) {
-                alert('機種を選択してください');
-                return;
-            }
-            
-            if (selectedData.model === 'arawunoV') {
-                document.getElementById('options_arawuno_s').style.display = 'none';
-                document.getElementById('options_arawunoV').style.display = 'block';
-            } else {
-                document.getElementById('options_arawuno_s').style.display = 'block';
-                document.getElementById('options_arawunoV').style.display = 'none';
-            }
-            
-            showStep('step1_arawuno');
-            showStep('step2_arawuno');
-        }
-
-        function selectWashbasin(type) {
-            selectedData.washbasin = type;
-            if (type === 'none') {
-                selectedData.washbasinPrice = 0;
-                selectedData.washbasinWorkPrice = 0;
-            } else {
-                selectedData.washbasinPrice = 55000;
-                selectedData.washbasinWorkPrice = 11000;
-            }
-            
-            document.getElementById('washbasin_' + type).checked = true;
-            document.querySelectorAll('#options_arawuno_s .option-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-            event.currentTarget.classList.add('selected');
-        }
-
-        function selectVWashbasin(type) {
-            selectedData.vWashbasin = type;
-            selectedData.vWashbasinCode = vWashbasinData[type].code;
-            selectedData.vWashbasinPrice = vWashbasinData[type].price;
-            
-            selectedData.modelCode = vWashbasinData[type].code;
-            selectedData.modelPrice = vWashbasinData[type].price;
-            
-            document.getElementById('v_washbasin_' + type).checked = true;
-            document.querySelectorAll('#options_arawunoV .option-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-            event.currentTarget.classList.add('selected');
-            
-            document.getElementById('v_seat_selection').style.display = 'block';
-        }
-
-        function selectVSeat(type) {
-            selectedData.vSeat = type;
-            selectedData.vSeatName = vSeatData[type].name;
-            selectedData.vSeatPrice = vSeatData[type].price;
-            
-            document.getElementById('v_seat_' + type).checked = true;
-            document.querySelectorAll('#v_seat_selection .option-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-            event.currentTarget.classList.add('selected');
-        }
-
-        function selectDrain(drain) {
-            selectedData.drain = drain;
-            const parts = partsData[selectedData.model][drain];
-            selectedData.drainParts = parts.code;
-            selectedData.partsCost = parts.price;
-            
-            document.getElementById('drain_' + drain.split('-')[0]).checked = true;
-            document.querySelectorAll('#step3_arawuno .option-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-            event.currentTarget.classList.add('selected');
-        }
-
-        function goToStep3_arawuno() {
-            if (selectedData.model === 'arawunoV') {
-                if (!selectedData.vWashbasin) {
-                    alert('手洗いの有無を選択してください');
-                    return;
-                }
-                if (!selectedData.vSeat) {
-                    alert('便座を選択してください');
-                    return;
-                }
-            } else {
-                if (!selectedData.washbasin) {
-                    alert('手洗い器の有無を選択してください');
-                    return;
-                }
-            }
-            
-            showStep('step2_arawuno');
-            showStep('step3_arawuno');
-        }
-
-        function goBackToStep2_arawuno() {
-            showStep('step3_arawuno');
-            showStep('step2_arawuno');
-        }
-
-        function goBackToStep1_arawuno() {
-            showStep('step2_arawuno');
-            showStep('step1_arawuno');
-        }
-
-        function goToStep4_arawuno() {
-            if (!selectedData.drain) {
-                alert('排水芯を選択してください');
-                return;
-            }
-            showStep('step3_arawuno');
-            showStep('step4_arawuno');
-        }
-
-        function goBackToStep3_arawuno() {
-            showStep('step4_arawuno');
-            showStep('step3_arawuno');
-        }
-
-        function goToStep5_arawuno() {
-            updateArawunoPreview();
-            showStep('step4_arawuno');
-            showStep('step5_arawuno');
-        }
-
-        function goBackToStep4_arawuno() {
-            showStep('step5_arawuno');
-            showStep('step4_arawuno');
-        }
-
-        function updateWorkSelection() {
-            if (document.getElementById('step5_arawuno').classList.contains('active')) {
-                updateArawunoPreview();
-            }
-        }
-
-        function updateArawunoPreview() {
-            const preview = document.getElementById('previewArawuno');
-            
-            let totalWork = workCosts.install + workCosts.water;
-            let workList = [
-                { name: 'アラウーノ本体設置工事', price: workCosts.install },
-                { name: 'アラウーノ給水接続工事', price: workCosts.water }
-            ];
-
-            if (selectedData.washbasin === 'with') {
-                totalWork += selectedData.washbasinWorkPrice;
-                workList.push({ name: '手洗い器取付工事', price: selectedData.washbasinWorkPrice });
-            }
-
-            if (document.getElementById('work_flange').checked) {
-                totalWork += workCosts.flange;
-                workList.push({ name: 'フランジ交換工事', price: workCosts.flange });
-            }
-            if (document.getElementById('work_removal').checked) {
-                totalWork += workCosts.removal;
-                workList.push({ name: '既設トイレ撤去工事', price: workCosts.removal });
-            }
-            if (document.getElementById('work_disposal').checked) {
-                totalWork += workCosts.disposal;
-                workList.push({ name: '既設トイレ処分費', price: workCosts.disposal });
-            }
-
-            let totalProduct = selectedData.modelPrice + selectedData.partsCost;
-            if (selectedData.washbasinPrice > 0) {
-                totalProduct += selectedData.washbasinPrice;
-            }
-            if (selectedData.vSeatPrice > 0) {
-                totalProduct += selectedData.vSeatPrice;
-            }
-
-            const grandTotal = totalProduct + totalWork;
-
-            let html = `<div class="preview-title">見積内容</div>`;
-            
-            html += `<div class="preview-section">
-                <div class="preview-section-title">機種情報</div>
-                <div class="preview-row">
-                    <span class="preview-label">機種</span>
-                    <span class="preview-value">${selectedData.modelName}</span>
-                </div>
-                <div class="preview-row">
-                    <span class="preview-label">型番</span>
-                    <span class="preview-value">${selectedData.modelCode}</span>
-                </div>
-                <div class="preview-row">
-                    <span class="preview-label">本体価格</span>
-                    <span class="preview-value">¥${selectedData.modelPrice.toLocaleString()}</span>
-                </div>`;
-
-            if (selectedData.model !== 'arawunoV' && selectedData.washbasin === 'with') {
-                html += `<div class="preview-row">
-                    <span class="preview-label">手洗い器（XCH10EH）</span>
-                    <span class="preview-value">¥${selectedData.washbasinPrice.toLocaleString()}</span>
-                </div>`;
-            }
-
-            if (selectedData.model === 'arawunoV') {
-                html += `<div class="preview-row">
-                    <span class="preview-label">便座（${selectedData.vSeatName}）</span>
-                    <span class="preview-value">¥${selectedData.vSeatPrice.toLocaleString()}</span>
-                </div>`;
-            }
-
-            html += `</div>`;
-
-            html += `<div class="preview-section">
-                <div class="preview-section-title">排水芯部品</div>
-                <div class="preview-row">
-                    <span class="preview-label">排水芯</span>
-                    <span class="preview-value">${selectedData.drain}mm</span>
-                </div>
-                <div class="preview-row">
-                    <span class="preview-label">部品型番</span>
-                    <span class="preview-value">${selectedData.drainParts}</span>
-                </div>
-                <div class="preview-row">
-                    <span class="preview-label">部品代</span>
-                    <span class="preview-value">¥${selectedData.partsCost.toLocaleString()}</span>
-                </div>
-            </div>`;
-
-            html += `<div class="preview-section">
-                <div class="preview-section-title">工事内容</div>`;
-            
-            workList.forEach(work => {
-                html += `<div class="preview-row">
-                    <span class="preview-label">${work.name}</span>
-                    <span class="preview-value">¥${work.price.toLocaleString()}</span>
-                </div>`;
-            });
-
-            html += `</div>`;
-
-            html += `<div class="total-row">
-                <span>合計金額（税込）</span>
-                <span>¥${grandTotal.toLocaleString()}</span>
-            </div>`;
-
-            preview.innerHTML = html;
-        }
-
-        async function generateArawunoPDF() {
-            const customerName = document.getElementById('customerNameArawuno').value.trim();
-            if (!customerName) {
-                alert('顧客名を入力してください');
-                return;
-            }
-
-            let totalWork = workCosts.install + workCosts.water;
-            let workList = [
-                { name: '本体設置工事', price: workCosts.install },
-                { name: '給水接続工事', price: workCosts.water }
-            ];
-
-            if (selectedData.washbasin === 'with') {
-                totalWork += selectedData.washbasinWorkPrice;
-                workList.push({ name: '手洗い器取付工事', price: selectedData.washbasinWorkPrice });
-            }
-
-            if (document.getElementById('work_flange').checked) {
-                totalWork += workCosts.flange;
-                workList.push({ name: 'フランジ交換工事', price: workCosts.flange });
-            }
-            if (document.getElementById('work_removal').checked) {
-                totalWork += workCosts.removal;
-                workList.push({ name: '既設撤去工事', price: workCosts.removal });
-            }
-            if (document.getElementById('work_disposal').checked) {
-                totalWork += workCosts.disposal;
-                workList.push({ name: '既設処分費', price: workCosts.disposal });
-            }
-
-            let totalProduct = selectedData.modelPrice + selectedData.partsCost;
-            let productList = [
-                { name: `本体：${selectedData.modelName}（${selectedData.modelCode}）`, price: selectedData.modelPrice }
-            ];
-
-            if (selectedData.washbasinPrice > 0) {
-                totalProduct += selectedData.washbasinPrice;
-                productList.push({ name: '手洗い器：XCH10EH', price: selectedData.washbasinPrice });
-            }
-
-            if (selectedData.vSeatPrice > 0) {
-                totalProduct += selectedData.vSeatPrice;
-                productList.push({ name: `便座：${selectedData.vSeatName}`, price: selectedData.vSeatPrice });
-            }
-
-            productList.push({ name: `排水芯部品：${selectedData.drainParts}`, price: selectedData.partsCost });
-
-            const grandTotal = totalProduct + totalWork;
-            const estimateNo = generateEstimateNumber();
-
-            // PDFコンテンツHTML作成
-            let productHTML = '';
-            productList.forEach(item => {
-                productHTML += `
-                    <div class="pdf-item">
-                        <span>${item.name}</span>
-                        <span>¥${item.price.toLocaleString()}</span>
-                    </div>
-                `;
-            });
-
-            let workHTML = '';
-            workList.forEach(work => {
-                workHTML += `
-                    <div class="pdf-item">
-                        <span>${work.name}</span>
-                        <span>¥${work.price.toLocaleString()}</span>
-                    </div>
-                `;
-            });
-
-            const pdfHTML = `
-                <div class="pdf-content" id="pdfContent">
-                    <div class="pdf-header">
-                        <div class="pdf-title">お見積書</div>
-                        <div class="pdf-company">
-                            <div class="pdf-company-name">ヤハタデンキ</div>
-                            <div>〒263-0005 千葉市稲毛区長沼町330-24</div>
-                            <div>TEL: 043-259-0463</div>
-                        </div>
-                    </div>
-                    <div class="pdf-estimate-no">見積番号：${estimateNo}</div>
-                    <div class="pdf-info">
-                        <span><strong>${customerName}</strong> 様</span>
-                        <span>作成日：${new Date().toLocaleDateString('ja-JP')}</span>
-                    </div>
-                    <div class="pdf-section">
-                        <div class="pdf-section-title">商品明細</div>
-                        ${productHTML}
-                        <div class="pdf-subtotal">
-                            <span>商品代 小計</span>
-                            <span>¥${totalProduct.toLocaleString()}</span>
-                        </div>
-                    </div>
-                    <div class="pdf-section">
-                        <div class="pdf-section-title">工事費明細</div>
-                        ${workHTML}
-                        <div class="pdf-subtotal">
-                            <span>工事費 小計</span>
-                            <span>¥${totalWork.toLocaleString()}</span>
-                        </div>
-                    </div>
-                    <div class="pdf-total">
-                        <span class="pdf-total-label">合計金額（税込）</span>
-                        <span class="pdf-total-amount">¥${grandTotal.toLocaleString()}</span>
-                    </div>
-                </div>
-            `;
-
-            const container = document.getElementById('pdfContainer');
-            container.innerHTML = pdfHTML;
-            const element = document.getElementById('pdfContent');
-
-            const canvas = await html2canvas(element, {
-                scale: 2.5,
-                useCORS: true,
-                logging: false
-            });
-
-            const imgData = canvas.toDataURL('image/jpeg', 1.0);
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            
-            const imgWidth = 210; // A4幅
-            const pageHeight = 297; // A4高さ
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-            let heightLeft = imgHeight;
-            let position = 0;
-
-            // 1ページ目
-            pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
-
-            // 2ページ目以降
-            while (heightLeft > 0) {
-                position = heightLeft - imgHeight;
-                pdf.addPage();
-                pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
-            }
-            
-            pdf.save('アラウーノ見積書_' + customerName + '_' + new Date().toLocaleDateString('ja-JP').replace(/\//g, '') + '.pdf');
-            
-            container.innerHTML = '';
-        }
-
-        // ======== LED用関数 ========
         function selectLedType(type) {
             selectedLedType = type;
             document.querySelectorAll('#step1_led .option-card').forEach(card => {
@@ -1898,7 +862,7 @@
             }
         }
 
-        function resetLedForm() {
+        function resetForm() {
             document.getElementById('lightQuantity').value = '1';
             document.getElementById('roomDescription').value = '';
             document.getElementById('fixtureCategory').value = '';
@@ -2035,7 +999,7 @@
                     }
                     const data = ledData.bulb[base][watt];
                     lightData.type = '電球';
-                    lightData.model = `${base} ${watt} ${colorName}(${data[colorCode]})`;
+                    lightData.model = `${base} ${watt} ${colorName}`;
                     lightData.code = data[colorCode];
                     lightData.price = data.price;
                 } else {
@@ -2053,7 +1017,7 @@
                         }
                         const data = ledData.bulb.ball[ballWatt];
                         lightData.type = 'ボール電球';
-                        lightData.model = `${ballWatt}形 ${colorName}(${data[colorCode]})`;
+                        lightData.model = `${ballWatt}形 ${colorName}`;
                         lightData.code = data[colorCode];
                         lightData.price = data.price;
                     } else {
@@ -2064,7 +1028,7 @@
                         }
                         const data = ledData.bulb[base][watt];
                         lightData.type = '電球';
-                        lightData.model = `${base} ${watt} ${colorName}(${data[colorCode]})`;
+                        lightData.model = `${base} ${watt} ${colorName}`;
                         lightData.code = data[colorCode];
                         lightData.price = data.price;
                     }
@@ -2076,7 +1040,7 @@
             lightData.total = (lightData.price + lightData.workCost) * quantity;
             selectedLights.push(lightData);
 
-            resetLedForm();
+            resetForm();
             updateAddedLightsPreview();
             showStep('step2_led');
             showStep('step3_led');
@@ -2088,15 +1052,9 @@
             let html = '<div class="preview-title">追加した照明一覧</div>';
             
             selectedLights.forEach((light, index) => {
-                // 型番を含む表示名を作成
-                let displayName = light.model;
-                if (light.code && !light.model.includes(light.code)) {
-                    displayName += ` (${light.code})`;
-                }
-                
                 html += `<div class="light-item">
                     <div class="light-item-header">
-                        <div>${light.room} / ${displayName} × ${light.quantity}個</div>
+                        <div>${light.room} / ${light.model} × ${light.quantity}個</div>
                         <button class="light-item-remove" onclick="removeLight(${index})">削除</button>
                     </div>
                     <div class="preview-row">
@@ -2138,7 +1096,7 @@
                 card.classList.remove('selected');
             });
             
-            resetLedForm();
+            resetForm();
             showStep('step3_led');
             showStep('step1_led');
         }
@@ -2208,7 +1166,7 @@
         }
 
         async function generateLedPDF() {
-            const customerName = document.getElementById('customerNameLed').value.trim();
+            const customerName = document.getElementById('customerName').value.trim();
             if (!customerName) {
                 alert('顧客名を入力してください');
                 return;
@@ -2222,40 +1180,30 @@
             const grandTotal = selectedLights.reduce((sum, light) => sum + light.total, 0);
             const estimateNo = generateEstimateNumber();
 
-            // 照明リストHTML生成
             let lightsHTML = '';
             selectedLights.forEach((light, index) => {
                 const itemPrice = light.price * light.quantity;
-                
-                // 電球の場合はmodelをそのまま表示（ワット数・色・型番含む）
-                // 器具の場合は型番を追加
-                let displayName = light.type;
-                if (light.type.includes('電球')) {
-                    displayName = light.model;
-                } else if (light.code) {
-                    displayName = `${light.type}（${light.code}）`;
-                }
+                const displayName = light.code ? `${light.type}（${light.code}）` : light.type;
                 
                 lightsHTML += `
-                    <div class="pdf-item" style="border-bottom: none; padding-bottom: 5px;">
+                    <div style="border-bottom: none; padding-bottom: 5px; display: flex; justify-content: space-between; padding: 10px 15px; font-size: 14px;">
                         <span><strong>${index + 1}. ${light.room}</strong></span>
                         <span></span>
                     </div>
-                    <div class="pdf-item" style="padding-left: 30px; padding-top: 5px;">
+                    <div style="display: flex; justify-content: space-between; padding: 5px 15px 5px 45px; font-size: 14px;">
                         <span>${displayName}</span>
                         <span></span>
                     </div>
-                    <div class="pdf-item" style="padding-left: 30px; padding-top: 5px; padding-bottom: 5px;">
+                    <div style="display: flex; justify-content: space-between; padding: 5px 15px 5px 45px; font-size: 14px;">
                         <span>個数：${light.quantity}個 × ¥${light.price.toLocaleString()}</span>
                         <span>¥${itemPrice.toLocaleString()}</span>
                     </div>
                     ${light.workCost > 0 ? `
-                    <div class="pdf-item" style="padding-left: 30px; padding-top: 5px;">
+                    <div style="display: flex; justify-content: space-between; padding: 5px 15px 5px 45px; font-size: 14px;">
                         <span>工事費</span>
                         <span>¥${(light.workCost * light.quantity).toLocaleString()}</span>
-                    </div>
-                    ` : ''}
-                    <div class="pdf-item" style="padding-left: 30px; font-weight: 600; background: #fafafa;">
+                    </div>` : ''}
+                    <div style="display: flex; justify-content: space-between; padding: 10px 15px 10px 45px; font-weight: 600; background: #fafafa; border-bottom: 1px solid #ddd; font-size: 14px;">
                         <span>小計</span>
                         <span>¥${light.total.toLocaleString()}</span>
                     </div>
@@ -2263,55 +1211,50 @@
             });
 
             const pdfHTML = `
-                <div class="pdf-content" id="pdfContent">
-                    <div class="pdf-header">
-                        <div class="pdf-title">お見積書</div>
-                        <div class="pdf-company">
-                            <div class="pdf-company-name">ヤハタデンキ</div>
+                <div style="width: 794px; background: white; padding: 50px 60px; font-family: 'Yu Gothic', sans-serif;">
+                    <div style="text-align: center; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 3px solid #667eea;">
+                        <div style="font-size: 32px; font-weight: bold; margin-bottom: 20px;">お見積書</div>
+                        <div style="text-align: right; font-size: 13px; line-height: 1.6;">
+                            <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">ヤハタデンキ</div>
                             <div>〒263-0005 千葉市稲毛区長沼町330-24</div>
                             <div>TEL: 043-259-0463</div>
                         </div>
                     </div>
-                    <div class="pdf-estimate-no">見積番号：${estimateNo}</div>
-                    <div class="pdf-info">
+                    <div style="font-size: 13px; margin-bottom: 15px; color: #666;">見積番号：${estimateNo}</div>
+                    <div style="display: flex; justify-content: space-between; margin: 25px 0; font-size: 15px;">
                         <span><strong>${customerName}</strong> 様</span>
                         <span>作成日：${new Date().toLocaleDateString('ja-JP')}</span>
                     </div>
-                    <div class="pdf-section">
-                        <div class="pdf-section-title">照明明細</div>
+                    
+                    <div style="margin: 25px 0;">
+                        <div style="background: #667eea; color: white; padding: 10px 15px; font-weight: bold; margin-bottom: 12px; font-size: 16px;">照明明細</div>
                         ${lightsHTML}
                     </div>
-                    <div class="pdf-total">
-                        <span class="pdf-total-label">合計金額（税込）</span>
-                        <span class="pdf-total-amount">¥${grandTotal.toLocaleString()}</span>
+
+                    <div style="margin-top: 30px; border: 3px solid #1976d2; background: #e3f2fd; padding: 18px 20px; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 20px; font-weight: bold; color: #1976d2;">合計金額（税込）</span>
+                        <span style="font-size: 26px; font-weight: bold; color: #1976d2;">¥${grandTotal.toLocaleString()}</span>
                     </div>
                 </div>
             `;
 
             const container = document.getElementById('pdfContainer');
             container.innerHTML = pdfHTML;
-            const element = document.getElementById('pdfContent');
+            const element = container.firstChild;
 
-            const canvas = await html2canvas(element, {
-                scale: 2.5,
-                useCORS: true,
-                logging: false
-            });
-
+            const canvas = await html2canvas(element, { scale: 2.5, useCORS: true, logging: false });
+            
             const imgData = canvas.toDataURL('image/jpeg', 1.0);
             const pdf = new jsPDF('p', 'mm', 'a4');
-            
-            const imgWidth = 210; // A4幅
-            const pageHeight = 297; // A4高さ
+            const imgWidth = 210;
+            const pageHeight = 297;
             const imgHeight = (canvas.height * imgWidth) / canvas.width;
             let heightLeft = imgHeight;
             let position = 0;
 
-            // 1ページ目
             pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
             heightLeft -= pageHeight;
 
-            // 2ページ目以降
             while (heightLeft > 0) {
                 position = heightLeft - imgHeight;
                 pdf.addPage();
@@ -2319,9 +1262,25 @@
                 heightLeft -= pageHeight;
             }
             
-            pdf.save('LED照明見積書_' + customerName + '_' + new Date().toLocaleDateString('ja-JP').replace(/\//g, '') + '.pdf');
+            const fileName = 'LED照明見積書_' + customerName + '_' + new Date().toLocaleDateString('ja-JP').replace(/\//g, '') + '.pdf';
+            
+            // PDFをダウンロード
+            pdf.save(fileName);
+            
+            // Google Driveに自動保存
+            const pdfBlob = pdf.output('blob');
+            await savePdfToDrive(pdfBlob, fileName, customerName, 'LED照明', grandTotal);
+            
+            alert('見積書を作成し、Google Driveに保存しました！');
             
             container.innerHTML = '';
+        }
+
+        function showStep(stepId) {
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active');
+            });
+            document.getElementById(stepId).classList.add('active');
         }
     </script>
 </body>
