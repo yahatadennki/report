@@ -9,64 +9,51 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f5f3ef;min-height:100vh;color:#1a1a1a}
 .wrap{max-width:900px;margin:0 auto;padding:1.5rem 1rem 4rem}
-
 .header{background:#1e3a5f;color:#fff;border-radius:14px;padding:1.2rem 1.5rem;margin-bottom:1.2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
 .header h1{font-size:19px;font-weight:700}
 .header p{font-size:12px;opacity:.65;margin-top:2px}
-.drive-link{display:inline-flex;align-items:center;gap:6px;background:#fff;color:#1a73e8;border-radius:8px;padding:8px 13px;font-size:13px;font-weight:500;text-decoration:none;white-space:nowrap;transition:background .15s}
+.drive-link{display:inline-flex;align-items:center;gap:6px;background:#fff;color:#1a73e8;border-radius:8px;padding:8px 13px;font-size:13px;font-weight:500;text-decoration:none;white-space:nowrap}
 .drive-link:hover{background:#e8f0fe}
-
 .stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1.2rem}
 .sc{background:#fff;border-radius:10px;padding:10px 14px;min-width:78px;text-align:center;border:1px solid #e8e4de}
 .sc .n{font-size:20px;font-weight:700;color:#1e3a5f}
 .sc .l{font-size:11px;color:#999;margin-top:2px}
-
 .panel{background:#fff;border-radius:14px;padding:1.4rem;margin-bottom:1.2rem;border:1px solid #e8e4de}
 .panel-ttl{font-size:13px;font-weight:700;color:#1e3a5f;margin-bottom:14px}
-
 .frow{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;align-items:flex-end}
 .fg{display:flex;flex-direction:column;gap:4px;flex:1;min-width:140px}
 .fg label{font-size:11px;color:#888;font-weight:500}
 .fg select,.fg input[type=text]{padding:9px 11px;border-radius:8px;border:1.5px solid #ddd;font-size:14px;font-family:inherit;outline:none;background:#fff;transition:border-color .15s;width:100%}
 .fg select:focus,.fg input[type=text]:focus{border-color:#1e3a5f}
-
 .extra{display:none;background:#eef4ff;border:1px solid #c5d9f5;border-radius:10px;padding:12px;margin-bottom:12px}
 .extra.show{display:block}
 .extra-ttl{font-size:11px;color:#1a73e8;font-weight:700;margin-bottom:8px}
-
 .pick-wrap{position:relative;border:2px dashed #ccc;border-radius:12px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:14px;overflow:hidden}
-.pick-wrap:hover,.pick-wrap.over{border-color:#1e3a5f;background:#f0f4fb}
+.pick-wrap:hover{border-color:#1e3a5f;background:#f0f4fb}
 .pick-inner{padding:1.5rem 1rem;pointer-events:none}
 .pick-wrap input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .pick-ico{font-size:30px;margin-bottom:8px}
 .pick-wrap p{font-size:14px;color:#666}
 .pick-wrap small{font-size:11px;color:#bbb;margin-top:4px;display:block}
-
 .thumb-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
 .thumb-item{position:relative;width:78px;height:78px;border-radius:8px;overflow:hidden;border:1.5px solid #ddd;flex-shrink:0}
 .thumb-item img{width:100%;height:100%;object-fit:cover;display:block}
 .thumb-del{position:absolute;top:2px;right:2px;background:rgba(0,0,0,.6);border:none;border-radius:50%;width:18px;height:18px;cursor:pointer;color:#fff;font-size:12px;line-height:18px;text-align:center;padding:0}
 .thumb-lbl{font-size:12px;color:#777;margin-bottom:12px}
-
 .fn-preview{background:#f0f4fb;border-radius:7px;padding:7px 11px;font-size:12px;color:#1e3a5f;margin-bottom:14px;display:none;word-break:break-all}
 .fn-preview b{font-weight:700}
-
-.send-btn{width:100%;padding:14px;border-radius:10px;background:#1e3a5f;color:#fff;border:none;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:8px}
-.send-btn:hover:not(:disabled){background:#2a4f7c}
-.send-btn:disabled{background:#b0b8c4;cursor:not-allowed}
-
-/* 進捗バー */
 .progress-wrap{display:none;margin-bottom:14px}
 .progress-wrap.show{display:block}
 .progress-bar-bg{background:#e0e0e0;border-radius:999px;height:8px;overflow:hidden}
 .progress-bar{background:#1e3a5f;height:8px;border-radius:999px;width:0%;transition:width .3s}
 .progress-lbl{font-size:12px;color:#666;margin-top:5px;text-align:center}
-
+.send-btn{width:100%;padding:14px;border-radius:10px;background:#1e3a5f;color:#fff;border:none;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.send-btn:hover:not(:disabled){background:#2a4f7c}
+.send-btn:disabled{background:#b0b8c4;cursor:not-allowed}
 .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem}
 .fbtn{padding:6px 14px;border-radius:999px;border:1.5px solid #ddd;background:#fff;cursor:pointer;font-size:13px;font-family:inherit;transition:all .15s;white-space:nowrap}
 .fbtn.active{border-color:#1e3a5f;background:#1e3a5f;color:#fff}
 .fbtn:not(.active):hover{border-color:#1e3a5f;color:#1e3a5f}
-
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px}
 .card{background:#fff;border-radius:11px;overflow:hidden;border:1.5px solid #e8e4de;transition:transform .15s,box-shadow .15s}
 .card:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.1)}
@@ -79,13 +66,10 @@ body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f5f3ef;mi
 .ic:hover{background:#f0f0f0}
 .card-sub{font-size:11px;color:#555;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .card-sub2{font-size:11px;color:#999;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fn-chip{font-size:10px;color:#bbb;background:#f5f3ef;border-radius:4px;padding:2px 5px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;display:block}
-/* ドライブ保存済みバッジ */
 .saved-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;color:#2d6a4f;background:#e6f4ed;border-radius:4px;padding:2px 6px;margin-top:3px}
-
+.fn-chip{font-size:10px;color:#bbb;background:#f5f3ef;border-radius:4px;padding:2px 5px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;display:block}
 .empty{text-align:center;color:#ccc;padding:3rem;font-size:14px}
 .empty .big{font-size:40px;margin-bottom:10px}
-
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:200;display:none;align-items:center;justify-content:center}
 .modal-bg.open{display:flex}
 .modal{background:#fff;border-radius:16px;overflow:hidden;max-width:92vw;max-height:92vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3)}
@@ -95,15 +79,12 @@ body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f5f3ef;mi
 .modal-img-wrap{overflow:auto;display:flex;align-items:center;justify-content:center;padding:8px}
 .modal-img{max-width:82vw;max-height:66vh;object-fit:contain;display:block}
 .modal-ft{padding:8px 16px;border-top:1px solid #eee;font-size:11px;color:#aaa;word-break:break-all}
-.dl-btn{display:inline-flex;align-items:center;gap:6px;background:#1e3a5f;color:#fff;border:none;border-radius:8px;padding:7px 13px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;white-space:nowrap}
 .close-btn{background:none;border:none;cursor:pointer;padding:6px;border-radius:8px;display:flex}
 .close-btn:hover{background:#f0f0f0}
-
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);color:#fff;padding:12px 24px;border-radius:999px;font-size:14px;font-weight:500;display:none;z-index:300;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.2)}
 .toast.show{display:block}
 .toast.ok{background:#2d6a4f}
 .toast.err{background:#c0392b}
-
 @media(max-width:600px){
   .header{padding:1rem}
   .grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
@@ -130,7 +111,6 @@ body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f5f3ef;mi
 
   <div class="panel">
     <div class="panel-ttl">📋 写真を登録</div>
-
     <div class="frow">
       <div class="fg">
         <label>カテゴリー</label>
@@ -163,7 +143,7 @@ body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f5f3ef;mi
 
     <div class="fn-preview" id="fn-preview">📄 保存ファイル名：<b id="fn-text"></b></div>
 
-    <div class="pick-wrap" id="pick-wrap">
+    <div class="pick-wrap">
       <div class="pick-inner">
         <div class="pick-ico">🖼️</div>
         <p>タップして写真を選ぶ</p>
@@ -175,10 +155,9 @@ body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f5f3ef;mi
     <div class="thumb-bar" id="thumb-bar"></div>
     <div class="thumb-lbl" id="thumb-lbl"></div>
 
-    <!-- 進捗バー -->
-    <div class="progress-wrap" id="progress-wrap">
-      <div class="progress-bar-bg"><div class="progress-bar" id="progress-bar"></div></div>
-      <div class="progress-lbl" id="progress-lbl">アップロード中...</div>
+    <div class="progress-wrap" id="pw">
+      <div class="progress-bar-bg"><div class="progress-bar" id="pb"></div></div>
+      <div class="progress-lbl" id="pl">アップロード中...</div>
     </div>
 
     <button class="send-btn" id="send-btn" onclick="register()" disabled>
@@ -204,7 +183,7 @@ body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f5f3ef;mi
     <div class="modal-hd">
       <div class="modal-title">
         <span class="pill" id="m-cat"></span>
-        <span style="font-size:13px;color:#555;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:240px" id="m-name"></span>
+        <span style="font-size:13px;color:#555;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="m-name"></span>
       </div>
       <div class="modal-acts">
         <button class="close-btn" onclick="closeModal()">
@@ -220,18 +199,16 @@ body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f5f3ef;mi
 <div class="toast" id="toast"></div>
 
 <script>
+// ★ GAS URL
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwQElStGimIfhMUbtGUT2ARCZpjMu9lg4INzIFcsU4cICSxTlcglA7Nucn22mVpEwIl/exec';
 
-const CATS=['フェア','工事','点検','プライベート'];
-const COLORS={フェア:'#c75b1a',工事:'#2d6a4f',点検:'#1e3a5f',プライベート:'#6b3a8e'};
-const FID={フェア:'f-0',工事:'f-1',点検:'f-2',プライベート:'f-3'};
-const KEY='yahata_photos_v3';
+const CATS = ['フェア','工事','点検','プライベート'];
+const COLORS = {フェア:'#c75b1a',工事:'#2d6a4f',点検:'#1e3a5f',プライベート:'#6b3a8e'};
+const FID = {フェア:'f-0',工事:'f-1',点検:'f-2',プライベート:'f-3'};
+const KEY = 'yahata_photos_v3';
 
-let photos=[];
-let pendingFiles=[];
-let pendingData=[];
-let currentFilter='すべて';
-let currentModal=null;
+let photos=[], pendingFiles=[], pendingData=[];
+let currentFilter='すべて', currentModal=null;
 
 function toDateStr(d=new Date()){
   return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
@@ -248,19 +225,18 @@ function buildFn(cat,name,customer,product,origName,idx,total){
   if(total>1) parts.push(String(idx+1).padStart(2,'0'));
   return parts.join('_')+ext;
 }
-
 function saveLS(){try{localStorage.setItem(KEY,JSON.stringify(photos));}catch(e){}}
 function loadLS(){try{const d=localStorage.getItem(KEY);if(d)photos=JSON.parse(d);}catch(e){}}
 
-function compress(dataURL,size=1200){
+function compress(dataURL, maxPx=1200){
   return new Promise(res=>{
     const img=new Image();
     img.onload=()=>{
       const c=document.createElement('canvas');
-      const r=Math.min(size/img.width,size/img.height,1);
-      c.width=img.width*r;c.height=img.height*r;
+      const r=Math.min(maxPx/img.width, maxPx/img.height, 1);
+      c.width=img.width*r; c.height=img.height*r;
       c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-      res(c.toDataURL('image/jpeg',0.85));
+      res(c.toDataURL('image/jpeg', 0.85));
     };
     img.src=dataURL;
   });
@@ -270,10 +246,10 @@ function compressThumb(dataURL){
     const img=new Image();
     img.onload=()=>{
       const c=document.createElement('canvas');
-      const r=Math.min(400/img.width,400/img.height,1);
-      c.width=img.width*r;c.height=img.height*r;
+      const r=Math.min(400/img.width, 400/img.height, 1);
+      c.width=img.width*r; c.height=img.height*r;
       c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-      res(c.toDataURL('image/jpeg',0.75));
+      res(c.toDataURL('image/jpeg', 0.75));
     };
     img.src=dataURL;
   });
@@ -281,18 +257,29 @@ function compressThumb(dataURL){
 function readFile(file){
   return new Promise((res,rej)=>{
     const r=new FileReader();
-    r.onload=e=>res(e.target.result);r.onerror=rej;
+    r.onload=e=>res(e.target.result); r.onerror=rej;
     r.readAsDataURL(file);
   });
 }
 
-function onCatChange(){
-  const cat=document.getElementById('cat').value;
-  const extra=document.getElementById('extra');
-  (cat==='工事'||cat==='点検')?extra.classList.add('show'):extra.classList.remove('show');
-  updatePreview();
+// ★ no-cors で送信 → レスポンスは読めないが送信は通る
+async function uploadToGas(filename, dataURL){
+  const body = JSON.stringify({ files:[{ filename, data: dataURL }] });
+  await fetch(GAS_URL, {
+    method: 'POST',
+    mode: 'no-cors',       // ← CORSをスキップ
+    body: body
+  });
+  // no-cors はレスポンスが空なので、エラーが投げられなければ成功とみなす
 }
 
+function onCatChange(){
+  const cat=document.getElementById('cat').value;
+  (cat==='工事'||cat==='点検')
+    ? document.getElementById('extra').classList.add('show')
+    : document.getElementById('extra').classList.remove('show');
+  updatePreview();
+}
 function updatePreview(){
   const cat=document.getElementById('cat').value;
   const name=document.getElementById('name-in').value.trim();
@@ -302,7 +289,7 @@ function updatePreview(){
   if(pendingFiles.length||name||customer||product){
     const sample=pendingFiles.length?pendingFiles[0].name:'photo.jpg';
     let txt=buildFn(cat,name,customer,product,sample,0,pendingFiles.length||1);
-    if(pendingFiles.length>1) txt+=`　ほか${pendingFiles.length-1}枚`;
+    if(pendingFiles.length>1) txt+=` ほか${pendingFiles.length-1}枚`;
     document.getElementById('fn-text').textContent=txt;
     preview.style.display='block';
   } else {
@@ -323,31 +310,21 @@ async function onFilePick(input){
   updatePreview();
   document.getElementById('send-btn').disabled=false;
 }
-
 function renderThumbs(){
-  const bar=document.getElementById('thumb-bar');
-  const lbl=document.getElementById('thumb-lbl');
-  bar.innerHTML=pendingFiles.map((_,i)=>`
-    <div class="thumb-item">
-      <img src="${pendingData[i]}" alt="">
-      <button class="thumb-del" onclick="removePending(${i})">×</button>
-    </div>`).join('');
-  lbl.textContent=pendingFiles.length?`${pendingFiles.length}枚 選択中`:'';
+  document.getElementById('thumb-bar').innerHTML=
+    pendingFiles.map((_,i)=>`<div class="thumb-item"><img src="${pendingData[i]}" alt=""><button class="thumb-del" onclick="removePending(${i})">×</button></div>`).join('');
+  document.getElementById('thumb-lbl').textContent=pendingFiles.length?`${pendingFiles.length}枚 選択中`:'';
   document.getElementById('send-btn').disabled=!pendingFiles.length;
 }
-
 function removePending(i){
-  pendingFiles.splice(i,1);
-  pendingData.splice(i,1);
-  renderThumbs();
-  updatePreview();
+  pendingFiles.splice(i,1); pendingData.splice(i,1);
+  renderThumbs(); updatePreview();
 }
 
 async function register(){
   if(!pendingFiles.length) return;
   const btn=document.getElementById('send-btn');
-  btn.disabled=true;
-  btn.textContent='送信中...';
+  btn.disabled=true; btn.textContent='送信中...';
 
   const cat=document.getElementById('cat').value;
   const name=document.getElementById('name-in').value.trim();
@@ -355,80 +332,69 @@ async function register(){
   const product=document.getElementById('product').value.trim();
   const total=pendingFiles.length;
 
-  // 進捗バー表示
-  const pw=document.getElementById('progress-wrap');
-  const pb=document.getElementById('progress-bar');
-  const pl=document.getElementById('progress-lbl');
-  pw.classList.add('show');
+  document.getElementById('pw').classList.add('show');
+  const pb=document.getElementById('pb');
+  const pl=document.getElementById('pl');
 
-  // 1枚ずつアップロード（大きいファイルのため）
   const newPhotos=[];
   for(let i=0;i<total;i++){
     pl.textContent=`${i+1} / ${total} 枚 アップロード中...`;
-    pb.style.width=`${Math.round((i/total)*100)}%`;
+    pb.style.width=`${Math.round(i/total*100)}%`;
 
     const file=pendingFiles[i];
     const filename=buildFn(cat,name,customer,product,file.name,i,total);
-    const compressed=await compress(pendingData[i],1200);
+    const compressed=await compress(pendingData[i], 1200);
     const thumb=await compressThumb(pendingData[i]);
 
     try {
-      const res=await fetch(GAS_URL,{
-        method:'POST',
-        body:JSON.stringify({files:[{data:compressed,filename}]})
-      });
-      const json=await res.json();
-      const driveUrl=json.ok&&json.results[0]?json.results[0].url:null;
-
-      const id=`${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      await uploadToGas(filename, compressed);
       newPhotos.push({
-        id,origName:file.name,filename,name,customer,product,
-        category:cat,date:toDisp(),dateStr:toDateStr(),
-        thumb,driveUrl,uploaded:!!driveUrl
+        id:`${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        origName:file.name, filename, name, customer, product,
+        category:cat, date:toDisp(), dateStr:toDateStr(),
+        thumb, uploaded:true
       });
     } catch(err) {
-      showToast('❌ エラーが発生しました','err');
       console.error(err);
+      newPhotos.push({
+        id:`${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        origName:file.name, filename, name, customer, product,
+        category:cat, date:toDisp(), dateStr:toDateStr(),
+        thumb, uploaded:false
+      });
     }
   }
 
   pb.style.width='100%';
   pl.textContent='完了！';
-  setTimeout(()=>pw.classList.remove('show'),1500);
+  setTimeout(()=>document.getElementById('pw').classList.remove('show'), 1500);
 
   photos=[...newPhotos,...photos];
   saveLS();
-
-  pendingFiles=[];pendingData=[];
+  pendingFiles=[]; pendingData=[];
   renderThumbs();
   document.getElementById('name-in').value='';
   document.getElementById('customer').value='';
   document.getElementById('product').value='';
   document.getElementById('fn-preview').style.display='none';
-
   btn.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg> ドライブに保存する';
   btn.disabled=true;
   renderAll();
-
-  const ok=newPhotos.filter(p=>p.uploaded).length;
-  showToast(`✅ ${ok}枚をドライブに保存しました！`,'ok');
+  showToast(`✅ ${total}枚をドライブに送信しました！`,'ok');
 }
 
 function showToast(msg,type='ok'){
   const t=document.getElementById('toast');
-  t.textContent=msg;t.className=`toast ${type} show`;
+  t.textContent=msg; t.className=`toast ${type} show`;
   setTimeout(()=>t.classList.remove('show'),3000);
 }
-
 function setFilter(cat,btn){
   currentFilter=cat;
   document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   renderGrid();
 }
-
-function renderAll(){renderStats();renderGrid();}
-
+function renderAll(){ renderStats(); renderGrid(); }
 function renderStats(){
   document.getElementById('total-n').textContent=photos.length;
   const stats=document.getElementById('stats');
@@ -446,7 +412,6 @@ function renderStats(){
   });
   document.getElementById('f-all').textContent=`(${photos.length})`;
 }
-
 function renderGrid(){
   const grid=document.getElementById('grid');
   const empty=document.getElementById('empty');
@@ -471,20 +436,17 @@ function renderGrid(){
         <div class="card-sub2">${p.date}</div>
         ${p.uploaded
           ?`<div class="saved-badge">☁️ ドライブ保存済</div>`
-          :`<span class="fn-chip">${p.filename}</span>`
-        }
+          :`<span class="fn-chip">${p.filename}</span>`}
       </div>
     </div>`;
   }).join('');
 }
-
 function delPhoto(id){
   if(!confirm('この写真を削除しますか？\n※ドライブ上のファイルは削除されません'))return;
   photos=photos.filter(p=>p.id!==id);
-  if(currentModal===id)closeModal();
-  saveLS();renderAll();
+  if(currentModal===id) closeModal();
+  saveLS(); renderAll();
 }
-
 function openModal(id){
   currentModal=id;
   const p=photos.find(x=>x.id===id);
@@ -493,12 +455,10 @@ function openModal(id){
   document.getElementById('m-cat').style.background=COLORS[p.category]||'#555';
   document.getElementById('m-name').textContent=[p.name,sub].filter(Boolean).join('　');
   document.getElementById('m-img').src=p.thumb;
-  document.getElementById('m-ft').textContent=p.uploaded
-    ?`${p.date}　☁️ ドライブ保存済　${p.filename}`
-    :`${p.date}　${p.filename}`;
+  document.getElementById('m-ft').textContent=`${p.date}　${p.uploaded?'☁️ ドライブ保存済　':''}${p.filename}`;
   document.getElementById('modal').classList.add('open');
 }
-function closeModal(){document.getElementById('modal').classList.remove('open');}
+function closeModal(){ document.getElementById('modal').classList.remove('open'); }
 
 loadLS();
 renderAll();
