@@ -1,0 +1,384 @@
+import { useState, useRef, useEffect, useCallback } from "react";
+
+const CATEGORIES = ["かわらばん", "チラシ", "工事写真", "店内写真", "その他"];
+const ALL = "すべて";
+const DRIVE_FOLDER_URL = "https://drive.google.com/drive/u/0/folders/12WLokXXTwYKgdrGgQLQImKpdAmHoeCRJ";
+
+const CAT_COLORS = {
+  かわらばん: "#1e3a5f",
+  チラシ: "#6b3a8e",
+  工事写真: "#2d6a4f",
+  店内写真: "#8c4a1e",
+  その他: "#4a4a4a",
+};
+
+function toDateStr(d = new Date()) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}${m}${day}`;
+}
+
+function toDisplayDate(d = new Date()) {
+  return d.toLocaleDateString("ja-JP", { year: "numeric", month: "2-digit", day: "2-digit" });
+}
+
+function buildFilename(category, name, origName) {
+  const date = toDateStr();
+  const ext = origName.match(/\.[^.]+$/)?.[0] || ".jpg";
+  const label = name.trim() || category;
+  return `${date}_${category}_${label}${ext}`;
+}
+
+function compress(dataURL, size = 400) {
+  return new Promise((res) => {
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement("canvas");
+      const r = Math.min(size / img.width, size / img.height, 1);
+      c.width = img.width * r; c.height = img.height * r;
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      res(c.toDataURL("image/jpeg", 0.78));
+    };
+    img.src = dataURL;
+  });
+}
+
+function readFile(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = e => res(e.target.result);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+export default function App() {
+  const [photos, setPhotos] = useState([]);
+  const [fullImages, setFullImages] = useState({});
+  const [filter, setFilter] = useState(ALL);
+  const [newCat, setNewCat] = useState(CATEGORIES[0]);
+  const [newName, setNewName] = useState("");
+  const [dragOver, setDragOver] = useState(false);
+  const [selected, setSelected] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const [editId, setEditId] = useState(null);
+  const [editName, setEditName] = useState("");
+  const fileRef = useRef();
+  const camRef = useRef();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const r = await window.storage.get("kw:photos2");
+        if (r) setPhotos(JSON.parse(r.value));
+      } catch {}
+      setLoading(false);
+    })();
+  }, []);
+
+  const save = async (list) => {
+    setPhotos(list);
+    try { await window.storage.set("kw:photos2", JSON.stringify(list)); } catch {}
+  };
+
+  const addFiles = async (files) => {
+    setUploading(true);
+    const arr = Array.from(files).filter(f => f.type.startsWith("image/"));
+    if (!arr.length) { setUploading(false); return; }
+    const newList = [...photos];
+    const newFull = { ...fullImages };
+    for (const file of arr) {
+      const data = await readFile(file);
+      const thumb = await compress(data, 400);
+      const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      const filename = buildFilename(newCat, newName, file.name);
+      newList.unshift({
+        id,
+        origName: file.name,
+        filename,
+        name: newName.trim(),
+        category: newCat,
+        date: toDisplayDate(),
+        dateStr: toDateStr(),
+        thumb,
+      });
+      newFull[id] = data;
+    }
+    setFullImages(newFull);
+    await save(newList);
+    setUploading(false);
+  };
+
+  const onDrop = useCallback(async (e) => {
+    e.preventDefault(); setDragOver(false);
+    await addFiles(e.dataTransfer.files);
+  }, [photos, fullImages, newCat, newName]);
+
+  const onDelete = async (id) => {
+    const list = photos.filter(p => p.id !== id);
+    const f = { ...fullImages }; delete f[id];
+    setFullImages(f); setSelected(null);
+    await save(list);
+  };
+
+  const download = (id) => {
+    const photo = photos.find(p => p.id === id);
+    const src = fullImages[id] || photo?.thumb;
+    if (!src || !photo) return;
+    const a = document.createElement("a");
+    a.href = src;
+    a.download = photo.filename;
+    a.click();
+  };
+
+  const saveEditName = async (id) => {
+    const list = photos.map(p => {
+      if (p.id !== id) return p;
+      const filename = `${p.dateStr}_${p.category}_${editName.trim() || p.category}${p.origName.match(/\.[^.]+$/)?.[0] || ".jpg"}`;
+      return { ...p, name: editName.trim(), filename };
+    });
+    await save(list);
+    setEditId(null);
+  };
+
+  const filtered = filter === ALL ? photos : photos.filter(p => p.category === filter);
+  const counts = {};
+  CATEGORIES.forEach(c => { counts[c] = photos.filter(p => p.category === c).length; });
+  const selPhoto = selected ? photos.find(p => p.id === selected) : null;
+
+  return (
+    <div style={{ fontFamily: "'Noto Sans JP','Hiragino Sans',sans-serif", padding: "0 0 3rem", maxWidth: 900, margin: "0 auto" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
+        .photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px}
+        .photo-card{border-radius:10px;overflow:hidden;cursor:pointer;border:1.5px solid #e8e4de;transition:transform .15s,box-shadow .15s;background:#fff}
+        .photo-card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.1)}
+        .photo-card img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+        .cat-pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:500;color:#fff}
+        .filter-btn{padding:6px 14px;border-radius:999px;border:1.5px solid #ddd;background:transparent;cursor:pointer;font-size:13px;transition:all .15s;white-space:nowrap;font-family:inherit}
+        .filter-btn.active{border-color:#1e3a5f;background:#1e3a5f;color:#fff}
+        .filter-btn:not(.active):hover{border-color:#1e3a5f;color:#1e3a5f}
+        .drop-zone{border:2px dashed #c8c3bb;border-radius:14px;padding:2rem;text-align:center;transition:all .2s;cursor:pointer}
+        .drop-zone.over,.drop-zone:hover{border-color:#1e3a5f;background:#f0f4f9}
+        .sel,.cat-sel{padding:8px 12px;border-radius:8px;border:1.5px solid #ddd;font-size:14px;background:#fff;cursor:pointer;outline:none;font-family:inherit}
+        .sel:focus,.cat-sel:focus,.name-in:focus{border-color:#1e3a5f}
+        .name-in{padding:8px 12px;border-radius:8px;border:1.5px solid #ddd;font-size:14px;background:#fff;outline:none;font-family:inherit;width:180px}
+        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:100;display:flex;align-items:center;justify-content:center}
+        .modal-box{background:#fff;border-radius:16px;overflow:hidden;max-width:92vw;max-height:92vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+        .modal-img{max-width:82vw;max-height:68vh;object-fit:contain;display:block}
+        .icon-btn{background:none;border:none;cursor:pointer;padding:6px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:background .15s}
+        .icon-btn:hover{background:#f0f0f0}
+        .upload-btn{background:#1e3a5f;color:#fff;border:none;border-radius:10px;padding:9px 18px;font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .15s;font-family:inherit}
+        .upload-btn:hover{background:#2a4f7c}
+        .drive-btn{background:#fff;color:#1a73e8;border:1.5px solid #c5d9f5;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .15s;font-family:inherit;text-decoration:none}
+        .drive-btn:hover{background:#f0f7ff;border-color:#1a73e8}
+        .stat-card{background:#f7f5f1;border-radius:10px;padding:10px 14px;min-width:82px;text-align:center}
+        .edit-in{padding:4px 8px;border-radius:6px;border:1.5px solid #1e3a5f;font-size:12px;outline:none;font-family:inherit;width:110px}
+        .filename-chip{font-size:11px;color:#888;background:#f5f3ef;border-radius:5px;padding:2px 6px;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+      `}</style>
+
+      {/* Header */}
+      <div style={{ padding:"1.5rem 0 1rem", borderBottom:"1px solid #e8e4de", marginBottom:"1.5rem" }}>
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:12 }}>
+          <div>
+            <h1 style={{ fontSize:22, fontWeight:700, color:"#1a1a1a", margin:0 }}>フォト保管庫</h1>
+            <p style={{ fontSize:13, color:"#888", margin:"2px 0 0" }}>かわらばん・チラシなど写真の整理・保存</p>
+          </div>
+          <a href={DRIVE_FOLDER_URL} target="_blank" rel="noopener noreferrer" className="drive-btn">
+            <svg width="16" height="16" viewBox="0 0 87.3 78" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25L29.9 1.2C28.55 2 27.4 3.1 26.6 4.5L1.2 49.5C.4 50.9 0 52.45 0 54h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.85l5.85 11.2z" fill="#ea4335"/><path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.9 0H34.4c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.85 54H27.5L13.75 77.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 27.5l-12.6-21.8c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25 59.85 54h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+            </svg>
+            保存先フォルダを開く
+          </a>
+        </div>
+        <div style={{ display:"flex", gap:10, marginTop:14, flexWrap:"wrap" }}>
+          <div className="stat-card">
+            <div style={{ fontSize:22, fontWeight:700, color:"#1e3a5f" }}>{photos.length}</div>
+            <div style={{ fontSize:11, color:"#888", marginTop:2 }}>総枚数</div>
+          </div>
+          {CATEGORIES.map(c => counts[c] > 0 && (
+            <div key={c} className="stat-card">
+              <div style={{ fontSize:20, fontWeight:700, color:CAT_COLORS[c] }}>{counts[c]}</div>
+              <div style={{ fontSize:11, color:"#888", marginTop:2 }}>{c}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Upload Controls */}
+      <div style={{ background:"#f9f7f4", borderRadius:14, padding:"1.25rem", marginBottom:"1.5rem", border:"1px solid #e8e4de" }}>
+        <div style={{ fontSize:13, fontWeight:500, color:"#555", marginBottom:10 }}>📋 取り込み設定</div>
+        <div style={{ display:"flex", gap:10, alignItems:"center", flexWrap:"wrap", marginBottom:12 }}>
+          <div>
+            <div style={{ fontSize:11, color:"#888", marginBottom:4 }}>カテゴリー</div>
+            <select className="cat-sel" value={newCat} onChange={e => setNewCat(e.target.value)}>
+              {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
+          <div>
+            <div style={{ fontSize:11, color:"#888", marginBottom:4 }}>名前（ファイル名に使用）</div>
+            <input
+              className="name-in"
+              type="text"
+              placeholder="例：2026年3月号"
+              value={newName}
+              onChange={e => setNewName(e.target.value)}
+            />
+          </div>
+          {newName.trim() && (
+            <div style={{ alignSelf:"flex-end" }}>
+              <div style={{ fontSize:11, color:"#888", marginBottom:4 }}>保存ファイル名プレビュー</div>
+              <div className="filename-chip" style={{ fontSize:12, maxWidth:260 }}>
+                📄 {toDateStr()}_{newCat}_{newName.trim()}.jpg
+              </div>
+            </div>
+          )}
+        </div>
+        <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+          <button className="upload-btn" onClick={() => fileRef.current.click()}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+            写真を選択
+          </button>
+          <button className="upload-btn" style={{ background:"#555" }} onClick={() => camRef.current.click()}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            カメラで撮影
+          </button>
+        </div>
+
+        <div
+          className={`drop-zone ${dragOver ? "over" : ""}`}
+          style={{ marginTop:12 }}
+          onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={onDrop}
+          onClick={() => fileRef.current.click()}
+        >
+          {uploading ? (
+            <div style={{ color:"#1e3a5f", fontSize:14 }}>⏳ 読み込み中...</div>
+          ) : (
+            <>
+              <div style={{ fontSize:24, marginBottom:6 }}>📂</div>
+              <div style={{ fontSize:13, color:"#777" }}>ドラッグ＆ドロップ、またはクリックして選択</div>
+              <div style={{ fontSize:11, color:"#bbb", marginTop:3 }}>複数枚まとめてOK</div>
+            </>
+          )}
+        </div>
+
+        <input ref={fileRef} type="file" accept="image/*" multiple style={{ display:"none" }}
+          onChange={e => { addFiles(e.target.files); e.target.value=""; }} />
+        <input ref={camRef} type="file" accept="image/*" capture="environment" style={{ display:"none" }}
+          onChange={e => { addFiles(e.target.files); e.target.value=""; }} />
+      </div>
+
+      {/* Drive guide */}
+      <div style={{ background:"#f0f7ff", border:"1px solid #c5d9f5", borderRadius:10, padding:"10px 14px", marginBottom:"1.5rem", fontSize:13, color:"#1a4080", display:"flex", alignItems:"center", gap:8 }}>
+        <span style={{ fontSize:16 }}>ℹ️</span>
+        <span>写真は端末に保存されます。「ダウンロード」ボタンで日付入りファイル名でDLし、上のボタンからフォルダを開いてドライブに移動してください。</span>
+      </div>
+
+      {/* Filter */}
+      <div style={{ display:"flex", gap:8, marginBottom:16, flexWrap:"wrap" }}>
+        {[ALL, ...CATEGORIES].map(c => (
+          <button key={c} className={`filter-btn ${filter===c?"active":""}`} onClick={() => setFilter(c)}>
+            {c}
+            <span style={{ marginLeft:4, opacity:.7 }}>({c===ALL ? photos.length : (counts[c]||0)})</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Grid */}
+      {loading ? (
+        <div style={{ textAlign:"center", color:"#bbb", padding:"3rem", fontSize:14 }}>読み込み中...</div>
+      ) : filtered.length === 0 ? (
+        <div style={{ textAlign:"center", color:"#ccc", padding:"3rem", fontSize:14 }}>
+          <div style={{ fontSize:36, marginBottom:10 }}>🖼️</div>写真がまだありません
+        </div>
+      ) : (
+        <div className="photo-grid">
+          {filtered.map(photo => (
+            <div key={photo.id} className="photo-card">
+              <div onClick={() => setSelected(photo.id)}>
+                <img src={photo.thumb} alt={photo.filename} loading="lazy" />
+              </div>
+              <div style={{ padding:"8px 10px" }}>
+                <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+                  <span className="cat-pill" style={{ background:CAT_COLORS[photo.category]||"#555" }}>{photo.category}</span>
+                  <div style={{ display:"flex", gap:2 }}>
+                    <button className="icon-btn" style={{ padding:3 }} title="ダウンロード" onClick={() => download(photo.id)}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1e3a5f" strokeWidth="2.5" strokeLinecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                    </button>
+                    <button className="icon-btn" style={{ padding:3 }} title="削除" onClick={() => { if(confirm("削除しますか？")) onDelete(photo.id); }}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#cc3333" strokeWidth="2.5" strokeLinecap="round"><path d="M3 6h18M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6"/></svg>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Editable name */}
+                {editId === photo.id ? (
+                  <div style={{ marginTop:6, display:"flex", gap:4 }}>
+                    <input
+                      className="edit-in"
+                      value={editName}
+                      onChange={e => setEditName(e.target.value)}
+                      onKeyDown={e => { if(e.key==="Enter") saveEditName(photo.id); if(e.key==="Escape") setEditId(null); }}
+                      autoFocus
+                    />
+                    <button className="icon-btn" style={{ padding:3 }} onClick={() => saveEditName(photo.id)}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2d6a4f" strokeWidth="2.5" strokeLinecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+                    </button>
+                  </div>
+                ) : (
+                  <div
+                    style={{ fontSize:12, color:photo.name?"#333":"#bbb", marginTop:5, cursor:"pointer", display:"flex", alignItems:"center", gap:4 }}
+                    onClick={() => { setEditId(photo.id); setEditName(photo.name||""); }}
+                    title="クリックして名前を編集"
+                  >
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2.5" strokeLinecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg>
+                    {photo.name || "名前を入力"}
+                  </div>
+                )}
+
+                <div className="filename-chip" title={photo.filename}>{photo.filename}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Modal */}
+      {selPhoto && (
+        <div className="modal-overlay" onClick={() => setSelected(null)}>
+          <div className="modal-box" onClick={e => e.stopPropagation()}>
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 16px", borderBottom:"1px solid #eee", gap:8 }}>
+              <div style={{ display:"flex", alignItems:"center", gap:8, flex:1, minWidth:0 }}>
+                <span className="cat-pill" style={{ background:CAT_COLORS[selPhoto.category]||"#555", flexShrink:0 }}>{selPhoto.category}</span>
+                <span style={{ fontSize:13, color:"#666", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{selPhoto.filename}</span>
+              </div>
+              <div style={{ display:"flex", gap:4, flexShrink:0 }}>
+                <button className="upload-btn" style={{ padding:"7px 14px", fontSize:13 }} onClick={() => download(selPhoto.id)}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                  ダウンロード
+                </button>
+                <a href={DRIVE_FOLDER_URL} target="_blank" rel="noopener noreferrer" className="drive-btn" style={{ padding:"7px 12px" }}>
+                  <svg width="13" height="13" viewBox="0 0 87.3 78" fill="none"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25L29.9 1.2C28.55 2 27.4 3.1 26.6 4.5L1.2 49.5C.4 50.9 0 52.45 0 54h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.85l5.85 11.2z" fill="#ea4335"/><path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.9 0H34.4c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.85 54H27.5L13.75 77.8c1.35.8 2.9 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 27.5l-12.6-21.8c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25 59.85 54h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg>
+                  ドライブ
+                </a>
+                <button className="icon-btn" onClick={() => setSelected(null)}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+              </div>
+            </div>
+            <div style={{ overflow:"auto", display:"flex", alignItems:"center", justifyContent:"center", padding:8 }}>
+              <img className="modal-img" src={fullImages[selPhoto.id]||selPhoto.thumb} alt={selPhoto.filename} />
+            </div>
+            <div style={{ padding:"8px 16px", borderTop:"1px solid #eee", fontSize:11, color:"#999" }}>
+              {selPhoto.date}　📄 {selPhoto.filename}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
