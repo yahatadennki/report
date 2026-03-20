@@ -55,6 +55,13 @@ body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f5f3ef;mi
 .send-btn:hover:not(:disabled){background:#2a4f7c}
 .send-btn:disabled{background:#b0b8c4;cursor:not-allowed}
 
+/* 進捗バー */
+.progress-wrap{display:none;margin-bottom:14px}
+.progress-wrap.show{display:block}
+.progress-bar-bg{background:#e0e0e0;border-radius:999px;height:8px;overflow:hidden}
+.progress-bar{background:#1e3a5f;height:8px;border-radius:999px;width:0%;transition:width .3s}
+.progress-lbl{font-size:12px;color:#666;margin-top:5px;text-align:center}
+
 .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem}
 .fbtn{padding:6px 14px;border-radius:999px;border:1.5px solid #ddd;background:#fff;cursor:pointer;font-size:13px;font-family:inherit;transition:all .15s;white-space:nowrap}
 .fbtn.active{border-color:#1e3a5f;background:#1e3a5f;color:#fff}
@@ -73,6 +80,8 @@ body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f5f3ef;mi
 .card-sub{font-size:11px;color:#555;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .card-sub2{font-size:11px;color:#999;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .fn-chip{font-size:10px;color:#bbb;background:#f5f3ef;border-radius:4px;padding:2px 5px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;display:block}
+/* ドライブ保存済みバッジ */
+.saved-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;color:#2d6a4f;background:#e6f4ed;border-radius:4px;padding:2px 6px;margin-top:3px}
 
 .empty{text-align:center;color:#ccc;padding:3rem;font-size:14px}
 .empty .big{font-size:40px;margin-bottom:10px}
@@ -90,8 +99,10 @@ body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f5f3ef;mi
 .close-btn{background:none;border:none;cursor:pointer;padding:6px;border-radius:8px;display:flex}
 .close-btn:hover{background:#f0f0f0}
 
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#2d6a4f;color:#fff;padding:12px 24px;border-radius:999px;font-size:14px;font-weight:500;display:none;z-index:300;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);color:#fff;padding:12px 24px;border-radius:999px;font-size:14px;font-weight:500;display:none;z-index:300;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.2)}
 .toast.show{display:block}
+.toast.ok{background:#2d6a4f}
+.toast.err{background:#c0392b}
 
 @media(max-width:600px){
   .header{padding:1rem}
@@ -164,9 +175,15 @@ body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f5f3ef;mi
     <div class="thumb-bar" id="thumb-bar"></div>
     <div class="thumb-lbl" id="thumb-lbl"></div>
 
+    <!-- 進捗バー -->
+    <div class="progress-wrap" id="progress-wrap">
+      <div class="progress-bar-bg"><div class="progress-bar" id="progress-bar"></div></div>
+      <div class="progress-lbl" id="progress-lbl">アップロード中...</div>
+    </div>
+
     <button class="send-btn" id="send-btn" onclick="register()" disabled>
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-      登録する
+      ドライブに保存する
     </button>
   </div>
 
@@ -190,9 +207,6 @@ body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f5f3ef;mi
         <span style="font-size:13px;color:#555;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:240px" id="m-name"></span>
       </div>
       <div class="modal-acts">
-        <button class="dl-btn" onclick="dlPhoto(currentModal)">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>DL
-        </button>
         <button class="close-btn" onclick="closeModal()">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
         </button>
@@ -206,13 +220,14 @@ body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f5f3ef;mi
 <div class="toast" id="toast"></div>
 
 <script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwQElStGimIfhMUbtGUT2ARCZpjMu9lg4INzIFcsU4cICSxTlcglA7Nucn22mVpEwIl/exec';
+
 const CATS=['フェア','工事','点検','プライベート'];
 const COLORS={フェア:'#c75b1a',工事:'#2d6a4f',点検:'#1e3a5f',プライベート:'#6b3a8e'};
 const FID={フェア:'f-0',工事:'f-1',点検:'f-2',プライベート:'f-3'};
-const KEY='yahata_photos_v2';
+const KEY='yahata_photos_v3';
 
 let photos=[];
-let fullImages={};
 let pendingFiles=[];
 let pendingData=[];
 let currentFilter='すべて';
@@ -237,7 +252,7 @@ function buildFn(cat,name,customer,product,origName,idx,total){
 function saveLS(){try{localStorage.setItem(KEY,JSON.stringify(photos));}catch(e){}}
 function loadLS(){try{const d=localStorage.getItem(KEY);if(d)photos=JSON.parse(d);}catch(e){}}
 
-function compress(dataURL,size=500){
+function compress(dataURL,size=1200){
   return new Promise(res=>{
     const img=new Image();
     img.onload=()=>{
@@ -245,7 +260,20 @@ function compress(dataURL,size=500){
       const r=Math.min(size/img.width,size/img.height,1);
       c.width=img.width*r;c.height=img.height*r;
       c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-      res(c.toDataURL('image/jpeg',0.80));
+      res(c.toDataURL('image/jpeg',0.85));
+    };
+    img.src=dataURL;
+  });
+}
+function compressThumb(dataURL){
+  return new Promise(res=>{
+    const img=new Image();
+    img.onload=()=>{
+      const c=document.createElement('canvas');
+      const r=Math.min(400/img.width,400/img.height,1);
+      c.width=img.width*r;c.height=img.height*r;
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      res(c.toDataURL('image/jpeg',0.75));
     };
     img.src=dataURL;
   });
@@ -319,41 +347,77 @@ async function register(){
   if(!pendingFiles.length) return;
   const btn=document.getElementById('send-btn');
   btn.disabled=true;
-  btn.textContent='登録中...';
+  btn.textContent='送信中...';
+
   const cat=document.getElementById('cat').value;
   const name=document.getElementById('name-in').value.trim();
   const customer=document.getElementById('customer').value.trim();
   const product=document.getElementById('product').value.trim();
   const total=pendingFiles.length;
+
+  // 進捗バー表示
+  const pw=document.getElementById('progress-wrap');
+  const pb=document.getElementById('progress-bar');
+  const pl=document.getElementById('progress-lbl');
+  pw.classList.add('show');
+
+  // 1枚ずつアップロード（大きいファイルのため）
+  const newPhotos=[];
   for(let i=0;i<total;i++){
+    pl.textContent=`${i+1} / ${total} 枚 アップロード中...`;
+    pb.style.width=`${Math.round((i/total)*100)}%`;
+
     const file=pendingFiles[i];
-    const thumb=await compress(pendingData[i],450);
-    const id=`${Date.now()}-${Math.random().toString(36).slice(2)}`;
-    photos.unshift({
-      id,origName:file.name,
-      filename:buildFn(cat,name,customer,product,file.name,i,total),
-      name,customer,product,category:cat,
-      date:toDisp(),dateStr:toDateStr(),thumb
-    });
-    fullImages[id]=pendingData[i];
+    const filename=buildFn(cat,name,customer,product,file.name,i,total);
+    const compressed=await compress(pendingData[i],1200);
+    const thumb=await compressThumb(pendingData[i]);
+
+    try {
+      const res=await fetch(GAS_URL,{
+        method:'POST',
+        body:JSON.stringify({files:[{data:compressed,filename}]})
+      });
+      const json=await res.json();
+      const driveUrl=json.ok&&json.results[0]?json.results[0].url:null;
+
+      const id=`${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      newPhotos.push({
+        id,origName:file.name,filename,name,customer,product,
+        category:cat,date:toDisp(),dateStr:toDateStr(),
+        thumb,driveUrl,uploaded:!!driveUrl
+      });
+    } catch(err) {
+      showToast('❌ エラーが発生しました','err');
+      console.error(err);
+    }
   }
+
+  pb.style.width='100%';
+  pl.textContent='完了！';
+  setTimeout(()=>pw.classList.remove('show'),1500);
+
+  photos=[...newPhotos,...photos];
   saveLS();
+
   pendingFiles=[];pendingData=[];
   renderThumbs();
   document.getElementById('name-in').value='';
   document.getElementById('customer').value='';
   document.getElementById('product').value='';
   document.getElementById('fn-preview').style.display='none';
-  btn.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg> 登録する';
+
+  btn.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg> ドライブに保存する';
   btn.disabled=true;
   renderAll();
-  showToast('✅ 登録しました！');
+
+  const ok=newPhotos.filter(p=>p.uploaded).length;
+  showToast(`✅ ${ok}枚をドライブに保存しました！`,'ok');
 }
 
-function showToast(msg){
+function showToast(msg,type='ok'){
   const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2500);
+  t.textContent=msg;t.className=`toast ${type} show`;
+  setTimeout(()=>t.classList.remove('show'),3000);
 }
 
 function setFilter(cat,btn){
@@ -397,9 +461,6 @@ function renderGrid(){
         <div class="card-top">
           <span class="pill" style="background:${COLORS[p.category]||'#555'}">${p.category}</span>
           <div class="card-acts">
-            <button class="ic" onclick="dlPhoto('${p.id}')" title="ダウンロード">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1e3a5f" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-            </button>
             <button class="ic" onclick="delPhoto('${p.id}')" title="削除">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#cc3333" stroke-width="2.5" stroke-linecap="round"><path d="M3 6h18M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6"/></svg>
             </button>
@@ -408,22 +469,18 @@ function renderGrid(){
         ${p.name?`<div class="card-sub">${p.name}</div>`:''}
         ${sub?`<div class="card-sub2">${sub}</div>`:''}
         <div class="card-sub2">${p.date}</div>
-        <span class="fn-chip" title="${p.filename}">${p.filename}</span>
+        ${p.uploaded
+          ?`<div class="saved-badge">☁️ ドライブ保存済</div>`
+          :`<span class="fn-chip">${p.filename}</span>`
+        }
       </div>
     </div>`;
   }).join('');
 }
 
-function dlPhoto(id){
-  const p=photos.find(x=>x.id===id);if(!p)return;
-  const a=document.createElement('a');
-  a.href=fullImages[id]||p.thumb;a.download=p.filename;a.click();
-}
-
 function delPhoto(id){
-  if(!confirm('この写真を削除しますか？'))return;
+  if(!confirm('この写真を削除しますか？\n※ドライブ上のファイルは削除されません'))return;
   photos=photos.filter(p=>p.id!==id);
-  delete fullImages[id];
   if(currentModal===id)closeModal();
   saveLS();renderAll();
 }
@@ -435,8 +492,10 @@ function openModal(id){
   document.getElementById('m-cat').textContent=p.category;
   document.getElementById('m-cat').style.background=COLORS[p.category]||'#555';
   document.getElementById('m-name').textContent=[p.name,sub].filter(Boolean).join('　');
-  document.getElementById('m-img').src=fullImages[id]||p.thumb;
-  document.getElementById('m-ft').textContent=`${p.date}　${p.filename}`;
+  document.getElementById('m-img').src=p.thumb;
+  document.getElementById('m-ft').textContent=p.uploaded
+    ?`${p.date}　☁️ ドライブ保存済　${p.filename}`
+    :`${p.date}　${p.filename}`;
   document.getElementById('modal').classList.add('open');
 }
 function closeModal(){document.getElementById('modal').classList.remove('open');}
