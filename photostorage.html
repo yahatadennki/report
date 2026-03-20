@@ -8,425 +8,440 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f5f3ef;min-height:100vh;color:#1a1a1a}
-.container{max-width:920px;margin:0 auto;padding:1.5rem 1rem 4rem}
+.wrap{max-width:900px;margin:0 auto;padding:1.5rem 1rem 4rem}
 
-/* Header */
-.header{background:#1e3a5f;color:#fff;border-radius:16px;padding:1.25rem 1.5rem;margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.header h1{font-size:20px;font-weight:700;letter-spacing:.03em}
-.header p{font-size:12px;opacity:.7;margin-top:2px}
-.drive-btn{display:flex;align-items:center;gap:7px;background:#fff;color:#1a73e8;border:none;border-radius:9px;padding:9px 14px;font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;white-space:nowrap;transition:background .15s;font-family:inherit}
-.drive-btn:hover{background:#e8f0fe}
+.header{background:#1e3a5f;color:#fff;border-radius:14px;padding:1.2rem 1.5rem;margin-bottom:1.2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.header h1{font-size:19px;font-weight:700}
+.header p{font-size:12px;opacity:.65;margin-top:2px}
+.drive-link{display:inline-flex;align-items:center;gap:6px;background:#fff;color:#1a73e8;border-radius:8px;padding:8px 13px;font-size:13px;font-weight:500;text-decoration:none;white-space:nowrap;transition:background .15s}
+.drive-link:hover{background:#e8f0fe}
 
-/* Stats */
-.stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1.25rem}
-.stat-card{background:#fff;border-radius:10px;padding:10px 16px;min-width:80px;text-align:center;border:1px solid #e8e4de}
-.stat-card .num{font-size:22px;font-weight:700;color:#1e3a5f}
-.stat-card .lbl{font-size:11px;color:#999;margin-top:2px}
-.stat-card.cat .num{font-size:18px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1.2rem}
+.sc{background:#fff;border-radius:10px;padding:10px 14px;min-width:78px;text-align:center;border:1px solid #e8e4de}
+.sc .n{font-size:20px;font-weight:700;color:#1e3a5f}
+.sc .l{font-size:11px;color:#999;margin-top:2px}
 
-/* Upload panel */
-.upload-panel{background:#fff;border-radius:14px;padding:1.25rem;margin-bottom:1.25rem;border:1px solid #e8e4de}
-.panel-title{font-size:13px;font-weight:500;color:#555;margin-bottom:12px}
-.controls{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:12px}
-.ctrl-group label{display:block;font-size:11px;color:#888;margin-bottom:4px}
-.ctrl-group select,.ctrl-group input[type=text]{padding:8px 12px;border-radius:8px;border:1.5px solid #ddd;font-size:14px;background:#fff;outline:none;font-family:inherit;transition:border-color .15s}
-.ctrl-group select:focus,.ctrl-group input[type=text]:focus{border-color:#1e3a5f}
-.ctrl-group input[type=text]{width:190px}
-.filename-preview{background:#f0f4f9;border-radius:7px;padding:6px 10px;font-size:12px;color:#1e3a5f;margin-bottom:12px;display:none}
-.filename-preview span{font-weight:500}
-.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.btn{display:inline-flex;align-items:center;gap:7px;border:none;border-radius:10px;padding:9px 18px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
-.btn-primary{background:#1e3a5f;color:#fff}.btn-primary:hover{background:#2a4f7c}
-.btn-dark{background:#555;color:#fff}.btn-dark:hover{background:#333}
-.drop-zone{border:2px dashed #c8c3bb;border-radius:12px;padding:1.75rem;text-align:center;cursor:pointer;transition:all .2s}
-.drop-zone:hover,.drop-zone.over{border-color:#1e3a5f;background:#f0f4f9}
-.drop-zone .icon{font-size:28px;margin-bottom:8px}
-.drop-zone p{font-size:13px;color:#777}
-.drop-zone small{font-size:11px;color:#bbb;margin-top:4px;display:block}
+.panel{background:#fff;border-radius:14px;padding:1.4rem;margin-bottom:1.2rem;border:1px solid #e8e4de}
+.panel-ttl{font-size:13px;font-weight:700;color:#1e3a5f;margin-bottom:14px}
 
-/* Info bar */
-.info-bar{background:#eef5ff;border:1px solid #c5d9f5;border-radius:10px;padding:10px 14px;margin-bottom:1.25rem;font-size:13px;color:#1a4080;display:flex;align-items:flex-start;gap:8px}
+.frow{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;align-items:flex-end}
+.fg{display:flex;flex-direction:column;gap:4px;flex:1;min-width:140px}
+.fg label{font-size:11px;color:#888;font-weight:500}
+.fg select,.fg input[type=text]{padding:9px 11px;border-radius:8px;border:1.5px solid #ddd;font-size:14px;font-family:inherit;outline:none;background:#fff;transition:border-color .15s;width:100%}
+.fg select:focus,.fg input[type=text]:focus{border-color:#1e3a5f}
 
-/* Filter */
+.extra{display:none;background:#eef4ff;border:1px solid #c5d9f5;border-radius:10px;padding:12px;margin-bottom:12px}
+.extra.show{display:block}
+.extra-ttl{font-size:11px;color:#1a73e8;font-weight:700;margin-bottom:8px}
+
+.pick-wrap{position:relative;border:2px dashed #ccc;border-radius:12px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:14px;overflow:hidden}
+.pick-wrap:hover,.pick-wrap.over{border-color:#1e3a5f;background:#f0f4fb}
+.pick-inner{padding:1.5rem 1rem;pointer-events:none}
+.pick-wrap input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.pick-ico{font-size:30px;margin-bottom:8px}
+.pick-wrap p{font-size:14px;color:#666}
+.pick-wrap small{font-size:11px;color:#bbb;margin-top:4px;display:block}
+
+.thumb-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.thumb-item{position:relative;width:78px;height:78px;border-radius:8px;overflow:hidden;border:1.5px solid #ddd;flex-shrink:0}
+.thumb-item img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb-del{position:absolute;top:2px;right:2px;background:rgba(0,0,0,.6);border:none;border-radius:50%;width:18px;height:18px;cursor:pointer;color:#fff;font-size:12px;line-height:18px;text-align:center;padding:0}
+.thumb-lbl{font-size:12px;color:#777;margin-bottom:12px}
+
+.fn-preview{background:#f0f4fb;border-radius:7px;padding:7px 11px;font-size:12px;color:#1e3a5f;margin-bottom:14px;display:none;word-break:break-all}
+.fn-preview b{font-weight:700}
+
+.send-btn{width:100%;padding:14px;border-radius:10px;background:#1e3a5f;color:#fff;border:none;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.send-btn:hover:not(:disabled){background:#2a4f7c}
+.send-btn:disabled{background:#b0b8c4;cursor:not-allowed}
+
 .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem}
-.filter-btn{padding:6px 14px;border-radius:999px;border:1.5px solid #ddd;background:#fff;cursor:pointer;font-size:13px;font-family:inherit;transition:all .15s;white-space:nowrap}
-.filter-btn.active{border-color:#1e3a5f;background:#1e3a5f;color:#fff}
-.filter-btn:not(.active):hover{border-color:#1e3a5f;color:#1e3a5f}
+.fbtn{padding:6px 14px;border-radius:999px;border:1.5px solid #ddd;background:#fff;cursor:pointer;font-size:13px;font-family:inherit;transition:all .15s;white-space:nowrap}
+.fbtn.active{border-color:#1e3a5f;background:#1e3a5f;color:#fff}
+.fbtn:not(.active):hover{border-color:#1e3a5f;color:#1e3a5f}
 
-/* Grid */
-.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px}
-.photo-card{background:#fff;border-radius:11px;overflow:hidden;border:1.5px solid #e8e4de;transition:transform .15s,box-shadow .15s}
-.photo-card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.1)}
-.photo-card img{width:100%;aspect-ratio:1;object-fit:cover;display:block;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px}
+.card{background:#fff;border-radius:11px;overflow:hidden;border:1.5px solid #e8e4de;transition:transform .15s,box-shadow .15s}
+.card:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.1)}
+.card img{width:100%;aspect-ratio:1;object-fit:cover;cursor:pointer;display:block}
 .card-body{padding:8px 10px}
-.card-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
-.cat-pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:500;color:#fff}
-.card-actions{display:flex;gap:2px}
-.icon-btn{background:none;border:none;cursor:pointer;padding:4px;border-radius:7px;display:flex;align-items:center;justify-content:center;transition:background .15s}
-.icon-btn:hover{background:#f0f0f0}
-.card-name{font-size:12px;color:#333;margin:3px 0 1px;cursor:pointer;display:flex;align-items:center;gap:4px;min-height:18px}
-.card-name.empty{color:#bbb}
-.card-name:hover{color:#1e3a5f}
-.filename-chip{font-size:10px;color:#aaa;background:#f5f3ef;border-radius:4px;padding:2px 5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
-.edit-row{display:flex;gap:4px;margin:4px 0}
-.edit-in{flex:1;padding:4px 7px;border-radius:6px;border:1.5px solid #1e3a5f;font-size:12px;outline:none;font-family:inherit;min-width:0}
+.card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:500;color:#fff}
+.card-acts{display:flex;gap:2px}
+.ic{background:none;border:none;cursor:pointer;padding:4px;border-radius:6px;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.ic:hover{background:#f0f0f0}
+.card-sub{font-size:11px;color:#555;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card-sub2{font-size:11px;color:#999;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fn-chip{font-size:10px;color:#bbb;background:#f5f3ef;border-radius:4px;padding:2px 5px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;display:block}
 
-/* Empty */
 .empty{text-align:center;color:#ccc;padding:3rem;font-size:14px}
-.empty .big{font-size:40px;margin-bottom:12px}
+.empty .big{font-size:40px;margin-bottom:10px}
 
-/* Modal */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:200;display:none;align-items:center;justify-content:center}
-.modal-overlay.open{display:flex}
-.modal-box{background:#fff;border-radius:16px;overflow:hidden;max-width:92vw;max-height:92vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.35)}
-.modal-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #eee;gap:8px;flex-wrap:wrap}
-.modal-title{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
-.modal-title span{font-size:13px;color:#666;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.modal-actions{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:200;display:none;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:#fff;border-radius:16px;overflow:hidden;max-width:92vw;max-height:92vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #eee;gap:8px;flex-wrap:wrap}
+.modal-title{display:flex;align-items:center;gap:8px;flex:1;min-width:0;flex-wrap:wrap}
+.modal-acts{display:flex;gap:6px;align-items:center;flex-shrink:0}
 .modal-img-wrap{overflow:auto;display:flex;align-items:center;justify-content:center;padding:8px}
-.modal-img{max-width:82vw;max-height:68vh;object-fit:contain;display:block}
-.modal-footer{padding:8px 16px;border-top:1px solid #eee;font-size:11px;color:#aaa}
-.btn-sm{padding:7px 13px;font-size:13px}
+.modal-img{max-width:82vw;max-height:66vh;object-fit:contain;display:block}
+.modal-ft{padding:8px 16px;border-top:1px solid #eee;font-size:11px;color:#aaa;word-break:break-all}
+.dl-btn{display:inline-flex;align-items:center;gap:6px;background:#1e3a5f;color:#fff;border:none;border-radius:8px;padding:7px 13px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;white-space:nowrap}
+.close-btn{background:none;border:none;cursor:pointer;padding:6px;border-radius:8px;display:flex}
+.close-btn:hover{background:#f0f0f0}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#2d6a4f;color:#fff;padding:12px 24px;border-radius:999px;font-size:14px;font-weight:500;display:none;z-index:300;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.toast.show{display:block}
 
 @media(max-width:600px){
-  .header{padding:1rem}.controls{flex-direction:column;align-items:stretch}
-  .ctrl-group input[type=text]{width:100%}.photo-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+  .header{padding:1rem}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
 }
 </style>
 </head>
 <body>
-<div class="container">
+<div class="wrap">
 
-  <!-- Header -->
   <div class="header">
     <div>
       <h1>📷 フォト保管庫</h1>
-      <p>かわらばん・チラシなど写真の整理・保存</p>
+      <p>ヤハタ電機商会</p>
     </div>
-    <a href="https://drive.google.com/drive/u/0/folders/12WLokXXTwYKgdrGgQLQImKpdAmHoeCRJ" target="_blank" class="drive-btn">
+    <a href="https://drive.google.com/drive/u/0/folders/12WLokXXTwYKgdrGgQLQImKpdAmHoeCRJ" target="_blank" class="drive-link">
       <svg width="15" height="15" viewBox="0 0 87.3 78" fill="none"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25L29.9 1.2C28.55 2 27.4 3.1 26.6 4.5L1.2 49.5C.4 50.9 0 52.45 0 54h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.85l5.85 11.2z" fill="#ea4335"/><path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.9 0H34.4c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.85 54H27.5L13.75 77.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 27.5l-12.6-21.8c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25 59.85 54h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg>
       保存先フォルダを開く
     </a>
   </div>
 
-  <!-- Stats -->
   <div class="stats" id="stats">
-    <div class="stat-card"><div class="num" id="total-count">0</div><div class="lbl">総枚数</div></div>
+    <div class="sc"><div class="n" id="total-n">0</div><div class="l">総枚数</div></div>
   </div>
 
-  <!-- Upload Panel -->
-  <div class="upload-panel">
-    <div class="panel-title">📋 取り込み設定</div>
-    <div class="controls">
-      <div class="ctrl-group">
+  <div class="panel">
+    <div class="panel-ttl">📋 写真を登録</div>
+
+    <div class="frow">
+      <div class="fg">
         <label>カテゴリー</label>
-        <select id="cat-select">
-          <option>かわらばん</option>
-          <option>チラシ</option>
-          <option>工事写真</option>
-          <option>店内写真</option>
-          <option>その他</option>
+        <select id="cat" onchange="onCatChange()">
+          <option value="フェア">フェア</option>
+          <option value="工事">工事</option>
+          <option value="点検">点検</option>
+          <option value="プライベート">プライベート</option>
         </select>
       </div>
-      <div class="ctrl-group">
-        <label>名前（ファイル名に使用）</label>
-        <input type="text" id="name-input" placeholder="例：2026年3月号">
+      <div class="fg">
+        <label>タイトル（任意）</label>
+        <input type="text" id="name-in" placeholder="例：春のフェア" oninput="updatePreview()">
       </div>
     </div>
-    <div class="filename-preview" id="filename-preview">
-      保存ファイル名：<span id="preview-text"></span>
+
+    <div class="extra" id="extra">
+      <div class="extra-ttl">🏠 顧客・商品情報</div>
+      <div class="frow" style="margin-bottom:0">
+        <div class="fg">
+          <label>顧客名</label>
+          <input type="text" id="customer" placeholder="例：山田様" oninput="updatePreview()">
+        </div>
+        <div class="fg">
+          <label>商品名</label>
+          <input type="text" id="product" placeholder="例：エアコン CS-X253D" oninput="updatePreview()">
+        </div>
+      </div>
     </div>
-    <div class="btn-row">
-      <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-        写真を選択
-      </button>
-      <button class="btn btn-dark" onclick="document.getElementById('cam-input').click()">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        カメラで撮影
-      </button>
+
+    <div class="fn-preview" id="fn-preview">📄 保存ファイル名：<b id="fn-text"></b></div>
+
+    <div class="pick-wrap" id="pick-wrap">
+      <div class="pick-inner">
+        <div class="pick-ico">🖼️</div>
+        <p>タップして写真を選ぶ</p>
+        <small>複数枚まとめて選択できます</small>
+      </div>
+      <input type="file" id="file-in" accept="image/*" multiple onchange="onFilePick(this)">
     </div>
-    <div class="drop-zone" id="drop-zone">
-      <div class="icon">📂</div>
-      <p>ドラッグ＆ドロップ、またはクリックして選択</p>
-      <small>複数枚まとめてOK</small>
-    </div>
-    <input type="file" id="file-input" accept="image/*" multiple style="display:none">
-    <input type="file" id="cam-input" accept="image/*" capture="environment" style="display:none">
+
+    <div class="thumb-bar" id="thumb-bar"></div>
+    <div class="thumb-lbl" id="thumb-lbl"></div>
+
+    <button class="send-btn" id="send-btn" onclick="register()" disabled>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+      登録する
+    </button>
   </div>
 
-  <!-- Info bar -->
-  <div class="info-bar">
-    <span>ℹ️</span>
-    <span>写真はこのブラウザ内に保存されます。「DL」ボタンで日付入りファイル名でダウンロードし、上のボタンからドライブフォルダを開いてアップロードしてください。</span>
+  <div class="filters">
+    <button class="fbtn active" onclick="setFilter('すべて',this)">すべて <span id="f-all">(0)</span></button>
+    <button class="fbtn" onclick="setFilter('フェア',this)">フェア <span id="f-0">(0)</span></button>
+    <button class="fbtn" onclick="setFilter('工事',this)">工事 <span id="f-1">(0)</span></button>
+    <button class="fbtn" onclick="setFilter('点検',this)">点検 <span id="f-2">(0)</span></button>
+    <button class="fbtn" onclick="setFilter('プライベート',this)">プライベート <span id="f-3">(0)</span></button>
   </div>
 
-  <!-- Filters -->
-  <div class="filters" id="filters">
-    <button class="filter-btn active" onclick="setFilter('すべて', this)">すべて <span id="f-all">(0)</span></button>
-    <button class="filter-btn" onclick="setFilter('かわらばん', this)">かわらばん <span id="f-0">(0)</span></button>
-    <button class="filter-btn" onclick="setFilter('チラシ', this)">チラシ <span id="f-1">(0)</span></button>
-    <button class="filter-btn" onclick="setFilter('工事写真', this)">工事写真 <span id="f-2">(0)</span></button>
-    <button class="filter-btn" onclick="setFilter('店内写真', this)">店内写真 <span id="f-3">(0)</span></button>
-    <button class="filter-btn" onclick="setFilter('その他', this)">その他 <span id="f-4">(0)</span></button>
-  </div>
-
-  <!-- Grid -->
-  <div class="photo-grid" id="photo-grid"></div>
-  <div class="empty" id="empty-msg" style="display:none"><div class="big">🖼️</div>写真がまだありません</div>
-
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" style="display:none"><div class="big">🖼️</div>写真がまだありません</div>
 </div>
 
-<!-- Modal -->
-<div class="modal-overlay" id="modal" onclick="closeModal(event)">
-  <div class="modal-box" onclick="event.stopPropagation()">
-    <div class="modal-header">
+<div class="modal-bg" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-hd">
       <div class="modal-title">
-        <span class="cat-pill" id="modal-cat"></span>
-        <span id="modal-filename"></span>
+        <span class="pill" id="m-cat"></span>
+        <span style="font-size:13px;color:#555;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:240px" id="m-name"></span>
       </div>
-      <div class="modal-actions">
-        <button class="btn btn-primary btn-sm" onclick="downloadPhoto(currentModal)">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-          DL
+      <div class="modal-acts">
+        <button class="dl-btn" onclick="dlPhoto(currentModal)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>DL
         </button>
-        <a href="https://drive.google.com/drive/u/0/folders/12WLokXXTwYKgdrGgQLQImKpdAmHoeCRJ" target="_blank" class="drive-btn" style="padding:7px 12px;font-size:13px">
-          <svg width="13" height="13" viewBox="0 0 87.3 78" fill="none"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25L29.9 1.2C28.55 2 27.4 3.1 26.6 4.5L1.2 49.5C.4 50.9 0 52.45 0 54h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.85l5.85 11.2z" fill="#ea4335"/><path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.9 0H34.4c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.85 54H27.5L13.75 77.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 27.5l-12.6-21.8c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25 59.85 54h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg>
-          ドライブ
-        </a>
-        <button class="icon-btn" onclick="document.getElementById('modal').classList.remove('open')">
+        <button class="close-btn" onclick="closeModal()">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
         </button>
       </div>
     </div>
-    <div class="modal-img-wrap">
-      <img class="modal-img" id="modal-img" src="" alt="">
-    </div>
-    <div class="modal-footer" id="modal-footer"></div>
+    <div class="modal-img-wrap"><img class="modal-img" id="m-img" src="" alt=""></div>
+    <div class="modal-ft" id="m-ft"></div>
   </div>
 </div>
 
+<div class="toast" id="toast"></div>
+
 <script>
-const STORAGE_KEY = 'yahata_photos_v1';
-const CAT_COLORS = {'かわらばん':'#1e3a5f','チラシ':'#6b3a8e','工事写真':'#2d6a4f','店内写真':'#8c4a1e','その他':'#4a4a4a'};
-const CAT_FILTER_IDS = {'かわらばん':'f-0','チラシ':'f-1','工事写真':'f-2','店内写真':'f-3','その他':'f-4'};
+const CATS=['フェア','工事','点検','プライベート'];
+const COLORS={フェア:'#c75b1a',工事:'#2d6a4f',点検:'#1e3a5f',プライベート:'#6b3a8e'};
+const FID={フェア:'f-0',工事:'f-1',点検:'f-2',プライベート:'f-3'};
+const KEY='yahata_photos_v2';
 
-let photos = [];
-let fullImages = {};
-let currentFilter = 'すべて';
-let currentModal = null;
+let photos=[];
+let fullImages={};
+let pendingFiles=[];
+let pendingData=[];
+let currentFilter='すべて';
+let currentModal=null;
 
-function toDateStr(d = new Date()) {
+function toDateStr(d=new Date()){
   return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
 }
-function toDisplayDate(d = new Date()) {
+function toDisp(d=new Date()){
   return d.toLocaleDateString('ja-JP',{year:'numeric',month:'2-digit',day:'2-digit'});
 }
-function buildFilename(cat, name, origName) {
-  const ext = (origName.match(/\.[^.]+$/) || ['.jpg'])[0];
-  const label = name.trim() || cat;
-  return `${toDateStr()}_${cat}_${label}${ext}`;
+function buildFn(cat,name,customer,product,origName,idx,total){
+  const ext=(origName.match(/\.[^.]+$/)||['.jpg'])[0];
+  const parts=[toDateStr(),cat];
+  if(customer) parts.push(customer);
+  if(product) parts.push(product);
+  if(name) parts.push(name);
+  if(total>1) parts.push(String(idx+1).padStart(2,'0'));
+  return parts.join('_')+ext;
 }
 
-function saveToStorage() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(photos)); } catch(e) {}
-}
-function loadFromStorage() {
-  try {
-    const d = localStorage.getItem(STORAGE_KEY);
-    if (d) photos = JSON.parse(d);
-  } catch(e) {}
-}
+function saveLS(){try{localStorage.setItem(KEY,JSON.stringify(photos));}catch(e){}}
+function loadLS(){try{const d=localStorage.getItem(KEY);if(d)photos=JSON.parse(d);}catch(e){}}
 
-function compress(dataURL, size=400) {
-  return new Promise(res => {
-    const img = new Image();
-    img.onload = () => {
-      const c = document.createElement('canvas');
-      const r = Math.min(size/img.width, size/img.height, 1);
-      c.width = img.width*r; c.height = img.height*r;
+function compress(dataURL,size=500){
+  return new Promise(res=>{
+    const img=new Image();
+    img.onload=()=>{
+      const c=document.createElement('canvas');
+      const r=Math.min(size/img.width,size/img.height,1);
+      c.width=img.width*r;c.height=img.height*r;
       c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-      res(c.toDataURL('image/jpeg',0.78));
+      res(c.toDataURL('image/jpeg',0.80));
     };
-    img.src = dataURL;
+    img.src=dataURL;
   });
 }
-function readFile(file) {
-  return new Promise((res,rej) => {
-    const r = new FileReader();
-    r.onload = e => res(e.target.result);
-    r.onerror = rej;
+function readFile(file){
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onload=e=>res(e.target.result);r.onerror=rej;
     r.readAsDataURL(file);
   });
 }
 
-async function addFiles(files) {
-  const arr = Array.from(files).filter(f => f.type.startsWith('image/'));
-  if (!arr.length) return;
-  const cat = document.getElementById('cat-select').value;
-  const name = document.getElementById('name-input').value;
-  for (const file of arr) {
-    const data = await readFile(file);
-    const thumb = await compress(data, 400);
-    const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-    const filename = buildFilename(cat, name, file.name);
-    photos.unshift({ id, origName:file.name, filename, name:name.trim(), category:cat, date:toDisplayDate(), dateStr:toDateStr(), thumb });
-    fullImages[id] = data;
-  }
-  saveToStorage();
-  renderAll();
+function onCatChange(){
+  const cat=document.getElementById('cat').value;
+  const extra=document.getElementById('extra');
+  (cat==='工事'||cat==='点検')?extra.classList.add('show'):extra.classList.remove('show');
+  updatePreview();
 }
 
-function updatePreview() {
-  const cat = document.getElementById('cat-select').value;
-  const name = document.getElementById('name-input').value.trim();
-  const preview = document.getElementById('filename-preview');
-  const text = document.getElementById('preview-text');
-  if (name) {
-    preview.style.display = 'block';
-    text.textContent = `${toDateStr()}_${cat}_${name}.jpg`;
+function updatePreview(){
+  const cat=document.getElementById('cat').value;
+  const name=document.getElementById('name-in').value.trim();
+  const customer=document.getElementById('customer').value.trim();
+  const product=document.getElementById('product').value.trim();
+  const preview=document.getElementById('fn-preview');
+  if(pendingFiles.length||name||customer||product){
+    const sample=pendingFiles.length?pendingFiles[0].name:'photo.jpg';
+    let txt=buildFn(cat,name,customer,product,sample,0,pendingFiles.length||1);
+    if(pendingFiles.length>1) txt+=`　ほか${pendingFiles.length-1}枚`;
+    document.getElementById('fn-text').textContent=txt;
+    preview.style.display='block';
   } else {
-    preview.style.display = 'none';
+    preview.style.display='none';
   }
 }
 
-function setFilter(cat, btn) {
-  currentFilter = cat;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+async function onFilePick(input){
+  const files=Array.from(input.files).filter(f=>f.type.startsWith('image/'));
+  input.value='';
+  if(!files.length) return;
+  for(const f of files){
+    const data=await readFile(f);
+    pendingFiles.push(f);
+    pendingData.push(data);
+  }
+  renderThumbs();
+  updatePreview();
+  document.getElementById('send-btn').disabled=false;
+}
+
+function renderThumbs(){
+  const bar=document.getElementById('thumb-bar');
+  const lbl=document.getElementById('thumb-lbl');
+  bar.innerHTML=pendingFiles.map((_,i)=>`
+    <div class="thumb-item">
+      <img src="${pendingData[i]}" alt="">
+      <button class="thumb-del" onclick="removePending(${i})">×</button>
+    </div>`).join('');
+  lbl.textContent=pendingFiles.length?`${pendingFiles.length}枚 選択中`:'';
+  document.getElementById('send-btn').disabled=!pendingFiles.length;
+}
+
+function removePending(i){
+  pendingFiles.splice(i,1);
+  pendingData.splice(i,1);
+  renderThumbs();
+  updatePreview();
+}
+
+async function register(){
+  if(!pendingFiles.length) return;
+  const btn=document.getElementById('send-btn');
+  btn.disabled=true;
+  btn.textContent='登録中...';
+  const cat=document.getElementById('cat').value;
+  const name=document.getElementById('name-in').value.trim();
+  const customer=document.getElementById('customer').value.trim();
+  const product=document.getElementById('product').value.trim();
+  const total=pendingFiles.length;
+  for(let i=0;i<total;i++){
+    const file=pendingFiles[i];
+    const thumb=await compress(pendingData[i],450);
+    const id=`${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    photos.unshift({
+      id,origName:file.name,
+      filename:buildFn(cat,name,customer,product,file.name,i,total),
+      name,customer,product,category:cat,
+      date:toDisp(),dateStr:toDateStr(),thumb
+    });
+    fullImages[id]=pendingData[i];
+  }
+  saveLS();
+  pendingFiles=[];pendingData=[];
+  renderThumbs();
+  document.getElementById('name-in').value='';
+  document.getElementById('customer').value='';
+  document.getElementById('product').value='';
+  document.getElementById('fn-preview').style.display='none';
+  btn.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg> 登録する';
+  btn.disabled=true;
+  renderAll();
+  showToast('✅ 登録しました！');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function setFilter(cat,btn){
+  currentFilter=cat;
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   renderGrid();
 }
 
-function renderAll() {
-  renderStats();
-  renderGrid();
-}
+function renderAll(){renderStats();renderGrid();}
 
-function renderStats() {
-  document.getElementById('total-count').textContent = photos.length;
-  const stats = document.getElementById('stats');
-  // Remove old cat cards
-  stats.querySelectorAll('.stat-card.cat').forEach(e => e.remove());
-  const cats = ['かわらばん','チラシ','工事写真','店内写真','その他'];
-  cats.forEach(c => {
-    const count = photos.filter(p => p.category === c).length;
-    if (count > 0) {
-      const d = document.createElement('div');
-      d.className = 'stat-card cat';
-      d.innerHTML = `<div class="num" style="color:${CAT_COLORS[c]}">${count}</div><div class="lbl">${c}</div>`;
+function renderStats(){
+  document.getElementById('total-n').textContent=photos.length;
+  const stats=document.getElementById('stats');
+  stats.querySelectorAll('.sc.cat').forEach(e=>e.remove());
+  CATS.forEach(c=>{
+    const cnt=photos.filter(p=>p.category===c).length;
+    const fi=document.getElementById(FID[c]);
+    if(fi) fi.textContent=`(${cnt})`;
+    if(cnt>0){
+      const d=document.createElement('div');
+      d.className='sc cat';
+      d.innerHTML=`<div class="n" style="color:${COLORS[c]}">${cnt}</div><div class="l">${c}</div>`;
       stats.appendChild(d);
     }
-    const fi = document.getElementById(CAT_FILTER_IDS[c]);
-    if (fi) fi.textContent = `(${count})`;
   });
-  document.getElementById('f-all').textContent = `(${photos.length})`;
+  document.getElementById('f-all').textContent=`(${photos.length})`;
 }
 
-function renderGrid() {
-  const grid = document.getElementById('photo-grid');
-  const empty = document.getElementById('empty-msg');
-  const filtered = currentFilter === 'すべて' ? photos : photos.filter(p => p.category === currentFilter);
-  if (filtered.length === 0) {
-    grid.innerHTML = ''; empty.style.display = 'block'; return;
-  }
-  empty.style.display = 'none';
-  grid.innerHTML = filtered.map(p => `
-    <div class="photo-card" id="card-${p.id}">
-      <img src="${p.thumb}" loading="lazy" onclick="openModal('${p.id}')" alt="${p.filename}">
+function renderGrid(){
+  const grid=document.getElementById('grid');
+  const empty=document.getElementById('empty');
+  const list=currentFilter==='すべて'?photos:photos.filter(p=>p.category===currentFilter);
+  if(!list.length){grid.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  grid.innerHTML=list.map(p=>{
+    const sub=[p.customer,p.product].filter(Boolean).join(' / ');
+    return `<div class="card">
+      <img src="${p.thumb}" loading="lazy" onclick="openModal('${p.id}')" alt="">
       <div class="card-body">
-        <div class="card-row">
-          <span class="cat-pill" style="background:${CAT_COLORS[p.category]||'#555'}">${p.category}</span>
-          <div class="card-actions">
-            <button class="icon-btn" title="ダウンロード" onclick="downloadPhoto('${p.id}')">
+        <div class="card-top">
+          <span class="pill" style="background:${COLORS[p.category]||'#555'}">${p.category}</span>
+          <div class="card-acts">
+            <button class="ic" onclick="dlPhoto('${p.id}')" title="ダウンロード">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1e3a5f" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
             </button>
-            <button class="icon-btn" title="削除" onclick="deletePhoto('${p.id}')">
+            <button class="ic" onclick="delPhoto('${p.id}')" title="削除">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#cc3333" stroke-width="2.5" stroke-linecap="round"><path d="M3 6h18M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6"/></svg>
             </button>
           </div>
         </div>
-        <div class="card-name ${p.name?'':'empty'}" onclick="startEdit('${p.id}')" title="クリックして名前を編集">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg>
-          ${p.name || '名前を入力'}
-        </div>
-        <div class="filename-chip" title="${p.filename}">${p.filename}</div>
+        ${p.name?`<div class="card-sub">${p.name}</div>`:''}
+        ${sub?`<div class="card-sub2">${sub}</div>`:''}
+        <div class="card-sub2">${p.date}</div>
+        <span class="fn-chip" title="${p.filename}">${p.filename}</span>
       </div>
-    </div>
-  `).join('');
-}
-
-function startEdit(id) {
-  const photo = photos.find(p => p.id === id);
-  const card = document.getElementById(`card-${id}`);
-  const nameDiv = card.querySelector('.card-name');
-  nameDiv.outerHTML = `
-    <div class="edit-row">
-      <input class="edit-in" id="edit-${id}" value="${photo.name}" placeholder="名前を入力" onkeydown="handleEditKey(event,'${id}')">
-      <button class="icon-btn" onclick="saveEdit('${id}')">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2d6a4f" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
-      </button>
     </div>`;
-  document.getElementById(`edit-${id}`).focus();
-}
-function handleEditKey(e, id) {
-  if (e.key === 'Enter') saveEdit(id);
-  if (e.key === 'Escape') renderGrid();
-}
-function saveEdit(id) {
-  const val = document.getElementById(`edit-${id}`).value;
-  photos = photos.map(p => {
-    if (p.id !== id) return p;
-    const ext = (p.origName.match(/\.[^.]+$/) || ['.jpg'])[0];
-    const label = val.trim() || p.category;
-    return { ...p, name: val.trim(), filename: `${p.dateStr}_${p.category}_${label}${ext}` };
-  });
-  saveToStorage();
-  renderAll();
+  }).join('');
 }
 
-function deletePhoto(id) {
-  if (!confirm('この写真を削除しますか？')) return;
-  photos = photos.filter(p => p.id !== id);
+function dlPhoto(id){
+  const p=photos.find(x=>x.id===id);if(!p)return;
+  const a=document.createElement('a');
+  a.href=fullImages[id]||p.thumb;a.download=p.filename;a.click();
+}
+
+function delPhoto(id){
+  if(!confirm('この写真を削除しますか？'))return;
+  photos=photos.filter(p=>p.id!==id);
   delete fullImages[id];
-  saveToStorage();
-  renderAll();
+  if(currentModal===id)closeModal();
+  saveLS();renderAll();
 }
 
-function downloadPhoto(id) {
-  const photo = photos.find(p => p.id === id);
-  if (!photo) return;
-  const src = fullImages[id] || photo.thumb;
-  const a = document.createElement('a');
-  a.href = src; a.download = photo.filename; a.click();
-}
-
-function openModal(id) {
-  currentModal = id;
-  const photo = photos.find(p => p.id === id);
-  document.getElementById('modal-cat').textContent = photo.category;
-  document.getElementById('modal-cat').style.background = CAT_COLORS[photo.category]||'#555';
-  document.getElementById('modal-filename').textContent = photo.filename;
-  document.getElementById('modal-img').src = fullImages[id] || photo.thumb;
-  document.getElementById('modal-footer').textContent = `${photo.date}　📄 ${photo.filename}`;
+function openModal(id){
+  currentModal=id;
+  const p=photos.find(x=>x.id===id);
+  const sub=[p.customer,p.product].filter(Boolean).join(' / ');
+  document.getElementById('m-cat').textContent=p.category;
+  document.getElementById('m-cat').style.background=COLORS[p.category]||'#555';
+  document.getElementById('m-name').textContent=[p.name,sub].filter(Boolean).join('　');
+  document.getElementById('m-img').src=fullImages[id]||p.thumb;
+  document.getElementById('m-ft').textContent=`${p.date}　${p.filename}`;
   document.getElementById('modal').classList.add('open');
 }
-function closeModal(e) {
-  if (e.target.id === 'modal') document.getElementById('modal').classList.remove('open');
-}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
 
-// Drag & Drop
-const dz = document.getElementById('drop-zone');
-dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('over'); });
-dz.addEventListener('dragleave', () => dz.classList.remove('over'));
-dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('over'); addFiles(e.dataTransfer.files); });
-dz.addEventListener('click', () => document.getElementById('file-input').click());
-
-document.getElementById('file-input').addEventListener('change', e => { addFiles(e.target.files); e.target.value=''; });
-document.getElementById('cam-input').addEventListener('change', e => { addFiles(e.target.files); e.target.value=''; });
-document.getElementById('cat-select').addEventListener('change', updatePreview);
-document.getElementById('name-input').addEventListener('input', updatePreview);
-
-loadFromStorage();
+loadLS();
 renderAll();
 </script>
 </body>
