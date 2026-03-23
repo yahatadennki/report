@@ -494,7 +494,7 @@
 
   <script>
     // ★ ここをご自身の最新GAS URLに書き換えてください ★
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbzk1Wl5bQX-OmEo7uQB2uE14rffGEQjui4Q-UHTqGHKC-xmR9spID6A9ZvX440XwRzf/exec";
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbx9PCDNIWVoDLfjxQlijad3fWbUuFyf0s8duQbxqflZbWoQ1jKC07llA2jVpLy18ujTNQ/exec";
 
     // スタッフリスト
     const STAFF_LIST = {
@@ -667,8 +667,8 @@
         }
       }
 
-      // 工事・現調時は写真必須の注記
-      if (state.workType.includes("工事") || state.workType.includes("現調")) {
+      // 工事・現調時は写真必須の注記（工事スタッフのみ）
+      if (state.staffType === "construction" && (state.workType.includes("工事") || state.workType.includes("現調"))) {
         photoRequiredNote.textContent = "（※ 写真必須）";
         photoRequiredNote.style.color = "#dc3545";
         photoRequiredNote.style.fontWeight = "bold";
@@ -978,8 +978,8 @@
         return; 
       }
 
-      // 工事・現調時の写真必須チェック
-      if (state.workType.includes("工事") || state.workType.includes("現調")) {
+      // 工事・現調時の写真必須チェック（工事スタッフのみ）
+      if (state.staffType === "construction" && (state.workType.includes("工事") || state.workType.includes("現調"))) {
         const totalPhotos = state.photos.現調.length + state.photos.完了.length;
         if (totalPhotos === 0) {
           alert("工事・現調の場合は写真を1枚以上アップロードしてください");
