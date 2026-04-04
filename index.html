@@ -18,13 +18,37 @@
   .row { display: flex; gap: 12px; }
   .row > div { flex: 1; }
   .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+
+  /* 共通ボタン */
   .tag {
-    padding: 5px 12px; border-radius: 20px; border: 1px solid #ccc;
+    padding: 5px 12px; border-radius: 20px; border: 2px solid #ccc;
     background: #fff; color: #333; cursor: pointer; font-size: 12px;
+    font-weight: bold; transition: all 0.15s;
   }
-  .tag.on { border-color: #4CAF50; background: #4CAF50; color: #fff; }
-  .tag.blue.on { border-color: #2196F3; background: #2196F3; color: #fff; }
-  .tag.orange.on { border-color: #FF9800; background: #FF9800; color: #fff; }
+
+  /* 担当者カラー（受注日報と同じ） */
+  .tag.ishibashi         { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
+  .tag.ishibashi.on      { background: #fca5a5; color: #7f1d1d; border-color: #ef4444; box-shadow: 0 0 0 2px #ef4444; }
+  .tag.kakui             { background: #fef9c3; color: #854d0e; border-color: #fef08a; }
+  .tag.kakui.on          { background: #fde047; color: #713f12; border-color: #ca8a04; box-shadow: 0 0 0 2px #ca8a04; }
+  .tag.sakurai           { background: #f3e8ff; color: #6b21a8; border-color: #e9d5ff; }
+  .tag.sakurai.on        { background: #d8b4fe; color: #4c1d95; border-color: #9333ea; box-shadow: 0 0 0 2px #9333ea; }
+
+  /* 区域カラー（担当者に対応） */
+  /* 角井担当：1・3区 → 黄色 */
+  .tag.area-kakui        { background: #fef9c3; color: #854d0e; border-color: #fef08a; }
+  .tag.area-kakui.on     { background: #fde047; color: #713f12; border-color: #ca8a04; box-shadow: 0 0 0 2px #ca8a04; }
+  /* 櫻井担当：2・7・8・9区 → 紫 */
+  .tag.area-sakurai      { background: #f3e8ff; color: #6b21a8; border-color: #e9d5ff; }
+  .tag.area-sakurai.on   { background: #d8b4fe; color: #4c1d95; border-color: #9333ea; box-shadow: 0 0 0 2px #9333ea; }
+  /* 石橋担当：4・5・6区 → 赤 */
+  .tag.area-ishibashi    { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
+  .tag.area-ishibashi.on { background: #fca5a5; color: #7f1d1d; border-color: #ef4444; box-shadow: 0 0 0 2px #ef4444; }
+
+  /* 配布物ボタン */
+  .tag.item        { background: #fff7ed; color: #9a3412; border-color: #fed7aa; }
+  .tag.item.on     { background: #fb923c; color: #fff; border-color: #ea580c; box-shadow: 0 0 0 2px #ea580c; }
+
   .btn {
     display: block; width: 100%; padding: 10px; font-size: 15px; font-weight: bold;
     background: #4CAF50; color: #fff; border: none; border-radius: 6px; cursor: pointer; margin-top: 16px;
@@ -59,6 +83,14 @@
         <input type="number" id="visits" min="0" placeholder="0">
       </div>
       <div>
+        <label>TEL件数</label>
+        <input type="number" id="tels" min="0" placeholder="0">
+      </div>
+      <div>
+        <label>点検件数</label>
+        <input type="number" id="inspections" min="0" placeholder="0">
+      </div>
+      <div>
         <label>ポスティング件数</label>
         <input type="number" id="postings" min="0" placeholder="0">
       </div>
@@ -78,44 +110,87 @@
 
 <script>
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxrFUzdm4ZVBLa2JApaVBmHD7J-UNW9CiCltjeSVEeq6Bpi0rkLCHfOgqJiYTvuiP2v/exec";
-const STAFF = ["石橋", "角井", "櫻井"];
-const AREAS = ["1区","2区","3区","4区","5区","6区","7区","8区","9区"];
+
+// 担当者と対応するCSSクラス
+const STAFF = [
+  { name: "石橋", cls: "ishibashi" },
+  { name: "角井", cls: "kakui" },
+  { name: "櫻井", cls: "sakurai" }
+];
+
+// 区域と担当者対応
+const AREAS = [
+  { name: "1区", cls: "area-kakui" },
+  { name: "2区", cls: "area-sakurai" },
+  { name: "3区", cls: "area-kakui" },
+  { name: "4区", cls: "area-ishibashi" },
+  { name: "5区", cls: "area-ishibashi" },
+  { name: "6区", cls: "area-ishibashi" },
+  { name: "7区", cls: "area-sakurai" },
+  { name: "8区", cls: "area-sakurai" },
+  { name: "9区", cls: "area-sakurai" }
+];
+
 const ITEMS = ["消耗品","ハガキ","チラシ","招待状","カレンダー","年賀タオル"];
 
 let selected = { staff: "", areas: [], items: [] };
 let logs = [];
 
+// 担当者タグ生成
 function createStaffTags() {
   const container = document.getElementById("staffTags");
-  STAFF.forEach(val => {
+  STAFF.forEach(s => {
     const btn = document.createElement("button");
-    btn.className = "tag";
-    btn.textContent = val;
+    btn.className = "tag " + s.cls;
+    btn.textContent = s.name;
     btn.onclick = () => {
-      // 他の担当者ボタンを全てオフにする
-      document.querySelectorAll("#staffTags .tag").forEach(t => t.classList.remove("on"));
-      // クリックしたボタンだけオンにする
+      document.querySelectorAll("#staffTags .tag").forEach(t => {
+        const base = STAFF.find(x => x.name === t.textContent);
+        t.className = "tag " + (base ? base.cls : "");
+      });
       btn.classList.add("on");
-      selected.staff = val;
+      selected.staff = s.name;
     };
     container.appendChild(btn);
   });
 }
 
-function createTags(arr, containerId, key, colorClass) {
-  const container = document.getElementById(containerId);
-  arr.forEach(val => {
+// 区域タグ生成
+function createAreaTags() {
+  const container = document.getElementById("areaTags");
+  AREAS.forEach(a => {
     const btn = document.createElement("button");
-    btn.className = "tag " + (colorClass || "");
+    btn.className = "tag " + a.cls;
+    btn.textContent = a.name;
+    btn.onclick = () => {
+      const idx = selected.areas.indexOf(a.name);
+      if (idx > -1) {
+        selected.areas.splice(idx, 1);
+        btn.className = "tag " + a.cls;
+      } else {
+        selected.areas.push(a.name);
+        btn.classList.add("on");
+      }
+    };
+    container.appendChild(btn);
+  });
+}
+
+// 配布物タグ生成
+function createItemTags() {
+  const container = document.getElementById("itemTags");
+  ITEMS.forEach(val => {
+    const btn = document.createElement("button");
+    btn.className = "tag item";
     btn.textContent = val;
     btn.onclick = () => {
-      const idx = selected[key].indexOf(val);
-      if (idx > -1) { 
-        selected[key].splice(idx, 1); 
-        btn.classList.remove("on"); 
-      } else { 
-        selected[key].push(val); 
-        btn.classList.add("on"); 
+      const idx = selected.items.indexOf(val);
+      if (idx > -1) {
+        selected.items.splice(idx, 1);
+        btn.className = "tag item";
+      } else {
+        selected.items.push(val);
+        btn.classList.add("on");
       }
     };
     container.appendChild(btn);
@@ -123,18 +198,17 @@ function createTags(arr, containerId, key, colorClass) {
 }
 
 createStaffTags();
-createTags(AREAS, "areaTags", "areas", "blue");
-createTags(ITEMS, "itemTags", "items", "orange");
+createAreaTags();
+createItemTags();
 
-// 今日の日付をセット
 const today = new Date();
 document.getElementById("date").value = today.toISOString().split("T")[0];
 
 document.getElementById("submitBtn").addEventListener("click", async () => {
   const date = document.getElementById("date").value;
-  if (!date || !selected.staff) { 
-    alert("日にちと担当者は必須です"); 
-    return; 
+  if (!date || !selected.staff) {
+    alert("日にちと担当者は必須です");
+    return;
   }
 
   const btn = document.getElementById("submitBtn");
@@ -148,6 +222,8 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
     staff: selected.staff,
     areas: selected.areas.join("・"),
     visits: document.getElementById("visits").value || "0",
+    tels: document.getElementById("tels").value || "0",
+    inspections: document.getElementById("inspections").value || "0",
     postings: document.getElementById("postings").value || "0",
     items: selected.items.join("・"),
     remarks: document.getElementById("remarks").value
@@ -167,10 +243,20 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
     // リセット
     document.getElementById("date").value = today.toISOString().split("T")[0];
     document.getElementById("visits").value = "";
+    document.getElementById("tels").value = "";
+    document.getElementById("inspections").value = "";
     document.getElementById("postings").value = "";
     document.getElementById("remarks").value = "";
     selected = { staff: "", areas: [], items: [] };
-    document.querySelectorAll(".tag").forEach(t => t.classList.remove("on"));
+    document.querySelectorAll("#staffTags .tag").forEach(t => {
+      const base = STAFF.find(x => x.name === t.textContent);
+      t.className = "tag " + (base ? base.cls : "");
+    });
+    document.querySelectorAll("#areaTags .tag").forEach(t => {
+      const base = AREAS.find(x => x.name === t.textContent);
+      t.className = "tag " + (base ? base.cls : "");
+    });
+    document.querySelectorAll("#itemTags .tag").forEach(t => { t.className = "tag item"; });
   } catch (e) {
     msg.className = "msg err";
     msg.textContent = "❌ 送信に失敗しました。再度お試しください。";
@@ -191,7 +277,7 @@ function renderLogs() {
         <div class="log-header"><strong>${log.date}</strong><button class="del" onclick="deleteLog(${i})">削除</button></div>
         <div>担当者: ${log.staff || "ー"}</div>
         <div>区域: ${log.areas || "ー"}</div>
-        <div>面談件数: ${log.visits} / ポスティング: ${log.postings}</div>
+        <div>面談: ${log.visits} / TEL: ${log.tels} / 点検: ${log.inspections} / ポスティング: ${log.postings}</div>
         <div>配布物: ${log.items || "ー"}</div>
         ${log.remarks ? "<div>備考: " + log.remarks + "</div>" : ""}
       </div>`;
