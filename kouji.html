@@ -493,31 +493,21 @@
   </div>
 
   <script>
-    // ★ ここをご自身の最新GAS URLに書き換えてください ★
     const GAS_URL = "https://script.google.com/macros/s/AKfycbwDhQVpdoB_Dt92NXiCXHFHREWf8O1EVU8jY_YyHtPH8wg7pB4INrcf7bTnN0QN-TAL/exec";
 
-    // スタッフリスト
     const STAFF_LIST = {
       service: ["伊藤", "高山"],
       construction: ["渡辺"]
     };
 
-    // 作業内容リスト
     const WORK_TYPES = {
       service: ["お困りごと対応", "点検", "売上", "配達", "工事", "集金", "見積り"],
-      construction: ["工事", "現調", "配達"]
+      construction: ["工事", "現調", "配達", "その他"]  // ★ その他を追加
     };
 
-    // 配達商品リスト
     const DELIVERY_ITEMS = ["TV・BD", "冷蔵庫", "洗濯機", "調理", "家事", "理美容", "修理品", "その他"];
-
-    // 工事種類リスト
     const CONSTRUCTION_TYPES = ["電気", "水道", "アンテナ", "エアコン", "照明", "レンジフード", "換気扇", "ドアホン", "トイレ", "洗面台", "IH", "エコキュート", "管球", "その他"];
-
-    // 見込商品の場所リスト
     const PROSPECT_LOCATIONS = ["リビング", "台所", "寝室", "洗面所", "トイレ", "玄関", "廊下", "その他"];
-
-    // 見込商品の品名リスト
     const PROSPECT_PRODUCTS = ["エアコン", "冷蔵庫", "洗濯機", "TV", "照明", "換気扇", "レンジフード", "IH", "エコキュート", "温水器", "その他"];
 
     const state = {
@@ -539,7 +529,6 @@
       prospectItems: []
     };
 
-    // ボタン生成ヘルパー
     function createButtons(containerId, list, stateKey, isMultiple = false) {
       const container = document.getElementById(containerId);
       container.innerHTML = "";
@@ -564,27 +553,17 @@
             state[stateKey] = item;
             btn.classList.add("active");
           }
-          
-          // 作業内容が変更されたら詳細表示を更新
-          if (stateKey === "workType") {
-            updateWorkDetails();
-          }
-
-          // 作業人数が変更されたら按分表示を更新
-          if (stateKey === "people") {
-            updateWorkAmountInfo();
-          }
+          if (stateKey === "workType") updateWorkDetails();
+          if (stateKey === "people") updateWorkAmountInfo();
         };
         container.appendChild(btn);
       });
     }
 
-    // 作業人数による按分情報を表示
     function updateWorkAmountInfo() {
       const workAmount = parseInt(document.getElementById("workAmount").value) || 0;
       const people = state.people;
       const infoDiv = document.getElementById("work-amount-info");
-      
       if (workAmount > 0 && people) {
         const peopleNum = people === "4人以上" ? 4 : parseInt(people);
         const perPerson = Math.floor(workAmount / peopleNum);
@@ -595,7 +574,6 @@
       }
     }
 
-    // 作業内容の詳細表示を更新
     function updateWorkDetails() {
       const inspectionDetail = document.getElementById("inspection-detail");
       const deliveryDetail = document.getElementById("delivery-detail");
@@ -604,7 +582,6 @@
       const photoRequiredNote = document.getElementById("photo-required-note");
       const peopleSection = document.getElementById("section-people");
       
-      // 点検が選択されているか
       if (state.workType.includes("点検")) {
         inspectionDetail.classList.remove("hidden");
       } else {
@@ -615,59 +592,44 @@
         document.getElementById("inspectionOther").value = 0;
       }
       
-      // 配達が選択されているか
       if (state.workType.includes("配達")) {
         deliveryDetail.classList.remove("hidden");
       } else {
         deliveryDetail.classList.add("hidden");
         state.deliveryItems = [];
-        document.querySelectorAll("#group-deliveryItems .toggle-btn").forEach(btn => {
-          btn.classList.remove("active");
-        });
+        document.querySelectorAll("#group-deliveryItems .toggle-btn").forEach(btn => btn.classList.remove("active"));
       }
       
-      // 工事が選択されているか
       if (state.workType.includes("工事")) {
         constructionDetail.classList.remove("hidden");
       } else {
         constructionDetail.classList.add("hidden");
         state.constructionTypes = [];
-        document.querySelectorAll("#group-constructionTypes .toggle-btn").forEach(btn => {
-          btn.classList.remove("active");
-        });
+        document.querySelectorAll("#group-constructionTypes .toggle-btn").forEach(btn => btn.classList.remove("active"));
       }
 
-      // 販売担当者（常に表示）
       if (state.staffType) {
         salesPersonSection.classList.remove("hidden");
       } else {
         salesPersonSection.classList.add("hidden");
         state.salesPerson = "";
-        document.querySelectorAll("#group-salesPerson .toggle-btn").forEach(btn => {
-          btn.classList.remove("active");
-        });
+        document.querySelectorAll("#group-salesPerson .toggle-btn").forEach(btn => btn.classList.remove("active"));
       }
 
-      // 作業人数の表示制御
       if (state.staffType === "construction") {
-        // 工事スタッフは常に表示
         peopleSection.classList.remove("hidden");
       } else if (state.staffType === "service") {
-        // サービススタッフは工事・配達がある場合のみ表示
         if (state.workType.includes("工事") || state.workType.includes("配達")) {
           peopleSection.classList.remove("hidden");
         } else {
           peopleSection.classList.add("hidden");
           state.people = "";
-          document.querySelectorAll("#group-people .toggle-btn").forEach(btn => {
-            btn.classList.remove("active");
-          });
-          // 按分表示も非表示
+          document.querySelectorAll("#group-people .toggle-btn").forEach(btn => btn.classList.remove("active"));
           document.getElementById("work-amount-info").classList.add("hidden");
         }
       }
 
-      // 工事・現調時は写真必須の注記（工事スタッフのみ）
+      // 写真必須は「工事」「現調」のみ（「その他」は不要）
       if (state.staffType === "construction" && (state.workType.includes("工事") || state.workType.includes("現調"))) {
         photoRequiredNote.textContent = "（※ 写真必須）";
         photoRequiredNote.style.color = "#dc3545";
@@ -677,7 +639,6 @@
       }
     }
 
-    // 初期設定
     createButtons("group-time", ["午前", "午後"], "time", true);
     createButtons("group-people", ["1人", "2人", "3人", "4人以上"], "people");
     createButtons("group-payment", ["パナカード", "現金", "売掛", "なし"], "payment");
@@ -686,34 +647,26 @@
 
     document.getElementById("date").value = new Date().toISOString().split('T')[0];
 
-    // 職種選択
     document.querySelectorAll(".staff-type-btn").forEach(btn => {
       btn.onclick = () => {
         document.querySelectorAll(".staff-type-btn").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
         state.staffType = btn.dataset.type;
-        
-        // フォーム表示
         document.getElementById("mainForm").classList.remove("hidden");
         
-        // 職種に応じて表示切替
         if (state.staffType === "construction") {
-          // 工事スタッフ
           document.getElementById("sales-amount-wrapper").classList.add("hidden");
           createButtons("group-workType", WORK_TYPES.construction, "workType", true);
         } else {
-          // サービススタッフ
           document.getElementById("sales-amount-wrapper").classList.remove("hidden");
           createButtons("group-workType", WORK_TYPES.service, "workType", true);
         }
         
-        // 共通ボタン生成
         const staffList = STAFF_LIST[state.staffType];
         const salesPersonList = [...STAFF_LIST.service, "その他"];
         createButtons("group-staff", staffList, "staff");
         createButtons("group-salesPerson", salesPersonList, "salesPerson");
         
-        // 状態リセット
         state.workType = [];
         state.deliveryItems = [];
         state.constructionTypes = [];
@@ -722,36 +675,22 @@
       };
     });
 
-    // 点検台数の入力
-    document.getElementById("inspectionAircon").oninput = (e) => {
-      state.inspectionAircon = parseInt(e.target.value) || 0;
-    };
-    document.getElementById("inspectionOther").oninput = (e) => {
-      state.inspectionOther = parseInt(e.target.value) || 0;
-    };
+    document.getElementById("inspectionAircon").oninput = (e) => { state.inspectionAircon = parseInt(e.target.value) || 0; };
+    document.getElementById("inspectionOther").oninput = (e) => { state.inspectionOther = parseInt(e.target.value) || 0; };
+    document.getElementById("workAmount").oninput = () => { updateWorkAmountInfo(); };
 
-    // 工事/配達売上の入力で按分表示を更新
-    document.getElementById("workAmount").oninput = () => {
-      updateWorkAmountInfo();
-    };
-
-    // 集金方法の選択で入力欄表示切替
     document.getElementById("group-payment").addEventListener("click", (e) => {
       if (e.target.classList.contains("toggle-btn")) {
         const paymentType = e.target.textContent;
         const cashWrapper = document.getElementById("payment-amount-wrapper");
         const creditWrapper = document.getElementById("credit-detail-wrapper");
-        
         if (paymentType === "現金") {
-          // 現金のみ集金額入力を表示
           cashWrapper.classList.remove("hidden");
           creditWrapper.classList.add("hidden");
         } else if (paymentType === "売掛") {
-          // 売掛時は詳細入力を表示
           cashWrapper.classList.add("hidden");
           creditWrapper.classList.remove("hidden");
         } else {
-          // その他は非表示
           cashWrapper.classList.add("hidden");
           creditWrapper.classList.add("hidden");
           document.getElementById("paymentAmount").value = "";
@@ -761,15 +700,9 @@
       }
     });
 
-    // 売掛詳細の変更
-    document.getElementById("creditMethod").onchange = (e) => {
-      state.creditMethod = e.target.value;
-    };
-    document.getElementById("creditTiming").onchange = (e) => {
-      state.creditTiming = e.target.value;
-    };
+    document.getElementById("creditMethod").onchange = (e) => { state.creditMethod = e.target.value; };
+    document.getElementById("creditTiming").onchange = (e) => { state.creditTiming = e.target.value; };
 
-    // 写真種別選択
     document.querySelectorAll(".photo-type-btn").forEach(btn => {
       btn.onclick = () => {
         document.querySelectorAll(".photo-type-btn").forEach(b => b.classList.remove("active"));
@@ -777,29 +710,23 @@
         state.currentPhotoType = btn.dataset.photoType;
       };
     });
-    // デフォルトで現調を選択
     document.querySelector(".photo-type-btn[data-photo-type='現調']").classList.add("active");
 
-    // 写真枚数更新
     function updatePhotoCount() {
       document.getElementById("gentyoCount").textContent = state.photos.現調.length;
       document.getElementById("kanryoCount").textContent = state.photos.完了.length;
     }
 
-    // 写真プレビュー処理
     document.getElementById("files").onchange = (e) => {
       const currentType = state.currentPhotoType;
       const currentCount = state.photos[currentType].length;
       const remaining = 10 - currentCount;
-      
       if (remaining <= 0) {
         alert(`${currentType}写真は10枚までです`);
         e.target.value = "";
         return;
       }
-      
       const files = Array.from(e.target.files).slice(0, remaining);
-      
       files.forEach(file => {
         const reader = new FileReader();
         reader.onload = (event) => {
@@ -813,7 +740,6 @@
             canvas.width = w; canvas.height = h;
             canvas.getContext("2d").drawImage(img, 0, 0, w, h);
             const base64 = canvas.toDataURL("image/jpeg", 0.7);
-            
             state.photos[currentType].push(base64);
             updatePhotoPreview();
             updatePhotoCount();
@@ -822,16 +748,14 @@
         };
         reader.readAsDataURL(file);
       });
-      
       e.target.value = "";
     };
 
     function updatePhotoPreview() {
       const preview = document.getElementById("preview");
       preview.innerHTML = "";
-      
       ["現調", "完了"].forEach(type => {
-        state.photos[type].forEach((photo, index) => {
+        state.photos[type].forEach((photo) => {
           const div = document.createElement("div");
           div.className = "photo-item";
           const img = document.createElement("img");
@@ -846,41 +770,29 @@
       });
     }
 
-    // 見込商品の表示更新
     function updateProspectItems() {
       const container = document.getElementById("prospectItems");
       container.innerHTML = "";
-      
       state.prospectItems.forEach((item, index) => {
         const itemDiv = document.createElement("div");
         itemDiv.className = "prospect-item";
-        
-        // ヘッダー（番号と削除ボタン）
         const header = document.createElement("div");
         header.className = "prospect-item-header";
-        
         const number = document.createElement("span");
         number.className = "prospect-item-number";
         number.textContent = `見込商品 ${index + 1}`;
-        
         const deleteBtn = document.createElement("button");
         deleteBtn.type = "button";
         deleteBtn.className = "prospect-delete-btn";
         deleteBtn.textContent = "✕ 削除";
-        deleteBtn.onclick = () => {
-          state.prospectItems.splice(index, 1);
-          updateProspectItems();
-        };
-        
+        deleteBtn.onclick = () => { state.prospectItems.splice(index, 1); updateProspectItems(); };
         header.appendChild(number);
         header.appendChild(deleteBtn);
         itemDiv.appendChild(header);
         
-        // 場所
         const locationLabel = document.createElement("label");
         locationLabel.textContent = "場所";
         itemDiv.appendChild(locationLabel);
-        
         const locationGroup = document.createElement("div");
         locationGroup.className = "prospect-location-group";
         PROSPECT_LOCATIONS.forEach(loc => {
@@ -889,19 +801,14 @@
           btn.className = "prospect-btn";
           btn.textContent = loc;
           if (item.location === loc) btn.classList.add("active");
-          btn.onclick = () => {
-            item.location = loc;
-            updateProspectItems();
-          };
+          btn.onclick = () => { item.location = loc; updateProspectItems(); };
           locationGroup.appendChild(btn);
         });
         itemDiv.appendChild(locationGroup);
         
-        // 品名
         const productLabel = document.createElement("label");
         productLabel.textContent = "品名";
         itemDiv.appendChild(productLabel);
-        
         const productGroup = document.createElement("div");
         productGroup.className = "prospect-product-group";
         PROSPECT_PRODUCTS.forEach(prod => {
@@ -910,75 +817,45 @@
           btn.className = "prospect-btn";
           btn.textContent = prod;
           if (item.product === prod) btn.classList.add("active");
-          btn.onclick = () => {
-            item.product = prod;
-            updateProspectItems();
-          };
+          btn.onclick = () => { item.product = prod; updateProspectItems(); };
           productGroup.appendChild(btn);
         });
         itemDiv.appendChild(productGroup);
         
-        // 内容
         const contentLabel = document.createElement("label");
         contentLabel.textContent = "内容";
         itemDiv.appendChild(contentLabel);
-        
         const contentInput = document.createElement("input");
         contentInput.type = "text";
         contentInput.className = "prospect-content";
         contentInput.placeholder = "例：省エネに変えたい、古い";
         contentInput.value = item.content || "";
-        contentInput.oninput = (e) => {
-          item.content = e.target.value;
-        };
+        contentInput.oninput = (e) => { item.content = e.target.value; };
         itemDiv.appendChild(contentInput);
         
         container.appendChild(itemDiv);
       });
     }
 
-    // 見込商品を追加
     document.getElementById("addProspectBtn").onclick = () => {
-      state.prospectItems.push({
-        location: "",
-        product: "",
-        content: ""
-      });
+      state.prospectItems.push({ location: "", product: "", content: "" });
       updateProspectItems();
     };
 
-    // 送信ボタン
     document.getElementById("sendBtn").onclick = async () => {
       const btn = document.getElementById("sendBtn");
       const visitName = document.getElementById("visitName").value.trim();
       
-      // バリデーション
-      if (!state.staffType) { 
-        alert("職種を選択してください"); 
-        return; 
-      }
-      if (!state.staff) { 
-        alert("あなたの名前を選択してください"); 
-        return; 
-      }
-      if (!visitName) { 
-        alert("訪問先名を入力してください"); 
-        return; 
-      }
-      if (state.workType.length === 0) {
-        alert("作業内容を選択してください");
-        return;
-      }
+      if (!state.staffType) { alert("職種を選択してください"); return; }
+      if (!state.staff) { alert("あなたの名前を選択してください"); return; }
+      if (!visitName) { alert("訪問先名を入力してください"); return; }
+      if (state.workType.length === 0) { alert("作業内容を選択してください"); return; }
       
-      // 作業人数のチェック（工事スタッフ、またはサービススタッフで工事・配達がある場合のみ）
       const needsPeople = state.staffType === "construction" || 
                          (state.staffType === "service" && (state.workType.includes("工事") || state.workType.includes("配達")));
-      if (needsPeople && !state.people) { 
-        alert("作業人数を選択してください"); 
-        return; 
-      }
+      if (needsPeople && !state.people) { alert("作業人数を選択してください"); return; }
 
-      // 工事・現調時の写真必須チェック（工事スタッフのみ）
+      // 写真必須チェック：工事・現調のみ（その他は不要）
       if (state.staffType === "construction" && (state.workType.includes("工事") || state.workType.includes("現調"))) {
         const totalPhotos = state.photos.現調.length + state.photos.完了.length;
         if (totalPhotos === 0) {
@@ -987,7 +864,6 @@
         }
       }
 
-      // 売掛時の詳細チェック
       if (state.payment === "売掛") {
         if (!state.creditMethod || !state.creditTiming) {
           alert("売掛の場合は集金方法と入金時期を選択してください");
@@ -1002,14 +878,9 @@
       const workAmount = parseInt(document.getElementById("workAmount").value) || 0;
       const paymentAmount = parseInt(document.getElementById("paymentAmount").value) || 0;
 
-      // 写真データを統合
       const allPhotos = [];
-      state.photos.現調.forEach(photo => {
-        allPhotos.push({ type: "現調", data: photo });
-      });
-      state.photos.完了.forEach(photo => {
-        allPhotos.push({ type: "完了", data: photo });
-      });
+      state.photos.現調.forEach(photo => allPhotos.push({ type: "現調", data: photo }));
+      state.photos.完了.forEach(photo => allPhotos.push({ type: "完了", data: photo }));
 
       const entry = {
         staffType: state.staffType,
