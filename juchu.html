@@ -121,7 +121,6 @@
   <script>
     let orders = [];
     let currentDate = new Date().toISOString().slice(0, 10);
-    let scriptUrl = 'https://script.google.com/macros/s/AKfycbzPYcJ9DXzxltuC0S8-1P9pmScKxq0-BOTU28DHx6POuFg5gwXQ4kNKd9A_4lp42yTG/exec';
     let selectedService = '';
     let selectedProduct = '';
 
@@ -210,29 +209,34 @@
         '</div>';
     }
 
-    // 顧客検索機能
-    function searchCust() {
+    // 顧客検索機能（CORS対応fetch版）
+    async function searchCust() {
       const query = document.getElementById('searchQuery').value.trim();
       if (!query) {
         alert('検索キーワードを入力してください');
         return;
       }
 
-      google.script.run
-        .withSuccessHandler(results => {
-          if (!results || results.length === 0) {
-            alert('該当する顧客が見つかりませんでした');
-          } else if (results.length === 1) {
-            applyCustomer(results[0]);
-          } else {
-            showCustList(results);
-          }
-        })
-        .withFailureHandler(error => {
-          console.error('検索エラー:', error);
-          alert('検索に失敗しました');
-        })
-        .searchCustomer(query);
+      try {
+        const response = await fetch(scriptUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'search', query: query })
+        });
+        
+        const results = await response.json();
+        
+        if (!results || results.length === 0) {
+          alert('該当する顧客が見つかりませんでした');
+        } else if (results.length === 1) {
+          applyCustomer(results[0]);
+        } else {
+          showCustList(results);
+        }
+      } catch (error) {
+        console.error('検索エラー:', error);
+        alert('検索に失敗しました');
+      }
     }
 
     function showCustList(results) {
