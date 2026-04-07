@@ -322,19 +322,20 @@
     }
 
     async function sendToSpreadsheet(order) {
-      try {
-        console.log('=== 送信データ詳細 ===');
-        console.log('完全なデータ:', JSON.stringify(order));
-        
-        google.script.run
-          .withSuccessHandler(() => {
+  try {
+    console.log('=== 送信データ詳細 ===');
+    console.log('完全なデータ:', JSON.stringify(order));
+    
+    await fetch(scriptUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(order)
+    });
+    
+    console.log('スプレッドシートに送信完了');
             console.log('スプレッドシートに送信完了');
           })
-          .withFailureHandler((error) => {
-            console.error('送信エラー:', error);
-            alert('データ送信に失敗しました');
-          })
-          .saveOrderData(order);
+          
           
       } catch (error) {
         console.error('送信エラー:', error);
