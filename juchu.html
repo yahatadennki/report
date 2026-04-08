@@ -184,10 +184,7 @@
         return;
       }
       try {
-        const response = await fetch(scriptUrl, {
-          method: 'POST',
-          body: JSON.stringify({ action: 'search', query: query })
-        });
+        const response = await fetch(scriptUrl + '?action=search&query=' + encodeURIComponent(query));
         const results = await response.json();
         if (!results || results.length === 0) {
           alert('該当する顧客が見つかりませんでした');
@@ -232,6 +229,7 @@
         console.log('完全なデータ:', JSON.stringify(order));
         await fetch(scriptUrl, {
           method: 'POST',
+          mode: 'no-cors',
           body: JSON.stringify(order)
         });
         console.log('スプレッドシートに送信完了');
