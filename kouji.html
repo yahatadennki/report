@@ -332,6 +332,61 @@
     .prospect-content {
       margin-top: 8px;
     }
+
+    /* 顧客検索モーダル */
+    .customer-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .customer-modal.active { display: flex; }
+    .customer-modal-content {
+      background: white;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    .customer-search-result {
+      cursor: pointer;
+      padding: 12px 16px;
+      border-bottom: 1px solid #e8e8e8;
+      transition: background 0.2s;
+    }
+    .customer-search-result:hover { background: #f3f4f6; }
+    .customer-search-result:last-child { border-bottom: none; }
+
+    .search-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .search-group input {
+      flex: 1;
+    }
+    .search-btn {
+      padding: 12px 20px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .search-btn:hover {
+      background: #218838;
+    }
   </style>
 </head>
 <body>
@@ -358,6 +413,13 @@
 
         <label>あなたの名前</label>
         <div class="btn-group" id="group-staff"></div>
+
+        <!-- 顧客検索 -->
+        <label>🔍 顧客検索</label>
+        <div class="search-group">
+          <input type="text" id="searchQuery" placeholder="電話番号 or 顧客名 or カタカナ">
+          <button type="button" class="search-btn" onclick="searchCust()">検索</button>
+        </div>
 
         <label>訪問先名（現場名）</label>
         <input type="text" id="visitName" placeholder="例：山田太郎様">
@@ -410,11 +472,11 @@
         <label>売上金額（千円単位） ※半角数字</label>
         <div class="amount-group">
           <div class="amount-item" id="sales-amount-wrapper">
-            <label>💰 販売売上</label>
+            <label>💰 成約金額</label>
             <input type="number" id="salesAmount" placeholder="例：250" value="0">
           </div>
           <div class="amount-item">
-            <label>🔧 工事/配達売上</label>
+            <label>🔧 工事/配達売上金額</label>
             <input type="number" id="workAmount" placeholder="例：50" value="0">
           </div>
         </div>
@@ -492,6 +554,19 @@
     </div>
   </div>
 
+  <!-- 顧客検索モーダル -->
+  <div id="customerModal" class="customer-modal">
+    <div class="customer-modal-content">
+      <div style="background:#28a745;color:white;padding:16px;border-radius:12px 12px 0 0;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <h3 style="font-weight:bold;font-size:18px;margin:0;">該当する顧客が複数います</h3>
+          <button onclick="hideCustomerModal()" style="color:white;font-size:24px;background:none;border:none;cursor:pointer;">&times;</button>
+        </div>
+      </div>
+      <div id="customerList"></div>
+    </div>
+  </div>
+
   <script>
     const GAS_URL = "https://script.google.com/macros/s/AKfycbwDhQVpdoB_Dt92NXiCXHFHREWf8O1EVU8jY_YyHtPH8wg7pB4INrcf7bTnN0QN-TAL/exec";
 
@@ -501,8 +576,8 @@
     };
 
     const WORK_TYPES = {
-      service: ["お困りごと対応", "点検", "売上", "配達", "工事", "集金", "見積り"],
-      construction: ["工事", "現調", "配達", "その他"]  // ★ その他を追加
+      service: ["お困りごと対応", "点検", "商談", "配達", "工事", "修理", "集金"],
+      construction: ["工事", "現調", "配達", "修理","その他"]
     };
 
     const DELIVERY_ITEMS = ["TV・BD", "冷蔵庫", "洗濯機", "調理", "家事", "理美容", "修理品", "その他"];
@@ -529,6 +604,49 @@
       prospectItems: []
     };
 
+    // ===== 顧客検索 =====
+    async function searchCust() {
+      const query = document.getElementById('searchQuery').value.trim();
+      if (!query) { alert('検索キーワードを入力してください'); return; }
+      try {
+        const response = await fetch(GAS_URL + '?action=search&query=' + encodeURIComponent(query));
+        const results = await response.json();
+        if (!results || results.length === 0) {
+          alert('該当する顧客が見つかりませんでした');
+        } else if (results.length === 1) {
+          applyCustomer(results[0]);
+        } else {
+          showCustList(results);
+        }
+      } catch (error) {
+        console.error('検索エラー:', error);
+        alert('検索に失敗しました');
+      }
+    }
+
+    function showCustList(results) {
+      const listDiv = document.getElementById('customerList');
+      listDiv.innerHTML = '';
+      results.forEach(r => {
+        const div = document.createElement('div');
+        div.className = 'customer-search-result';
+        div.innerHTML = '<div style="font-weight:bold;color:#333;">' + (r.name || '') + '</div><div style="font-size:13px;color:#666;">' + (r.tel || '') + '</div><div style="font-size:13px;color:#999;">' + (r.address || '') + '</div>';
+        div.onclick = function() { applyCustomer(r); hideCustomerModal(); };
+        listDiv.appendChild(div);
+      });
+      document.getElementById('customerModal').classList.add('active');
+    }
+
+    function hideCustomerModal() {
+      document.getElementById('customerModal').classList.remove('active');
+    }
+
+    function applyCustomer(customer) {
+      document.getElementById('visitName').value = customer.name || '';
+      document.getElementById('searchQuery').value = customer.tel || '';
+    }
+
+    // ===== ボタン生成 =====
     function createButtons(containerId, list, stateKey, isMultiple = false) {
       const container = document.getElementById(containerId);
       container.innerHTML = "";
@@ -567,7 +685,7 @@
       if (workAmount > 0 && people) {
         const peopleNum = people === "4人以上" ? 4 : parseInt(people);
         const perPerson = Math.floor(workAmount / peopleNum);
-        infoDiv.textContent = `💡 1人あたりの工事/配達売上: ${perPerson}千円`;
+        infoDiv.textContent = `💡 1人あたりの工事/配達売上金額: ${perPerson}千円`;
         infoDiv.classList.remove("hidden");
       } else {
         infoDiv.classList.add("hidden");
@@ -629,7 +747,6 @@
         }
       }
 
-      // 写真必須は「工事」「現調」のみ（「その他」は不要）
       if (state.staffType === "construction" && (state.workType.includes("工事") || state.workType.includes("現調"))) {
         photoRequiredNote.textContent = "（※ 写真必須）";
         photoRequiredNote.style.color = "#dc3545";
@@ -855,7 +972,6 @@
                          (state.staffType === "service" && (state.workType.includes("工事") || state.workType.includes("配達")));
       if (needsPeople && !state.people) { alert("作業人数を選択してください"); return; }
 
-      // 写真必須チェック：工事・現調のみ（その他は不要）
       if (state.staffType === "construction" && (state.workType.includes("工事") || state.workType.includes("現調"))) {
         const totalPhotos = state.photos.現調.length + state.photos.完了.length;
         if (totalPhotos === 0) {
