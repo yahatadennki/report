@@ -103,21 +103,37 @@ function doPost(e) {
   }
 }
 
-// 半角カタカナ→全角カタカナ変換
-function toFullWidth(str) {
-  return str.replace(/[\uFF65-\uFF9F]/g, function(ch) {
-    return String.fromCharCode(ch.charCodeAt(0) - 0xFEC0);
-  });
-}
-
-// ひらがな→全角カタカナ変換
-function hiraToKata(str) {
-  return str.replace(/[\u3041-\u3096]/g, function(ch) {
+// カナ正規化（半角カタカナ・ひらがな・全角カタカナ → すべて全角カタカナに統一）
+function normalizeKana(str) {
+  var result = str;
+  
+  // 1. 半角カタカナの濁音・半濁音（2文字→1文字）を先に変換
+  result = result.replace(/ｶﾞ/g,'ガ').replace(/ｷﾞ/g,'ギ').replace(/ｸﾞ/g,'グ').replace(/ｹﾞ/g,'ゲ').replace(/ｺﾞ/g,'ゴ');
+  result = result.replace(/ｻﾞ/g,'ザ').replace(/ｼﾞ/g,'ジ').replace(/ｽﾞ/g,'ズ').replace(/ｾﾞ/g,'ゼ').replace(/ｿﾞ/g,'ゾ');
+  result = result.replace(/ﾀﾞ/g,'ダ').replace(/ﾁﾞ/g,'ヂ').replace(/ﾂﾞ/g,'ヅ').replace(/ﾃﾞ/g,'デ').replace(/ﾄﾞ/g,'ド');
+  result = result.replace(/ﾊﾞ/g,'バ').replace(/ﾋﾞ/g,'ビ').replace(/ﾌﾞ/g,'ブ').replace(/ﾍﾞ/g,'ベ').replace(/ﾎﾞ/g,'ボ');
+  result = result.replace(/ﾊﾟ/g,'パ').replace(/ﾋﾟ/g,'ピ').replace(/ﾌﾟ/g,'プ').replace(/ﾍﾟ/g,'ペ').replace(/ﾎﾟ/g,'ポ');
+  result = result.replace(/ｳﾞ/g,'ヴ');
+  
+  // 2. 半角カタカナ（単独文字）→ 全角カタカナ
+  var hw = 'ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ';
+  var fw = 'ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン';
+  for (var j = 0; j < hw.length; j++) {
+    result = result.split(hw[j]).join(fw[j]);
+  }
+  
+  // 3. 残った濁点・半濁点マークを除去
+  result = result.replace(/ﾞ/g,'').replace(/ﾟ/g,'');
+  
+  // 4. ひらがな → 全角カタカナ
+  result = result.replace(/[\u3041-\u3096]/g, function(ch) {
     return String.fromCharCode(ch.charCodeAt(0) + 96);
   });
+  
+  return result;
 }
 
-// 顧客検索（半角・全角カタカナ・ひらがな・スペース対応、電話番号1〜5対応）
+// 顧客検索（全カナ形式対応、電話番号1〜5対応、カナ前方一致）
 function searchCustomer(query) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const s = ss.getSheetByName("顧客マスタ") || ss.getSheetByName("顧客ﾏｽﾀ");
@@ -125,12 +141,12 @@ function searchCustomer(query) {
   
   const d = s.getDataRange().getValues();
   const cleanQuery = String(query).replace(/-|\s|　/g, "");
-  const fullQuery = hiraToKata(toFullWidth(cleanQuery));
+  const kanaQuery = normalizeKana(cleanQuery);
   const results = [];
 
   for (let i = 1; i < d.length; i++) {
     const rowName = String(d[i][1]).replace(/\s|　/g, "");
-    const rowKana = hiraToKata(toFullWidth(String(d[i][2]).replace(/\s|　/g, "")));
+    const rowKana = normalizeKana(String(d[i][2]).replace(/\s|　/g, ""));
     
     // 電話番号1〜5（D列〜H列 = index 3〜7）
     let telMatch = false;
@@ -144,7 +160,7 @@ function searchCustomer(query) {
       }
     }
     
-    if (rowName.includes(cleanQuery) || rowKana.startsWith(fullQuery) || telMatch) {
+    if (rowName.includes(cleanQuery) || rowKana.startsWith(kanaQuery) || telMatch) {
       results.push({
         tel: d[i][3],
         name: d[i][1],
