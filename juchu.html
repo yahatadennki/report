@@ -1,262 +1,819 @@
-// ウェブアプリとしてHTMLを配信
-function doGet(e) {
-  if (e && e.parameter && e.parameter.action === 'search') {
-    const results = searchCustomer(e.parameter.query);
-    return ContentService.createTextOutput(JSON.stringify(results))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-  
-  return HtmlService.createHtmlOutputFromFile('index')
-    .setTitle('受注日報 - ヤハタ電機商会')
-    .addMetaTag('viewport', 'width=device-width, initial-scale=1.0');
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>受注日報 - ヤハタ電機商会</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+.icon { width: 1.2rem; height: 1.2rem; display: inline-block; vertical-align: middle; }
+.icon-lg { width: 2rem; height: 2rem; }
+.btn-select { transition: all 0.15s; }
+.btn-select:active { transform: scale(0.95); }
+
+.prospect-item {
+background: #f8f9fa;
+padding: 15px;
+border-radius: 8px;
+margin-bottom: 12px;
+position: relative;
+}
+.prospect-item-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 12px;
+}
+.prospect-item-number {
+font-weight: bold;
+color: #f97316;
+font-size: 14px;
+}
+.prospect-delete-btn {
+background: #dc3545;
+color: white;
+border: none;
+padding: 6px 12px;
+border-radius: 6px;
+cursor: pointer;
+font-size: 12px;
+font-weight: 500;
+}
+.prospect-delete-btn:hover {
+background: #c82333;
+}
+.prospect-btn {
+padding: 8px 12px;
+border: 2px solid #e5e7eb;
+border-radius: 6px;
+background: white;
+cursor: pointer;
+font-size: 13px;
+transition: all 0.2s;
+}
+.prospect-btn:hover {
+border-color: #f97316;
+background: #fff7ed;
+}
+.prospect-btn.active {
+background: #f97316;
+color: white;
+border-color: #f97316;
+}
+/* 伊藤さん専用えんじ色 */
+.c-enji-normal { background-color: #fbe8ea; color: #6b0f1a; border-color: #d4848e; }
+.c-enji-active { background-color: #f4c2c8; color: #4a0810; border-color: #b05060; }
+
+/* ★追加：顧客検索モーダル */
+.customer-modal {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0,0,0,0.5);
+z-index: 1000;
+align-items: center;
+justify-content: center;
+}
+.customer-modal.active { display: flex; }
+.customer-modal-content {
+background: white;
+border-radius: 12px;
+max-width: 500px;
+width: 90%;
+max-height: 70vh;
+overflow-y: auto;
+}
+.customer-search-result {
+cursor: pointer;
+padding: 12px 16px;
+border-bottom: 1px solid #e5e7eb;
+transition: background 0.2s;
+}
+.customer-search-result:hover { background: #f3f4f6; }
+.customer-search-result:last-child { border-bottom: none; }
+</style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-orange-50 to-yellow-100">
+<div id="app" class="p-4 max-w-6xl mx-auto"></div>
+
+<!-- ★追加：顧客検索モーダル -->
+<div id="customerModal" class="customer-modal">
+<div class="customer-modal-content">
+<div class="bg-orange-500 text-white p-4 rounded-t-xl">
+<div class="flex justify-between items-center">
+<h3 class="font-bold text-lg">該当する顧客が複数います</h3>
+<button onclick="hideCustomerModal()" class="text-white text-2xl">&times;</button>
+</div>
+</div>
+<div id="customerList"></div>
+</div>
+</div>
+
+<script>
+let orders = [];
+let currentDate = new Date().toISOString().slice(0, 10);
+let scriptUrl = 'https://script.google.com/macros/s/AKfycbybHVTvastbYdcePLc-WxDZtChBKtpcEPF7IYqMX4UPVs1TbfKnIhvnhlIJGtIfK8Y/exec';
+let selectedService = '';
+let selectedProduct = '';
+
+const 担当者リスト = ['宇留野', '石橋', '角井', '櫻井', '渡邊', '高山', '伊藤'];
+const 種類リスト = ['電話', 'LINE', '来店', '訪問'];
+
+const 訪問担当者リスト = [
+{ name: '高山', email: 'yawata51@gmail.com' },
+{ name: '伊藤', email: 'yahata.itou@gmail.com' },
+{ name: '渡邊', email: 'yahata.watanabe@gmail.com' },
+{ name: '石橋', email: 'yahata.ishibashi@gmail.com' },
+{ name: '角井', email: 'yahata.kakui@gmail.com' },
+{ name: '櫻井', email: 'yahata.sakurai@gmail.com' }
+];
+
+const 予定時間リスト = ['0.5時間', '1時間', '1.5時間', '2時間', '2.5時間', '3時間', '4時間', '5時間'];
+
+const サービスリスト = [
+{ name: '修理', icon: 'wrench' },
+{ name: 'エアコンクリーニング', icon: 'wind' },
+{ name: '業者', icon: 'person' }
+];
+
+const 業者リスト = ['大工', '水道', 'ガス', '内装', '表具', 'その他'];
+let selected業者 = [];
+
+const 見込場所リスト = ["リビング", "台所", "寝室", "洗面所", "トイレ", "玄関", "廊下", "その他"];
+const 見込品名リスト = ["エアコン", "冷蔵庫", "洗濯機", "TV", "照明", "換気扇", "レンジフード", "IH", "エコキュート", "温水器", "その他"];
+
+let 見込商品リスト = [];
+let quickTemplate = '';
+let quickTaisuu = 0;
+
+// ★追加：顧客検索（GETリクエストで検索）
+async function searchCust() {
+const query = document.getElementById('searchQuery').value.trim();
+if (!query) {
+alert('検索キーワードを入力してください');
+return;
+}
+try {
+const response = await fetch(scriptUrl + '?action=search&query=' + encodeURIComponent(query));
+const results = await response.json();
+if (!results || results.length === 0) {
+alert('該当する顧客が見つかりませんでした');
+} else if (results.length === 1) {
+applyCustomer(results[0]);
+} else {
+showCustList(results);
+}
+} catch (error) {
+console.error('検索エラー:', error);
+alert('検索に失敗しました');
+}
 }
 
-// データ受信・保存
-function doPost(e) {
-  try {
-    const data = JSON.parse(e.postData.contents);
-    
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const sheet = ss.getSheetByName("受注日報") || ss.getSheets()[0];
-    
-    if (sheet.getLastRow() === 0) {
-      sheet.appendRow([
-        '日付', '登録時刻', '担当', '種類', '顧客名', '住所', '電話番号', 
-        'サービス種別', '業者種別', '商品区分', '商品詳細', 
-        '訪問日時', '訪問担当', '予定時間', '内容', '見込商品', 'カレンダーID'
-      ]);
-    }
-    
-    let 見込商品文字列 = '';
-    if (data.見込商品 && data.見込商品.length > 0) {
-      見込商品文字列 = data.見込商品.map(item => {
-        return `${item.location || ''}/${item.product || ''}/${item.content || ''}`;
-      }).join('｜');
-    }
-    
-    const rowData = [
-      data.日付, data.登録時刻, data.担当, data.種類, data.顧客名,
-      data.住所 || '', data.電話番号 || '', data.サービス種別 || '',
-      data.業者種別 || '', data.商品区分 || '', data.商品詳細 || '', 
-      data.訪問日時 || '', data.訪問担当 || '', data.予定時間 || '', 
-      data.内容 || '', 見込商品文字列, ''
-    ];
-    sheet.appendRow(rowData);
-
-    if (data.訪問日時 && data.訪問担当メール && data.予定時間) {
-      try {
-        const calendar = CalendarApp.getCalendarById(data.訪問担当メール);
-        
-        if (calendar) {
-          const startTime = new Date(data.訪問日時.replace(/-/g, '/'));
-          let durationHours = 1;
-          const match = data.予定時間.match(/(\d+(\.\d+)?)/);
-          if (match) durationHours = parseFloat(match[1]);
-          
-          const endTime = new Date(startTime.getTime() + (durationHours * 60 * 60 * 1000));
-
-          let title = `${data.顧客名} 様`;
-          if (data.サービス種別) {
-            title += ` - ${data.サービス種別}`;
-          } else if (data.業者種別) {
-            title += ` - 業者(${data.業者種別})`;
-          }
-
-          const descriptionParts = [
-            `【顧客名】 ${data.顧客名} 様`,
-            `【受注種類】 ${data.種類}`
-          ];
-          if (data.電話番号) descriptionParts.push(`【電話】 ${data.電話番号}`);
-          if (data.サービス種別) descriptionParts.push(`【サービス】 ${data.サービス種別}`);
-          if (data.業者種別) descriptionParts.push(`【業者】 ${data.業者種別}`);
-          if (data.商品区分) descriptionParts.push(`【商品】 ${data.商品区分} ${data.商品詳細 || ''}`);
-          if (data.内容) descriptionParts.push(`【内容】 ${data.内容}`);
-          
-          if (見込商品文字列) {
-            const 見込表示 = data.見込商品.map(item => {
-              return `${item.location}/${item.product}: ${item.content || ''}`;
-            }).join('\n');
-            descriptionParts.push(`【見込商品】\n${見込表示}`);
-          }
-          
-          descriptionParts.push('---');
-          descriptionParts.push(`受注担当: ${data.担当} (${data.登録時刻} 受付)`);
-
-          const event = calendar.createEvent(title, startTime, endTime, {
-            location: data.住所 || '',
-            description: descriptionParts.join('\n')
-          });
-          
-          const lastRow = sheet.getLastRow();
-          sheet.getRange(lastRow, 17).setValue(event.getId());
-        }
-      } catch (calendarError) {
-        Logger.log('カレンダー作成エラー: ' + calendarError.toString());
-      }
-    }
-
-    return ContentService.createTextOutput("Success");
-
-  } catch (err) {
-    Logger.log('エラー発生: ' + err.toString());
-    return ContentService.createTextOutput("Error: " + err.toString());
-  }
+// ★追加：検索結果リスト表示
+function showCustList(results) {
+const listDiv = document.getElementById('customerList');
+listDiv.innerHTML = '';
+results.forEach(r => {
+const div = document.createElement('div');
+div.className = 'customer-search-result';
+div.innerHTML = '<div class="font-bold text-gray-800">' + (r.name || '') + '</div><div class="text-sm text-gray-600">' + (r.tel || '') + '</div><div class="text-sm text-gray-500">' + (r.address || '') + '</div>';
+div.onclick = function() { applyCustomer(r); hideCustomerModal(); };
+listDiv.appendChild(div);
+});
+document.getElementById('customerModal').classList.add('active');
 }
 
-// カナ正規化（半角カタカナ・ひらがな・全角カタカナ → すべて全角カタカナに統一）
-function normalizeKana(str) {
-  var result = str;
-  
-  // 1. 半角カタカナの濁音・半濁音（2文字→1文字）を先に変換
-  result = result.replace(/ｶﾞ/g,'ガ').replace(/ｷﾞ/g,'ギ').replace(/ｸﾞ/g,'グ').replace(/ｹﾞ/g,'ゲ').replace(/ｺﾞ/g,'ゴ');
-  result = result.replace(/ｻﾞ/g,'ザ').replace(/ｼﾞ/g,'ジ').replace(/ｽﾞ/g,'ズ').replace(/ｾﾞ/g,'ゼ').replace(/ｿﾞ/g,'ゾ');
-  result = result.replace(/ﾀﾞ/g,'ダ').replace(/ﾁﾞ/g,'ヂ').replace(/ﾂﾞ/g,'ヅ').replace(/ﾃﾞ/g,'デ').replace(/ﾄﾞ/g,'ド');
-  result = result.replace(/ﾊﾞ/g,'バ').replace(/ﾋﾞ/g,'ビ').replace(/ﾌﾞ/g,'ブ').replace(/ﾍﾞ/g,'ベ').replace(/ﾎﾞ/g,'ボ');
-  result = result.replace(/ﾊﾟ/g,'パ').replace(/ﾋﾟ/g,'ピ').replace(/ﾌﾟ/g,'プ').replace(/ﾍﾟ/g,'ペ').replace(/ﾎﾟ/g,'ポ');
-  result = result.replace(/ｳﾞ/g,'ヴ');
-  
-  // 2. 半角カタカナ（単独文字）→ 全角カタカナ
-  var hw = 'ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ';
-  var fw = 'ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン';
-  for (var j = 0; j < hw.length; j++) {
-    result = result.split(hw[j]).join(fw[j]);
-  }
-  
-  // 3. 残った濁点・半濁点マークを除去
-  result = result.replace(/ﾞ/g,'').replace(/ﾟ/g,'');
-  
-  // 4. ひらがな → 全角カタカナ
-  result = result.replace(/[\u3041-\u3096]/g, function(ch) {
-    return String.fromCharCode(ch.charCodeAt(0) + 96);
-  });
-  
-  return result;
+// ★追加：モーダル閉じる
+function hideCustomerModal() {
+document.getElementById('customerModal').classList.remove('active');
 }
 
-// 顧客検索（全カナ形式対応、電話番号1〜5対応、カナ前方一致）
-function searchCustomer(query) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const s = ss.getSheetByName("顧客マスタ") || ss.getSheetByName("顧客ﾏｽﾀ");
-  if (!s || !query) return [];
-  
-  const d = s.getDataRange().getValues();
-  const cleanQuery = String(query).replace(/-|\s|　/g, "");
-  const kanaQuery = normalizeKana(cleanQuery);
-  const results = [];
-
-  for (let i = 1; i < d.length; i++) {
-    const rowName = String(d[i][1]).replace(/\s|　/g, "");
-    const rowKana = normalizeKana(String(d[i][2]).replace(/\s|　/g, ""));
-    
-    // 電話番号1〜5（D列〜H列 = index 3〜7）
-    let telMatch = false;
-    if (cleanQuery !== "") {
-      for (let t = 3; t <= 7; t++) {
-        const tel = String(d[i][t]).replace(/-/g, "");
-        if (tel && tel.includes(cleanQuery)) {
-          telMatch = true;
-          break;
-        }
-      }
-    }
-    
-    if (rowName.includes(cleanQuery) || rowKana.startsWith(kanaQuery) || telMatch) {
-      results.push({
-        tel: d[i][3],
-        name: d[i][1],
-        address: d[i][15]
-      });
-    }
-  }
-  return results;
+// ★追加：検索結果を入力欄に反映
+function applyCustomer(customer) {
+document.getElementById('顧客名').value = customer.name || '';
+document.getElementById('住所text').value = customer.address || '';
+document.getElementById('電話番号').value = customer.tel || '';
+document.getElementById('searchQuery').value = customer.tel || '';
 }
 
-// 受注データ保存（HTMLから直接呼び出し用）
-function saveOrderData(data) {
-  try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const sheet = ss.getSheetByName("受注日報") || ss.getSheets()[0];
-    
-    if (sheet.getLastRow() === 0) {
-      sheet.appendRow([
-        '日付', '登録時刻', '担当', '種類', '顧客名', '住所', '電話番号', 
-        'サービス種別', '業者種別', '商品区分', '商品詳細', 
-        '訪問日時', '訪問担当', '予定時間', '内容', '見込商品', 'カレンダーID'
-      ]);
-    }
-    
-    let 見込商品文字列 = '';
-    if (data.見込商品 && data.見込商品.length > 0) {
-      見込商品文字列 = data.見込商品.map(item => {
-        return `${item.location || ''}/${item.product || ''}/${item.content || ''}`;
-      }).join('｜');
-    }
-    
-    const rowData = [
-      data.日付, data.登録時刻, data.担当, data.種類, data.顧客名,
-      data.住所 || '', data.電話番号 || '', data.サービス種別 || '',
-      data.業者種別 || '', data.商品区分 || '', data.商品詳細 || '', 
-      data.訪問日時 || '', data.訪問担当 || '', data.予定時間 || '', 
-      data.内容 || '', 見込商品文字列, ''
-    ];
-    sheet.appendRow(rowData);
-
-    if (data.訪問日時 && data.訪問担当メール && data.予定時間) {
-      try {
-        const calendar = CalendarApp.getCalendarById(data.訪問担当メール);
-        
-        if (calendar) {
-          const startTime = new Date(data.訪問日時.replace(/-/g, '/'));
-          let durationHours = 1;
-          const match = data.予定時間.match(/(\d+(\.\d+)?)/);
-          if (match) durationHours = parseFloat(match[1]);
-          
-          const endTime = new Date(startTime.getTime() + (durationHours * 60 * 60 * 1000));
-
-          let title = `${data.顧客名} 様`;
-          if (data.サービス種別) {
-            title += ` - ${data.サービス種別}`;
-          } else if (data.業者種別) {
-            title += ` - 業者(${data.業者種別})`;
-          }
-
-          const descriptionParts = [
-            `【顧客名】 ${data.顧客名} 様`,
-            `【受注種類】 ${data.種類}`
-          ];
-          if (data.電話番号) descriptionParts.push(`【電話】 ${data.電話番号}`);
-          if (data.サービス種別) descriptionParts.push(`【サービス】 ${data.サービス種別}`);
-          if (data.業者種別) descriptionParts.push(`【業者】 ${data.業者種別}`);
-          if (data.商品区分) descriptionParts.push(`【商品】 ${data.商品区分} ${data.商品詳細 || ''}`);
-          if (data.内容) descriptionParts.push(`【内容】 ${data.内容}`);
-          
-          if (見込商品文字列) {
-            const 見込表示 = data.見込商品.map(item => {
-              return `${item.location}/${item.product}: ${item.content || ''}`;
-            }).join('\n');
-            descriptionParts.push(`【見込商品】\n${見込表示}`);
-          }
-          
-          descriptionParts.push('---');
-          descriptionParts.push(`受注担当: ${data.担当} (${data.登録時刻} 受付)`);
-
-          const event = calendar.createEvent(title, startTime, endTime, {
-            location: data.住所 || '',
-            description: descriptionParts.join('\n')
-          });
-          
-          const lastRow = sheet.getLastRow();
-          sheet.getRange(lastRow, 17).setValue(event.getId());
-        }
-      } catch (calendarError) {
-        Logger.log('カレンダー作成エラー: ' + calendarError.toString());
-      }
-    }
-    
-    return { success: true };
-    
-  } catch (err) {
-    Logger.log('エラー発生: ' + err.toString());
-    return { success: false, error: err.toString() };
-  }
+function selectQuickTemplate(name) {
+if (quickTemplate === name) {
+quickTemplate = '';
+quickTaisuu = 0;
+renderQuickTemplate();
+return;
 }
+quickTemplate = name;
+quickTaisuu = 0;
+renderQuickTemplate();
+const vStaff = document.getElementById('訪問担当');
+      if (vStaff && !vStaff.value) vStaff.value = '伊藤';
+}
+
+function selectTaisuuAndApply(n) {
+quickTaisuu = n;
+document.querySelectorAll('.taisuubtn').forEach(b => {
+b.className = parseInt(b.dataset.n) === n
+? 'taisuubtn px-3 py-1 rounded-lg border-2 font-bold text-sm bg-blue-500 text-white border-blue-600'
+: 'taisuubtn px-3 py-1 rounded-lg border-2 font-bold text-sm bg-white text-gray-700 border-gray-300 hover:bg-gray-100';
+});
+const textarea = document.getElementById('内容');
+if (textarea) {
+const existing = textarea.value.trim();
+const line = quickTemplate + ' ' + n + '台';
+textarea.value = existing ? existing + '\n' + line : line;
+}
+const addrEl = document.getElementById('住所text');
+const addr = addrEl ? addrEl.value.trim() : '';
+const isInage = !addr || addr.includes('稲毛区');
+let dur = '';
+if (isInage) {
+dur = n <= 3 ? '1時間' : '1.5時間';
+} else {
+dur = n <= 3 ? '1.5時間' : '2時間';
+}
+const vDur = document.getElementById('予定時間');
+if (vDur) vDur.value = dur;
+}
+
+function renderQuickTemplate() {
+const container = document.getElementById('quickTemplateArea');
+if (!container) return;
+if (!quickTemplate) { container.innerHTML = ''; return; }
+let btns = '';
+[1,2,3,4,5].forEach(function(n) {
+btns += '<button class="taisuubtn px-3 py-1 rounded-lg border-2 font-bold text-sm bg-white text-gray-700 border-gray-300 hover:bg-gray-100" data-n="' + n + '" onclick="selectTaisuuAndApply(' + n + ')">' + n + '台</button>';
+});
+container.innerHTML =
+'<div class="bg-blue-50 border-2 border-blue-200 rounded-lg p-3">' +
+'<p class="text-xs font-semibold text-blue-700 mb-2">台数を選択（内容欄に追記されます）</p>' +
+'<div class="flex gap-2 flex-wrap">' + btns + '</div>' +
+'</div>';
+}
+
+const icons = {
+calendar: '<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>',
+plus: '<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>',
+trash: '<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>',
+phone: '<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>',
+line: '<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>',
+store: '<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>',
+mapPin: '<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>',
+download: '<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>',
+search: '<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>',
+wrench: '<svg class="icon icon-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>',
+wind: '<svg class="icon icon-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9.59 4.59a2 2 0 1 1 3 2.83L9.5 12H3"></path><path d="M9.59 19.41a2 2 0 1 0 3-2.83L9.5 12H3"></path><path d="M14.5 12H21"></path></svg>',
+person: '<svg class="icon icon-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-4 4-6 8-6s8 2 8 6"></path></svg>'
+};
+
+function getIconForType(type) {
+if (type === '電話') return icons.phone;
+if (type === 'LINE') return icons.line;
+if (type === '来店') return icons.store;
+if (type === '訪問') return icons.mapPin;
+return '';
+}
+
+function getColorForType(type) {
+if (type === '電話') return { bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-300', active: 'bg-blue-200 text-blue-900 border-blue-400' };
+if (type === 'LINE') return { bg: 'bg-green-100', text: 'text-green-800', border: 'border-green-300', active: 'bg-green-200 text-green-900 border-green-400' };
+if (type === '来店') return { bg: 'bg-purple-100', text: 'text-purple-800', border: 'border-purple-300', active: 'bg-purple-200 text-purple-900 border-purple-400' };
+if (type === '訪問') return { bg: 'bg-orange-100', text: 'text-orange-800', border: 'border-orange-300', active: 'bg-orange-200 text-orange-900 border-orange-400' };
+return { bg: 'bg-gray-100', text: 'text-gray-800', border: 'border-gray-300', active: 'bg-gray-200 text-gray-900 border-gray-400' };
+}
+
+const staffColors = [
+{ normal: 'bg-blue-100 text-blue-800 border-blue-300',     active: 'bg-blue-200 text-blue-900 border-blue-400' },
+{ normal: 'bg-red-100 text-red-800 border-red-300',        active: 'bg-red-200 text-red-900 border-red-400' },
+{ normal: 'bg-yellow-100 text-yellow-800 border-yellow-300', active: 'bg-yellow-200 text-yellow-900 border-yellow-400' },
+{ normal: 'bg-purple-100 text-purple-800 border-purple-300', active: 'bg-purple-200 text-purple-900 border-purple-400' },
+{ normal: 'bg-green-100 text-green-800 border-green-300',   active: 'bg-green-200 text-green-900 border-green-400' },
+{ normal: 'bg-sky-100 text-sky-800 border-sky-300',         active: 'bg-sky-200 text-sky-900 border-sky-400' },
+{ normal: 'c-enji-normal',                                 active: 'c-enji-active' }
+];
+
+function getColorForService(name) {
+if (name === '修理') return { normal: 'bg-red-50 text-red-700 border-red-300', active: 'bg-red-200 text-red-900 border-red-500' };
+if (name === 'エアコンクリーニング') return { normal: 'bg-sky-50 text-sky-700 border-sky-300', active: 'bg-sky-200 text-sky-900 border-sky-500' };
+if (name === '業者') return { normal: 'bg-purple-50 text-purple-700 border-purple-300', active: 'bg-purple-200 text-purple-900 border-purple-500' };
+return { normal: 'bg-gray-50 text-gray-700 border-gray-300', active: 'bg-gray-200 text-gray-900 border-gray-400' };
+}
+
+// ★sendToSpreadsheetは一切変更なし
+async function sendToSpreadsheet(order) {
+if (!scriptUrl) {
+console.log('URL未設定');
+return;
+}
+try {
+console.log('=== 送信データ詳細 ===');
+console.log('完全なデータ:', JSON.stringify(order));
+
+await fetch(scriptUrl, {
+method: 'POST',
+mode: 'no-cors',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify(order)
+});
+console.log('スプレッドシートに送信しました');
+} catch (error) {
+console.error('送信エラー:', error);
+}
+}
+
+function selectStaff(btn) {
+document.querySelectorAll('.staff-btn').forEach((b, i) => {
+b.classList.remove('active');
+b.className = `staff-btn btn-select p-2 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center ${staffColors[i].normal}`;
+});
+const idx = parseInt(btn.dataset.index);
+btn.classList.add('active');
+btn.className = `staff-btn active btn-select p-2 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center shadow-md ${staffColors[idx].active}`;
+}
+
+function selectType(btn) {
+document.querySelectorAll('.type-btn').forEach(b => {
+b.classList.remove('active');
+b.className = 'type-btn btn-select p-3 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100';
+});
+const color = getColorForType(btn.dataset.name);
+btn.classList.add('active');
+btn.className = `type-btn active btn-select p-3 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center shadow-md ${color.active}`;
+}
+
+function selectService(btn) {
+const name = btn.dataset.name;
+if (selectedService === name) {
+selectedService = '';
+selectedProduct = '';
+selected業者 = [];
+document.querySelectorAll('.service-btn').forEach((b, i) => {
+const color = getColorForService(サービスリスト[i].name);
+b.classList.remove('active');
+b.className = `service-btn btn-select p-3 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center ${color.normal}`;
+});
+} else {
+selectedService = name;
+selectedProduct = '';
+selected業者 = [];
+document.querySelectorAll('.service-btn').forEach((b, i) => {
+const color = getColorForService(サービスリスト[i].name);
+if (b.dataset.name === name) {
+b.classList.add('active');
+b.className = `service-btn active btn-select p-3 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center shadow-md ${color.active}`;
+} else {
+b.classList.remove('active');
+b.className = `service-btn btn-select p-3 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center ${color.normal}`;
+}
+});
+}
+renderProductSection();
+}
+
+function selectProduct(btn) {
+const name = btn.dataset.name;
+selectedProduct = name;
+document.querySelectorAll('.product-btn').forEach(b => {
+if (b.dataset.name === name) {
+b.classList.add('active');
+b.className = 'product-btn active btn-select p-2 px-4 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center bg-orange-200 text-orange-900 border-orange-400 shadow-md';
+} else {
+b.classList.remove('active');
+b.className = 'product-btn btn-select p-2 px-4 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100';
+}
+});
+const detailArea = document.getElementById('productDetailArea');
+if (detailArea) {
+detailArea.style.display = (name === 'パナ以外') ? 'block' : 'none';
+}
+}
+
+function renderProductSection() {
+const container = document.getElementById('productSection');
+if (!container) return;
+
+if (selectedService === '業者') {
+container.style.display = 'block';
+container.innerHTML = `
+         <label class="block text-sm font-semibold text-gray-700 mb-2">業者種別(複数選択可)</label>
+         <div class="grid grid-cols-3 gap-2">
+           ${業者リスト.map(name => `
+             <button class="contractor-btn btn-select p-2 px-3 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center ${selected業者.includes(name) ? 'bg-purple-200 text-purple-900 border-purple-400 shadow-md' : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'}" data-name="${name}" onclick="toggle業者(this)">
+               ${name}
+             </button>
+           `).join('')}
+         </div>
+       `;
+} else if (selectedService) {
+container.style.display = 'block';
+container.innerHTML = `
+         <label class="block text-sm font-semibold text-gray-700 mb-2">商品区分</label>
+         <div class="flex gap-2 mb-3">
+           <button class="product-btn btn-select p-2 px-4 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100" data-name="パナソニック" onclick="selectProduct(this)">パナソニック</button>
+           <button class="product-btn btn-select p-2 px-4 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100" data-name="パナ以外" onclick="selectProduct(this)">パナ以外</button>
+         </div>
+         <div id="productDetailArea" style="display:none;">
+           <label class="block text-sm font-semibold text-gray-700 mb-2">商品詳細</label>
+           <input type="text" id="商品詳細" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="商品名・メーカーなど">
+         </div>
+       `;
+} else {
+container.style.display = 'none';
+container.innerHTML = '';
+}
+}
+
+function toggle業者(btn) {
+const name = btn.dataset.name;
+if (selected業者.includes(name)) {
+selected業者 = selected業者.filter(n => n !== name);
+btn.className = 'contractor-btn btn-select p-2 px-3 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100';
+} else {
+selected業者.push(name);
+btn.className = 'contractor-btn btn-select p-2 px-3 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center bg-purple-200 text-purple-900 border-purple-400 shadow-md';
+}
+}
+
+function render見込商品() {
+const container = document.getElementById('prospectItems');
+if (!container) return;
+
+container.innerHTML = '';
+
+見込商品リスト.forEach((item, index) => {
+const itemDiv = document.createElement('div');
+itemDiv.className = 'prospect-item';
+
+itemDiv.innerHTML = `
+         <div class="prospect-item-header">
+           <span class="prospect-item-number">見込商品 ${index + 1}</span>
+           <button type="button" class="prospect-delete-btn" onclick="delete見込商品(${index})">✕ 削除</button>
+         </div>
+         
+         <label class="block text-sm font-semibold text-gray-700 mb-2">場所</label>
+         <div class="grid grid-cols-4 gap-2 mb-3">
+           ${見込場所リスト.map(loc => `
+             <button type="button" class="prospect-btn ${item.location === loc ? 'active' : ''}" onclick="update見込場所(${index}, '${loc}')">
+               ${loc}
+             </button>
+           `).join('')}
+         </div>
+         
+         <label class="block text-sm font-semibold text-gray-700 mb-2">品名</label>
+         <div class="grid grid-cols-3 gap-2 mb-3">
+           ${見込品名リスト.map(prod => `
+             <button type="button" class="prospect-btn ${item.product === prod ? 'active' : ''}" onclick="update見込品名(${index}, '${prod}')">
+               ${prod}
+             </button>
+           `).join('')}
+         </div>
+         
+         <label class="block text-sm font-semibold text-gray-700 mb-2">内容</label>
+         <input type="text" value="${item.content || ''}" oninput="update見込内容(${index}, this.value)" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="例：省エネに変えたい、古い">
+       `;
+
+container.appendChild(itemDiv);
+});
+}
+
+function add見込商品() {
+見込商品リスト.push({ location: '', product: '', content: '' });
+render見込商品();
+}
+
+function delete見込商品(index) {
+見込商品リスト.splice(index, 1);
+render見込商品();
+}
+
+function update見込場所(index, location) {
+見込商品リスト[index].location = location;
+render見込商品();
+}
+
+function update見込品名(index, product) {
+見込商品リスト[index].product = product;
+render見込商品();
+}
+
+function update見込内容(index, content) {
+見込商品リスト[index].content = content;
+}
+
+// ★handleAddOrderに searchQuery クリアを追加（1行だけ）
+function handleAddOrder() {
+const 担当 = document.querySelector('.staff-btn.active')?.dataset.name;
+const 種類 = document.querySelector('.type-btn.active')?.dataset.name;
+const 顧客名 = document.getElementById('顧客名').value;
+const 住所 = document.getElementById('住所text').value;
+const 電話番号 = document.getElementById('電話番号').value;
+const サービス種別 = selectedService;
+const 商品区分 = (selectedService === '業者') ? '' : selectedProduct;
+const 商品詳細 = document.getElementById('商品詳細')?.value || '';
+const 業者種別 = (selectedService === '業者') ? selected業者.join('・') : '';
+const 訪問日 = document.getElementById('訪問日').value;
+const 訪問時刻 = document.getElementById('訪問時刻').value;
+const 訪問日時 = (訪問日 && 訪問時刻) ? `${訪問日} ${訪問時刻}` : '';
+const 訪問担当 = document.getElementById('訪問担当')?.value || '';
+const 訪問担当メール = 訪問担当 ? 訪問担当者リスト.find(t => t.name === 訪問担当)?.email || '' : '';
+const 予定時間 = document.getElementById('予定時間')?.value || '';
+const 内容 = document.getElementById('内容').value;
+
+if (!担当 || !種類 || !顧客名) {
+alert('担当、種類、顧客名は必須項目です');
+return;
+}
+
+const newOrder = {
+id: Date.now(),
+日付: currentDate,
+登録時刻: new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }),
+担当, 種類, 顧客名, 住所, 電話番号, サービス種別, 業者種別, 商品区分, 商品詳細,
+訪問日時, 訪問担当, 訪問担当メール, 予定時間, 内容,
+見込商品: 見込商品リスト
+};
+
+orders.push(newOrder);
+sendToSpreadsheet(newOrder);
+
+document.getElementById('searchQuery').value = '';  // ★追加
+document.getElementById('顧客名').value = '';
+document.getElementById('住所text').value = '';
+document.getElementById('電話番号').value = '';
+document.getElementById('訪問日').value = '';
+document.getElementById('訪問時刻').value = '';
+document.getElementById('訪問担当').value = '';
+document.getElementById('予定時間').value = '';
+document.getElementById('内容').value = '';
+selectedService = '';
+selectedProduct = '';
+selected業者 = [];
+見込商品リスト = [];
+quickTemplate = '';
+quickTaisuu = 0;
+render();
+}
+
+function deleteOrder(id) {
+if (confirm('この受注を削除しますか？')) {
+orders = orders.filter(o => o.id !== id);
+render();
+}
+}
+
+function exportCSV() {
+const todayOrders = orders.filter(o => o.日付 === currentDate);
+if (todayOrders.length === 0) {
+alert('エクスポートするデータがありません');
+return;
+}
+const headers = ['日付', '登録時刻', '担当', '種類', '顧客名', '住所', '電話番号', 'サービス種別', '業者種別', '商品区分', '商品詳細', '訪問日時', '訪問担当', '予定時間', '受注内容', '見込商品'];
+const csvData = todayOrders.map(o => {
+const 見込 = (o.見込商品 && o.見込商品.length > 0)
+? o.見込商品.map(m => `${m.location}/${m.product}/${m.content}`).join('｜')
+: '';
+return [
+o.日付, o.登録時刻, o.担当, o.種類, o.顧客名, o.住所 || '', o.電話番号 || '',
+o.サービス種別 || '', o.業者種別 || '', o.商品区分 || '', o.商品詳細 || '',
+o.訪問日時 || '', o.訪問担当 || '', o.予定時間 || '', o.内容 || '', 見込
+];
+});
+const csvContent = [
+headers.join(','),
+...csvData.map(row => row.map(cell => `"${cell}"`).join(','))
+].join('\n');
+const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+const link = document.createElement('a');
+link.href = URL.createObjectURL(blob);
+link.download = `受注日報_${currentDate}.csv`;
+link.click();
+}
+
+function render() {
+const todayOrders = orders.filter(o => o.日付 === currentDate);
+
+document.getElementById('app').innerHTML = `
+       <!-- ヘッダー -->
+       <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+         <div class="flex items-center justify-between mb-4">
+           <h1 class="text-3xl font-bold text-gray-800 flex items-center gap-3">
+             <div class="bg-orange-500 p-2 rounded-lg text-white">${icons.calendar}</div>
+             受注日報
+           </h1>
+           <div class="flex gap-2">
+             ${todayOrders.length > 0 ? `<button onclick="exportCSV()" class="bg-green-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center gap-2">${icons.download} CSV</button>` : ''}
+           </div>
+         </div>
+
+         <div class="flex items-center gap-4 bg-orange-50 p-4 rounded-lg border-2 border-orange-200">
+           <div class="text-orange-600">${icons.calendar}</div>
+           <div class="flex-1">
+             <label class="block text-sm font-semibold text-gray-700 mb-2">日付</label>
+             <input type="date" id="dateInput" value="${currentDate}" onchange="currentDate = this.value; render()" class="w-full p-3 border-2 border-orange-300 rounded-lg focus:border-orange-500 focus:outline-none text-lg font-semibold">
+           </div>
+           <div class="text-right">
+             <div class="text-sm text-gray-600">本日の受注</div>
+             <div class="text-3xl font-bold text-orange-600">${todayOrders.length}件</div>
+           </div>
+         </div>
+       </div>
+
+       <!-- 受注入力 -->
+       <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+         <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">${icons.plus} 受注入力</h2>
+         <div class="space-y-4">
+
+           <!-- 担当者 -->
+           <div>
+             <label class="block text-sm font-semibold text-gray-700 mb-2">受注担当者 <span class="text-red-500">*</span></label>
+             <div class="grid grid-cols-4 gap-2">
+               ${担当者リスト.map((name, i) => `
+                 <button class="staff-btn btn-select p-2 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center ${staffColors[i].normal}" data-name="${name}" data-index="${i}" onclick="selectStaff(this)">
+                   <div class="flex justify-center text-gray-500 mb-1">${icons.person}</div>
+                   <div class="text-xs">${name}</div>
+                 </button>
+               `).join('')}
+             </div>
+           </div>
+
+           <!-- 受注種類 -->
+           <div>
+             <label class="block text-sm font-semibold text-gray-700 mb-2">受注種類 <span class="text-red-500">*</span></label>
+             <div class="grid grid-cols-4 gap-2">
+               ${種類リスト.map(type => `
+                 <button class="type-btn btn-select p-3 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100" data-name="${type}" onclick="selectType(this)">
+                   <div class="flex items-center justify-center gap-1">${getIconForType(type)} ${type}</div>
+                 </button>
+               `).join('')}
+             </div>
+           </div>
+
+           <!-- ★追加：顧客検索 -->
+           <div>
+             <label class="block text-sm font-semibold text-gray-700 mb-2">${icons.search} 顧客検索</label>
+             <div class="flex gap-2">
+               <input type="text" id="searchQuery" class="flex-1 p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="電話番号 or 顧客名 or カタカナ">
+               <button onclick="searchCust()" class="bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center gap-2">${icons.search} 検索</button>
+             </div>
+           </div>
+
+           <!-- 顧客名 -->
+           <div>
+             <label class="block text-sm font-semibold text-gray-700 mb-2">顧客名 <span class="text-red-500">*</span></label>
+             <input type="text" id="顧客名" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="顧客名を入力">
+           </div>
+
+           <!-- 住所 -->
+           <div>
+             <label class="block text-sm font-semibold text-gray-700 mb-2">${icons.mapPin} 住所</label>
+             <input type="text" id="住所text" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="例: 長沼町 または ◯◯マンション101号室">
+           </div>
+
+           <!-- 電話番号 -->
+           <div>
+             <label class="block text-sm font-semibold text-gray-700 mb-2">${icons.phone} 電話番号</label>
+             <input type="tel" id="電話番号" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="例: 043-123-4567">
+           </div>
+
+           <!-- サービス/業者 -->
+           <div>
+             <label class="block text-sm font-semibold text-gray-700 mb-2">サービス/業者</label>
+             <div class="grid grid-cols-3 gap-3">
+               ${サービスリスト.map(s => {
+                 const color = getColorForService(s.name);
+                 return `
+                   <button class="service-btn btn-select p-3 rounded-lg border-2 font-semibold transition-all cursor-pointer text-center ${color.normal}" data-name="${s.name}" onclick="selectService(this)">
+                     <div class="flex items-center justify-center gap-2 text-lg">${icons[s.icon]} ${s.name}</div>
+                   </button>
+                 `;
+               }).join('')}
+             </div>
+           </div>
+
+           <!-- 商品区分 -->
+           <div id="productSection" style="display:none;"></div>
+
+           <!-- 訪問日時 -->
+           <div>
+             <label class="block text-sm font-semibold text-gray-700 mb-2">訪問日時・担当</label>
+             <div class="grid grid-cols-2 gap-2 mb-3">
+               <input type="date" id="訪問日" class="p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
+               <select id="訪問時刻" class="p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
+                 <option value="">時刻を選択</option>
+                 ${Array.from({length: 14}, (_, i) => {
+                   const h = String(i + 8).padStart(2, '0');
+                   return `<option value="${h}:00">${h}:00</option><option value="${h}:30">${h}:30</option>`;
+                 }).join('')}
+               </select>
+             </div>
+             <div class="grid grid-cols-2 gap-2">
+               <select id="訪問担当" class="p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
+                 <option value="">訪問担当者を選択</option>
+                 ${訪問担当者リスト.map(t => `<option value="${t.name}">${t.name}</option>`).join('')}
+               </select>
+               <select id="予定時間" class="p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
+                 <option value="">予定時間を選択</option>
+                 ${予定時間リスト.map(t => `<option value="${t}">${t}</option>`).join('')}
+               </select>
+             </div>
+           </div>
+
+           <!-- 見込商品 -->
+           <div>
+             <label class="block text-sm font-semibold text-gray-700 mb-2">見込商品 <span class="text-gray-500 text-xs">(任意)</span></label>
+             <div id="prospectItems"></div>
+             <button type="button" onclick="add見込商品()" class="w-full mt-2 bg-orange-100 text-orange-700 border-2 border-orange-300 py-2 px-4 rounded-lg font-semibold hover:bg-orange-200 transition-colors flex items-center justify-center gap-2">
+               ${icons.plus} 見込商品を追加
+             </button>
+           </div>
+
+           <!-- クイック入力 -->
+           <div>
+             <label class="block text-sm font-semibold text-gray-700 mb-2">⚡ クイック入力</label>
+             <div class="flex gap-2 flex-wrap mb-2">
+               <button onclick="selectQuickTemplate('エアコン点検')" class="quick-tpl-btn px-4 py-2 rounded-lg border-2 font-semibold text-sm transition-all bg-sky-50 text-sky-700 border-sky-300 hover:bg-sky-100">
+                 ❄️ エアコン点検
+               </button>
+             </div>
+             <div id="quickTemplateArea"></div>
+           </div>
+
+           <!-- 受注内容 -->
+           <div>
+             <label class="block text-sm font-semibold text-gray-700 mb-2">受注内容</label>
+             <textarea id="内容" rows="3" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="受注内容を入力"></textarea>
+           </div>
+
+           <!-- 送信ボタン -->
+           <button onclick="handleAddOrder()" class="w-full bg-orange-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center gap-2">
+             ${icons.plus} 受注を追加
+           </button>
+         </div>
+       </div>
+
+       <!-- 受注一覧 -->
+       <div class="bg-white rounded-lg shadow-lg p-6">
+         <h2 class="text-xl font-bold text-gray-800 mb-4">${currentDate} の受注一覧 (${todayOrders.length}件)</h2>
+         ${todayOrders.length === 0 ? `
+           <div class="text-center py-12 text-gray-500">
+             <div class="text-6xl mb-4">📋</div>
+             <p class="text-lg">この日の受注はまだありません</p>
+           </div>
+         ` : `
+           <div class="space-y-3">
+             ${todayOrders.map((order, index) => {
+               const typeColor = getColorForType(order.種類);
+               const staffIdx = 担当者リスト.indexOf(order.担当);
+               const sColor = staffIdx >= 0 ? staffColors[staffIdx].normal : 'bg-gray-100 text-gray-800 border-gray-300';
+
+               let 見込表示 = '';
+               if (order.見込商品 && order.見込商品.length > 0) {
+                 見込表示 = order.見込商品.map(m => `${m.location}/${m.product}: ${m.content}`).join('、');
+               }
+
+               return `
+                 <div class="border-2 border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                   <div class="flex items-start justify-between">
+                     <div class="flex-1">
+                       <div class="flex flex-wrap items-center gap-2 mb-2">
+                         <span class="px-2 py-1 bg-gray-200 text-gray-700 rounded text-sm font-bold">#${index + 1}</span>
+                         <span class="px-2 py-1 bg-orange-100 text-orange-800 rounded text-sm font-semibold">${order.登録時刻}</span>
+                         <span class="px-3 py-1 rounded-full text-sm font-semibold border-2 flex items-center gap-1 ${typeColor.bg} ${typeColor.text} ${typeColor.border}">
+                           ${getIconForType(order.種類)} ${order.種類}
+                         </span>
+                         <span class="px-3 py-1 rounded-full text-sm font-semibold border-2 ${sColor}">${order.担当}</span>
+                         ${order.サービス種別 ? `<span class="px-3 py-1 rounded-full text-sm font-semibold border-2 bg-gray-100 text-gray-800 border-gray-300">${order.サービス種別}</span>` : ''}
+                         ${order.業者種別 ? `<span class="px-3 py-1 rounded-full text-sm font-semibold border-2 bg-purple-100 text-purple-800 border-purple-300">${order.業者種別}</span>` : ''}
+                         ${order.商品区分 ? `<span class="px-3 py-1 rounded-full text-sm font-semibold border-2 ${order.商品区分 === 'パナソニック' ? 'bg-sky-100 text-sky-800 border-sky-300' : 'bg-amber-100 text-amber-800 border-amber-300'}">${order.商品区分}</span>` : ''}
+                       </div>
+                       <h3 class="text-xl font-bold text-gray-800 mb-2">${order.顧客名}</h3>
+                       <div class="space-y-1 mb-2">
+                         ${order.住所 ? `<p class="text-gray-700 flex items-center gap-2">${icons.mapPin} ${order.住所}</p>` : ''}
+                         ${order.電話番号 ? `<p class="text-gray-700 flex items-center gap-2">${icons.phone} ${order.電話番号}</p>` : ''}
+                         ${order.商品詳細 ? `<p class="text-gray-700">商品詳細: ${order.商品詳細}</p>` : ''}
+                       </div>
+                       ${order.訪問日時 ? `<p class="text-gray-700 mb-1 flex items-center gap-2">${icons.calendar} 訪問予定: ${order.訪問日時}</p>` : ''}
+                       ${order.訪問担当 ? `<p class="text-gray-700 mb-2">👤 訪問担当: ${order.訪問担当}${order.予定時間 ? ` (${order.予定時間})` : ''}</p>` : ''}
+                       ${見込表示 ? `<div class="bg-orange-50 p-3 rounded border border-orange-200 mt-2"><p class="text-sm font-semibold text-orange-800 mb-1">💡 見込商品:</p><p class="text-gray-700 text-sm">${見込表示}</p></div>` : ''}
+                       ${order.内容 ? `<div class="bg-gray-50 p-3 rounded border border-gray-200 mt-2"><p class="text-gray-700">${order.内容}</p></div>` : ''}
+                     </div>
+                     <button onclick="deleteOrder(${order.id})" class="text-red-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-colors ml-4">${icons.trash}</button>
+                   </div>
+                 </div>
+               `;
+             }).join('')}
+           </div>
+         `}
+       </div>
+     `;
+renderProductSection();
+render見込商品();
+}
+
+render();
+</script>
+</body>
+</html>
