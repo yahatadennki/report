@@ -87,10 +87,6 @@
         <input type="number" id="tels" min="0" placeholder="0">
       </div>
       <div>
-        <label>点検件数</label>
-        <input type="number" id="inspections" min="0" placeholder="0">
-      </div>
-      <div>
         <label>ポスティング件数</label>
         <input type="number" id="postings" min="0" placeholder="0">
       </div>
@@ -223,7 +219,6 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
     areas: selected.areas.join("・"),
     visits: document.getElementById("visits").value || "0",
     tels: document.getElementById("tels").value || "0",
-    inspections: document.getElementById("inspections").value || "0",
     postings: document.getElementById("postings").value || "0",
     items: selected.items.join("・"),
     remarks: document.getElementById("remarks").value
@@ -244,7 +239,6 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
     document.getElementById("date").value = today.toISOString().split("T")[0];
     document.getElementById("visits").value = "";
     document.getElementById("tels").value = "";
-    document.getElementById("inspections").value = "";
     document.getElementById("postings").value = "";
     document.getElementById("remarks").value = "";
     selected = { staff: "", areas: [], items: [] };
@@ -277,7 +271,7 @@ function renderLogs() {
         <div class="log-header"><strong>${log.date}</strong><button class="del" onclick="deleteLog(${i})">削除</button></div>
         <div>担当者: ${log.staff || "ー"}</div>
         <div>区域: ${log.areas || "ー"}</div>
-        <div>面談: ${log.visits} / TEL: ${log.tels} / 点検: ${log.inspections} / ポスティング: ${log.postings}</div>
+        <div>面談: ${log.visits} / TEL: ${log.tels} / ポスティング: ${log.postings}</div>
         <div>配布物: ${log.items || "ー"}</div>
         ${log.remarks ? "<div>備考: " + log.remarks + "</div>" : ""}
       </div>`;
