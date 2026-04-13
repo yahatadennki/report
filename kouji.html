@@ -133,9 +133,6 @@
       background: #218838; 
     }
     
-    .photo-section { 
-      margin-top: 15px; 
-    }
     .photo-type-group { 
       display: flex; 
       gap: 10px; 
@@ -205,13 +202,6 @@
       font-weight: normal; 
       font-size: 13px; 
       margin: 0 0 6px 0;
-    }
-    
-    .info-text { 
-      font-size: 12px; 
-      color: #666; 
-      margin-top: 8px; 
-      font-style: italic; 
     }
 
     .work-detail-section {
@@ -333,7 +323,6 @@
       margin-top: 8px;
     }
 
-    /* 顧客検索モーダル */
     .customer-modal {
       display: none;
       position: fixed;
@@ -458,7 +447,7 @@
         </div>
       </div>
 
-        <!-- 売上情報 -->
+      <!-- 売上情報 -->
       <div class="section">
         <label>売上金額（千円単位） ※半角数字</label>
         <div class="amount-group">
@@ -467,7 +456,7 @@
             <input type="number" id="salesAmount" placeholder="例：250" value="0">
           </div>
           <div class="amount-item">
-            <label>🔧 工事/配達売上金額</label>
+            <label>🔧 工事/配達売上伝票金額</label>
             <input type="number" id="workAmount" placeholder="例：50" value="0">
           </div>
         </div>
@@ -518,7 +507,7 @@
 
       <!-- 写真 -->
       <div class="section">
-        <label>写真アップロード <span class="label-optional" id="photo-required-note"></span></label>
+        <label>写真アップロード <span class="label-optional">（任意）</span></label>
         <div class="photo-type-group">
           <button type="button" class="photo-type-btn" data-photo-type="現調">📸 現調写真</button>
           <button type="button" class="photo-type-btn" data-photo-type="完了">✅ 完了写真</button>
@@ -567,8 +556,8 @@
     };
 
     const WORK_TYPES = {
-      service: ["お困りごと対応", "点検", "商談", "配達", "工事", "修理", "集金"],
-      construction: ["工事", "現調", "配達", "修理","その他"]
+      service: ["お困りごと対応", "点検", "商談", "配達", "工事", "集金", "修理"],
+      construction: ["工事", "現調", "配達", "修理", "その他"]
     };
 
     const DELIVERY_ITEMS = ["TV・BD", "冷蔵庫", "洗濯機", "調理", "家事", "理美容", "修理品", "その他"];
@@ -585,7 +574,6 @@
       inspectionOther: 0,
       deliveryItems: [],
       constructionTypes: [],
-      salesPerson: "",
       people: "",
       payment: "",
       creditMethod: "",
@@ -676,7 +664,7 @@
       if (workAmount > 0 && people) {
         const peopleNum = people === "4人以上" ? 4 : parseInt(people);
         const perPerson = Math.floor(workAmount / peopleNum);
-        infoDiv.textContent = `💡 1人あたりの工事/配達売上金額: ${perPerson}千円`;
+        infoDiv.textContent = `💡 1人あたりの工事/配達売上伝票金額: ${perPerson}千円`;
         infoDiv.classList.remove("hidden");
       } else {
         infoDiv.classList.add("hidden");
@@ -687,8 +675,6 @@
       const inspectionDetail = document.getElementById("inspection-detail");
       const deliveryDetail = document.getElementById("delivery-detail");
       const constructionDetail = document.getElementById("construction-detail");
-      const salesPersonSection = document.getElementById("section-salesPerson");
-      const photoRequiredNote = document.getElementById("photo-required-note");
       const peopleSection = document.getElementById("section-people");
       
       if (state.workType.includes("点検")) {
@@ -717,14 +703,6 @@
         document.querySelectorAll("#group-constructionTypes .toggle-btn").forEach(btn => btn.classList.remove("active"));
       }
 
-      if (state.staffType) {
-        salesPersonSection.classList.remove("hidden");
-      } else {
-        salesPersonSection.classList.add("hidden");
-        state.salesPerson = "";
-        document.querySelectorAll("#group-salesPerson .toggle-btn").forEach(btn => btn.classList.remove("active"));
-      }
-
       if (state.staffType === "construction") {
         peopleSection.classList.remove("hidden");
       } else if (state.staffType === "service") {
@@ -736,14 +714,6 @@
           document.querySelectorAll("#group-people .toggle-btn").forEach(btn => btn.classList.remove("active"));
           document.getElementById("work-amount-info").classList.add("hidden");
         }
-      }
-
-      if (state.staffType === "construction" && (state.workType.includes("工事") || state.workType.includes("現調"))) {
-        photoRequiredNote.textContent = "（※ 写真必須）";
-        photoRequiredNote.style.color = "#dc3545";
-        photoRequiredNote.style.fontWeight = "bold";
-      } else {
-        photoRequiredNote.textContent = "";
       }
     }
 
@@ -771,14 +741,11 @@
         }
         
         const staffList = STAFF_LIST[state.staffType];
-        const salesPersonList = [...STAFF_LIST.service, "その他"];
         createButtons("group-staff", staffList, "staff");
-        createButtons("group-salesPerson", salesPersonList, "salesPerson");
         
         state.workType = [];
         state.deliveryItems = [];
         state.constructionTypes = [];
-        state.salesPerson = "";
         updateWorkDetails();
       };
     });
@@ -963,14 +930,6 @@
                          (state.staffType === "service" && (state.workType.includes("工事") || state.workType.includes("配達")));
       if (needsPeople && !state.people) { alert("作業人数を選択してください"); return; }
 
-      if (state.staffType === "construction" && (state.workType.includes("工事") || state.workType.includes("現調"))) {
-        const totalPhotos = state.photos.現調.length + state.photos.完了.length;
-        if (totalPhotos === 0) {
-          alert("工事・現調の場合は写真を1枚以上アップロードしてください");
-          return;
-        }
-      }
-
       if (state.payment === "売掛") {
         if (!state.creditMethod || !state.creditTiming) {
           alert("売掛の場合は集金方法と入金時期を選択してください");
@@ -1000,7 +959,6 @@
         inspectionOther: state.inspectionOther,
         deliveryItems: state.deliveryItems.join("、"),
         constructionTypes: state.constructionTypes.join("、"),
-        salesPerson: state.salesPerson,
         salesAmount: salesAmount,
         workAmount: workAmount,
         people: state.people,
