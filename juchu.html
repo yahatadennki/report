@@ -94,6 +94,11 @@ transition: background 0.2s;
 }
 .customer-search-result:hover { background: #f3f4f6; }
 .customer-search-result:last-child { border-bottom: none; }
+
+/* PCではdate入力のオーバーレイを非表示（スマホのみ表示） */
+@media (pointer: fine) {
+  #datePlaceholder { display: none !important; }
+}
 </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-orange-50 to-yellow-100">
