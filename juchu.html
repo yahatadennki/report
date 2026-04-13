@@ -720,7 +720,10 @@ document.getElementById('app').innerHTML = `
              <div class="grid grid-cols-2 gap-2 mb-3">
                <div>
                  <label class="block text-xs font-semibold text-gray-500 mb-1">日にち</label>
-                 <input type="date" id="訪問日" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
+                 <div style="position:relative;">
+                   <input type="date" id="訪問日" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" onchange="document.getElementById('datePlaceholder').style.display=this.value?'none':'flex'">
+                   <div id="datePlaceholder" onclick="var el=document.getElementById('訪問日');if(el.showPicker)el.showPicker();else el.focus();" style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;padding-left:12px;color:#9ca3af;font-size:14px;pointer-events:auto;cursor:pointer;">📅 日にちを選択</div>
+                 </div>
                </div>
                <div>
                  <label class="block text-xs font-semibold text-gray-500 mb-1">時刻</label>
