@@ -233,12 +233,20 @@ textarea.value = existing ? existing + '\n' + line : line;
 }
 const addrEl = document.getElementById('住所text');
 const addr = addrEl ? addrEl.value.trim() : '';
-const isInage = !addr || addr.includes('稲毛区');
+
+// 稲毛区内でも+30分エリアかチェック
+const 追加エリア = ['黒砂', '緑町', '小仲台', '小中台町'];
+const is稲毛区 = addr === '' || addr.includes('稲毛区');
+const is追加エリア = 追加エリア.some(a => addr.includes(a));
+const is標準 = is稲毛区 && !is追加エリア;
+
 let dur = '';
-if (isInage) {
-dur = n <= 3 ? '1時間' : '1.5時間';
+if (is標準) {
+  // 稲毛区（特定エリア除く）: 1-2台→1時間、3-4台→1.5時間、5-6台→2時間
+  dur = n <= 2 ? '1時間' : n <= 4 ? '1.5時間' : '2時間';
 } else {
-dur = n <= 3 ? '1.5時間' : '2時間';
+  // 稲毛区以外 or 特定エリア: +30分
+  dur = n <= 2 ? '1.5時間' : n <= 4 ? '2時間' : '2.5時間';
 }
 const vDur = document.getElementById('予定時間');
 if (vDur) vDur.value = dur;
@@ -249,7 +257,7 @@ const container = document.getElementById('quickTemplateArea');
 if (!container) return;
 if (!quickTemplate) { container.innerHTML = ''; return; }
 let btns = '';
-[1,2,3,4,5].forEach(function(n) {
+[1,2,3,4,5,6].forEach(function(n) {
 btns += '<button class="taisuubtn px-3 py-1 rounded-lg border-2 font-bold text-sm bg-white text-gray-700 border-gray-300 hover:bg-gray-100" data-n="' + n + '" onclick="selectTaisuuAndApply(' + n + ')">' + n + '台</button>';
 });
 container.innerHTML =
