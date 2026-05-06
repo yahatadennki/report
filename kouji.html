@@ -192,9 +192,16 @@
       color: #666;
       margin-top: 8px;
     }
+    .photo-item {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100px;
+    }
     .photo-edit-btn {
       position: absolute;
-      bottom: -6px;
+      bottom: 22px;
       left: -6px;
       background: #ff9800;
       color: white;
@@ -205,6 +212,28 @@
       cursor: pointer;
       box-shadow: 0 2px 4px rgba(0,0,0,0.2);
       z-index: 1;
+    }
+    .photo-delete-btn {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 11px;
+      padding: 3px 7px;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+    .photo-memo {
+      width: 100%;
+      padding: 3px 5px;
+      font-size: 11px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-top: 4px;
     }
     .annotation-modal {
       display: none;
@@ -889,7 +918,7 @@
             canvas.width = w; canvas.height = h;
             canvas.getContext("2d").drawImage(img, 0, 0, w, h);
             const base64 = canvas.toDataURL("image/jpeg", 0.7);
-            state.photos[currentType].push(base64);
+            state.photos[currentType].push({ data: base64, memo: "" });
             updatePhotoPreview();
             updatePhotoCount();
           };
@@ -908,7 +937,7 @@
           const div = document.createElement("div");
           div.className = "photo-item";
           const img = document.createElement("img");
-          img.src = photo;
+          img.src = photo.data;
           const badge = document.createElement("span");
           badge.className = "photo-badge";
           badge.textContent = type;
@@ -917,9 +946,26 @@
           editBtn.textContent = "✏️";
           editBtn.type = "button";
           editBtn.onclick = () => openAnn(type, index);
+          const deleteBtn = document.createElement("button");
+          deleteBtn.className = "photo-delete-btn";
+          deleteBtn.textContent = "✕";
+          deleteBtn.type = "button";
+          deleteBtn.onclick = () => {
+            state.photos[type].splice(index, 1);
+            updatePhotoPreview();
+            updatePhotoCount();
+          };
+          const memoInput = document.createElement("input");
+          memoInput.type = "text";
+          memoInput.className = "photo-memo";
+          memoInput.placeholder = "メモ";
+          memoInput.value = photo.memo || "";
+          memoInput.oninput = (e) => { photo.memo = e.target.value; };
           div.appendChild(img);
           div.appendChild(badge);
           div.appendChild(editBtn);
+          div.appendChild(deleteBtn);
+          div.appendChild(memoInput);
           preview.appendChild(div);
         });
       });
@@ -941,7 +987,7 @@
         annCtx.drawImage(img, 0, 0);
         annState.history.push(annCtx.getImageData(0, 0, annCanvas.width, annCanvas.height));
       };
-      img.src = state.photos[type][index];
+      img.src = state.photos[type][index].data;
       document.getElementById('annotationModal').classList.add('active');
     }
 
@@ -1043,7 +1089,7 @@
     }
 
     function saveAnn() {
-      state.photos[annState.type][annState.index] = annCanvas.toDataURL('image/jpeg', 0.9);
+      state.photos[annState.type][annState.index].data = annCanvas.toDataURL('image/jpeg', 0.9);
       updatePhotoPreview();
       closeAnn();
     }
@@ -1153,8 +1199,8 @@
       const paymentAmount = parseInt(document.getElementById("paymentAmount").value) || 0;
 
       const allPhotos = [];
-      state.photos.現調.forEach(photo => allPhotos.push({ type: "現調", data: photo }));
-      state.photos.完了.forEach(photo => allPhotos.push({ type: "完了", data: photo }));
+      state.photos.現調.forEach(photo => allPhotos.push({ type: "現調", data: photo.data, memo: photo.memo || "" }));
+      state.photos.完了.forEach(photo => allPhotos.push({ type: "完了", data: photo.data, memo: photo.memo || "" }));
 
       const entry = {
         staffType: state.staffType,
