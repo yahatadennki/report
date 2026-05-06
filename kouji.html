@@ -192,6 +192,63 @@
       color: #666;
       margin-top: 8px;
     }
+    .photo-edit-btn {
+      position: absolute;
+      bottom: -6px;
+      left: -6px;
+      background: #ff9800;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 11px;
+      padding: 3px 7px;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+    .annotation-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.95);
+      z-index: 3000;
+      flex-direction: column;
+      align-items: center;
+      overflow-y: auto;
+    }
+    .annotation-modal.active { display: flex; }
+    .annotation-toolbar {
+      width: 100%;
+      max-width: 640px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      background: #222;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    .ann-btn {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      background: #555;
+      color: white;
+    }
+    .ann-btn.active { background: #007bff; }
+    .ann-btn.green { background: #28a745; }
+    .ann-btn.orange { background: #ff9800; }
+    .ann-btn.red { background: #dc3545; }
+    #annotationCanvas {
+      width: 100%;
+      max-width: 640px;
+      display: block;
+      touch-action: none;
+      cursor: crosshair;
+    }
     
     .amount-group { 
       display: grid; 
@@ -547,6 +604,23 @@
     </div>
   </div>
 
+  <!-- 写真アノテーションモーダル -->
+  <div id="annotationModal" class="annotation-modal">
+    <div class="annotation-toolbar">
+      <button class="ann-btn active" id="ann-pen" onclick="setAnnTool('pen')">✏️ ペン</button>
+      <button class="ann-btn" id="ann-text" onclick="setAnnTool('text')">T テキスト</button>
+      <button class="ann-btn" id="ann-eraser" onclick="setAnnTool('eraser')">消しゴム</button>
+      <input type="color" id="annColor" value="#ff0000" style="width:36px;height:34px;border:none;border-radius:4px;padding:2px;cursor:pointer;">
+      <input type="range" id="annSize" min="2" max="24" value="4" style="width:70px;">
+      <button class="ann-btn orange" onclick="undoAnn()">↩ 戻す</button>
+      <button class="ann-btn red" onclick="clearAnn()">🗑 全消去</button>
+      <button class="ann-btn green" onclick="saveAnn()">✅ 保存</button>
+      <button class="ann-btn" onclick="closeAnn()">✕ 閉じる</button>
+    </div>
+    <input type="text" id="annTextInput" placeholder="テキスト入力 → Enter" style="display:none;width:100%;max-width:640px;padding:10px;font-size:16px;border:none;box-sizing:border-box;">
+    <canvas id="annotationCanvas"></canvas>
+  </div>
+
   <script>
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxotMc7VC2Et2ktmb4l71dyJgR6ZL_kqKwqTDWX-M8YXwPVu_73KCUqDGWBPtdryni7hQ/exec";
 
@@ -830,7 +904,7 @@
       const preview = document.getElementById("preview");
       preview.innerHTML = "";
       ["現調", "完了"].forEach(type => {
-        state.photos[type].forEach((photo) => {
+        state.photos[type].forEach((photo, index) => {
           const div = document.createElement("div");
           div.className = "photo-item";
           const img = document.createElement("img");
@@ -838,11 +912,145 @@
           const badge = document.createElement("span");
           badge.className = "photo-badge";
           badge.textContent = type;
+          const editBtn = document.createElement("button");
+          editBtn.className = "photo-edit-btn";
+          editBtn.textContent = "✏️";
+          editBtn.type = "button";
+          editBtn.onclick = () => openAnn(type, index);
           div.appendChild(img);
           div.appendChild(badge);
+          div.appendChild(editBtn);
           preview.appendChild(div);
         });
       });
+    }
+
+    // ===== 写真アノテーション =====
+    const annState = { tool: 'pen', type: '', index: -1, drawing: false, lastX: 0, lastY: 0, history: [] };
+    const annCanvas = document.getElementById('annotationCanvas');
+    const annCtx = annCanvas.getContext('2d');
+
+    function openAnn(type, index) {
+      annState.type = type;
+      annState.index = index;
+      annState.history = [];
+      const img = new Image();
+      img.onload = () => {
+        annCanvas.width = img.width;
+        annCanvas.height = img.height;
+        annCtx.drawImage(img, 0, 0);
+        annState.history.push(annCtx.getImageData(0, 0, annCanvas.width, annCanvas.height));
+      };
+      img.src = state.photos[type][index];
+      document.getElementById('annotationModal').classList.add('active');
+    }
+
+    function setAnnTool(tool) {
+      annState.tool = tool;
+      ['pen','text','eraser'].forEach(t => {
+        document.getElementById('ann-' + t).classList.toggle('active', t === tool);
+      });
+      document.getElementById('annTextInput').style.display = tool === 'text' ? 'block' : 'none';
+    }
+
+    function getAnnPos(e) {
+      const rect = annCanvas.getBoundingClientRect();
+      return {
+        x: (e.clientX - rect.left) * (annCanvas.width / rect.width),
+        y: (e.clientY - rect.top) * (annCanvas.height / rect.height)
+      };
+    }
+
+    function annStart(e) {
+      if (annState.tool === 'text') return;
+      annState.drawing = true;
+      const pos = getAnnPos(e);
+      annState.lastX = pos.x;
+      annState.lastY = pos.y;
+    }
+
+    function annMove(e) {
+      if (!annState.drawing) return;
+      const pos = getAnnPos(e);
+      annCtx.beginPath();
+      const size = parseInt(document.getElementById('annSize').value);
+      if (annState.tool === 'eraser') {
+        annCtx.globalCompositeOperation = 'destination-out';
+        annCtx.lineWidth = size * 4;
+        annCtx.strokeStyle = 'rgba(0,0,0,1)';
+      } else {
+        annCtx.globalCompositeOperation = 'source-over';
+        annCtx.lineWidth = size;
+        annCtx.strokeStyle = document.getElementById('annColor').value;
+      }
+      annCtx.lineCap = 'round';
+      annCtx.lineJoin = 'round';
+      annCtx.moveTo(annState.lastX, annState.lastY);
+      annCtx.lineTo(pos.x, pos.y);
+      annCtx.stroke();
+      annState.lastX = pos.x;
+      annState.lastY = pos.y;
+    }
+
+    function annEnd() {
+      if (!annState.drawing) return;
+      annState.drawing = false;
+      annCtx.globalCompositeOperation = 'source-over';
+      if (annState.history.length >= 20) annState.history.shift();
+      annState.history.push(annCtx.getImageData(0, 0, annCanvas.width, annCanvas.height));
+    }
+
+    annCanvas.addEventListener('mousedown', annStart);
+    annCanvas.addEventListener('mousemove', annMove);
+    annCanvas.addEventListener('mouseup', annEnd);
+    annCanvas.addEventListener('touchstart', e => { e.preventDefault(); annStart(e.touches[0]); }, { passive: false });
+    annCanvas.addEventListener('touchmove', e => { e.preventDefault(); annMove(e.touches[0]); }, { passive: false });
+    annCanvas.addEventListener('touchend', annEnd);
+    annCanvas.addEventListener('click', e => {
+      if (annState.tool !== 'text') return;
+      const pos = getAnnPos(e);
+      const input = document.getElementById('annTextInput');
+      input.style.display = 'block';
+      input.dataset.x = pos.x;
+      input.dataset.y = pos.y;
+      input.focus();
+    });
+
+    document.getElementById('annTextInput').addEventListener('keydown', e => {
+      if (e.key !== 'Enter' || !e.target.value.trim()) return;
+      const size = parseInt(document.getElementById('annSize').value) * 4 + 10;
+      annCtx.globalCompositeOperation = 'source-over';
+      annCtx.font = `bold ${size}px sans-serif`;
+      annCtx.fillStyle = document.getElementById('annColor').value;
+      annCtx.strokeStyle = '#000000';
+      annCtx.lineWidth = 1;
+      annCtx.strokeText(e.target.value, parseFloat(e.target.dataset.x), parseFloat(e.target.dataset.y));
+      annCtx.fillText(e.target.value, parseFloat(e.target.dataset.x), parseFloat(e.target.dataset.y));
+      annState.history.push(annCtx.getImageData(0, 0, annCanvas.width, annCanvas.height));
+      e.target.value = '';
+    });
+
+    function undoAnn() {
+      if (annState.history.length <= 1) return;
+      annState.history.pop();
+      annCtx.putImageData(annState.history[annState.history.length - 1], 0, 0);
+    }
+
+    function clearAnn() {
+      if (annState.history.length === 0) return;
+      annCtx.putImageData(annState.history[0], 0, 0);
+      annState.history = [annState.history[0]];
+    }
+
+    function saveAnn() {
+      state.photos[annState.type][annState.index] = annCanvas.toDataURL('image/jpeg', 0.9);
+      updatePhotoPreview();
+      closeAnn();
+    }
+
+    function closeAnn() {
+      document.getElementById('annotationModal').classList.remove('active');
+      document.getElementById('annTextInput').style.display = 'none';
     }
 
     function updateProspectItems() {
