@@ -513,7 +513,7 @@
           <button type="button" class="photo-type-btn" data-photo-type="完了">✅ 完了写真</button>
         </div>
         <input type="file" id="files" accept="image/*" multiple>
-        <div class="photo-count">現調: <span id="gentyoCount">0</span>/10枚　完了: <span id="kanryoCount">0</span>/10枚</div>
+        <div class="photo-count">現調: <span id="gentyoCount">0</span>/16枚　完了: <span id="kanryoCount">0</span>/16枚</div>
         <div class="photo-preview" id="preview"></div>
       </div>
 
@@ -795,9 +795,9 @@
     document.getElementById("files").onchange = (e) => {
       const currentType = state.currentPhotoType;
       const currentCount = state.photos[currentType].length;
-      const remaining = 10 - currentCount;
+      const remaining = 16 - currentCount;
       if (remaining <= 0) {
-        alert(`${currentType}写真は10枚までです`);
+        alert(`${currentType}写真は16枚までです`);
         e.target.value = "";
         return;
       }
