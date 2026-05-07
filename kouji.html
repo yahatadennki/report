@@ -257,7 +257,7 @@
     const PDF_TYPES = ["工事", "配達", "修理", "現調"];
     const DELIVERY_ITEMS = ["TV・BD", "冷蔵庫", "洗濯機", "調理", "家事", "理美容", "修理品", "その他"];
     const CONSTRUCTION_TYPES = ["電気", "水道", "アンテナ", "エアコン", "照明", "レンジフード", "換気扇", "ドアホン", "トイレ", "洗面台", "IH", "エコキュート", "管球", "その他"];
-    const PHOTO_TYPE_MAP = { "現調": ["現調"], "工事": ["工事前", "完了"], "配達": ["配達"], "修理": ["修理前", "修理後"] };
+    const PHOTO_TYPES = ["現調", "完了"];
     const PROSPECT_LOCATIONS = ["リビング", "台所", "寝室", "洗面所", "トイレ", "玄関", "廊下", "その他"];
     const PROSPECT_PRODUCTS = ["エアコン", "冷蔵庫", "洗濯機", "TV", "照明", "換気扇", "レンジフード", "IH", "エコキュート", "温水器", "その他"];
 
@@ -359,13 +359,8 @@
 
     function updatePhotoTypeButtons() {
       const group = document.getElementById('photo-type-group');
-      const types = new Set();
-      state.workType.forEach(wt => { if (PHOTO_TYPE_MAP[wt]) PHOTO_TYPE_MAP[wt].forEach(t => types.add(t)); });
-      if (types.size === 0) types.add('写真');
-      const typeList = Array.from(types);
-
-      group.innerHTML = '';
-      typeList.forEach(type => {
+      if (group.children.length > 0) return; // 初回のみ生成
+      PHOTO_TYPES.forEach(type => {
         const btn = document.createElement('button');
         btn.type = 'button'; btn.className = 'photo-type-btn'; btn.textContent = type; btn.dataset.photoType = type;
         btn.onclick = () => {
@@ -374,11 +369,8 @@
         };
         group.appendChild(btn);
       });
-
-      if (!typeList.includes(state.currentPhotoType)) state.currentPhotoType = typeList[0];
-      group.querySelectorAll('.photo-type-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.photoType === state.currentPhotoType);
-      });
+      state.currentPhotoType = PHOTO_TYPES[0];
+      group.querySelector('.photo-type-btn').classList.add('active');
     }
 
     function updateWorkAmountInfo() {
@@ -575,6 +567,10 @@
       if (needsPeople && !state.people) { alert('作業人数を選択してください'); return; }
       if (state.payment === '売掛' && (!state.creditMethod || !state.creditTiming)) {
         alert('売掛の場合は集金方法と入金時期を選択してください'); return;
+      }
+      if (needsPeople && state.photos.length === 0) {
+        const ok = confirm('📷 写真を撮りましたか？\n\n写真がない場合はPDFは作成されません。\nこのまま送信しますか？');
+        if (!ok) return;
       }
 
       btn.disabled = true; btn.textContent = '送信中...';
