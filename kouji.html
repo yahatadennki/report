@@ -341,7 +341,7 @@
         document.getElementById('work-amount-info').classList.add('hidden');
       }
       if (needsPeople && !wasPdf) {
-        const ok = confirm('📷 写真を撮りましたか？\n\nノーの場合は報告書が作成されません。');
+        const ok = confirm('📷 写真を撮りましたか？\n\n写真がないと報告書は作成されません。');
         if (!ok) {
           const info = document.getElementById('photo-no-report-msg');
           if (info) info.classList.remove('hidden');
