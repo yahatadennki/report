@@ -60,6 +60,17 @@
     .prospect-btn { padding: 8px 12px; border: 2px solid #ddd; border-radius: 6px; background: white; cursor: pointer; font-size: 13px; transition: all 0.2s; }
     .prospect-btn:hover { border-color: #17a2b8; background: #e6f7f9; }
     .prospect-btn.active { background: #17a2b8; color: white; border-color: #17a2b8; }
+    .worktype-pdf-row { background: #fff5e6; border: 1px solid #ffc870; border-radius: 8px; padding: 8px 10px; margin-top: 8px; }
+    .worktype-pdf-row-label { font-size: 11px; color: #c96000; font-weight: bold; margin-bottom: 6px; letter-spacing: 0.5px; }
+    .toggle-btn.pdf-work { border-color: #ffc870; }
+    .toggle-btn.pdf-work:hover { border-color: #e67e22; background: #fff5e6; }
+    .toggle-btn.pdf-work.active { background: #e67e22; border-color: #e67e22; color: white; }
+    .photo-type-btn.type-genncho { border-color: #9b59b6; }
+    .photo-type-btn.type-genncho:hover { border-color: #8e44ad; background: #f5eef8; }
+    .photo-type-btn.type-genncho.active { background: #9b59b6; border-color: #9b59b6; color: white; }
+    .photo-type-btn.type-kanryo { border-color: #17a2b8; }
+    .photo-type-btn.type-kanryo:hover { border-color: #138496; background: #e6f7f9; }
+    .photo-type-btn.type-kanryo.active { background: #17a2b8; border-color: #17a2b8; color: white; }
     .customer-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
     .customer-modal.active { display: flex; }
     .customer-modal-content { background: white; border-radius: 12px; max-width: 500px; width: 90%; max-height: 70vh; overflow-y: auto; }
@@ -108,6 +119,10 @@
     <div class="section">
       <label>作業内容 <span class="label-optional">（複数選択可）</span></label>
       <div class="btn-group" id="group-workType"></div>
+      <div class="worktype-pdf-row">
+        <div class="worktype-pdf-row-label">📄 報告書あり</div>
+        <div class="btn-group" id="group-workType-pdf"></div>
+      </div>
 
       <div id="inspection-detail" class="work-detail-section hidden">
         <label>点検内容</label>
@@ -254,7 +269,9 @@
     const GAS_URL = "https://script.google.com/macros/s/AKfycbw44LyPPZrUfCbCwGAPkukpKJ-Zt_0fhFRsZVxZi32J-uRmUoS95qBEYkncgQCSPutI4A/exec";
 
     const STAFF_LIST = ["高山", "渡辺", "伊藤", "服部"];
-    const WORK_TYPES = ["お困りごと対応", "点検", "商談", "現調", "配達", "工事", "集金", "修理", "その他"];
+    const STAFF_COLORS = { "高山": "#1565c0", "渡辺": "#2e7d32", "伊藤": "#7b1313" };
+    const WORK_TYPES = ["お困りごと対応", "点検", "商談", "集金", "その他"];
+    const WORK_TYPES_PDF = ["現調", "配達", "工事", "修理"];
     const PDF_TYPES = ["工事", "配達", "修理", "現調"];
     const DELIVERY_ITEMS = ["TV・BD", "冷蔵庫", "洗濯機", "調理", "家事", "理美容", "修理品", "その他"];
     const CONSTRUCTION_TYPES = ["電気", "水道", "アンテナ", "エアコン", "照明", "レンジフード", "換気扇", "ドアホン", "トイレ", "洗面台", "IH", "エコキュート", "管球", "その他"];
@@ -303,13 +320,13 @@
       document.getElementById('searchQuery').value = c.tel || '';
     }
 
-    function createButtons(id, list, key, multi = false) {
+    function createButtons(id, list, key, multi = false, extraClass = '') {
       const el = document.getElementById(id);
       if (!el) return;
       el.innerHTML = '';
       list.forEach(item => {
         const btn = document.createElement('button');
-        btn.type = 'button'; btn.className = 'toggle-btn'; btn.textContent = item;
+        btn.type = 'button'; btn.className = 'toggle-btn' + (extraClass ? ' ' + extraClass : ''); btn.textContent = item;
         btn.onclick = () => {
           if (multi) {
             if (state[key].includes(item)) { state[key] = state[key].filter(i => i !== item); btn.classList.remove('active'); }
@@ -320,6 +337,28 @@
           }
           if (key === 'workType') updateWorkDetails();
           if (key === 'people') updateWorkAmountInfo();
+        };
+        el.appendChild(btn);
+      });
+    }
+
+    function createStaffButtons() {
+      const el = document.getElementById('group-staff');
+      el.innerHTML = '';
+      STAFF_LIST.forEach(item => {
+        const btn = document.createElement('button');
+        btn.type = 'button'; btn.className = 'toggle-btn'; btn.textContent = item;
+        btn.onclick = () => {
+          el.querySelectorAll('.toggle-btn').forEach(b => {
+            b.classList.remove('active');
+            b.style.background = ''; b.style.borderColor = ''; b.style.color = '';
+          });
+          state.staff = item; btn.classList.add('active');
+          if (STAFF_COLORS[item]) {
+            btn.style.background = STAFF_COLORS[item];
+            btn.style.borderColor = STAFF_COLORS[item];
+            btn.style.color = 'white';
+          }
         };
         el.appendChild(btn);
       });
@@ -371,10 +410,13 @@
 
     function updatePhotoTypeButtons() {
       const group = document.getElementById('photo-type-group');
-      if (group.children.length > 0) return; // 初回のみ生成
+      if (group.children.length > 0) return;
+      const typeClasses = { "現調": "type-genncho", "完了": "type-kanryo" };
       PHOTO_TYPES.forEach(type => {
         const btn = document.createElement('button');
-        btn.type = 'button'; btn.className = 'photo-type-btn'; btn.textContent = type; btn.dataset.photoType = type;
+        btn.type = 'button';
+        btn.className = 'photo-type-btn' + (typeClasses[type] ? ' ' + typeClasses[type] : '');
+        btn.textContent = type; btn.dataset.photoType = type;
         btn.onclick = () => {
           document.querySelectorAll('.photo-type-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active'); state.currentPhotoType = type;
@@ -396,8 +438,9 @@
     }
 
     createButtons('group-time', ['午前', '午後'], 'time', true);
-    createButtons('group-staff', STAFF_LIST, 'staff');
+    createStaffButtons();
     createButtons('group-workType', WORK_TYPES, 'workType', true);
+    createButtons('group-workType-pdf', WORK_TYPES_PDF, 'workType', true, 'pdf-work');
     createButtons('group-people', ['1人', '2人', '3人', '4人以上'], 'people');
     createButtons('group-payment', ['パナカード', '現金', '売掛', 'なし'], 'payment');
     createButtons('group-deliveryItems', DELIVERY_ITEMS, 'deliveryItems', true);
