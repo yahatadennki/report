@@ -121,6 +121,7 @@ transition: background 0.2s;
 let orders = [];
 let currentDate = new Date().toISOString().slice(0, 10);
 let scriptUrl = 'https://script.google.com/macros/s/AKfycbybHVTvastbYdcePLc-WxDZtChBKtpcEPF7IYqMX4UPVs1TbfKnIhvnhlIJGtIfK8Y/exec';
+const CALENDAR_GAS = 'https://script.google.com/macros/s/AKfycbw44LyPPZrUfCbCwGAPkukpKJ-Zt_0fhFRsZVxZi32J-uRmUoS95qBEYkncgQCSPutI4A/exec';
 let selectedService = '';
 let selectedProduct = '';
 
@@ -333,6 +334,19 @@ body: JSON.stringify(order)
 console.log('スプレッドシートに送信しました');
 } catch (error) {
 console.error('送信エラー:', error);
+}
+}
+
+async function sendCalendarRequest(calData) {
+try {
+await fetch(CALENDAR_GAS, {
+method: 'POST',
+mode: 'no-cors',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify(calData)
+});
+} catch (e) {
+console.error('カレンダー送信エラー:', e);
 }
 }
 
@@ -549,6 +563,19 @@ id: Date.now(),
 
 orders.push(newOrder);
 sendToSpreadsheet(newOrder);
+if (訪問担当 === '高山' && 訪問日) {
+  sendCalendarRequest({
+    type: 'calendar',
+    date: 訪問日,
+    time: 訪問時刻,
+    visitName: 顧客名,
+    address: 住所,
+    tel: 電話番号,
+    workType: (サービス種別 || '') + (商品区分 ? ' ' + 商品区分 : ''),
+    duration: 予定時間,
+    remarks: 内容 || ''
+  });
+}
 
 document.getElementById('searchQuery').value = '';
 document.getElementById('顧客名').value = '';
