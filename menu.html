@@ -3,185 +3,140 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>㈲ヤハタ電機商会 メニュー</title>
+  <title>㈲ヤハタ電機商会 業務ポータル</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f0f2f5;
-      min-height: 100vh;
-      padding: 20px 16px 40px;
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #eef1f5; min-height: 100vh; padding: 20px 16px 40px; }
+    .container { max-width: 560px; margin: 0 auto; }
+    .header { text-align: center; margin-bottom: 28px; padding-top: 8px; }
+    .header h1 { color: #1a3c5e; font-size: 22px; font-weight: bold; }
+    .header p { color: #999; font-size: 12px; margin-top: 4px; }
+    .section-label {
+      font-size: 11px; font-weight: bold; color: #6b7280;
+      letter-spacing: 1.2px; text-transform: uppercase;
+      padding-left: 10px; border-left: 3px solid #3b82f6;
+      margin-bottom: 12px; margin-top: 28px;
     }
-    h1 {
-      text-align: center;
-      color: #1a3c5e;
-      font-size: 1.2rem;
-      margin: 16px 0 24px;
-      letter-spacing: 0.05em;
+    .card-list { display: flex; flex-direction: column; gap: 10px; }
+    .card {
+      background: white; border-radius: 14px; padding: 16px 18px;
+      text-decoration: none; display: flex; align-items: center; gap: 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      border: 2px solid transparent; transition: all 0.18s;
     }
-    .section-title {
-      font-size: 0.75rem;
-      color: #888;
-      font-weight: bold;
-      letter-spacing: 0.08em;
-      margin: 20px 0 8px 4px;
-    }
+    .card:active { transform: scale(0.98); }
+    .card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.13); transform: translateY(-1px); }
+    .icon { font-size: 30px; width: 44px; text-align: center; flex-shrink: 0; }
+    .body { flex: 1; min-width: 0; }
+    .card-title { font-weight: bold; font-size: 15px; color: #1e293b; }
+    .card-desc { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+    .tag { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+    .arrow { color: #cbd5e1; font-size: 18px; flex-shrink: 0; }
 
-    /* 横並びボタン */
-    .row {
-      display: flex;
-      gap: 8px;
-    }
-    .row a.btn {
-      flex: 1;
-    }
+    .app-himawari { border-color: #fde68a; }
+    .app-himawari:hover { border-color: #f59e0b; }
+    .app-juchu { border-color: #a7f3d0; }
+    .app-juchu:hover { border-color: #10b981; }
+    .app-kouji { border-color: #bfdbfe; }
+    .app-kouji:hover { border-color: #3b82f6; }
 
-    /* 共通ボタン */
-    a.btn {
-      display: block;
-      background: white;
-      color: #1a3c5e;
-      text-decoration: none;
-      padding: 14px 12px;
-      border-radius: 10px;
-      border: 1px solid #cdd6e0;
-      font-size: 0.85rem;
-      font-weight: bold;
-      text-align: center;
-      transition: background 0.15s, border-color 0.15s;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-    }
-    a.btn:hover {
-      background: #e8f0fb;
-      border-color: #007bff;
-    }
-    a.btn span {
-      display: block;
-      font-size: 0.7rem;
-      font-weight: normal;
-      color: #888;
-      margin-top: 3px;
-    }
-
-    /* アコーディオン */
-    .accordion-btn {
-      background: #1a3c5e;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      padding: 14px 16px;
-      font-size: 0.9rem;
-      font-weight: bold;
-      width: 100%;
-      text-align: left;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    .accordion-btn:hover {
-      background: #243f5e;
-    }
-    .accordion-btn .arrow {
-      font-size: 0.75rem;
-      transition: transform 0.2s;
-    }
-    .accordion-btn.open .arrow {
-      transform: rotate(180deg);
-    }
-    .accordion-body {
-      display: none;
-      flex-direction: column;
-      gap: 8px;
-      padding-top: 8px;
-    }
-    .accordion-body.open {
-      display: flex;
-    }
-    a.btn.disabled {
-      opacity: 0.45;
-      pointer-events: none;
-      background: #f0f0f0;
-    }
-
-    /* スプレッドシートボタン */
-    a.btn.sheet-btn {
-      background: #e8f0fb;
-      border-color: #a8c0e0;
-      font-size: 0.78rem;
-    }
-    a.btn.sheet-btn:hover {
-      background: #d0e3fb;
-      border-color: #007bff;
-    }
-    a.btn.sheet-btn span {
-      color: #6699bb;
-    }
-
-    /* 写真ボタン */
-    .photo-row {
-      display: flex;
-      gap: 8px;
-    }
-    .photo-row a.btn {
-      flex: 1;
-      background: #007bff;
-      color: white;
-      border-color: #007bff;
-    }
-    .photo-row a.btn:hover {
-      background: #0069d9;
-      border-color: #0069d9;
-    }
-    .photo-row a.btn span {
-      color: #cce0ff;
-    }
+    .sheet-juchu { border-color: #d1fae5; }
+    .sheet-juchu:hover { border-color: #059669; }
+    .tag-juchu { background: #d1fae5; color: #065f46; }
+    .sheet-kouji { border-color: #dbeafe; }
+    .sheet-kouji:hover { border-color: #2563eb; }
+    .tag-kouji { background: #dbeafe; color: #1e3a8a; }
+    .tag-staff { background: #f3e8ff; color: #6b21a8; }
+    .tag-other { background: #f1f5f9; color: #475569; }
   </style>
 </head>
 <body>
-  <h1>㈲ヤハタ電機商会</h1>
+  <div class="container">
 
-  <!-- 日報 -->
-  <div class="section-title">📋 日報</div>
-  <div class="row">
-    <a class="btn" href="juchu.html">受注日報<span>受注内容</span></a>
-    <a class="btn" href="kouji.html">工事・サービス<span>作業報告</span></a>
-    <a class="btn" href="index.html">ひまわり<span>活動報告</span></a>
-  </div>
-  <div class="row" style="margin-top:8px;">
-    <a class="btn sheet-btn" href="https://docs.google.com/spreadsheets/d/1Cg5FACS_HqpAlchsU6O4ansNHc7GO_FOWAYhpX_72_w/edit?gid=0#gid=0" target="_blank">📊 受注<span>スプレッドシート</span></a>
-    <a class="btn sheet-btn" href="https://docs.google.com/spreadsheets/d/1L57wd6u7MaX0Nw4SdpPtbCgVEbtLJkx6Pa1dvJpeZqg/edit?gid=0#gid=0" target="_blank">📊 工事・サービス<span>スプレッドシート</span></a>
-    <a class="btn sheet-btn" href="https://docs.google.com/spreadsheets/d/1WMsviRURr3Lwfi4zy4-dvH7DHO3uq4WXb4NBScwLqi4/edit?gid=1553369589#gid=1553369589" target="_blank">📊 ひまわり<span>スプレッドシート</span></a>
-  </div>
-
-  <!-- 見積書 -->
-  <div class="section-title">📄 見積書</div>
-  <button class="accordion-btn" onclick="toggleAccordion('acc-mitsumori', this)">
-    見積書を選ぶ <span class="arrow">▼</span>
-  </button>
-  <div class="accordion-body" id="acc-mitsumori">
-    <div class="row">
-      <a class="btn" href="mistumori.html">アラウーノ＆LED<span>見積書</span></a>
-      <a class="btn" href="alldenka.html">IH・レンジフード<br>&エコキュート<span>見積書</span></a>
-      <a class="btn disabled" href="#">電気工事<span>製作中</span></a>
+    <div class="header">
+      <h1>🌻 ヤハタ電機商会</h1>
+      <p>業務ポータル</p>
     </div>
-  </div>
 
-  <!-- 写真 -->
-  <div class="section-title">📷 写真フォルダ</div>
-  <div class="photo-row">
-    <a class="btn" href="https://drive.google.com/drive/u/0/folders/1--gy-_U-U-onPEZd3i8oWo290NDMZC9w" target="_blank">現調写真</a>
-    <a class="btn" href="https://drive.google.com/drive/u/0/folders/17R6uVjwN6kei_VdLjNJX4LeA6TEINwc4" target="_blank">完了写真</a>
-  </div>
+    <div class="section-label">📱 アプリ</div>
+    <div class="card-list">
 
-  <script>
-    function toggleAccordion(id, btn) {
-      const body = document.getElementById(id);
-      const isOpen = body.classList.contains('open');
-      body.classList.toggle('open', !isOpen);
-      btn.classList.toggle('open', !isOpen);
-    }
-  </script>
+      <a class="card app-himawari" href="https://yahatadennki.github.io/report/index.html" target="_blank">
+        <div class="icon">🌻</div>
+        <div class="body">
+          <div class="card-title">ひまわりスタッフ日報</div>
+          <div class="card-desc">石橋・角井・櫻井 ／ 区域・面談・TEL・ポスティング</div>
+        </div>
+        <div class="arrow">›</div>
+      </a>
+
+      <a class="card app-juchu" href="https://yahatadennki.github.io/report/juchu.html" target="_blank">
+        <div class="icon">📋</div>
+        <div class="body">
+          <div class="card-title">受注日報</div>
+          <div class="card-desc">受注・見積・訪問履歴の記録</div>
+        </div>
+        <div class="arrow">›</div>
+      </a>
+
+      <a class="card app-kouji" href="https://yahatadennki.github.io/report/kouji.html" target="_blank">
+        <div class="icon">🔧</div>
+        <div class="body">
+          <div class="card-title">業務日報</div>
+          <div class="card-desc">高山・渡辺・伊藤・服部 ／ 工事・配達・修理・現調</div>
+        </div>
+        <div class="arrow">›</div>
+      </a>
+
+    </div>
+
+    <div class="section-label">📊 スプレッドシート</div>
+    <div class="card-list">
+
+      <a class="card app-himawari" href="https://docs.google.com/spreadsheets/d/1WMsviRURr3Lwfi4zy4-dvH7DHO3uq4WXb4NBScwLqi4/edit" target="_blank">
+        <div class="icon">🌻</div>
+        <div class="body">
+          <div class="card-title">ひまわりスタッフ日報シート</div>
+          <div class="tags">
+            <span class="tag tag-other">石橋</span>
+            <span class="tag tag-other">角井</span>
+            <span class="tag tag-other">櫻井</span>
+          </div>
+        </div>
+        <div class="arrow">›</div>
+      </a>
+
+      <a class="card sheet-juchu" href="https://docs.google.com/spreadsheets/d/1Cg5FACS_HqpAlchsU6O4ansNHc7GO_FOWAYhpX_72_w/edit" target="_blank">
+        <div class="icon">📋</div>
+        <div class="body">
+          <div class="card-title">受注日報シート</div>
+          <div class="tags">
+            <span class="tag tag-juchu">受注日報</span>
+          </div>
+        </div>
+        <div class="arrow">›</div>
+      </a>
+
+      <a class="card sheet-kouji" href="https://docs.google.com/spreadsheets/d/1L57wd6u7MaX0Nw4SdpPtbCgVEbtLJkx6Pa1dvJpeZqg/edit" target="_blank">
+        <div class="icon">📊</div>
+        <div class="body">
+          <div class="card-title">業務日報シート</div>
+          <div class="tags">
+            <span class="tag tag-kouji">日報</span>
+            <span class="tag tag-staff">高山</span>
+            <span class="tag tag-staff">渡辺</span>
+            <span class="tag tag-staff">伊藤</span>
+            <span class="tag tag-staff">服部</span>
+            <span class="tag tag-other">見込み商品</span>
+            <span class="tag tag-other">顧客マスタ</span>
+          </div>
+        </div>
+        <div class="arrow">›</div>
+      </a>
+
+    </div>
+
+  </div>
 </body>
 </html>
