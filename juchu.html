@@ -623,7 +623,7 @@ id: Date.now(),
 
 orders.push(newOrder);
 sendToSpreadsheet(newOrder);
-if (訪問担当 === '高山' && 訪問日) {
+if (訪問担当 && 訪問日) {
   sendCalendarRequest({
     type: 'calendar',
     date: 訪問日,
@@ -635,7 +635,8 @@ if (訪問担当 === '高山' && 訪問日) {
     duration: 予定時間,
     remarks: 内容 || '',
     fileId: selectedEstimate ? selectedEstimate.id : null,
-    fileName: selectedEstimate ? selectedEstimate.name : null
+    fileName: selectedEstimate ? selectedEstimate.name : null,
+    calendarEmail: 訪問担当メール
   });
 }
 
