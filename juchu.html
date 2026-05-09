@@ -134,7 +134,6 @@ transition: background 0.2s;
 let orders = [];
 let currentDate = new Date().toISOString().slice(0, 10);
 let scriptUrl = 'https://script.google.com/macros/s/AKfycbybHVTvastbYdcePLc-WxDZtChBKtpcEPF7IYqMX4UPVs1TbfKnIhvnhlIJGtIfK8Y/exec';
-const CALENDAR_GAS = 'https://script.google.com/macros/s/AKfycbw44LyPPZrUfCbCwGAPkukpKJ-Zt_0fhFRsZVxZi32J-uRmUoS95qBEYkncgQCSPutI4A/exec';
 let selectedService = '';
 let selectedProduct = '';
 
@@ -356,7 +355,7 @@ async function openEstimatePicker() {
   const listEl = document.getElementById('estimateList');
   listEl.innerHTML = '<div class="p-4 text-center text-gray-500">読み込み中...</div>';
   try {
-    const resp = await fetch(CALENDAR_GAS + '?action=listEstimates');
+    const resp = await fetch(scriptUrl + '?action=listEstimates');
     const files = await resp.json();
     if (!Array.isArray(files) || files.length === 0) {
       listEl.innerHTML = '<div class="p-4 text-center text-gray-500">見積書(PDF)フォルダにファイルがありません</div>';
@@ -396,18 +395,6 @@ function renderSelectedEstimate() {
     '</div>';
 }
 
-async function sendCalendarRequest(calData) {
-try {
-await fetch(CALENDAR_GAS, {
-method: 'POST',
-mode: 'no-cors',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify(calData)
-});
-} catch (e) {
-console.error('カレンダー送信エラー:', e);
-}
-}
 
 function selectStaff(btn) {
 document.querySelectorAll('.staff-btn').forEach((b, i) => {
@@ -618,27 +605,12 @@ id: Date.now(),
 担当, 種類, 顧客名, 住所, 電話番号, サービス種別, 業者種別, 商品区分, 商品詳細,
 訪問日時, 訪問担当, 訪問担当メール, 予定時間, 内容,
 見込商品: 見込商品リスト,
-添付ファイル: selectedEstimate ? selectedEstimate.name : ''
+添付ファイル: selectedEstimate ? selectedEstimate.name : '',
+添付ファイルID: selectedEstimate ? selectedEstimate.id : null
 };
 
 orders.push(newOrder);
 sendToSpreadsheet(newOrder);
-if (訪問担当 && 訪問日) {
-  sendCalendarRequest({
-    type: 'calendar',
-    date: 訪問日,
-    time: 訪問時刻,
-    visitName: 顧客名,
-    address: 住所,
-    tel: 電話番号,
-    workType: (サービス種別 || '') + (商品区分 ? ' ' + 商品区分 : ''),
-    duration: 予定時間,
-    remarks: 内容 || '',
-    fileId: selectedEstimate ? selectedEstimate.id : null,
-    fileName: selectedEstimate ? selectedEstimate.name : null,
-    calendarEmail: 訪問担当メール
-  });
-}
 
 document.getElementById('searchQuery').value = '';
 document.getElementById('顧客名').value = '';
