@@ -104,6 +104,19 @@ transition: background 0.2s;
 <body class="min-h-screen bg-gradient-to-br from-orange-50 to-yellow-100">
 <div id="app" class="p-4 max-w-6xl mx-auto"></div>
 
+<!-- 見積書選択モーダル -->
+<div id="estimateModal" class="customer-modal">
+<div class="customer-modal-content">
+<div class="bg-orange-500 text-white p-4 rounded-t-xl">
+<div class="flex justify-between items-center">
+<h3 class="font-bold text-lg">📄 見積書を選択</h3>
+<button onclick="hideEstimateModal()" class="text-white text-2xl">&times;</button>
+</div>
+</div>
+<div id="estimateList"><div class="p-4 text-center text-gray-500">読み込み中...</div></div>
+</div>
+</div>
+
 <!-- 顧客検索モーダル -->
 <div id="customerModal" class="customer-modal">
 <div class="customer-modal-content">
@@ -154,7 +167,7 @@ const 見込品名リスト = ["エアコン", "冷蔵庫", "洗濯機", "TV", "
 let 見込商品リスト = [];
 let quickTemplate = '';
 let quickTaisuu = 0;
-let attachments = [];
+let selectedEstimate = null;
 
 // 顧客検索（GETリクエストで検索）
 async function searchCust() {
@@ -338,45 +351,49 @@ console.error('送信エラー:', error);
 }
 }
 
-async function uploadAttachment(file) {
-  if (file.size > 15 * 1024 * 1024) { alert('15MB以下のファイルを選択してください'); return; }
-  const base64 = await new Promise(resolve => {
-    const reader = new FileReader();
-    reader.onload = e => resolve(e.target.result);
-    reader.readAsDataURL(file);
-  });
-  const uploadBtn = document.getElementById('attachUploadBtn');
-  if (uploadBtn) { uploadBtn.textContent = '⏳ アップロード中...'; uploadBtn.disabled = true; }
+async function openEstimatePicker() {
+  document.getElementById('estimateModal').classList.add('active');
+  const listEl = document.getElementById('estimateList');
+  listEl.innerHTML = '<div class="p-4 text-center text-gray-500">読み込み中...</div>';
   try {
-    const resp = await fetch(CALENDAR_GAS, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'attachment', filename: file.name, mimeType: file.type || 'application/octet-stream', data: base64 })
-    });
-    const result = await resp.json();
-    if (result.ok) {
-      attachments.push({ name: file.name, url: result.url });
-      renderAttachments();
-    } else {
-      alert('アップロード失敗: ' + result.error);
+    const resp = await fetch(CALENDAR_GAS + '?action=listEstimates');
+    const files = await resp.json();
+    if (!Array.isArray(files) || files.length === 0) {
+      listEl.innerHTML = '<div class="p-4 text-center text-gray-500">見積書(PDF)フォルダにファイルがありません</div>';
+      return;
     }
+    listEl.innerHTML = '';
+    files.forEach(function(f) {
+      const div = document.createElement('div');
+      div.className = 'customer-search-result';
+      const dateStr = new Date(f.date).toLocaleDateString('ja-JP');
+      div.innerHTML = '<div class="font-bold text-gray-800">📄 ' + f.name + '</div><div class="text-sm text-gray-500">' + dateStr + '</div>';
+      div.onclick = function() { selectEstimate(f.id, f.name); };
+      listEl.appendChild(div);
+    });
   } catch(e) {
-    alert('アップロードエラー: ' + e.message);
-  } finally {
-    if (uploadBtn) { uploadBtn.textContent = '📎 添付'; uploadBtn.disabled = false; }
-    document.getElementById('attachmentInput').value = '';
+    listEl.innerHTML = '<div class="p-4 text-center text-red-500">読み込みエラー: ' + e.message + '</div>';
   }
 }
 
-function renderAttachments() {
+function selectEstimate(id, name) {
+  selectedEstimate = { id: id, name: name };
+  renderSelectedEstimate();
+  hideEstimateModal();
+}
+
+function hideEstimateModal() {
+  document.getElementById('estimateModal').classList.remove('active');
+}
+
+function renderSelectedEstimate() {
   const el = document.getElementById('attachmentList');
   if (!el) return;
-  el.innerHTML = attachments.map((a, i) =>
-    `<div style="display:flex;align-items:center;gap:6px;font-size:12px;margin-top:4px;">
-      <a href="${a.url}" target="_blank" style="color:#2563eb;text-decoration:underline;word-break:break-all;">${a.name}</a>
-      <button onclick="attachments.splice(${i},1);renderAttachments();" style="color:#dc2626;background:none;border:none;cursor:pointer;font-size:14px;">✕</button>
-    </div>`
-  ).join('');
+  if (!selectedEstimate) { el.innerHTML = ''; return; }
+  el.innerHTML = '<div style="display:flex;align-items:center;gap:6px;font-size:12px;margin-top:4px;padding:5px 10px;background:#f0fdf4;border:1px solid #86efac;border-radius:6px;">' +
+    '<span>📄 ' + selectedEstimate.name + '</span>' +
+    '<button onclick="selectedEstimate=null;renderSelectedEstimate();" style="color:#dc2626;background:none;border:none;cursor:pointer;font-size:14px;margin-left:4px;">✕</button>' +
+    '</div>';
 }
 
 async function sendCalendarRequest(calData) {
@@ -601,7 +618,7 @@ id: Date.now(),
 担当, 種類, 顧客名, 住所, 電話番号, サービス種別, 業者種別, 商品区分, 商品詳細,
 訪問日時, 訪問担当, 訪問担当メール, 予定時間, 内容,
 見込商品: 見込商品リスト,
-添付ファイル: attachments.map(a => a.url).join('\n')
+添付ファイル: selectedEstimate ? selectedEstimate.name : ''
 };
 
 orders.push(newOrder);
@@ -616,7 +633,9 @@ if (訪問担当 === '高山' && 訪問日) {
     tel: 電話番号,
     workType: (サービス種別 || '') + (商品区分 ? ' ' + 商品区分 : ''),
     duration: 予定時間,
-    remarks: 内容 || ''
+    remarks: 内容 || '',
+    fileId: selectedEstimate ? selectedEstimate.id : null,
+    fileName: selectedEstimate ? selectedEstimate.name : null
   });
 }
 
@@ -635,6 +654,7 @@ selected業者 = [];
 見込商品リスト = [];
 quickTemplate = '';
 quickTaisuu = 0;
+selectedEstimate = null;
 render();
 }
 
@@ -793,10 +813,9 @@ document.getElementById('app').innerHTML = `
                <button onclick="selectQuickTemplate('エアコン点検')" class="quick-tpl-btn px-4 py-2 rounded-lg border-2 font-semibold text-sm transition-all bg-sky-50 text-sky-700 border-sky-300 hover:bg-sky-100">
                  ❄️ エアコン点検
                </button>
-               <label id="attachUploadBtn" style="display:flex;align-items:center;gap:4px;padding:8px 14px;border-radius:8px;border:2px solid #d1d5db;background:#f9fafb;color:#374151;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">
-                 📎 添付
-                 <input type="file" id="attachmentInput" style="display:none;" onchange="if(this.files[0])uploadAttachment(this.files[0])">
-               </label>
+               <button onclick="openEstimatePicker()" style="display:flex;align-items:center;gap:4px;padding:8px 14px;border-radius:8px;border:2px solid #d1d5db;background:#f9fafb;color:#374151;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">
+                 📎 見積書を添付
+               </button>
              </div>
              <div id="attachmentList"></div>
              <div id="quickTemplateArea"></div>
@@ -912,6 +931,7 @@ document.getElementById('app').innerHTML = `
      `;
 renderProductSection();
 render見込商品();
+renderSelectedEstimate();
 }
 
 render();
