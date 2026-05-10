@@ -117,11 +117,6 @@
     </div>
 
     <div class="section">
-      <label>パッケージ <span class="label-optional">（複数選択可）</span></label>
-      <div class="btn-group" id="group-package"></div>
-    </div>
-
-    <div class="section">
       <label>作業内容 <span class="label-optional">（複数選択可）</span></label>
       <div class="btn-group" id="group-workType"></div>
       <div class="worktype-pdf-row">
@@ -275,8 +270,7 @@
 
     const STAFF_LIST = ["高山", "渡辺", "伊藤", "服部"];
     const STAFF_COLORS = { "高山": "#1565c0", "渡辺": "#2e7d32", "伊藤": "#7b1313" };
-    const PACKAGES = ["エアコン", "防犯カメラ", "あらうーの", "エキスパート", "HH", "管球", "家電", "マンション", "アンテナ", "電気工事", "レンジフード", "施設照明", "オール電化"];
-    const WORK_TYPES = ["お困りごと対応", "点検", "商談", "集金", "その他"];
+const WORK_TYPES = ["お困りごと対応", "点検", "商談", "集金", "その他"];
     const WORK_TYPES_PDF = ["現調", "配達", "工事", "修理"];
     const PDF_TYPES = ["工事", "配達", "修理", "現調"];
     const DELIVERY_ITEMS = ["TV・BD", "冷蔵庫", "洗濯機", "調理", "家事", "理美容", "修理品", "その他"];
@@ -286,7 +280,7 @@
     const PROSPECT_PRODUCTS = ["エアコン", "冷蔵庫", "洗濯機", "TV", "照明", "換気扇", "レンジフード", "IH", "エコキュート", "温水器", "その他"];
 
     const state = {
-      time: [], staff: "", package: [], workType: [],
+      time: [], staff: "", workType: [],
       inspectionAircon: 0, inspectionOther: 0,
       deliveryItems: [], constructionTypes: [],
       repairEquipment: "", repairSymptom: "", repairContent: "",
@@ -445,8 +439,7 @@
 
     createButtons('group-time', ['午前', '午後'], 'time', true);
     createStaffButtons();
-    createButtons('group-package', PACKAGES, 'package', true);
-    createButtons('group-workType', WORK_TYPES, 'workType', true);
+createButtons('group-workType', WORK_TYPES, 'workType', true);
     createButtons('group-workType-pdf', WORK_TYPES_PDF, 'workType', true, 'pdf-work');
     createButtons('group-people', ['1人', '2人', '3人', '4人以上'], 'people');
     createButtons('group-payment', ['パナカード', '現金', '売掛', 'なし'], 'payment');
@@ -640,8 +633,7 @@
         staff: state.staff,
         time: state.time.join('・'),
         visitName: visitName,
-        package: state.package.join('、'),
-        workType: state.workType.join('、'),
+workType: state.workType.join('、'),
         inspectionAircon: state.inspectionAircon,
         inspectionOther: state.inspectionOther,
         deliveryItems: state.deliveryItems.join('、'),
