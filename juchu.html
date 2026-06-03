@@ -404,6 +404,7 @@ async function openEstimatePicker() {
   document.getElementById('estimateModal').classList.add('active');
   const listEl = document.getElementById('estimateList');
   listEl.innerHTML = '<div class="p-4 text-center text-gray-500">読み込み中...</div>';
+  const customerName = document.getElementById('顧客名').value.trim();
   try {
     const resp = await fetch(scriptUrl + '?action=listEstimates');
     const files = await resp.json();
@@ -411,8 +412,18 @@ async function openEstimatePicker() {
       listEl.innerHTML = '<div class="p-4 text-center text-gray-500">見積書(PDF)フォルダにファイルがありません</div>';
       return;
     }
+    const filtered = customerName
+      ? files.filter(f => f.name.includes(customerName))
+      : files;
+    if (filtered.length === 0) {
+      listEl.innerHTML = '<div class="p-4 text-center text-gray-500">「' + customerName + '」の見積書が見つかりません</div>';
+      return;
+    }
     listEl.innerHTML = '';
-    files.forEach(function(f) {
+    if (customerName) {
+      listEl.innerHTML = '<div class="p-3 text-xs text-gray-500 border-b border-gray-100">「' + customerName + '」の見積書（' + filtered.length + '件）</div>';
+    }
+    filtered.forEach(function(f) {
       const div = document.createElement('div');
       div.className = 'customer-search-result';
       const dateStr = new Date(f.date).toLocaleDateString('ja-JP');
