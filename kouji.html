@@ -25,6 +25,8 @@
     .submit-btn { width: 100%; padding: 16px; background: #28a745; color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; margin-top: 30px; cursor: pointer; transition: background 0.2s; }
     .submit-btn:disabled { background: #ccc; cursor: not-allowed; }
     .submit-btn:hover:not(:disabled) { background: #218838; }
+    .print-btn { width: 100%; padding: 14px; background: #17a2b8; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; margin-top: 12px; cursor: pointer; transition: background 0.2s; }
+    .print-btn:hover { background: #138496; }
     .photo-type-btn { padding: 10px 14px; border: 2px solid #ddd; border-radius: 8px; background: white; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.2s; }
     .photo-type-btn:hover { border-color: #17a2b8; background: #e6f7f9; }
     .photo-type-btn.active { background: #17a2b8; color: white; border-color: #17a2b8; }
@@ -238,6 +240,7 @@
       <input type="text" id="remarks" placeholder="気が付いた点はなんでも記入してください">
     </div>
 
+    <button type="button" id="printBtn" class="print-btn" onclick="printKanryo()">🖨️ 完了報告書を印刷</button>
     <button type="button" id="sendBtn" class="submit-btn">📤 報告書を送信する</button>
   </div>
 
@@ -617,6 +620,63 @@ createButtons('group-workType', WORK_TYPES, 'workType', true);
     }
 
     document.getElementById('addProspectBtn').onclick = () => { state.prospectItems.push({location:'',product:'',content:''}); updateProspectItems(); };
+
+    function printKanryo() {
+      const kanryoPhotos = state.photos.filter(p => p.type === '完了');
+      if (kanryoPhotos.length === 0) {
+        alert('完了写真がありません。写真タイプを「完了」にして写真を追加してください。');
+        return;
+      }
+      const date = document.getElementById('date').value;
+      const visitName = document.getElementById('visitName').value || '（現場名未入力）';
+      const staff = state.staff || '（担当者未選択）';
+      const workType = state.workType.join('・') || '（作業内容未選択）';
+
+      const pages = [];
+      for (let i = 0; i < kanryoPhotos.length; i += 4) pages.push(kanryoPhotos.slice(i, i + 4));
+
+      const pageHtml = pages.map((page, pageIdx) => {
+        const cells = page.map(p => `
+          <div class="photo-cell">
+            <img src="${p.data}" alt="">
+            ${p.memo ? `<div class="photo-memo">${p.memo}</div>` : ''}
+          </div>`).join('');
+        return `
+          <div class="page">
+            <div class="page-header">
+              <div class="report-title">完了報告書</div>
+              <div class="report-meta">${date}&emsp;${visitName}&emsp;担当：${staff}&emsp;${workType}</div>
+              ${pages.length > 1 ? `<div class="page-num">${pageIdx + 1} / ${pages.length}</div>` : ''}
+            </div>
+            <div class="photo-grid">${cells}</div>
+          </div>`;
+      }).join('');
+
+      const html = `<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+<style>
+  @page { size: A4 landscape; margin: 10mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: sans-serif; }
+  .page { width: 100%; height: 190mm; display: flex; flex-direction: column; page-break-after: always; }
+  .page:last-child { page-break-after: auto; }
+  .page-header { display: flex; align-items: baseline; gap: 10mm; border-bottom: 1px solid #333; padding-bottom: 2mm; margin-bottom: 4mm; flex-shrink: 0; }
+  .report-title { font-size: 14pt; font-weight: bold; white-space: nowrap; }
+  .report-meta { font-size: 9pt; color: #444; flex: 1; }
+  .page-num { font-size: 9pt; color: #999; white-space: nowrap; }
+  .photo-grid { display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 5mm; flex: 1; min-height: 0; }
+  .photo-cell { display: flex; flex-direction: column; overflow: hidden; border: 1px solid #ccc; border-radius: 2mm; }
+  .photo-cell img { width: 100%; flex: 1; object-fit: cover; min-height: 0; display: block; }
+  .photo-memo { font-size: 7pt; color: #333; padding: 1mm 2mm; background: #f5f5f5; text-align: center; flex-shrink: 0; }
+</style>
+</head><body>${pageHtml}
+<script>window.onload = () => { window.print(); };<\/script>
+</body></html>`;
+
+      const win = window.open('', '_blank');
+      win.document.write(html);
+      win.document.close();
+    }
 
     document.getElementById('sendBtn').onclick = async () => {
       const btn = document.getElementById('sendBtn');

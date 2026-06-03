@@ -102,7 +102,26 @@ transition: background 0.2s;
 </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-orange-50 to-yellow-100">
-<div id="app" class="p-4 max-w-6xl mx-auto"></div>
+
+<!-- PIN認証オーバーレイ -->
+<div id="pinOverlay" style="display:none;position:fixed;inset:0;background:linear-gradient(135deg,#1a3c5e,#2d6a9f);z-index:9999;display:flex;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:20px;padding:40px 32px;width:90%;max-width:360px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.4);">
+    <div style="font-size:48px;margin-bottom:8px;">🏢</div>
+    <div style="font-size:18px;font-weight:bold;color:#1a3c5e;margin-bottom:4px;">㈲ヤハタ電機商会</div>
+    <div style="font-size:13px;color:#888;margin-bottom:28px;">受注日報</div>
+    <div style="font-size:13px;font-weight:bold;color:#555;margin-bottom:10px;">PINコードを入力してください</div>
+    <input id="pinInput" type="password" inputmode="numeric" maxlength="4" autocomplete="off"
+      style="width:100%;padding:14px;font-size:28px;letter-spacing:12px;text-align:center;border:2px solid #ddd;border-radius:12px;outline:none;margin-bottom:16px;"
+      placeholder="● ● ● ●"
+      onfocus="this.style.borderColor='#f97316'"
+      onblur="this.style.borderColor='#ddd'"
+      onkeydown="if(event.key==='Enter')verifyPin()">
+    <div id="pinError" style="color:#dc2626;font-size:13px;margin-bottom:12px;min-height:18px;"></div>
+    <button onclick="verifyPin()" style="width:100%;padding:14px;background:#f97316;color:white;border:none;border-radius:12px;font-size:16px;font-weight:bold;cursor:pointer;">ログイン</button>
+  </div>
+</div>
+
+<div id="app" class="p-4 max-w-6xl mx-auto" style="display:none;"></div>
 
 <!-- 見積書選択モーダル -->
 <div id="estimateModal" class="customer-modal">
@@ -131,6 +150,47 @@ transition: background 0.2s;
 </div>
 
 <script>
+// PIN認証
+const PIN_HASH = 'e2f691407acb1efa4c9f9f8b1ae626cf6d9a4d96e73e207e9ea7f429293127a8';
+const AUTH_KEY = 'juchu_auth';
+const AUTH_DAYS = 30;
+
+async function hashPin(pin) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pin));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function verifyPin() {
+  const pin = document.getElementById('pinInput').value;
+  if (pin.length !== 4) { document.getElementById('pinError').textContent = '4桁のPINを入力してください'; return; }
+  const h = await hashPin(pin);
+  if (h === PIN_HASH) {
+    const expires = Date.now() + AUTH_DAYS * 86400000;
+    localStorage.setItem(AUTH_KEY, expires);
+    showApp();
+  } else {
+    document.getElementById('pinError').textContent = '❌ PINが違います';
+    document.getElementById('pinInput').value = '';
+    document.getElementById('pinInput').focus();
+  }
+}
+
+function showApp() {
+  document.getElementById('pinOverlay').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  render();
+}
+
+(async function initAuth() {
+  const stored = localStorage.getItem(AUTH_KEY);
+  if (stored && Date.now() < parseInt(stored)) {
+    showApp();
+  } else {
+    localStorage.removeItem(AUTH_KEY);
+    document.getElementById('pinOverlay').style.display = 'flex';
+  }
+})();
+
 let orders = [];
 let currentDate = new Date().toISOString().slice(0, 10);
 let scriptUrl = 'https://script.google.com/macros/s/AKfycbybHVTvastbYdcePLc-WxDZtChBKtpcEPF7IYqMX4UPVs1TbfKnIhvnhlIJGtIfK8Y/exec';
@@ -907,7 +967,6 @@ render見込商品();
 renderSelectedEstimate();
 }
 
-render();
 </script>
 </body>
 </html>
