@@ -181,16 +181,6 @@ function showApp() {
   render();
 }
 
-(async function initAuth() {
-  const stored = localStorage.getItem(AUTH_KEY);
-  if (stored && Date.now() < parseInt(stored)) {
-    showApp();
-  } else {
-    localStorage.removeItem(AUTH_KEY);
-    document.getElementById('pinOverlay').style.display = 'flex';
-  }
-})();
-
 let orders = [];
 let currentDate = new Date().toISOString().slice(0, 10);
 let scriptUrl = 'https://script.google.com/macros/s/AKfycbybHVTvastbYdcePLc-WxDZtChBKtpcEPF7IYqMX4UPVs1TbfKnIhvnhlIJGtIfK8Y/exec';
@@ -967,6 +957,17 @@ render見込商品();
 renderSelectedEstimate();
 }
 
+async function initAuth() {
+  const stored = localStorage.getItem(AUTH_KEY);
+  if (stored && Date.now() < parseInt(stored)) {
+    showApp();
+  } else {
+    localStorage.removeItem(AUTH_KEY);
+    document.getElementById('pinOverlay').style.display = 'flex';
+  }
+}
+
+initAuth();
 </script>
 </body>
 </html>
