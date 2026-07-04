@@ -11,6 +11,22 @@
 .btn-select { transition: all 0.15s; }
 .btn-select:active { transform: scale(0.95); }
 
+/* クイック入力ボタン（統一デザイン） */
+.quick-btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px; padding: 10px 4px; border-radius: 8px; border: 2px solid;
+  font-weight: 600; font-size: 13px; line-height: 1.2; transition: all 0.15s; cursor: pointer;
+  background: white;
+}
+.quick-btn:active { transform: scale(0.96); }
+.quick-btn .quick-ico { font-size: 20px; line-height: 1; }
+.quick-btn.sky   { background:#f0f9ff; color:#0369a1; border-color:#7dd3fc; }
+.quick-btn.sky.active   { background:#0ea5e9; color:#fff; border-color:#0284c7; box-shadow:0 2px 6px rgba(2,132,199,0.35); }
+.quick-btn.green { background:#f0fdf4; color:#15803d; border-color:#86efac; }
+.quick-btn.green.active { background:#22c55e; color:#fff; border-color:#16a34a; box-shadow:0 2px 6px rgba(22,163,74,0.35); }
+.quick-btn.gray  { background:#f9fafb; color:#374151; border-color:#d1d5db; }
+.quick-btn.gray.active  { background:#4b5563; color:#fff; border-color:#374151; box-shadow:0 2px 6px rgba(55,65,81,0.35); }
+
 .prospect-item {
 background: #f8f9fa;
 padding: 15px;
@@ -187,7 +203,7 @@ let scriptUrl = 'https://script.google.com/macros/s/AKfycbybHVTvastbYdcePLc-WxDZ
 let selectedService = '';
 let selectedProduct = '';
 
-const 担当者リスト = ['宇留野', '石橋', '角井', '櫻井', '高山', '伊藤', '服部'];
+const 担当者リスト = ['宇留野', '石橋', '角井', '北沢', '高山', '伊藤', '服部'];
 const 種類リスト = ['電話', 'LINE', '来店', '訪問'];
 
 const 訪問担当者リスト = [
@@ -196,8 +212,20 @@ const 訪問担当者リスト = [
 { name: '服部', email: 'yahata.hattori@gmail.com' },
 { name: '石橋', email: 'yahata.ishibashi@gmail.com' },
 { name: '角井', email: 'yahata.kakui@gmail.com' },
-{ name: '櫻井', email: 'yahata.sakurai@gmail.com' }
+{ name: '北沢', email: 'yahata.kitazawa@gmail.com' },
+{ name: '宇留野', email: 'yahata.uruno@gmail.com' }
 ];
+
+// 受注担当者 → メール（電話連絡カレンダー用）
+const 受注担当メールMap = {
+'宇留野': 'yahata.uruno@gmail.com',
+'石橋': 'yahata.ishibashi@gmail.com',
+'角井': 'yahata.kakui@gmail.com',
+'高山': 'yawata51@gmail.com',
+'伊藤': 'yahata.itou@gmail.com',
+'服部': 'yahata.hattori@gmail.com',
+'北沢': 'yahata.kitazawa@gmail.com'
+};
 
 const 予定時間リスト = ['0.5時間', '1時間', '1.5時間', '2時間', '2.5時間', '3時間', '4時間', '5時間'];
 
@@ -275,22 +303,25 @@ function togglePhoneContact() {
   const btn = document.getElementById('phoneContactBtn');
   if (el.value.startsWith(PHONE_MARK)) {
     el.value = el.value.slice(PHONE_MARK.length);
-    if (btn) btn.className = 'quick-tpl-btn px-4 py-2 rounded-lg border-2 font-semibold text-sm transition-all bg-green-50 text-green-700 border-green-300 hover:bg-green-100';
+    if (btn) btn.classList.remove('active');
   } else {
     el.value = PHONE_MARK + el.value;
-    if (btn) btn.className = 'quick-tpl-btn px-4 py-2 rounded-lg border-2 font-semibold text-sm transition-all bg-green-500 text-white border-green-600';
+    if (btn) btn.classList.add('active');
   }
 }
 
 function selectQuickTemplate(name) {
+const btn = document.getElementById('airconBtn');
 if (quickTemplate === name) {
 quickTemplate = '';
 quickTaisuu = 0;
+if (btn) btn.classList.remove('active');
 renderQuickTemplate();
 return;
 }
 quickTemplate = name;
 quickTaisuu = 0;
+if (btn) btn.classList.add('active');
 renderQuickTemplate();
 const vStaff = document.getElementById('訪問担当');
       if (vStaff && !vStaff.value) vStaff.value = '伊藤';
@@ -380,7 +411,7 @@ const staffColors = [
 { normal: 'bg-blue-100 text-blue-800 border-blue-300',       active: 'bg-blue-200 text-blue-900 border-blue-400' },   // 宇留野
 { normal: 'bg-red-100 text-red-800 border-red-300',          active: 'bg-red-200 text-red-900 border-red-400' },      // 石橋
 { normal: 'bg-yellow-100 text-yellow-800 border-yellow-300', active: 'bg-yellow-200 text-yellow-900 border-yellow-400' }, // 角井
-{ normal: 'bg-purple-100 text-purple-800 border-purple-300', active: 'bg-purple-200 text-purple-900 border-purple-400' }, // 櫻井
+{ normal: 'bg-purple-100 text-purple-800 border-purple-300', active: 'bg-purple-200 text-purple-900 border-purple-400' }, // 北沢（櫻井の色を継承）
 { normal: 'bg-sky-100 text-sky-800 border-sky-300',          active: 'bg-sky-200 text-sky-900 border-sky-400' },      // 高山
 { normal: 'c-enji-normal',                                   active: 'c-enji-active' },                               // 伊藤
 { normal: 'bg-green-100 text-green-800 border-green-300',    active: 'bg-green-200 text-green-900 border-green-400' } // 服部
@@ -462,6 +493,8 @@ function hideEstimateModal() {
 
 function renderSelectedEstimate() {
   const el = document.getElementById('attachmentList');
+  const btn = document.getElementById('estimateBtn');
+  if (btn) btn.classList.toggle('active', !!selectedEstimate);
   if (!el) return;
   if (!selectedEstimate) { el.innerHTML = ''; return; }
   el.innerHTML = '<div style="display:flex;align-items:center;gap:6px;font-size:12px;margin-top:4px;padding:5px 10px;background:#f0fdf4;border:1px solid #86efac;border-radius:6px;">' +
@@ -667,6 +700,8 @@ const 訪問担当 = document.getElementById('訪問担当')?.value || '';
 const 訪問担当メール = 訪問担当 ? 訪問担当者リスト.find(t => t.name === 訪問担当)?.email || '' : '';
 const 予定時間 = document.getElementById('予定時間')?.value || '';
 const 内容 = document.getElementById('内容').value;
+const 電話連絡 = 顧客名.startsWith(PHONE_MARK);
+const 受注担当メール = 受注担当メールMap[担当] || '';
 
 if (!担当 || !種類 || !顧客名) {
 alert('担当、種類、顧客名は必須項目です');
@@ -679,6 +714,7 @@ id: Date.now(),
 登録時刻: new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }),
 担当, 種類, 顧客名, 住所, 電話番号, サービス種別, 業者種別, 商品区分, 商品詳細,
 訪問日時, 訪問担当, 訪問担当メール, 予定時間, 内容,
+電話連絡, 受注担当メール,
 見込商品: 見込商品リスト,
 添付ファイル: selectedEstimate ? selectedEstimate.name : '',
 添付ファイルID: selectedEstimate ? selectedEstimate.id : null
@@ -689,7 +725,7 @@ sendToSpreadsheet(newOrder);
 
 document.getElementById('searchQuery').value = '';
 document.getElementById('顧客名').value = '';
-{ const pcb = document.getElementById('phoneContactBtn'); if (pcb) pcb.className = 'quick-tpl-btn px-4 py-2 rounded-lg border-2 font-semibold text-sm transition-all bg-green-50 text-green-700 border-green-300 hover:bg-green-100'; }
+{ const pcb = document.getElementById('phoneContactBtn'); if (pcb) pcb.classList.remove('active'); }
 document.getElementById('住所text').value = '';
 document.getElementById('電話番号').value = '';
 document.getElementById('訪問日').value = '';
@@ -858,15 +894,15 @@ document.getElementById('app').innerHTML = `
            <!-- ★クイック入力（訪問日時・担当の上に移動） -->
            <div>
              <label class="block text-sm font-semibold text-gray-700 mb-2">⚡ クイック入力</label>
-             <div class="flex gap-2 flex-wrap mb-2" style="justify-content:space-between;align-items:flex-start;">
-               <button onclick="selectQuickTemplate('エアコン点検')" class="quick-tpl-btn px-4 py-2 rounded-lg border-2 font-semibold text-sm transition-all bg-sky-50 text-sky-700 border-sky-300 hover:bg-sky-100">
-                 ❄️ エアコン点検
+             <div class="grid grid-cols-3 gap-2 mb-2">
+               <button id="airconBtn" onclick="selectQuickTemplate('エアコン点検')" class="quick-btn sky">
+                 <span class="quick-ico">❄️</span><span>エアコン点検</span>
                </button>
-               <button id="phoneContactBtn" onclick="togglePhoneContact()" class="quick-tpl-btn px-4 py-2 rounded-lg border-2 font-semibold text-sm transition-all bg-green-50 text-green-700 border-green-300 hover:bg-green-100">
-                 ☎ 電話連絡
+               <button id="phoneContactBtn" onclick="togglePhoneContact()" class="quick-btn green">
+                 <span class="quick-ico">☎</span><span>電話連絡</span>
                </button>
-               <button onclick="openEstimatePicker()" style="display:flex;align-items:center;gap:4px;padding:8px 14px;border-radius:8px;border:2px solid #d1d5db;background:#f9fafb;color:#374151;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">
-                 📎 見積書を添付
+               <button id="estimateBtn" onclick="openEstimatePicker()" class="quick-btn gray">
+                 <span class="quick-ico">📎</span><span>見積書添付</span>
                </button>
              </div>
              <div id="attachmentList"></div>
