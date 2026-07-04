@@ -64,6 +64,51 @@
 </style>
 </head>
 <body>
+<!-- PIN認証オーバーレイ -->
+<div id="pinOverlay" style="position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,#1a3c5e,#2d6a9f);z-index:9999;display:flex;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:20px;padding:40px 32px;width:90%;max-width:360px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.4);">
+    <div style="font-size:48px;margin-bottom:8px;">🌻</div>
+    <div style="font-size:18px;font-weight:bold;color:#1a3c5e;margin-bottom:4px;">㈲ヤハタ電機商会</div>
+    <div style="font-size:13px;color:#888;margin-bottom:28px;">ひまわりスタッフ日報</div>
+    <div style="font-size:13px;font-weight:bold;color:#555;margin-bottom:10px;">PINコードを入力してください</div>
+    <input id="pinInput" type="password" inputmode="numeric" maxlength="4" autocomplete="off"
+      style="width:100%;padding:14px;font-size:28px;letter-spacing:12px;text-align:center;border:2px solid #ddd;border-radius:12px;outline:none;margin-bottom:16px;"
+      placeholder="● ● ● ●"
+      onfocus="this.style.borderColor='#f97316'"
+      onblur="this.style.borderColor='#ddd'"
+      onkeydown="if(event.key==='Enter')verifyPin()">
+    <div id="pinError" style="color:#dc2626;font-size:13px;margin-bottom:12px;min-height:18px;"></div>
+    <button onclick="verifyPin()" style="width:100%;padding:14px;background:#f97316;color:white;border:none;border-radius:12px;font-size:16px;font-weight:bold;cursor:pointer;">ログイン</button>
+  </div>
+</div>
+<script>
+(function(){
+  const PIN_HASH = 'aa4b0d224e2b4488c6e3c5692347a0e26322d86dcb6bf01ab937e15d76037ee4';
+  const AUTH_KEY = 'himawari_auth';
+  const AUTH_DAYS = 30;
+  async function hashPin(pin){
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pin));
+    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+  window.verifyPin = async function(){
+    const pin = document.getElementById('pinInput').value;
+    if(pin.length!==4){document.getElementById('pinError').textContent='4桁のPINを入力してください';return;}
+    const h = await hashPin(pin);
+    if(h===PIN_HASH){
+      localStorage.setItem(AUTH_KEY, Date.now()+AUTH_DAYS*86400000);
+      document.getElementById('pinOverlay').style.display='none';
+    }else{
+      document.getElementById('pinError').textContent='❌ PINが違います';
+      document.getElementById('pinInput').value='';
+      document.getElementById('pinInput').focus();
+    }
+  };
+  const stored = localStorage.getItem(AUTH_KEY);
+  if(stored && Date.now()<parseInt(stored)){
+    document.getElementById('pinOverlay').style.display='none';
+  }
+})();
+</script>
   <h2>🌻 ひまわりスタッフ 日報</h2>
   <p class="sub">㈲ヤハタ電機商会</p>
 
