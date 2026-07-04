@@ -268,6 +268,20 @@ document.getElementById('電話番号').value = customer.tel || '';
 document.getElementById('searchQuery').value = customer.tel || '';
 }
 
+const PHONE_MARK = '☎】';
+function togglePhoneContact() {
+  const el = document.getElementById('顧客名');
+  if (!el) return;
+  const btn = document.getElementById('phoneContactBtn');
+  if (el.value.startsWith(PHONE_MARK)) {
+    el.value = el.value.slice(PHONE_MARK.length);
+    if (btn) btn.className = 'quick-tpl-btn px-4 py-2 rounded-lg border-2 font-semibold text-sm transition-all bg-green-50 text-green-700 border-green-300 hover:bg-green-100';
+  } else {
+    el.value = PHONE_MARK + el.value;
+    if (btn) btn.className = 'quick-tpl-btn px-4 py-2 rounded-lg border-2 font-semibold text-sm transition-all bg-green-500 text-white border-green-600';
+  }
+}
+
 function selectQuickTemplate(name) {
 if (quickTemplate === name) {
 quickTemplate = '';
@@ -675,6 +689,7 @@ sendToSpreadsheet(newOrder);
 
 document.getElementById('searchQuery').value = '';
 document.getElementById('顧客名').value = '';
+{ const pcb = document.getElementById('phoneContactBtn'); if (pcb) pcb.className = 'quick-tpl-btn px-4 py-2 rounded-lg border-2 font-semibold text-sm transition-all bg-green-50 text-green-700 border-green-300 hover:bg-green-100'; }
 document.getElementById('住所text').value = '';
 document.getElementById('電話番号').value = '';
 document.getElementById('訪問日').value = '';
@@ -846,6 +861,9 @@ document.getElementById('app').innerHTML = `
              <div class="flex gap-2 flex-wrap mb-2" style="justify-content:space-between;align-items:flex-start;">
                <button onclick="selectQuickTemplate('エアコン点検')" class="quick-tpl-btn px-4 py-2 rounded-lg border-2 font-semibold text-sm transition-all bg-sky-50 text-sky-700 border-sky-300 hover:bg-sky-100">
                  ❄️ エアコン点検
+               </button>
+               <button id="phoneContactBtn" onclick="togglePhoneContact()" class="quick-tpl-btn px-4 py-2 rounded-lg border-2 font-semibold text-sm transition-all bg-green-50 text-green-700 border-green-300 hover:bg-green-100">
+                 ☎ 電話連絡
                </button>
                <button onclick="openEstimatePicker()" style="display:flex;align-items:center;gap:4px;padding:8px 14px;border-radius:8px;border:2px solid #d1d5db;background:#f9fafb;color:#374151;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">
                  📎 見積書を添付
