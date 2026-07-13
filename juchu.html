@@ -304,7 +304,7 @@ function updateTimeEstimate() {
   const addr = (document.getElementById('住所text')?.value || '').trim();
   if (!addr) { box.innerHTML = ''; return; }
   const AREA_20 = ['袖ケ浦', '袖ヶ浦', '茂原', '国府関'];
-  const AREA_15 = ['穴川', '小仲台', '小中台', '稲毛町', '花見川区', '中央区', '美浜区', '四街道', '佐倉市', '小倉町'];
+  const AREA_15 = ['穴川', '小仲台', '小中台', '稲毛町', '緑町', '花見川区', '中央区', '美浜区', '四街道', '佐倉市', '小倉町'];
   let level;
   if (AREA_20.some(a => addr.includes(a)))      level = 20;
   else if (AREA_15.some(a => addr.includes(a))) level = 15;
