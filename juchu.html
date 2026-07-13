@@ -290,7 +290,9 @@ document.getElementById('customerModal').classList.remove('active');
 
 // 検索結果を入力欄に反映
 function applyCustomer(customer) {
-document.getElementById('顧客名').value = customer.name || '';
+// ☎電話連絡ONのままなら、上書きしてもマークを維持する
+const name = customer.name || '';
+document.getElementById('顧客名').value = (phoneContactOn && !name.startsWith(PHONE_MARK)) ? PHONE_MARK + name : name;
 document.getElementById('住所text').value = customer.address || '';
 document.getElementById('電話番号').value = customer.tel || '';
 document.getElementById('searchQuery').value = customer.tel || '';
@@ -383,16 +385,19 @@ function pickSearchResult(i) {
 }
 
 const PHONE_MARK = '☎】';
+let phoneContactOn = false;   // ☎ボタンのON状態（顧客名の上書きに影響されない）
 function togglePhoneContact() {
   const el = document.getElementById('顧客名');
   if (!el) return;
   const btn = document.getElementById('phoneContactBtn');
-  if (el.value.startsWith(PHONE_MARK)) {
-    el.value = el.value.slice(PHONE_MARK.length);
+  if (phoneContactOn) {
+    phoneContactOn = false;
+    if (el.value.startsWith(PHONE_MARK)) el.value = el.value.slice(PHONE_MARK.length);
     if (btn) btn.classList.remove('active');
     renderPhoneStaff(false);
   } else {
-    el.value = PHONE_MARK + el.value;
+    phoneContactOn = true;
+    if (!el.value.startsWith(PHONE_MARK)) el.value = PHONE_MARK + el.value;
     if (btn) btn.classList.add('active');
     renderPhoneStaff(true);
   }
@@ -817,8 +822,9 @@ const 訪問担当 = document.getElementById('訪問担当')?.value || '';
 const 訪問担当メール = 訪問担当 ? 訪問担当者リスト.find(t => t.name === 訪問担当)?.email || '' : '';
 const 予定時間 = document.getElementById('予定時間')?.value || '';
 const 内容 = document.getElementById('内容').value;
-const 電話連絡 = 顧客名.startsWith(PHONE_MARK);
+const 電話連絡 = phoneContactOn || 顧客名.startsWith(PHONE_MARK);
 const 受注担当メール = 受注担当メールMap[担当] || '';
+const 顧客名送信 = (電話連絡 && !顧客名.startsWith(PHONE_MARK)) ? PHONE_MARK + 顧客名 : 顧客名;
 
 if (!担当 || !種類 || !顧客名) {
 alert('担当、種類、顧客名は必須項目です');
@@ -829,7 +835,7 @@ const newOrder = {
 id: Date.now(),
 日付: currentDate,
 登録時刻: new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }),
-担当, 種類, 顧客名, 住所, 電話番号, サービス種別, 業者種別, 商品区分, 商品詳細,
+担当, 種類, 顧客名: 顧客名送信, 住所, 電話番号, サービス種別, 業者種別, 商品区分, 商品詳細,
 訪問日時, 訪問担当, 訪問担当メール, 予定時間, 内容,
 電話連絡, 受注担当メール,
 見込商品: 見込商品リスト,
@@ -842,7 +848,9 @@ sendToSpreadsheet(newOrder);
 
 document.getElementById('searchQuery').value = '';
 document.getElementById('顧客名').value = '';
+phoneContactOn = false;
 { const pcb = document.getElementById('phoneContactBtn'); if (pcb) pcb.classList.remove('active'); }
+{ const psa = document.getElementById('phoneStaffArea'); if (psa) psa.innerHTML = ''; }
 document.getElementById('住所text').value = '';
 document.getElementById('電話番号').value = '';
 document.getElementById('訪問日').value = '';
