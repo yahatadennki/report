@@ -294,6 +294,82 @@ document.getElementById('顧客名').value = customer.name || '';
 document.getElementById('住所text').value = customer.address || '';
 document.getElementById('電話番号').value = customer.tel || '';
 document.getElementById('searchQuery').value = customer.tel || '';
+updateTimeEstimate();
+}
+
+// ── 住所 → 訪問時間の目安（イラスト表示＋予定時間の自動セット）──
+function updateTimeEstimate() {
+  const box = document.getElementById('timeEstimateBox');
+  if (!box) return;
+  const addr = (document.getElementById('住所text')?.value || '').trim();
+  if (!addr) { box.innerHTML = ''; return; }
+  const AREA_20 = ['袖ケ浦', '袖ヶ浦', '茂原', '国府関'];
+  const AREA_15 = ['穴川', '小仲台', '小中台', '稲毛町', '花見川区', '中央区', '美浜区', '四街道', '佐倉市', '小倉町'];
+  let level;
+  if (AREA_20.some(a => addr.includes(a)))      level = 20;
+  else if (AREA_15.some(a => addr.includes(a))) level = 15;
+  else                                          level = 10; // 稲毛区・愛生町・その他＝基本
+  const cfg = {
+    10: { dur: '1時間',   label: '基本エリア',   road: '🏪🚗･･🏠',        bg: '#e8f7ec', border: '#4a9e6e', color: '#1b5e20' },
+    15: { dur: '1.5時間', label: '少し遠いエリア', road: '🏪🚗━━･･･🏠',     bg: '#fff6e5', border: '#f0a500', color: '#8a5a00' },
+    20: { dur: '2時間',   label: '遠方エリア',    road: '🏪🚗━━━━━･･･🏠', bg: '#fdeaea', border: '#d9534f', color: '#8b1a1a' }
+  }[level];
+  box.innerHTML =
+    '<div style="display:flex;align-items:center;gap:10px;border:2px solid ' + cfg.border + ';background:' + cfg.bg + ';border-radius:10px;padding:8px 12px;margin-top:6px">' +
+    '<div style="font-size:20px;letter-spacing:1px">' + cfg.road + '</div>' +
+    '<div><div style="font-size:11px;font-weight:bold;color:' + cfg.color + '">' + cfg.label + '</div>' +
+    '<div style="font-size:16px;font-weight:900;color:' + cfg.color + '">訪問目安 ' + cfg.dur + '</div></div></div>';
+  // 予定時間にも自動セット（手動で変更可）
+  const vDur = document.getElementById('予定時間');
+  if (vDur) vDur.value = cfg.dur;
+}
+
+// ── 入力しただけで候補表示（商品見積と同じUX）──
+let _searchTimer = null;
+let _lastSearchResults = [];
+
+function onSearchInput() {
+  clearTimeout(_searchTimer);
+  const q = (document.getElementById('searchQuery').value || '').trim();
+  const box = document.getElementById('searchResults');
+  if (q.length < 2) { if (box) box.innerHTML = ''; return; }
+  _searchTimer = setTimeout(function() { liveSearch(q); }, 300);
+}
+
+function onSearchNow() {
+  clearTimeout(_searchTimer);
+  liveSearch((document.getElementById('searchQuery').value || '').trim());
+}
+
+async function liveSearch(q) {
+  const box = document.getElementById('searchResults');
+  if (!box) return;
+  if (!q) { box.innerHTML = ''; return; }
+  box.innerHTML = '<div class="p-2 text-sm text-gray-400">検索中…</div>';
+  try {
+    const resp = await fetch(scriptUrl + '?action=search&query=' + encodeURIComponent(q));
+    const results = await resp.json();
+    _lastSearchResults = (results || []).slice(0, 20);
+    if (_lastSearchResults.length === 0) {
+      box.innerHTML = '<div class="p-2 text-sm text-gray-400">該当なし</div>';
+      return;
+    }
+    box.innerHTML = _lastSearchResults.map(function(r, i) {
+      return '<div class="customer-search-result" onclick="pickSearchResult(' + i + ')">' +
+        '<div class="font-bold text-gray-800 text-sm">' + (r.name || '') + '</div>' +
+        '<div class="text-xs text-gray-500">' + (r.tel || '') + '　' + (r.address || '') + '</div></div>';
+    }).join('');
+  } catch (e) {
+    box.innerHTML = '<div class="p-2 text-sm text-red-400">検索エラー</div>';
+  }
+}
+
+function pickSearchResult(i) {
+  const r = _lastSearchResults[i];
+  if (!r) return;
+  applyCustomer(r);
+  const box = document.getElementById('searchResults');
+  if (box) box.innerHTML = '';
 }
 
 const PHONE_MARK = '☎】';
@@ -872,9 +948,10 @@ document.getElementById('app').innerHTML = `
            <div>
              <label class="block text-sm font-semibold text-gray-700 mb-2">${icons.search} 顧客検索</label>
              <div class="flex gap-2">
-               <input type="text" id="searchQuery" class="flex-1 p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="電話番号 or 顧客名 or 住所 or カタカナ">
-               <button onclick="searchCust()" class="bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center gap-2">${icons.search} 検索</button>
+               <input type="text" id="searchQuery" oninput="onSearchInput()" class="flex-1 p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="名前・電話・住所・カタカナ（入力で候補表示）">
+               <button onclick="onSearchNow()" class="bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center gap-2">${icons.search} 検索</button>
              </div>
+             <div id="searchResults" class="border border-gray-200 rounded-lg mt-1 overflow-y-auto bg-white" style="max-height:230px;"></div>
            </div>
 
            <!-- 顧客名 -->
@@ -886,7 +963,8 @@ document.getElementById('app').innerHTML = `
            <!-- 住所 -->
            <div>
              <label class="block text-sm font-semibold text-gray-700 mb-2">${icons.mapPin} 住所</label>
-             <input type="text" id="住所text" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="例: 長沼町 または ◯◯マンション101号室">
+             <input type="text" id="住所text" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="例: 長沼町 または ◯◯マンション101号室" oninput="updateTimeEstimate()">
+             <div id="timeEstimateBox"></div>
            </div>
 
            <!-- 電話番号 -->
