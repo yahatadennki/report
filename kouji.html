@@ -286,7 +286,7 @@
     </div>
 
     <button type="button" id="printBtn" class="print-btn" onclick="printKanryo()">🖨️ 完了報告書を印刷</button>
-    <button type="button" id="sendBtn" class="submit-btn">📤 報告書を送信する</button>
+    <button type="button" id="sendBtn" class="submit-btn">📤 日報を送信する</button>
   </div>
 
   <div id="customerModal" class="customer-modal">
@@ -771,7 +771,7 @@ workType: state.workType.join('、'),
         location.reload();
       } catch (err) {
         alert('❌ エラーが発生しました。もう一度お試しください。');
-        console.error(err); btn.disabled = false; btn.textContent = '📤 報告書を送信する';
+        console.error(err); btn.disabled = false; btn.textContent = '📤 日報を送信する';
       }
     };
   </script>
