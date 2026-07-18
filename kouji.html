@@ -156,7 +156,7 @@
       <label>🔍 顧客検索</label>
       <input type="text" id="searchQuery" placeholder="電話番号 or 顧客名 or カタカナ" oninput="filterCust()" autocomplete="off">
       <div id="custLoadStatus" style="font-size:12px;color:#999;margin-top:4px;">顧客データ読込中...</div>
-      <div id="custResults" style="margin-top:4px;border-radius:8px;overflow:hidden;"></div>
+      <div id="custResults" style="margin-top:4px;border-radius:8px;max-height:230px;overflow-y:auto;"></div>
 
       <label>訪問先名（現場名）</label>
       <input type="text" id="visitName" placeholder="例：山田太郎様">
