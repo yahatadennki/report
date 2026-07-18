@@ -336,44 +336,53 @@ function updateTimeEstimate() {
   }
 }
 
-// ── 入力しただけで候補表示（商品見積と同じUX）──
-let _searchTimer = null;
+// ── 入力しただけで即候補表示（商品見積・業務日報と同じ：全顧客を起動時に読込→ローカル絞込）──
 let _lastSearchResults = [];
+let _customers = [];
+(async function loadCustomers() {
+  try {
+    const resp = await fetch(scriptUrl + '?action=customers');
+    _customers = await resp.json();
+  } catch (e) { console.error('顧客データ読込失敗', e); }
+})();
+
+function toKana(str) {
+  return String(str)
+    .replace(/ｶﾞ/g,'ガ').replace(/ｷﾞ/g,'ギ').replace(/ｸﾞ/g,'グ').replace(/ｹﾞ/g,'ゲ').replace(/ｺﾞ/g,'ゴ')
+    .replace(/ｻﾞ/g,'ザ').replace(/ｼﾞ/g,'ジ').replace(/ｽﾞ/g,'ズ').replace(/ｾﾞ/g,'ゼ').replace(/ｿﾞ/g,'ゾ')
+    .replace(/ﾀﾞ/g,'ダ').replace(/ﾁﾞ/g,'ヂ').replace(/ﾂﾞ/g,'ヅ').replace(/ﾃﾞ/g,'デ').replace(/ﾄﾞ/g,'ド')
+    .replace(/ﾊﾞ/g,'バ').replace(/ﾋﾞ/g,'ビ').replace(/ﾌﾞ/g,'ブ').replace(/ﾍﾞ/g,'ベ').replace(/ﾎﾞ/g,'ボ')
+    .replace(/ﾊﾟ/g,'パ').replace(/ﾋﾟ/g,'ピ').replace(/ﾌﾟ/g,'プ').replace(/ﾍﾟ/g,'ペ').replace(/ﾎﾟ/g,'ポ')
+    .replace(/ｳﾞ/g,'ヴ')
+    .replace(/[ｦ-ﾝ]/g, function(c) {
+      const hw = 'ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ';
+      const fw = 'ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン';
+      const i = hw.indexOf(c); return i >= 0 ? fw[i] : c;
+    })
+    .replace(/[ぁ-ん]/g, function(c) { return String.fromCharCode(c.charCodeAt(0) + 0x60); });
+}
+function normalizeQ(str) { return toKana(str).replace(/[-\s　]/g,'').toLowerCase(); }
 
 function onSearchInput() {
-  clearTimeout(_searchTimer);
-  const q = (document.getElementById('searchQuery').value || '').trim();
-  const box = document.getElementById('searchResults');
-  if (q.length < 2) { if (box) box.innerHTML = ''; return; }
-  _searchTimer = setTimeout(function() { liveSearch(q); }, 300);
-}
-
-function onSearchNow() {
-  clearTimeout(_searchTimer);
-  liveSearch((document.getElementById('searchQuery').value || '').trim());
-}
-
-async function liveSearch(q) {
+  const raw = (document.getElementById('searchQuery').value || '').trim();
   const box = document.getElementById('searchResults');
   if (!box) return;
-  if (!q) { box.innerHTML = ''; return; }
-  box.innerHTML = '<div class="p-2 text-sm text-gray-400">検索中…</div>';
-  try {
-    const resp = await fetch(scriptUrl + '?action=search&query=' + encodeURIComponent(q));
-    const results = await resp.json();
-    _lastSearchResults = (results || []).slice(0, 20);
-    if (_lastSearchResults.length === 0) {
-      box.innerHTML = '<div class="p-2 text-sm text-gray-400">該当なし</div>';
-      return;
-    }
-    box.innerHTML = _lastSearchResults.map(function(r, i) {
-      return '<div class="customer-search-result" onclick="pickSearchResult(' + i + ')">' +
-        '<div class="font-bold text-gray-800 text-sm">' + (r.name || '') + '</div>' +
-        '<div class="text-xs text-gray-500">' + (r.tel || '') + '　' + (r.address || '') + '</div></div>';
-    }).join('');
-  } catch (e) {
-    box.innerHTML = '<div class="p-2 text-sm text-red-400">検索エラー</div>';
+  if (!raw) { box.innerHTML = ''; return; }
+  const q = normalizeQ(raw);
+  const qTel = raw.replace(/[-\s]/g, '');
+  _lastSearchResults = _customers.filter(function(c) {
+    return normalizeQ(c.name).includes(q) || normalizeQ(c.kana).includes(q) ||
+      (c.tels && c.tels.includes(qTel)) || (c.address && c.address.includes(raw));
+  }).slice(0, 15);
+  if (_lastSearchResults.length === 0) {
+    box.innerHTML = '<div class="p-2 text-sm text-gray-400">該当なし</div>';
+    return;
   }
+  box.innerHTML = _lastSearchResults.map(function(r, i) {
+    return '<div class="customer-search-result" onclick="pickSearchResult(' + i + ')">' +
+      '<div class="font-bold text-gray-800 text-sm">' + (r.name || '') + '</div>' +
+      '<div class="text-xs text-gray-500">' + (r.tel || '') + '　' + (r.address || '') + '</div></div>';
+  }).join('');
 }
 
 function pickSearchResult(i) {
@@ -965,10 +974,7 @@ document.getElementById('app').innerHTML = `
            <!-- 顧客検索 -->
            <div>
              <label class="block text-sm font-semibold text-gray-700 mb-2">${icons.search} 顧客検索</label>
-             <div class="flex gap-2">
-               <input type="text" id="searchQuery" oninput="onSearchInput()" class="flex-1 p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="名前・電話・住所・カタカナ（入力で候補表示）">
-               <button onclick="onSearchNow()" class="bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center gap-2">${icons.search} 検索</button>
-             </div>
+             <input type="text" id="searchQuery" oninput="onSearchInput()" autocomplete="off" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="名前・電話・住所・カタカナ（入力で候補表示）">
              <div id="searchResults" class="border border-gray-200 rounded-lg mt-1 overflow-y-auto bg-white" style="max-height:230px;"></div>
            </div>
 
