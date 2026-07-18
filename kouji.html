@@ -217,15 +217,12 @@
     <div class="section">
       <label>売上金額（千円単位）※半角数字</label>
       <div class="amount-group">
-        <div class="amount-item">
-          <label>💰 成約(見積書)</label>
-          <input type="number" id="salesAmount" placeholder="例：250" value="0">
-        </div>
         <div class="amount-item" id="work-amount-wrapper">
           <label>🔧 工事/配達(売上伝票)</label>
           <input type="number" id="workAmount" placeholder="例：50" value="0">
         </div>
       </div>
+      <!-- 成約金額は商品見積システム側で管理するため入力欄を廃止（シートのK列は0のまま維持） -->
       <div id="work-amount-info" class="work-amount-info hidden"></div>
     </div>
 
@@ -753,7 +750,7 @@ workType: state.workType.join('、'),
         repairContent: state.repairContent,
         inspectionContent: state.inspectionContent,
         hasEstimate: state.hasEstimate,
-        salesAmount: parseInt(document.getElementById('salesAmount').value) || 0,
+        salesAmount: 0, // 成約金額は商品見積システム側で管理（欄廃止・シートK列は0固定）
         workAmount: parseInt(document.getElementById('workAmount').value) || 0,
         people: state.people,
         payment: state.payment,
