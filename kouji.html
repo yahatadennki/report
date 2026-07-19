@@ -154,9 +154,9 @@
       <div class="btn-group" id="group-staff"></div>
 
       <label>🔍 顧客検索</label>
-      <input type="text" id="searchQuery" placeholder="電話番号 or 顧客名 or カタカナ" oninput="filterCust()" autocomplete="off">
+      <input type="text" id="searchQuery" placeholder="名前・電話・住所・カタカナ（入力で候補表示）" oninput="filterCust()" autocomplete="off">
       <div id="custLoadStatus" style="font-size:12px;color:#999;margin-top:4px;">顧客データ読込中...</div>
-      <div id="custResults" style="margin-top:4px;border-radius:8px;max-height:230px;overflow-y:auto;"></div>
+      <div id="custResults" style="margin-top:4px;border:1px solid #e5e7eb;border-radius:8px;max-height:230px;overflow-y:auto;background:#fff;display:none;"></div>
 
       <label>訪問先名（現場名）</label>
       <input type="text" id="visitName" placeholder="例：山田太郎様">
@@ -370,7 +370,7 @@ const WORK_TYPES = ["お困りごと対応", "点検", "商談", "集金", "そ�
     function filterCust() {
       const raw = document.getElementById('searchQuery').value.trim();
       const div = document.getElementById('custResults');
-      if (!raw) { div.innerHTML = ''; return; }
+      if (!raw) { div.innerHTML = ''; div.style.display = 'none'; return; }
       const q = normalizeQ(raw);
       const qTel = raw.replace(/[-\s]/g, '');
       const matches = customers.filter(c =>
@@ -378,11 +378,15 @@ const WORK_TYPES = ["お困りごと対応", "点検", "商談", "集金", "そ�
         (c.tels && c.tels.includes(qTel)) || (c.address && c.address.includes(raw))
       ).slice(0, 15);
       window._custMatches = matches;
+      div.style.display = '';
+      if (matches.length === 0) {
+        div.innerHTML = '<div style="padding:8px;font-size:13px;color:#9ca3af;">該当なし</div>';
+        return;
+      }
       div.innerHTML = matches.map((c, i) =>
-        '<div class="customer-search-result" style="background:#fff;border:1px solid #e8e8e8;" onclick="pickCust(' + i + ')">' +
-        '<div style="font-weight:bold;">' + (c.name || '') + '</div>' +
-        '<div style="font-size:13px;color:#666;">' + (c.tel || '') + '</div>' +
-        '<div style="font-size:13px;color:#999;">' + (c.address || '') + '</div></div>'
+        '<div class="customer-search-result" onclick="pickCust(' + i + ')">' +
+        '<div style="font-weight:bold;color:#1f2937;font-size:14px;">' + (c.name || '') + '</div>' +
+        '<div style="font-size:12px;color:#6b7280;">' + (c.tel || '') + '　' + (c.address || '') + '</div></div>'
       ).join('');
     }
 
