@@ -185,8 +185,11 @@
       </div>
 
       <div id="delivery-detail" class="work-detail-section hidden">
-        <label>配達商品 <span class="label-optional">（複数選択可）</span></label>
-        <div class="btn-group" id="group-deliveryItems"></div>
+        <label>🛒 商品 <span class="label-optional">（配達・工事は必須）</span></label>
+        <div style="font-size:12px;color:#888;margin-bottom:4px;">大分類を選ぶと商品が出ます（複数選択可）</div>
+        <div class="btn-group" id="group-prodMajor"></div>
+        <div class="btn-group" id="group-prodCategory" style="margin-top:8px;"></div>
+        <div id="prod-selected" style="margin-top:8px;font-size:13px;color:#2e7d32;font-weight:bold;"></div>
       </div>
 
       <div id="construction-detail" class="work-detail-section hidden">
@@ -321,7 +324,16 @@
 const WORK_TYPES = ["お困りごと対応", "点検", "商談", "集金", "その他"];
     const WORK_TYPES_PDF = ["現調", "配達", "工事", "修理"];
     const PDF_TYPES = ["工事", "配達", "修理", "現調"];
-    const DELIVERY_ITEMS = ["TV・BD", "冷蔵庫", "洗濯機", "調理", "家事", "理美容", "修理品", "その他"];
+    // 商品マスタ(37カテゴリ)を大分類に振り分け。マスタにあってここに無いカテゴリは自動で「その他」へ
+    const PROD_GROUPS = {
+      'AV・情報': ['テレビ','ビデオ','イメージング','オーディオ','ＡＶＣアクセサリー','情報通信','HDD'],
+      '調理器具': ['炊飯器','電子レンジ','電化調理','ＩＨクッキングヒーター','食器洗い乾燥機／生ごみ処理機'],
+      '生活家電': ['洗濯機','掃除機','アイロン','冷蔵庫','アクア商品'],
+      '空調・住環境': ['エアコン','空気清浄機／加湿機／除湿機','冬物商品','エコキュート'],
+      '水まわり': ['トイレ設備','温水洗浄便座'],
+      '美容・健康': ['美容商品','シェーバー／オーラル','マッサージチェア','その他健康商品','補聴器'],
+      '照明・電材': ['管球','照明器具','電池・電池応用品','配線','住宅火災警報器','ﾀﾞｳﾝﾗｲﾄ','器具本体','ﾗｲﾄﾊﾞｰ(40形)','ﾗｲﾄﾊﾞｰ(20形)']
+    };
     const CONSTRUCTION_TYPES = ["電気", "水道", "アンテナ", "エアコン", "照明", "レンジフード", "換気扇", "ドアホン", "トイレ", "洗面台", "IH", "エコキュート", "管球", "その他"];
     const PHOTO_TYPES = ["現調", "完了"];
     const PROSPECT_LOCATIONS = ["リビング", "台所", "寝室", "洗面所", "トイレ", "玄関", "廊下", "その他"];
@@ -462,7 +474,9 @@ const WORK_TYPES = ["お困りごと対応", "点検", "商談", "集金", "そ�
 
     function updateWorkDetails() {
       document.getElementById('inspection-detail').classList.toggle('hidden', !state.workType.includes('点検'));
-      document.getElementById('delivery-detail').classList.toggle('hidden', !state.workType.includes('配達'));
+      // 商品選択は配達・工事どちらでも表示
+      const needsProduct = state.workType.includes('配達') || state.workType.includes('工事');
+      document.getElementById('delivery-detail').classList.toggle('hidden', !needsProduct);
       document.getElementById('construction-detail').classList.toggle('hidden', !state.workType.includes('工事'));
       document.getElementById('repair-detail').classList.toggle('hidden', !state.workType.includes('修理'));
       document.getElementById('genncho-detail').classList.toggle('hidden', !state.workType.includes('現調'));
@@ -491,9 +505,10 @@ const WORK_TYPES = ["お困りごと対応", "点検", "商談", "集金", "そ�
         document.getElementById('inspectionAircon').value = 0;
         document.getElementById('inspectionOther').value = 0;
       }
-      if (!state.workType.includes('配達')) {
+      if (!needsProduct) {
         state.deliveryItems = [];
-        document.querySelectorAll('#group-deliveryItems .toggle-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('#group-prodCategory .toggle-btn').forEach(b => b.classList.remove('active'));
+        if (typeof renderProdSelected === 'function') renderProdSelected();
       }
       if (!state.workType.includes('工事')) {
         state.constructionTypes = [];
@@ -539,8 +554,61 @@ createButtons('group-workType', WORK_TYPES, 'workType', true);
     createButtons('group-workType-pdf', WORK_TYPES_PDF, 'workType', true, 'pdf-work');
     createButtons('group-people', ['1人', '2人', '3人', '4人以上'], 'people');
     createButtons('group-payment', ['パナカード', '現金', '売掛', 'なし'], 'payment');
-    createButtons('group-deliveryItems', DELIVERY_ITEMS, 'deliveryItems', true);
     createButtons('group-constructionTypes', CONSTRUCTION_TYPES, 'constructionTypes', true);
+
+    // ══ 商品（大分類→カテゴリ）カスケード。商品マスタ(action=products)から取得 ══
+    let PROD_MASTER = { order: [], items: {} };
+    let PROD_BY_MAJOR = {}, PROD_MAJORS = [];
+    function buildProdGroups() {
+      PROD_BY_MAJOR = {}; PROD_MAJORS = [];
+      const cat2major = {};
+      Object.keys(PROD_GROUPS).forEach(mj => PROD_GROUPS[mj].forEach(c => cat2major[c] = mj));
+      (PROD_MASTER.order || []).forEach(cat => {
+        const mj = cat2major[cat] || 'その他';
+        if (!PROD_BY_MAJOR[mj]) PROD_BY_MAJOR[mj] = [];
+        PROD_BY_MAJOR[mj].push(cat);
+      });
+      PROD_MAJORS = Object.keys(PROD_GROUPS).filter(mj => PROD_BY_MAJOR[mj]);
+      if (PROD_BY_MAJOR['その他']) PROD_MAJORS.push('その他');
+    }
+    function renderProdMajors() {
+      const el = document.getElementById('group-prodMajor'); el.innerHTML = '';
+      PROD_MAJORS.forEach(mj => {
+        const btn = document.createElement('button');
+        btn.type = 'button'; btn.className = 'toggle-btn'; btn.textContent = mj;
+        btn.onclick = () => {
+          el.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active'); renderProdCategories(mj);
+        };
+        el.appendChild(btn);
+      });
+    }
+    function renderProdCategories(mj) {
+      const el = document.getElementById('group-prodCategory'); el.innerHTML = '';
+      (PROD_BY_MAJOR[mj] || []).forEach(cat => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'toggle-btn' + (state.deliveryItems.includes(cat) ? ' active' : '');
+        btn.textContent = cat;
+        btn.onclick = () => {
+          if (state.deliveryItems.includes(cat)) { state.deliveryItems = state.deliveryItems.filter(x => x !== cat); btn.classList.remove('active'); }
+          else { state.deliveryItems.push(cat); btn.classList.add('active'); }
+          renderProdSelected();
+        };
+        el.appendChild(btn);
+      });
+    }
+    function renderProdSelected() {
+      const el = document.getElementById('prod-selected');
+      el.textContent = state.deliveryItems.length ? '✓ 選択中: ' + state.deliveryItems.join('、') : '';
+    }
+    (async function loadProducts() {
+      try {
+        const res = await fetch(GAS_URL + '?action=products');
+        PROD_MASTER = await res.json();
+      } catch (e) { PROD_MASTER = { order: [], items: {} }; }
+      buildProdGroups(); renderProdMajors(); renderProdSelected();
+    })();
     updatePhotoTypeButtons();
 
     document.getElementById('date').value = new Date().toISOString().split('T')[0];
@@ -773,6 +841,9 @@ createButtons('group-workType', WORK_TYPES, 'workType', true);
       if (!state.staff) { alert('担当者を選択してください'); return; }
       if (!visitName) { alert('訪問先名を入力してください'); return; }
       if (state.workType.length === 0) { alert('作業内容を選択してください'); return; }
+      if ((state.workType.includes('配達') || state.workType.includes('工事')) && state.deliveryItems.length === 0) {
+        alert('配達・工事のときは「🛒 商品」を選択してください'); return;
+      }
       const needsPeople = state.workType.some(t => PDF_TYPES.includes(t));
       if (needsPeople && !state.people) { alert('作業人数を選択してください'); return; }
       if (state.payment === '売掛' && (!state.creditMethod || !state.creditTiming)) {
