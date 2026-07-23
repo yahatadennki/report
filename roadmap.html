@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>年間販促スケジュール｜ヤハタ電機商会</title>
+<style>
+  :root {
+    --navy: #1a3a5c;
+    --navy-deep: #12283f;
+    --blue: #2e75b6;
+    --sun: #f0a500;
+    --paper: #f4f7fa;
+    --card: #ffffff;
+    --ink: #1c2530;
+    --ink-soft: #4a5a6a;
+    --line: #d7e0e8;
+    --prep-bg: #fdf3de;
+    --prep-fg: #8a5a00;
+    --live-bg: #e4eefa;
+    --live-fg: #164a7a;
+    --off-bg: #eef1f4;
+    --off-fg: #5c6b78;
+    --advice-bg: #fdf3de;
+    --advice-border: #f0a500;
+    --jimu: #607d8b; --jimu-bg: #eceff1; --jimu-fg: #37474f;
+    --himawari: #ffa000; --himawari-bg: #fff3e0; --himawari-fg: #8a5a00;
+    --service: #e53935; --service-bg: #ffebee; --service-fg: #b71c1c;
+    --koji: #43a047; --koji-bg: #e8f5e9; --koji-fg: #2e7d32;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #10161d;
+      --card: #1a2028;
+      --ink: #e8edf2;
+      --ink-soft: #a9b6c2;
+      --line: #2c3844;
+      --navy: #3f6a94;
+      --navy-deep: #1a3a5c;
+      --prep-bg: #33291a;
+      --prep-fg: #f0c56a;
+      --live-bg: #16283a;
+      --live-fg: #8fc2f2;
+      --off-bg: #232b33;
+      --off-fg: #a9b6c2;
+      --advice-bg: #33291a;
+      --advice-border: #f0a500;
+      --jimu: #90a4ae; --jimu-bg: #263238; --jimu-fg: #cfd8dc;
+      --himawari: #ffb300; --himawari-bg: #3a2c12; --himawari-fg: #ffd180;
+      --service: #ef5350; --service-bg: #3a1a1a; --service-fg: #ff8a80;
+      --koji: #66bb6a; --koji-bg: #1b2e1c; --koji-fg: #a5d6a7;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #10161d; --card: #1a2028; --ink: #e8edf2; --ink-soft: #a9b6c2; --line: #2c3844;
+    --navy: #3f6a94; --navy-deep: #1a3a5c;
+    --prep-bg: #33291a; --prep-fg: #f0c56a; --live-bg: #16283a; --live-fg: #8fc2f2;
+    --off-bg: #232b33; --off-fg: #a9b6c2; --advice-bg: #33291a; --advice-border: #f0a500;
+    --jimu: #90a4ae; --jimu-bg: #263238; --jimu-fg: #cfd8dc;
+    --himawari: #ffb300; --himawari-bg: #3a2c12; --himawari-fg: #ffd180;
+    --service: #ef5350; --service-bg: #3a1a1a; --service-fg: #ff8a80;
+    --koji: #66bb6a; --koji-bg: #1b2e1c; --koji-fg: #a5d6a7;
+  }
+  :root[data-theme="light"] {
+    --paper: #f4f7fa; --card: #ffffff; --ink: #1c2530; --ink-soft: #4a5a6a; --line: #d7e0e8;
+    --navy: #1a3a5c; --navy-deep: #12283f;
+    --prep-bg: #fdf3de; --prep-fg: #8a5a00; --live-bg: #e4eefa; --live-fg: #164a7a;
+    --off-bg: #eef1f4; --off-fg: #5c6b78; --advice-bg: #fdf3de; --advice-border: #f0a500;
+    --jimu: #607d8b; --jimu-bg: #eceff1; --jimu-fg: #37474f;
+    --himawari: #ffa000; --himawari-bg: #fff3e0; --himawari-fg: #8a5a00;
+    --service: #e53935; --service-bg: #ffebee; --service-fg: #b71c1c;
+    --koji: #43a047; --koji-bg: #e8f5e9; --koji-fg: #2e7d32;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Yu Gothic Medium", "Yu Gothic", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Meiryo", sans-serif;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.75;
+    padding: 32px 16px 70px;
+  }
+
+  .wrap { max-width: 900px; margin: 0 auto; }
+
+  .head {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-deep) 100%);
+    color: #fff;
+    border-radius: 10px;
+    padding: 26px 30px 24px;
+    margin-bottom: 20px;
+  }
+  .head__eyebrow { font-size: 12px; letter-spacing: 0.14em; color: #cfe0ee; margin: 0 0 6px; }
+  .head__title { font-size: 23px; font-weight: 700; margin: 0 0 6px; text-wrap: balance; }
+  .head__sub { font-size: 13px; color: #b9cee0; margin: 0; }
+
+  /* 今月やることカード */
+  .now-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 22px 26px;
+    margin-bottom: 22px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .now-card__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--sun);
+    margin: 0 0 10px;
+  }
+  .now-card__title {
+    font-size: 19px;
+    font-weight: 700;
+    margin: 0 0 4px;
+    color: var(--ink);
+  }
+  .now-card__phase {
+    display: inline-block;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+  }
+  .now-card__phase.prep { background: var(--prep-bg); color: var(--prep-fg); }
+  .now-card__phase.live { background: var(--live-bg); color: var(--live-fg); }
+  .now-card__phase.off  { background: var(--off-bg);  color: var(--off-fg); }
+
+  .role-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 560px) {
+    .role-grid { grid-template-columns: 1fr; }
+  }
+  .role-block {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .role-block__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .role-block__body {
+    padding: 11px 14px 13px;
+    background: var(--card);
+  }
+  .role-block.jimu .role-block__head     { background: var(--jimu-bg);     color: var(--jimu-fg); }
+  .role-block.himawari .role-block__head { background: var(--himawari-bg); color: var(--himawari-fg); }
+  .role-block.service .role-block__head  { background: var(--service-bg);  color: var(--service-fg); }
+  .role-block.koji .role-block__head     { background: var(--koji-bg);     color: var(--koji-fg); }
+
+  .tasklist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .tasklist li {
+    font-size: 13.5px;
+    padding-left: 20px;
+    position: relative;
+    color: var(--ink);
+  }
+  .tasklist li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--blue);
+    font-weight: 700;
+  }
+  .role-block.jimu .tasklist li::before     { color: var(--jimu); }
+  .role-block.himawari .tasklist li::before { color: var(--himawari); }
+  .role-block.service .tasklist li::before  { color: var(--service); }
+  .role-block.koji .tasklist li::before     { color: var(--koji); }
+
+  .advice {
+    background: var(--advice-bg);
+    border-left: 3px solid var(--advice-border);
+    border-radius: 0 6px 6px 0;
+    padding: 12px 16px;
+    font-size: 13.5px;
+    color: var(--ink);
+  }
+  .advice b { display: block; font-size: 11px; letter-spacing: 0.06em; color: var(--ink-soft); margin-bottom: 4px; font-weight: 700; }
+
+  /* 年間ストリップ */
+  .strip-title {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+    margin: 0 0 10px;
+  }
+  .strip {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 6px;
+    margin-bottom: 24px;
+  }
+  .strip button {
+    font-family: inherit;
+    cursor: pointer;
+    border: 1px solid var(--line);
+    background: var(--card);
+    border-radius: 8px;
+    padding: 10px 4px 8px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    position: relative;
+    color: var(--ink);
+  }
+  .strip button:hover { border-color: var(--blue); }
+  .strip button:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+  .strip button.selected { border-color: var(--blue); border-width: 2px; }
+  .strip button .m { font-size: 14px; font-weight: 700; }
+  .strip button .chip {
+    width: 100%;
+    height: 5px;
+    border-radius: 3px;
+  }
+  .strip button .chip.prep { background: var(--sun); }
+  .strip button .chip.live { background: var(--blue); }
+  .strip button .chip.off  { background: var(--line); }
+  .strip button .icon { font-size: 13px; line-height: 1; height: 15px; }
+  .strip button .now-dot {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: var(--sun);
+    color: #3a2600;
+    font-size: 9.5px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 999px;
+  }
+
+  .legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-bottom: 28px;
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+  .legend i.prep { background: var(--sun); }
+  .legend i.live { background: var(--blue); }
+  .legend i.off  { background: var(--line); }
+
+  .fair-overview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .fair-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 14px 12px;
+    text-align: center;
+  }
+  .fair-card .icon { font-size: 22px; margin-bottom: 4px; }
+  .fair-card .name { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+  .fair-card .time { font-size: 11.5px; color: var(--ink-soft); }
+
+  @media (max-width: 700px) {
+    .strip { grid-template-columns: repeat(6, 1fr); }
+    .fair-overview { grid-template-columns: repeat(2, 1fr); }
+    .strip button .m { font-size: 12px; }
+  }
+
+  /* 過去のフェア記録 */
+  .records { margin-top: 30px; }
+  .records-note {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin: -4px 0 14px;
+  }
+  .record-form {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 18px;
+    display: grid;
+    grid-template-columns: 90px 100px 1fr 1fr;
+    gap: 10px 12px;
+  }
+  .record-form .full { grid-column: 1 / -1; }
+  .record-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 11.5px;
+    color: var(--ink-soft);
+  }
+  .record-form input, .record-form select {
+    font-family: inherit;
+    font-size: 13.5px;
+    padding: 7px 9px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .record-form button {
+    grid-column: 1 / -1;
+    justify-self: start;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    padding: 9px 20px;
+    border: none;
+    border-radius: 6px;
+    background: var(--blue);
+    color: #fff;
+    cursor: pointer;
+  }
+  .record-form button:hover { opacity: 0.9; }
+  @media (max-width: 640px) {
+    .record-form { grid-template-columns: 1fr 1fr; }
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+  }
+  table.records-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    min-width: 720px;
+  }
+  table.records-table th, table.records-table td {
+    padding: 9px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  table.records-table td.wrap-cell { white-space: normal; min-width: 140px; }
+  table.records-table th {
+    background: var(--paper);
+    color: var(--ink-soft);
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+    position: sticky;
+    top: 0;
+  }
+  table.records-table td.num { font-variant-numeric: tabular-nums; text-align: right; }
+  table.records-table tbody tr:last-child td { border-bottom: none; }
+  table.records-table .del-btn {
+    font-family: inherit;
+    font-size: 12px;
+    color: var(--service);
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 3px 9px;
+    cursor: pointer;
+  }
+  .empty-row td { text-align: center; color: var(--ink-soft); padding: 20px; }
+
+  /* PINロック画面 */
+  #pinGate { position: fixed; inset: 0; z-index: 9999; background: var(--paper); display: flex; align-items: center; justify-content: center; padding: 20px; }
+  #pinGate.hidden { display: none; }
+  #pinGate .pinbox { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 30px 28px; text-align: center; max-width: 320px; width: 100%; box-shadow: 0 6px 24px rgba(0,0,0,0.12); }
+  #pinGate .pin-emoji { font-size: 34px; }
+  #pinGate .pin-title { font-weight: 700; font-size: 16px; margin: 8px 0 2px; color: var(--ink); }
+  #pinGate .pin-sub { font-size: 12.5px; color: var(--ink-soft); margin: 0 0 16px; }
+  #pinGate input { font-family: inherit; font-size: 24px; letter-spacing: 0.35em; text-align: center; padding: 10px 8px; width: 170px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--ink); }
+  #pinGate input:focus { outline: 2px solid var(--blue); }
+  #pinGate .pin-err { color: var(--coral); font-size: 12px; height: 16px; margin: 6px 0; }
+  #pinGate button { font-family: inherit; font-size: 15px; font-weight: 700; margin-top: 6px; padding: 10px 28px; border: none; border-radius: 8px; background: var(--blue); color: #fff; cursor: pointer; }
+  #pinGate button:hover { background: var(--navy); }
+</style>
+
+<div id="pinGate">
+  <div class="pinbox">
+    <div class="pin-emoji">🔒</div>
+    <p class="pin-title">ヤハタ電機商会 年間ロードマップ</p>
+    <p class="pin-sub">4桁のPINを入力してください</p>
+    <input id="pinInput" type="tel" inputmode="numeric" maxlength="4" placeholder="••••" autocomplete="off">
+    <div class="pin-err" id="pinErr"></div>
+    <button type="button" onclick="checkPin()">入る</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="head">
+    <p class="head__eyebrow">ヤハタ電機商会　年間販促スケジュール</p>
+    <h1 class="head__title">今月やること、先取りで。</h1>
+    <p class="head__sub">4月始まり・3月決算。フェアは年4回（春末・夏末・秋中旬・冬末）。冬フェアの招待状配布時にカレンダーも同時にお届けします。</p>
+  </div>
+
+  <div class="fair-overview">
+    <div class="fair-card"><div class="icon">🌸</div><div class="name">春フェア</div><div class="time">3月末</div></div>
+    <div class="fair-card"><div class="icon">☀️</div><div class="name">夏フェア</div><div class="time">6月末</div></div>
+    <div class="fair-card"><div class="icon">🍁</div><div class="name">秋フェア</div><div class="time">9月中旬</div></div>
+    <div class="fair-card"><div class="icon">❄️</div><div class="name">冬フェア</div><div class="time">11月末・カレンダー配布</div></div>
+  </div>
+
+  <div class="now-card" id="nowCard">
+    <p class="now-card__label" id="nowLabel">📍 読み込み中…</p>
+    <p class="now-card__title" id="nowTitle"></p>
+    <span class="now-card__phase" id="nowPhase"></span>
+    <div class="role-grid">
+      <div class="role-block jimu">
+        <div class="role-block__head">🗂 事務スタッフ</div>
+        <div class="role-block__body"><ul class="tasklist" id="tasks-jimu"></ul></div>
+      </div>
+      <div class="role-block himawari">
+        <div class="role-block__head">🌻 ひまわりスタッフ</div>
+        <div class="role-block__body"><ul class="tasklist" id="tasks-himawari"></ul></div>
+      </div>
+      <div class="role-block service">
+        <div class="role-block__head">🔧 サービススタッフ</div>
+        <div class="role-block__body"><ul class="tasklist" id="tasks-service"></ul></div>
+      </div>
+      <div class="role-block koji">
+        <div class="role-block__head">⚙️ 工事スタッフ</div>
+        <div class="role-block__body"><ul class="tasklist" id="tasks-koji"></ul></div>
+      </div>
+    </div>
+    <div class="advice"><b>アドバイス</b><span id="nowAdvice"></span></div>
+  </div>
+
+  <p class="strip-title">年間の流れ（タップで各月の詳細を表示）</p>
+  <div class="strip" id="strip"></div>
+  <div class="legend">
+    <span><i class="prep"></i>準備期間</span>
+    <span><i class="live"></i>配布・開催</span>
+    <span><i class="off"></i>谷間・フォロー</span>
+  </div>
+
+  <section class="records">
+    <p class="strip-title">📚 過去のフェア記録</p>
+    <p class="records-note">この端末のブラウザに保存されます（他の端末とは共有されません）。</p>
+
+    <form class="record-form" id="recordForm">
+      <label class="full" style="max-width:120px">年
+        <input type="number" id="rYear" placeholder="2026" required>
+      </label>
+      <label>フェア
+        <select id="rSeason">
+          <option value="春">🌸 春</option>
+          <option value="夏">☀️ 夏</option>
+          <option value="秋">🍁 秋</option>
+          <option value="冬">❄️ 冬</option>
+        </select>
+      </label>
+      <label class="full">内容（テーマ・目玉）
+        <input type="text" id="rContent" placeholder="例：エアコン買い替えフェア">
+      </label>
+      <label>配布数
+        <input type="number" id="rDistribute" placeholder="例：1200">
+      </label>
+      <label>来場数
+        <input type="number" id="rVisitors" placeholder="例：85">
+      </label>
+      <label>記念品
+        <input type="text" id="rGift" placeholder="例：洗剤セット">
+      </label>
+      <label>ゲーム
+        <input type="text" id="rGame" placeholder="例：輪投げ">
+      </label>
+      <label class="full">イベント
+        <input type="text" id="rEvent" placeholder="例：くじ引き大会">
+      </label>
+      <button type="submit">＋ 記録を追加</button>
+    </form>
+
+    <div class="table-wrap">
+      <table class="records-table">
+        <thead>
+          <tr>
+            <th>年</th><th>フェア</th><th>内容</th><th>配布数</th><th>来場数</th><th>記念品</th><th>ゲーム</th><th>イベント</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="recordsBody"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<script>
+  var MONTHS = [
+    { m: 4, phase: 'off', fair: null, icon: '', title: '谷間・夏フェアの助走',
+      roles: {
+        jimu: ['冬フェアの来場者数・売上を集計し、対前年比較表を作成する'],
+        himawari: ['冬フェアで未購入だったお客様をリストアップし、フォロー架電をする'],
+        service: ['冬フェアで見積り止まりだったお客様に再提案する'],
+        koji: ['冬フェアの装飾・什器を撤去し、夏フェア用什器の在庫を確認する']
+      },
+      advice: 'フェアの谷間で売上が落ちやすい時期です。前フェアで見積り止まりのお客様への再提案が、この時期いちばんの売上の種です。' },
+    { m: 5, phase: 'prep', fair: '夏フェア', icon: '☀️', title: '夏フェア準備',
+      roles: {
+        jimu: ['招待状の原稿を確定し、宛先件数を確定した上で印刷を発注する', '目玉商品・景品の発注書を作成する'],
+        himawari: ['最新の顧客リストで配布ルート図を見直す'],
+        service: ['目玉商品（エアコン買い替え等）の提案トークをすり合わせる'],
+        koji: ['会場装飾・POPのデザインを確定する', '什器の破損チェックと補修をする']
+      },
+      advice: '来月には配布が始まります。招待状の原稿・印刷は今月中に確定を。' },
+    { m: 6, phase: 'live', fair: '夏フェア', icon: '☀️', title: '夏フェア 配布・開催（6月末）',
+      roles: {
+        jimu: ['発注した目玉商品・景品の納品を確認する', '当日使う伝票様式を準備する'],
+        himawari: ['招待状を配布ルート通りに配る（月前半）'],
+        service: ['来場予約したお客様に事前アポの確認連絡をする'],
+        koji: ['会場装飾・POPを設置する（開催前々日までに）', '什器を搬入する']
+      },
+      advice: '開催直前は忙しくなります。人員配置と在庫の最終確認をお早めに。' },
+    { m: 7, phase: 'off', fair: null, icon: '', title: '谷間・秋フェアの助走',
+      roles: {
+        jimu: ['夏フェアの来場者数・売上を集計し、対前年比較表を作成する'],
+        himawari: ['夏フェアで未購入だったお客様をリストアップし、フォロー架電をする'],
+        service: ['夏フェアで見積り止まりだったお客様に再提案する'],
+        koji: ['夏フェアの装飾・什器を撤去し、秋フェア用什器の在庫を確認する']
+      },
+      advice: '夏フェア直後は反動で来店が落ち着きがちです。見積り止まりのお客様への再提案を優先しましょう。' },
+    { m: 8, phase: 'prep', fair: '秋フェア', icon: '🍁', title: '秋フェア準備',
+      roles: {
+        jimu: ['招待状の原稿を確定し、宛先件数を確定した上で印刷を発注する', '目玉商品・景品の発注書を作成する'],
+        himawari: ['最新の顧客リストで配布ルート図を見直す'],
+        service: ['残暑向け目玉商品（エアコン等）の提案トークをすり合わせる'],
+        koji: ['会場装飾・POPのデザインを確定する', '什器の破損チェックと補修をする']
+      },
+      advice: '残暑の時期。エアコン関連の提案と合わせて招待状を届けると効果的です。' },
+    { m: 9, phase: 'live', fair: '秋フェア', icon: '🍁', title: '秋フェア 配布・開催（9月中旬）',
+      roles: {
+        jimu: ['発注した目玉商品・景品の納品を確認する', '当日使う伝票様式を準備する'],
+        himawari: ['招待状を配布ルート通りに配る（月前半）'],
+        service: ['来場予約したお客様に事前アポの確認連絡をする'],
+        koji: ['会場装飾・POPを設置する（開催前々日までに）', '什器を搬入する']
+      },
+      advice: '開催後はすぐに冬フェアの準備期間に入ります。反省点をメモしておきましょう。' },
+    { m: 10, phase: 'prep', fair: '冬フェア', icon: '❄️', title: '冬フェア準備・カレンダー発注',
+      roles: {
+        jimu: ['招待状の原稿を確定し印刷を発注する', '📅 来年用カレンダーの数量を確定し発注する', '目玉商品・景品の発注書を作成する'],
+        himawari: ['最新の顧客リストで配布ルート図を見直す', 'カレンダーの配布数をエリアごとに割り当てる'],
+        service: ['年末商戦向け目玉商品の提案トークをすり合わせる'],
+        koji: ['会場装飾・POPのデザインを確定する', '什器の破損チェックと補修をする']
+      },
+      advice: 'カレンダーは数量発注に時間がかかることがあります。早めの手配を。' },
+    { m: 11, phase: 'live', fair: '冬フェア', icon: '❄️', title: '冬フェア 配布・開催（11月末）',
+      roles: {
+        jimu: ['発注した目玉商品・カレンダーの納品を確認する'],
+        himawari: ['招待状を配布ルート通りに配る（カレンダーを同時にお届け、月前半）'],
+        service: ['来場予約したお客様に事前アポの確認連絡をする'],
+        koji: ['会場装飾・POPを設置する（開催前々日までに）', '什器を搬入する']
+      },
+      advice: '1年で最も配布物が多い月です。配布ルート・数量を事前にダブルチェックしましょう。' },
+    { m: 12, phase: 'off', fair: null, icon: '', title: '谷間・年末',
+      roles: {
+        jimu: ['冬フェアの来場者数・売上を集計し、対前年比較表を作成する'],
+        himawari: ['冬フェアで未購入だったお客様をリストアップし、フォロー架電をする', '年末年始のご挨拶回りルートを組む'],
+        service: ['冬フェアで見積り止まりだったお客様に再提案する'],
+        koji: ['冬フェアの装飾・什器を撤去し、春フェア用什器の在庫を確認する']
+      },
+      advice: '年末は競合の値引きが目立つ時期。価格でなく「顔の見える安心」を伝える訪問を増やしましょう。' },
+    { m: 1, phase: 'off', fair: null, icon: '', title: '谷間・春フェアの助走',
+      roles: {
+        jimu: ['1年分の来場者数・売上を通期で振り返り、来年度フェア計画のたたき台を作る'],
+        himawari: ['春フェアの目玉商品案を検討し、配布エリアの見直し案を作る'],
+        service: ['年明けの定期点検予約を掘り起こす'],
+        koji: ['什器・POPを棚卸しし、破損分の補修リストを作る']
+      },
+      advice: '1年で最も客足が落ち着く時期と言われます。この谷間のうちに、来年度全体の計画を見直しておきましょう。' },
+    { m: 2, phase: 'prep', fair: '春フェア', icon: '🌸', title: '春フェア準備',
+      roles: {
+        jimu: ['招待状の原稿を確定し印刷を発注する', '目玉商品・景品の発注書を作成する'],
+        himawari: ['最新の顧客リストで配布ルート図を見直す'],
+        service: ['目玉商品の提案トークをすり合わせる'],
+        koji: ['会場装飾・POPのデザインを確定する', '什器の破損チェックと補修をする']
+      },
+      advice: '年度末（3月決算）に向けて、売上の追い込みを意識した提案を。' },
+    { m: 3, phase: 'live', fair: '春フェア', icon: '🌸', title: '春フェア 配布・開催（3月末）・決算月',
+      roles: {
+        jimu: ['決算に向けた伝票・請求書の締め作業をする', '発注した目玉商品・景品の納品を確認する'],
+        himawari: ['招待状を配布ルート通りに配る（月前半）'],
+        service: ['来場予約したお客様に事前アポの確認連絡をする'],
+        koji: ['会場装飾・POPを設置する（開催前々日までに）', '什器を搬入する']
+      },
+      advice: '決算月と重なる繁忙期です。事務スタッフと早めにスケジュール調整をしておきましょう。' }
+  ];
+
+  var PHASE_LABEL = { prep: '準備期間', live: '配布・開催', off: '谷間・フォロー' };
+
+  function findMonth(m) {
+    for (var i = 0; i < MONTHS.length; i++) if (MONTHS[i].m === m) return MONTHS[i];
+    return MONTHS[0];
+  }
+
+  function renderNow(m) {
+    var data = findMonth(m);
+    document.getElementById('nowLabel').textContent = '📍 ' + m + '月にやること';
+    document.getElementById('nowTitle').textContent = data.title;
+    var phaseEl = document.getElementById('nowPhase');
+    phaseEl.textContent = PHASE_LABEL[data.phase];
+    phaseEl.className = 'now-card__phase ' + data.phase;
+    ['jimu', 'himawari', 'service', 'koji'].forEach(function (role) {
+      var ul = document.getElementById('tasks-' + role);
+      ul.innerHTML = '';
+      data.roles[role].forEach(function (t) {
+        var li = document.createElement('li');
+        li.textContent = t;
+        ul.appendChild(li);
+      });
+    });
+    document.getElementById('nowAdvice').textContent = data.advice;
+
+    document.querySelectorAll('#strip button').forEach(function (btn) {
+      btn.classList.toggle('selected', Number(btn.dataset.m) === m);
+    });
+  }
+
+  function buildStrip(currentMonth) {
+    var strip = document.getElementById('strip');
+    MONTHS.forEach(function (data) {
+      var btn = document.createElement('button');
+      btn.dataset.m = data.m;
+      btn.innerHTML =
+        '<span class="m">' + data.m + '月</span>' +
+        '<span class="chip ' + data.phase + '"></span>' +
+        '<span class="icon">' + (data.icon || '') + '</span>';
+      if (data.m === currentMonth) {
+        var dot = document.createElement('span');
+        dot.className = 'now-dot';
+        dot.textContent = '今';
+        btn.appendChild(dot);
+      }
+      btn.addEventListener('click', function () { renderNow(data.m); });
+      strip.appendChild(btn);
+    });
+  }
+
+  var currentMonth = new Date().getMonth() + 1;
+  buildStrip(currentMonth);
+  renderNow(currentMonth);
+
+  // ---- 過去のフェア記録（このブラウザに保存） ----
+  var RECORDS_KEY = 'yahataFairRecords';
+  var SEASON_ORDER = { '夏': 0, '秋': 1, '冬': 2, '春': 3 };
+  var records = [];
+  try { records = JSON.parse(localStorage.getItem(RECORDS_KEY) || '[]'); } catch (e) { records = []; }
+
+  function saveRecords() {
+    try { localStorage.setItem(RECORDS_KEY, JSON.stringify(records)); } catch (e) {}
+  }
+
+  function escapeHtml(s) {
+    var d = document.createElement('div');
+    d.textContent = s == null ? '' : String(s);
+    return d.innerHTML;
+  }
+
+  function renderRecords() {
+    var body = document.getElementById('recordsBody');
+    body.innerHTML = '';
+    if (!records.length) {
+      body.innerHTML = '<tr class="empty-row"><td colspan="9">まだ記録がありません。上のフォームから追加してください。</td></tr>';
+      return;
+    }
+    var sorted = records.slice().sort(function (a, b) {
+      if (b.year !== a.year) return b.year - a.year;
+      return SEASON_ORDER[a.season] - SEASON_ORDER[b.season];
+    });
+    sorted.forEach(function (r) {
+      var idx = records.indexOf(r);
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td class="num">' + escapeHtml(r.year) + '</td>' +
+        '<td>' + escapeHtml(r.season) + '</td>' +
+        '<td class="wrap-cell">' + escapeHtml(r.content) + '</td>' +
+        '<td class="num">' + escapeHtml(r.distribute) + '</td>' +
+        '<td class="num">' + escapeHtml(r.visitors) + '</td>' +
+        '<td class="wrap-cell">' + escapeHtml(r.gift) + '</td>' +
+        '<td class="wrap-cell">' + escapeHtml(r.game) + '</td>' +
+        '<td class="wrap-cell">' + escapeHtml(r.event) + '</td>' +
+        '<td><button type="button" class="del-btn" data-idx="' + idx + '">削除</button></td>';
+      body.appendChild(tr);
+    });
+    body.querySelectorAll('.del-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        records.splice(Number(btn.dataset.idx), 1);
+        saveRecords();
+        renderRecords();
+      });
+    });
+  }
+
+  document.getElementById('recordForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var year = document.getElementById('rYear').value.trim();
+    if (!year) return;
+    records.push({
+      year: year,
+      season: document.getElementById('rSeason').value,
+      content: document.getElementById('rContent').value.trim(),
+      distribute: document.getElementById('rDistribute').value.trim(),
+      visitors: document.getElementById('rVisitors').value.trim(),
+      gift: document.getElementById('rGift').value.trim(),
+      game: document.getElementById('rGame').value.trim(),
+      event: document.getElementById('rEvent').value.trim()
+    });
+    saveRecords();
+    renderRecords();
+    e.target.reset();
+    document.getElementById('rYear').focus();
+  });
+
+  renderRecords();
+
+  // ===== PINロック（7860）※軽い目隠しです =====
+  (function () {
+    var KEY = 'yahataRoadmapAuth_v1';
+    var PIN = '7860';
+    function reveal() { var g = document.getElementById('pinGate'); if (g) g.classList.add('hidden'); }
+    window.checkPin = function () {
+      var v = (document.getElementById('pinInput').value || '').trim();
+      if (v === PIN) { try { localStorage.setItem(KEY, '1'); } catch (e) {} reveal(); }
+      else { document.getElementById('pinErr').textContent = 'PINが違います'; }
+    };
+    var already = false;
+    try { already = localStorage.getItem(KEY) === '1'; } catch (e) {}
+    if (already) { reveal(); }
+    else {
+      var inp = document.getElementById('pinInput');
+      if (inp) {
+        inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') window.checkPin(); });
+        setTimeout(function () { try { inp.focus(); } catch (e) {} }, 100);
+      }
+    }
+  })();
+</script>
