@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>エアコン取付工事 手順書｜ヤハタ電機商会</title>
+<style>
+  :root{
+    --navy:#1a3a5c; --navy-deep:#12283f; --blue:#2e75b6; --sun:#f0a500;
+    --paper:#f4f7fa; --card:#fff; --ink:#1c2530; --ink-soft:#4a5a6a; --line:#d7e0e8;
+    --kouji-bg:#e4eefa; --kouji-fg:#164a7a; --hojo-bg:#e8f5e9; --hojo-fg:#2e7d32;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --paper:#10161d; --card:#1a2028; --ink:#e8edf2; --ink-soft:#a9b6c2; --line:#2c3844;
+    --navy:#3f6a94; --navy-deep:#1a3a5c; --kouji-bg:#16283a; --kouji-fg:#8fc2f2; --hojo-bg:#1b2e1c; --hojo-fg:#a5d6a7;
+  }}
+  :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844;--navy:#3f6a94;--navy-deep:#1a3a5c;--kouji-bg:#16283a;--kouji-fg:#8fc2f2;--hojo-bg:#1b2e1c;--hojo-fg:#a5d6a7;}
+  :root[data-theme="light"]{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;--navy:#1a3a5c;--navy-deep:#12283f;--kouji-bg:#e4eefa;--kouji-fg:#164a7a;--hojo-bg:#e8f5e9;--hojo-fg:#2e7d32;}
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;
+    line-height:1.7;padding:28px 14px 70px;}
+  .wrap{max-width:860px;margin:0 auto;}
+  .toolbar{max-width:860px;margin:0 auto 16px;display:flex;justify-content:flex-end;}
+  .toolbar button{font-family:inherit;font-size:13px;padding:8px 16px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;}
+  .toolbar button:hover{border-color:var(--blue);color:var(--blue);}
+
+  .head{background:linear-gradient(135deg,var(--navy),var(--navy-deep));color:#fff;border-radius:10px;padding:24px 28px;margin-bottom:8px;}
+  .head__eyebrow{font-size:12px;letter-spacing:.14em;color:#cfe0ee;margin:0 0 6px;}
+  .head__title{font-size:23px;font-weight:700;margin:0;}
+  .head__sub{font-size:13px;color:#b9cee0;margin:8px 0 0;}
+
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink-soft);margin:14px 2px;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .legend i{width:12px;height:12px;border-radius:3px;display:inline-block;}
+  .legend i.k{background:var(--blue);} .legend i.h{background:var(--hojo-fg);}
+
+  .phase{font-weight:800;font-size:15px;color:#fff;background:var(--navy);border-radius:8px;padding:7px 14px;margin:20px 0 0;}
+
+  .steps{display:flex;flex-direction:column;gap:10px;margin-top:10px;}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .step__no{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--line);background:var(--paper);}
+  .step__num{width:26px;height:26px;border-radius:50%;background:var(--sun);color:#3a2600;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .step__title{font-weight:700;font-size:14.5px;}
+  .cols{display:grid;grid-template-columns:1fr 1fr;}
+  .col{padding:11px 14px;}
+  .col.kouji{border-right:1px solid var(--line);}
+  .col__h{font-size:11.5px;font-weight:800;letter-spacing:.04em;padding:2px 8px;border-radius:999px;display:inline-block;margin-bottom:7px;}
+  .col.kouji .col__h{background:var(--kouji-bg);color:var(--kouji-fg);}
+  .col.hojo  .col__h{background:var(--hojo-bg);color:var(--hojo-fg);}
+  .col ul{margin:0;padding-left:18px;}
+  .col li{font-size:13px;margin:4px 0;color:var(--ink);}
+  .col .empty{font-size:12px;color:var(--ink-soft);}
+
+  .warn{background:var(--sun);color:#3a2600;font-size:12.5px;font-weight:700;border-radius:8px;padding:10px 14px;margin-top:16px;}
+  .warn b{display:block;margin-bottom:3px;}
+
+
+  @media(max-width:560px){ .cols{grid-template-columns:1fr;} .col.kouji{border-right:none;border-bottom:1px solid var(--line);} }
+
+  @media print{
+    body{padding:0;background:#fff;}
+    .toolbar{display:none;}
+    .step{break-inside:avoid;}
+    :root,:root[data-theme="dark"]{--paper:#fff;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;--navy:#1a3a5c;--navy-deep:#12283f;--kouji-bg:#e4eefa;--kouji-fg:#164a7a;--hojo-bg:#e8f5e9;--hojo-fg:#2e7d32;}
+  }
+</style>
+
+<div class="toolbar"><button onclick="window.print()">🖨️ 印刷 / PDF保存</button></div>
+
+<div class="wrap">
+  <div class="head">
+    <p class="head__eyebrow">ヤハタ電機商会　工事手順書</p>
+    <h1 class="head__title">エアコン取付工事 手順書</h1>
+    <p class="head__sub">大きな手順1〜6を上から順に。左＝工事手順（メイン担当）／右＝補助手順（サポート担当）。</p>
+  </div>
+
+  <div class="legend">
+    <span><i class="k"></i>工事手順（メイン）</span>
+    <span><i class="h"></i>補助手順（サポート）</span>
+  </div>
+
+  <!-- 1 準備 -->
+  <div class="phase">1. 準備（荷物運搬 ＆ 養生）</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">1</span><span class="step__title">荷物を運ぶ・種類ごとに配置</span></div>
+      <div class="cols">
+        <div class="col kouji"><span class="col__h">工事</span><ul>
+          <li>据付位置・配管ルート・室外機置き場を確認</li>
+          <li>電源（専用回路／電圧100V・200V）を確認</li>
+          <li>荷物・工具の置き場所を決めて指示する</li>
+        </ul></div>
+        <div class="col hojo"><span class="col__h">補助</span><ul>
+          <li>荷物を運び入れる</li>
+          <li><b>商品・工具・部材</b>をそれぞれ分けて、分かりやすく配置</li>
+          <li>工具は何度も使うので、<b>近くて使いやすい所</b>に置く</li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">2</span><span class="step__title">養生する</span></div>
+      <div class="cols">
+        <div class="col kouji"><span class="col__h">工事</span><ul>
+          <li>据付まわり・搬入動線を確認し、養生範囲を指示</li>
+        </ul></div>
+        <div class="col hojo"><span class="col__h">補助</span><ul>
+          <li><b>玄関（出入りする場所）</b>を養生</li>
+          <li><b>作業場所</b>（据付まわり・床・壁・家具）を養生</li>
+          <li>お客様へ作業範囲と時間の目安を一言</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 取外し -->
+  <div class="phase">2. 取外し（交換の場合・ポンプダウン）</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">3</span><span class="step__title">ポンプダウンして取り外す</span></div>
+      <div class="cols">
+        <div class="col kouji"><span class="col__h">工事</span><ul>
+          <li>室内機で<b>強制冷房</b>を運転する</li>
+          <li>室外機の<b>高圧側（細い方）</b>のバルブを閉める</li>
+          <li>コンプレッサーが回って<b>約1分後</b>に<b>低圧側（太い方）</b>を閉める（ガスを室外機に回収）</li>
+          <li>室内のコンセントを抜く → 配線・配管を外して室内機・室外機を取り外す</li>
+        </ul></div>
+        <div class="col hojo"><span class="col__h">補助</span><ul>
+          <li>強制冷房〜約1分の時間を計測して声かけ</li>
+          <li>工具（レンチ等）を準備・受け渡し</li>
+          <li>取り外した旧機・配管・廃材を運び出す／養生を守る</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 室内機取付 -->
+  <div class="phase">3. 室内機取付</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">4</span><span class="step__title">据付板の取り付け</span></div>
+      <div class="cols">
+        <div class="col kouji"><span class="col__h">工事</span><ul>
+          <li>下地（間柱）を確認し据付板の位置決め</li>
+          <li>水平器で水平を出す（ドレン勾配を考慮）</li>
+          <li>ビスでしっかり固定</li>
+        </ul></div>
+        <div class="col hojo"><span class="col__h">補助</span><ul>
+          <li>据付板を押さえる・水平の目視補助</li>
+          <li>ビス・工具の受け渡し</li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">5</span><span class="step__title">壁の穴あけ（配管穴）</span></div>
+      <div class="cols">
+        <div class="col kouji"><span class="col__h">工事</span><ul>
+          <li>配管穴の位置を決める（やや下がり勾配）</li>
+          <li>コアドリルで穴あけ→スリーブ挿入</li>
+        </ul></div>
+        <div class="col hojo"><span class="col__h">補助</span><ul>
+          <li>外側で粉じん受け・掃除機を当てる</li>
+          <li>屋外側の落下物・破片に注意して見張り</li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">6</span><span class="step__title">配管準備・室内機の設置</span></div>
+      <div class="cols">
+        <div class="col kouji"><span class="col__h">工事</span><ul>
+          <li>配管を必要長さに切断・バリ取り・フレア加工</li>
+          <li>ドレンホース・断熱材を取り付け</li>
+          <li>配管・ケーブルを穴に通し、室内機を据付板に固定</li>
+        </ul></div>
+        <div class="col hojo"><span class="col__h">補助</span><ul>
+          <li>配管・ドレン・テープを準備して渡す</li>
+          <li>室内機の持ち上げ・保持を補助／屋外側で配管を引き出す</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 室外機取付 -->
+  <div class="phase">4. 室外機取付</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">7</span><span class="step__title">室外機の設置</span></div>
+      <div class="cols">
+        <div class="col kouji"><span class="col__h">工事</span><ul>
+          <li>架台/ブロック等に設置し水平を出す</li>
+          <li>転倒・振動対策を確認</li>
+        </ul></div>
+        <div class="col hojo"><span class="col__h">補助</span><ul>
+          <li>室外機の運搬・設置を補助</li>
+          <li>ブロック・防振ゴムを準備</li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">8</span><span class="step__title">配管・ドレン・電源の接続</span></div>
+      <div class="cols">
+        <div class="col kouji"><span class="col__h">工事</span><ul>
+          <li>フレアナットをトルクレンチで規定締付</li>
+          <li>ドレンホースを接続（逆勾配なし）</li>
+          <li>電源ケーブルを室内外で正しく結線</li>
+        </ul></div>
+        <div class="col hojo"><span class="col__h">補助</span><ul>
+          <li>配管を保持し締付を補助／工具受け渡し</li>
+          <li>結線図の確認・ドレン排水先を確認</li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">9</span><span class="step__title">真空引き（エア抜き）</span></div>
+      <div class="cols">
+        <div class="col kouji"><span class="col__h">工事</span><ul>
+          <li>ゲージ・真空ポンプを接続</li>
+          <li>規定時間、真空引き（-0.1MPa目安）</li>
+          <li>ポンプ停止後、真空保持を確認</li>
+        </ul></div>
+        <div class="col hojo"><span class="col__h">補助</span><ul>
+          <li>ポンプ・ゲージ・電源を準備</li>
+          <li>時間を計測して声かけ</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 片付け＆試運転 -->
+  <div class="phase">5. 片付け ＆ 試運転</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">10</span><span class="step__title">ガス開放・試運転・漏れ確認</span></div>
+      <div class="cols">
+        <div class="col kouji"><span class="col__h">工事</span><ul>
+          <li>サービスバルブを開放（ガス開放）</li>
+          <li>試運転（冷房・暖房の動作確認）</li>
+          <li>接続部のガス漏れ確認（石鹸水/検知器）</li>
+        </ul></div>
+        <div class="col hojo"><span class="col__h">補助</span><ul>
+          <li>吹き出し温度・室外機動作を確認</li>
+          <li>石鹸水・検知器を準備</li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">11</span><span class="step__title">化粧カバー・清掃・片付け</span></div>
+      <div class="cols">
+        <div class="col kouji"><span class="col__h">工事</span><ul>
+          <li>配管化粧カバー取付・壁穴をパテ埋め</li>
+          <li>配管固定・見栄えを整える／最終動作確認</li>
+        </ul></div>
+        <div class="col hojo"><span class="col__h">補助</span><ul>
+          <li>養生撤去・清掃・ゴミ/廃材の搬出</li>
+          <li>工具・部材を片付ける</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6 取扱説明 -->
+  <div class="phase">6. 取扱説明</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">12</span><span class="step__title">使い方説明・引き渡し</span></div>
+      <div class="cols">
+        <div class="col kouji"><span class="col__h">工事</span><ul>
+          <li>リモコンの基本操作・おすすめの使い方を説明</li>
+          <li>保証・アフター（不具合時の連絡先）を伝える</li>
+        </ul></div>
+        <div class="col hojo"><span class="col__h">補助</span><ul>
+          <li>リモコン・取扱説明書・保証書をお渡し</li>
+          <li>お客様に一緒に操作してもらい確認（納品時マニュアル参照）</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn">
+    <b>⚠ 安全・品質の要点</b>
+    フレアの締付トルク／真空保持の確認／ガス漏れチェックは必ず実施。ドレンは逆勾配にしない。専用回路・電圧を必ず確認。作業前後の写真を撮影（業務日報に添付）。
+  </div>
+</div>
