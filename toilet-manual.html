@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>トイレ工事 手順書｜ヤハタ電機商会</title>
+<style>
+  :root{
+    --navy:#1a3a5c; --navy-deep:#12283f; --blue:#2e75b6; --sun:#f0a500;
+    --paper:#f4f7fa; --card:#fff; --ink:#1c2530; --ink-soft:#4a5a6a; --line:#d7e0e8;
+    --kouji-bg:#e4eefa; --kouji-fg:#164a7a; --hojo-bg:#e8f5e9; --hojo-fg:#2e7d32;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --paper:#10161d; --card:#1a2028; --ink:#e8edf2; --ink-soft:#a9b6c2; --line:#2c3844;
+    --navy:#3f6a94; --navy-deep:#1a3a5c; --kouji-bg:#16283a; --kouji-fg:#8fc2f2; --hojo-bg:#1b2e1c; --hojo-fg:#a5d6a7;
+  }}
+  :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844;--navy:#3f6a94;--navy-deep:#1a3a5c;--kouji-bg:#16283a;--kouji-fg:#8fc2f2;--hojo-bg:#1b2e1c;--hojo-fg:#a5d6a7;}
+  :root[data-theme="light"]{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;--navy:#1a3a5c;--navy-deep:#12283f;--kouji-bg:#e4eefa;--kouji-fg:#164a7a;--hojo-bg:#e8f5e9;--hojo-fg:#2e7d32;}
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;
+    line-height:1.7;padding:28px 14px 70px;}
+  .wrap{max-width:860px;margin:0 auto;}
+  .toolbar{max-width:860px;margin:0 auto 16px;display:flex;justify-content:flex-end;}
+  .toolbar button{font-family:inherit;font-size:13px;padding:8px 16px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;}
+  .toolbar button:hover{border-color:var(--blue);color:var(--blue);}
+
+  .head{background:linear-gradient(135deg,var(--navy),var(--navy-deep));color:#fff;border-radius:10px;padding:24px 28px;margin-bottom:8px;}
+  .head__eyebrow{font-size:12px;letter-spacing:.14em;color:#cfe0ee;margin:0 0 6px;}
+  .head__title{font-size:23px;font-weight:700;margin:0;}
+  .head__sub{font-size:13px;color:#b9cee0;margin:8px 0 0;}
+
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink-soft);margin:14px 2px;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .legend i{width:12px;height:12px;border-radius:3px;display:inline-block;}
+  .legend i.k{background:var(--blue);} .legend i.h{background:var(--hojo-fg);}
+
+  .phase{font-weight:800;font-size:15px;color:#fff;background:var(--navy);border-radius:8px;padding:7px 14px;margin:20px 0 0;}
+
+  .steps{display:flex;flex-direction:column;gap:10px;margin-top:10px;}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .step__no{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--line);background:var(--paper);}
+  .step__num{width:26px;height:26px;border-radius:50%;background:var(--sun);color:#3a2600;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .step__title{font-weight:700;font-size:14.5px;}
+  .cols{display:grid;grid-template-columns:1fr 1fr;}
+  .col{padding:11px 14px;}
+  .col.kouji{border-right:1px solid var(--line);}
+  .col__h{font-size:11.5px;font-weight:800;letter-spacing:.04em;padding:2px 8px;border-radius:999px;display:inline-block;margin-bottom:7px;}
+  .col.kouji .col__h{background:var(--kouji-bg);color:var(--kouji-fg);}
+  .col.hojo  .col__h{background:var(--hojo-bg);color:var(--hojo-fg);}
+  .col ul{margin:0;padding-left:18px;}
+  .col li{font-size:13px;margin:4px 0;color:var(--ink);}
+
+  .warn{background:var(--sun);color:#3a2600;font-size:12.5px;font-weight:700;border-radius:8px;padding:10px 14px;margin-top:16px;}
+  .warn b{display:block;margin-bottom:3px;}
+
+  @media(max-width:560px){ .cols{grid-template-columns:1fr;} .col.kouji{border-right:none;border-bottom:1px solid var(--line);} }
+
+  @media print{
+    body{padding:0;background:#fff;}
+    .toolbar{display:none;}
+    .step{break-inside:avoid;}
+    :root,:root[data-theme="dark"]{--paper:#fff;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;--navy:#1a3a5c;--navy-deep:#12283f;--kouji-bg:#e4eefa;--kouji-fg:#164a7a;--hojo-bg:#e8f5e9;--hojo-fg:#2e7d32;}
+  }
+</style>
+
+<div class="toolbar"><button onclick="window.print()">🖨️ 印刷 / PDF保存</button></div>
+
+<div class="wrap">
+  <div class="head">
+    <p class="head__eyebrow">ヤハタ電機商会　工事手順書</p>
+    <h1 class="head__title">トイレ工事 手順書</h1>
+    <p class="head__sub">大きな手順を上から順に。左＝工事手順（メイン担当）／右＝補助手順（サポート担当）。</p>
+  </div>
+
+  <div class="legend">
+    <span><i class="k"></i>工事手順（メイン）</span>
+    <span><i class="h"></i>補助手順（サポート）</span>
+  </div>
+
+  <!-- 1 準備 -->
+  <div class="phase">1. 準備（用意するもの ＆ 養生）</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">1</span><span class="step__title">用意するもの</span></div>
+      <div class="cols">
+        <div class="col kouji"><span class="col__h">🔧 工具</span><ul>
+          <li>モンキーレンチ</li>
+          <li>ドライバー</li>
+          <li>メガネレンチ</li>
+          <li>ノコギリ</li>
+        </ul></div>
+        <div class="col hojo"><span class="col__h">📦 材料</span><ul>
+          <li>配管セット</li>
+          <li>フランジ</li>
+          <li>パッキン</li>
+          <li>養生</li>
+          <li>トイレ用毛布</li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">2</span><span class="step__title">養生する</span></div>
+      <div class="cols">
+        <div class="col kouji"><span class="col__h">工事</span><ul>
+          <li>搬入動線・作業範囲を確認し、養生範囲を指示</li>
+          <li>止水栓の位置・給排水の状態を確認</li>
+        </ul></div>
+        <div class="col hojo"><span class="col__h">補助</span><ul>
+          <li>玄関〜トイレの動線・床を養生</li>
+          <li>作業場所にトイレ用毛布を敷く</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 取外し -->
+  <div class="phase">2. 取外し（既設トイレの撤去）</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">3</span><span class="step__title">水を止めて撤去する</span></div>
+      <div class="cols">
+        <div class="col kouji"><span class="col__h">工事</span><ul>
+          <li>止水栓を閉める</li>
+          <li>タンク・便器内の水を抜く</li>
+          <li>給水管を外す → 便器固定ナットを外す</li>
+          <li>便器を撤去し、フランジの状態を確認</li>
+        </ul></div>
+        <div class="col hojo"><span class="col__h">補助</span><ul>
+          <li>バケツ・雑巾で残水を処理</li>
+          <li>撤去した便器を毛布で包んで搬出</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 設置 -->
+  <div class="phase">3. 設置（新しいトイレ）</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">4</span><span class="step__title">フランジ・パッキン・便器の設置</span></div>
+      <div class="cols">
+        <div class="col kouji"><span class="col__h">工事</span><ul>
+          <li>フランジ・パッキンを取り付ける</li>
+          <li>便器を据えて水平を確認</li>
+          <li>ボルトでしっかり固定</li>
+        </ul></div>
+        <div class="col hojo"><span class="col__h">補助</span><ul>
+          <li>フランジ・パッキン・ボルトを準備して渡す</li>
+          <li>便器の位置合わせ・保持を補助</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 接続 -->
+  <div class="phase">4. 接続（給水・タンク）</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">5</span><span class="step__title">給水・タンク・便座の接続</span></div>
+      <div class="cols">
+        <div class="col kouji"><span class="col__h">工事</span><ul>
+          <li>タンクを組み付ける</li>
+          <li>配管セットで給水管を接続</li>
+          <li>温水洗浄便座を取り付け（該当時）</li>
+        </ul></div>
+        <div class="col hojo"><span class="col__h">補助</span><ul>
+          <li>配管セット・工具の受け渡し</li>
+          <li>接続位置の合わせを補助</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 試運転 -->
+  <div class="phase">5. 通水・水漏れ確認</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">6</span><span class="step__title">通水して漏れを確認</span></div>
+      <div class="cols">
+        <div class="col kouji"><span class="col__h">工事</span><ul>
+          <li>止水栓を開けて通水</li>
+          <li>タンク・便器・接続部の水漏れを確認</li>
+          <li>洗浄・機能の動作確認</li>
+        </ul></div>
+        <div class="col hojo"><span class="col__h">補助</span><ul>
+          <li>各接続部を一緒に目視</li>
+          <li>雑巾で漏れの有無を確認</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6 仕上げ -->
+  <div class="phase">6. 仕上げ・取扱説明</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">7</span><span class="step__title">清掃・使い方説明・引き渡し</span></div>
+      <div class="cols">
+        <div class="col kouji"><span class="col__h">工事</span><ul>
+          <li>見栄えを整え、最終動作確認</li>
+        </ul></div>
+        <div class="col hojo"><span class="col__h">補助</span><ul>
+          <li>養生撤去・清掃・廃材搬出</li>
+          <li>使い方説明、取説・保証書をお渡し</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn">
+    <b>⚠ 安全・品質の要点</b>
+    止水栓の開閉・残水処理を確実に。フランジ／パッキンの位置ずれに注意。通水後の水漏れ確認は必ず実施。作業前後の写真を撮影（業務日報に添付）。
+  </div>
+</div>
