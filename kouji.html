@@ -214,6 +214,11 @@
           見積書あり（写真・PDF保存スキップ）
         </label>
       </div>
+
+      <div id="trouble-detail" class="work-detail-section hidden">
+        <label>要件（何の用事で伺ったか）</label>
+        <input type="text" id="troubleMatter" placeholder="例：エアコンの効きが悪い相談、リモコン操作の説明">
+      </div>
     </div>
 
     <div class="section">
@@ -480,6 +485,9 @@ const WORK_TYPES = ["お困りごと対応", "点検", "商談", "集金", "そ�
       document.getElementById('construction-detail').classList.toggle('hidden', !state.workType.includes('工事'));
       document.getElementById('repair-detail').classList.toggle('hidden', !state.workType.includes('修理'));
       document.getElementById('genncho-detail').classList.toggle('hidden', !state.workType.includes('現調'));
+      const isTrouble = state.workType.includes('お困りごと対応');
+      document.getElementById('trouble-detail').classList.toggle('hidden', !isTrouble);
+      if (!isTrouble) document.getElementById('troubleMatter').value = '';
 
       const needsPeople = state.workType.some(t => PDF_TYPES.includes(t));
       const wasPdf = document.getElementById('section-people').classList.contains('hidden') === false;
@@ -518,8 +526,8 @@ const WORK_TYPES = ["お困りごと対応", "点検", "商談", "集金", "そ�
       updatePhotoTypeButtons();
       document.getElementById('pdf-badge').classList.toggle('hidden', !state.workType.some(t => PDF_TYPES.includes(t)));
 
-      // 報告書のない作業（お困りごと対応・点検・商談・集金・その他）はメモを必須表示に
-      const memoRequired = state.workType.some(t => WORK_TYPES.includes(t));
+      // 報告書のない作業（点検・商談・集金・その他）はメモを必須表示に（お困りごと対応は「要件」が必須）
+      const memoRequired = state.workType.some(t => WORK_TYPES.includes(t) && t !== 'お困りごと対応');
       const rq = document.getElementById('remarks-req');
       if (rq) { rq.textContent = memoRequired ? '（必須）' : '（任意）'; rq.style.color = memoRequired ? '#e67e22' : ''; }
     }
@@ -852,8 +860,11 @@ createButtons('group-workType', WORK_TYPES, 'workType', true);
       if (state.workType.includes('工事') && state.constructionTypes.length === 0) {
         alert('工事のときは「工事種類」を選択してください'); return;
       }
-      if (state.workType.some(t => WORK_TYPES.includes(t)) && !document.getElementById('remarks').value.trim()) {
-        alert('お困りごと対応・点検・商談・集金・その他などは報告書がないため、「メモ」を記入してください'); return;
+      if (state.workType.includes('お困りごと対応') && !document.getElementById('troubleMatter').value.trim()) {
+        alert('お困りごと対応のときは「要件」を記入してください'); return;
+      }
+      if (state.workType.some(t => WORK_TYPES.includes(t) && t !== 'お困りごと対応') && !document.getElementById('remarks').value.trim()) {
+        alert('点検・商談・集金・その他などは報告書がないため、「メモ」を記入してください'); return;
       }
       const needsPeople = state.workType.some(t => PDF_TYPES.includes(t));
       if (needsPeople && !state.people) { alert('作業人数を選択してください'); return; }
@@ -887,7 +898,11 @@ workType: state.workType.join('、'),
         creditMethod: state.creditMethod,
         creditTiming: state.creditTiming,
         prospectItems: state.prospectItems,
-        remarks: document.getElementById('remarks').value,
+        remarks: (function(){
+          var matter = document.getElementById('troubleMatter').value.trim();
+          var memo = document.getElementById('remarks').value.trim();
+          return matter ? (memo ? matter + ' / ' + memo : matter) : memo;
+        })(),
         photos: state.photos
       };
 
