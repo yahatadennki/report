@@ -49,11 +49,10 @@
   .col.hojo  .col__h{background:var(--hojo-bg);color:var(--hojo-fg);}
   .col ul{margin:0;padding-left:18px;}
   .col li{font-size:13px;margin:4px 0;color:var(--ink);}
-  .col .empty{font-size:12px;color:var(--ink-soft);}
+  .col .blank{list-style:none;margin-left:-18px;color:var(--ink-soft);font-size:12px;}
 
   .warn{background:var(--sun);color:#3a2600;font-size:12.5px;font-weight:700;border-radius:8px;padding:10px 14px;margin-top:16px;}
   .warn b{display:block;margin-bottom:3px;}
-
 
   @media(max-width:560px){ .cols{grid-template-columns:1fr;} .col.kouji{border-right:none;border-bottom:1px solid var(--line);} }
 
@@ -71,11 +70,11 @@
   <div class="head">
     <p class="head__eyebrow">ヤハタ電機商会　工事手順書</p>
     <h1 class="head__title">エアコン取付工事 手順書</h1>
-    <p class="head__sub">大きな手順1〜6を上から順に。左＝工事手順（メイン担当）／右＝補助手順（サポート担当）。</p>
+    <p class="head__sub">大きな手順1〜6を上から順に。左＝工事手順（作業者）／右＝補助手順（サポート）。</p>
   </div>
 
   <div class="legend">
-    <span><i class="k"></i>工事手順（メイン）</span>
+    <span><i class="k"></i>工事手順（作業者）</span>
     <span><i class="h"></i>補助手順（サポート）</span>
   </div>
 
@@ -88,10 +87,12 @@
         <div class="col kouji"><span class="col__h">工事</span><ul>
           <li>据付位置・配管ルート・室外機置き場を確認</li>
           <li>電源（専用回路／電圧100V・200V）を確認</li>
-          <li>荷物・工具の置き場所を決めて指示する</li>
+          <li>荷物を運び入れる</li>
+          <li>商品・工具・部材をそれぞれ分けて、分かりやすく配置</li>
+          <li>工具は何度も使うので、近くて使いやすい所に置く</li>
         </ul></div>
         <div class="col hojo"><span class="col__h">補助</span><ul>
-          <li style="color:#8a94a3">（記入予定）</li>
+          <li class="blank">（記入予定）</li>
         </ul></div>
       </div>
     </div>
@@ -99,10 +100,13 @@
       <div class="step__no"><span class="step__num">2</span><span class="step__title">養生する</span></div>
       <div class="cols">
         <div class="col kouji"><span class="col__h">工事</span><ul>
-          <li>据付まわり・搬入動線を確認し、養生範囲を指示</li>
+          <li>据付まわり・搬入動線を確認し、養生範囲を決める</li>
+          <li>玄関（出入りする場所）を養生</li>
+          <li>作業場所（据付まわり・床・壁・家具）を養生</li>
+          <li>お客様へ作業範囲と時間の目安を一言</li>
         </ul></div>
         <div class="col hojo"><span class="col__h">補助</span><ul>
-          <li style="color:#8a94a3">（記入予定）</li>
+          <li class="blank">（記入予定）</li>
         </ul></div>
       </div>
     </div>
@@ -119,9 +123,11 @@
           <li>室外機の<b>高圧側（細い方）</b>のバルブを閉める</li>
           <li>コンプレッサーが回って<b>約1分後</b>に<b>低圧側（太い方）</b>を閉める（ガスを室外機に回収）</li>
           <li>室内のコンセントを抜く → 配線・配管を外して室内機・室外機を取り外す</li>
+          <li>強制冷房〜約1分の時間を計測</li>
+          <li>取り外した旧機・配管・廃材を運び出す</li>
         </ul></div>
         <div class="col hojo"><span class="col__h">補助</span><ul>
-          <li style="color:#8a94a3">（記入予定）</li>
+          <li class="blank">（記入予定）</li>
         </ul></div>
       </div>
     </div>
@@ -139,7 +145,7 @@
           <li>ビスでしっかり固定</li>
         </ul></div>
         <div class="col hojo"><span class="col__h">補助</span><ul>
-          <li style="color:#8a94a3">（記入予定）</li>
+          <li class="blank">（記入予定）</li>
         </ul></div>
       </div>
     </div>
@@ -151,7 +157,7 @@
           <li>コアドリルで穴あけ→スリーブ挿入</li>
         </ul></div>
         <div class="col hojo"><span class="col__h">補助</span><ul>
-          <li style="color:#8a94a3">（記入予定）</li>
+          <li class="blank">（記入予定）</li>
         </ul></div>
       </div>
     </div>
@@ -164,7 +170,7 @@
           <li>配管・ケーブルを穴に通し、室内機を据付板に固定</li>
         </ul></div>
         <div class="col hojo"><span class="col__h">補助</span><ul>
-          <li style="color:#8a94a3">（記入予定）</li>
+          <li class="blank">（記入予定）</li>
         </ul></div>
       </div>
     </div>
@@ -181,7 +187,7 @@
           <li>転倒・振動対策を確認</li>
         </ul></div>
         <div class="col hojo"><span class="col__h">補助</span><ul>
-          <li style="color:#8a94a3">（記入予定）</li>
+          <li class="blank">（記入予定）</li>
         </ul></div>
       </div>
     </div>
@@ -194,7 +200,7 @@
           <li>電源ケーブルを室内外で正しく結線</li>
         </ul></div>
         <div class="col hojo"><span class="col__h">補助</span><ul>
-          <li style="color:#8a94a3">（記入予定）</li>
+          <li class="blank">（記入予定）</li>
         </ul></div>
       </div>
     </div>
@@ -207,7 +213,7 @@
           <li>ポンプ停止後、真空保持を確認</li>
         </ul></div>
         <div class="col hojo"><span class="col__h">補助</span><ul>
-          <li style="color:#8a94a3">（記入予定）</li>
+          <li class="blank">（記入予定）</li>
         </ul></div>
       </div>
     </div>
@@ -225,7 +231,7 @@
           <li>接続部のガス漏れ確認（石鹸水/検知器）</li>
         </ul></div>
         <div class="col hojo"><span class="col__h">補助</span><ul>
-          <li style="color:#8a94a3">（記入予定）</li>
+          <li class="blank">（記入予定）</li>
         </ul></div>
       </div>
     </div>
@@ -235,9 +241,11 @@
         <div class="col kouji"><span class="col__h">工事</span><ul>
           <li>配管化粧カバー取付・壁穴をパテ埋め</li>
           <li>配管固定・見栄えを整える／最終動作確認</li>
+          <li>養生撤去・清掃・ゴミ/廃材の搬出</li>
+          <li>工具・部材を片付ける</li>
         </ul></div>
         <div class="col hojo"><span class="col__h">補助</span><ul>
-          <li style="color:#8a94a3">（記入予定）</li>
+          <li class="blank">（記入予定）</li>
         </ul></div>
       </div>
     </div>
@@ -252,9 +260,11 @@
         <div class="col kouji"><span class="col__h">工事</span><ul>
           <li>リモコンの基本操作・おすすめの使い方を説明</li>
           <li>保証・アフター（不具合時の連絡先）を伝える</li>
+          <li>リモコン・取扱説明書・保証書をお渡し</li>
+          <li>お客様に一緒に操作してもらい確認（納品時マニュアル参照）</li>
         </ul></div>
         <div class="col hojo"><span class="col__h">補助</span><ul>
-          <li style="color:#8a94a3">（記入予定）</li>
+          <li class="blank">（記入予定）</li>
         </ul></div>
       </div>
     </div>
