@@ -185,7 +185,7 @@
       </div>
 
       <div id="delivery-detail" class="work-detail-section hidden">
-        <label>🛒 商品 <span class="label-optional">（配達・工事は必須）</span></label>
+        <label>🛒 商品 <span class="label-optional">（配達は必須）</span></label>
         <div style="font-size:12px;color:#888;margin-bottom:4px;">大分類を選ぶと商品が出ます（複数選択可）</div>
         <div class="btn-group" id="group-prodMajor"></div>
         <div class="btn-group" id="group-prodCategory" style="margin-top:8px;"></div>
@@ -474,8 +474,8 @@ const WORK_TYPES = ["お困りごと対応", "点検", "商談", "集金", "そ�
 
     function updateWorkDetails() {
       document.getElementById('inspection-detail').classList.toggle('hidden', !state.workType.includes('点検'));
-      // 商品選択は配達・工事どちらでも表示
-      const needsProduct = state.workType.includes('配達') || state.workType.includes('工事');
+      // 商品選択は配達のときのみ（工事は「工事種類」だけでOK）
+      const needsProduct = state.workType.includes('配達');
       document.getElementById('delivery-detail').classList.toggle('hidden', !needsProduct);
       document.getElementById('construction-detail').classList.toggle('hidden', !state.workType.includes('工事'));
       document.getElementById('repair-detail').classList.toggle('hidden', !state.workType.includes('修理'));
@@ -841,8 +841,11 @@ createButtons('group-workType', WORK_TYPES, 'workType', true);
       if (!state.staff) { alert('担当者を選択してください'); return; }
       if (!visitName) { alert('訪問先名を入力してください'); return; }
       if (state.workType.length === 0) { alert('作業内容を選択してください'); return; }
-      if ((state.workType.includes('配達') || state.workType.includes('工事')) && state.deliveryItems.length === 0) {
-        alert('配達・工事のときは「🛒 商品」を選択してください'); return;
+      if (state.workType.includes('配達') && state.deliveryItems.length === 0) {
+        alert('配達のときは「🛒 商品」を選択してください'); return;
+      }
+      if (state.workType.includes('工事') && state.constructionTypes.length === 0) {
+        alert('工事のときは「工事種類」を選択してください'); return;
       }
       const needsPeople = state.workType.some(t => PDF_TYPES.includes(t));
       if (needsPeople && !state.people) { alert('作業人数を選択してください'); return; }
