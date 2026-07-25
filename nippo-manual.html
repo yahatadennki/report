@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>業務日報の入力マニュアル｜ヤハタ電機商会</title>
+<style>
+  :root{
+    --navy:#1a3a5c; --navy-deep:#12283f; --blue:#2e75b6; --sun:#f0a500;
+    --paper:#f4f7fa; --card:#fff; --ink:#1c2530; --ink-soft:#4a5a6a; --line:#d7e0e8;
+    --req-bg:#fdecea; --req-fg:#c0392b; --ok-bg:#e8f5e9; --ok-fg:#2e7d32;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --paper:#10161d; --card:#1a2028; --ink:#e8edf2; --ink-soft:#a9b6c2; --line:#2c3844;
+    --navy:#3f6a94; --navy-deep:#1a3a5c; --req-bg:#3a1e1c; --req-fg:#f5a79f; --ok-bg:#1b2e1c; --ok-fg:#a5d6a7;
+  }}
+  :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844;--navy:#3f6a94;--navy-deep:#1a3a5c;--req-bg:#3a1e1c;--req-fg:#f5a79f;--ok-bg:#1b2e1c;--ok-fg:#a5d6a7;}
+  :root[data-theme="light"]{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;--navy:#1a3a5c;--navy-deep:#12283f;--req-bg:#fdecea;--req-fg:#c0392b;--ok-bg:#e8f5e9;--ok-fg:#2e7d32;}
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;
+    line-height:1.75;padding:26px 14px 70px;}
+  .wrap{max-width:760px;margin:0 auto;}
+  .toolbar{max-width:760px;margin:0 auto 14px;display:flex;justify-content:flex-end;}
+  .toolbar button{font-family:inherit;font-size:13px;padding:8px 16px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;}
+
+  .head{background:linear-gradient(135deg,var(--navy),var(--navy-deep));color:#fff;border-radius:10px;padding:22px 26px;margin-bottom:18px;}
+  .head__eyebrow{font-size:12px;letter-spacing:.14em;color:#cfe0ee;margin:0 0 6px;}
+  .head__title{font-size:22px;font-weight:800;margin:0;}
+  .head__sub{font-size:13px;color:#b9cee0;margin:8px 0 0;}
+
+  .step{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:12px;}
+  .step__h{display:flex;align-items:center;gap:10px;margin:0 0 8px;}
+  .step__n{width:28px;height:28px;border-radius:50%;background:var(--sun);color:#3a2600;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .step__t{font-weight:800;font-size:15.5px;}
+  .step p{margin:4px 0;font-size:14px;}
+  .step ul{margin:6px 0 0;padding-left:20px;}
+  .step li{font-size:13.5px;margin:4px 0;}
+
+  .req{background:var(--req-bg);color:var(--req-fg);font-weight:800;font-size:11px;padding:1px 8px;border-radius:999px;display:inline-block;}
+  .opt{background:var(--ok-bg);color:var(--ok-fg);font-weight:700;font-size:11px;padding:1px 8px;border-radius:999px;display:inline-block;}
+
+  .tag{background:var(--navy);color:#fff;font-size:12px;font-weight:700;padding:2px 9px;border-radius:6px;display:inline-block;margin:1px 2px;}
+  .tag.pdf{background:var(--sun);color:#3a2600;}
+
+  .callout{border-left:4px solid var(--sun);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:14px 0;font-size:13.5px;}
+  .callout b{color:var(--req-fg);}
+
+  table{width:100%;border-collapse:collapse;margin-top:6px;font-size:13px;}
+  th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top;}
+  th{background:var(--navy);color:#fff;font-weight:700;white-space:nowrap;}
+
+  .must{background:var(--card);border:2px solid var(--req-fg);border-radius:12px;padding:14px 18px;margin:18px 0;}
+  .must h3{margin:0 0 8px;color:var(--req-fg);font-size:15px;}
+  .must li{font-size:13.5px;margin:5px 0;}
+
+  @media print{ body{padding:0;background:#fff;} .toolbar{display:none;} .step,.must{break-inside:avoid;}
+    :root,:root[data-theme="dark"]{--paper:#fff;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;--navy:#1a3a5c;--navy-deep:#12283f;} }
+</style>
+
+<div class="toolbar"><button onclick="window.print()">🖨️ 印刷 / PDF保存</button></div>
+
+<div class="wrap">
+  <div class="head">
+    <p class="head__eyebrow">ヤハタ電機商会　業務日報</p>
+    <h1 class="head__title">業務日報の入力マニュアル</h1>
+    <p class="head__sub">上から順に入れていくだけ。訪問1件ごとに1回送信します。</p>
+  </div>
+
+  <div class="callout">
+    📱 <b style="color:inherit">開き方</b>：スマホのブラウザで日報のURLを開く → 初回に「ホーム画面に追加」しておくと次回すぐ開けます。
+  </div>
+
+  <!-- 1 -->
+  <div class="step">
+    <div class="step__h"><span class="step__n">1</span><span class="step__t">日付・時間帯・担当者</span></div>
+    <ul>
+      <li>日付：当日が自動で入ります（違えば直す）</li>
+      <li>時間帯：午前／午後などを選ぶ（複数可）</li>
+      <li>担当者：自分を選ぶ <span class="req">必須</span></li>
+    </ul>
+  </div>
+
+  <!-- 2 -->
+  <div class="step">
+    <div class="step__h"><span class="step__n">2</span><span class="step__t">訪問先（お客様）を入れる</span></div>
+    <ul>
+      <li>🔍 顧客検索に名前・電話・住所・カタカナを入れると候補が出る → 選ぶと訪問先名に入る</li>
+      <li>候補になければ「訪問先名」に直接入力（例：山田太郎様） <span class="req">必須</span></li>
+    </ul>
+  </div>
+
+  <!-- 3 -->
+  <div class="step">
+    <div class="step__h"><span class="step__n">3</span><span class="step__t">作業内容を選ぶ（複数可）</span></div>
+    <p><span class="req">必須</span>　やったことを選びます。選ぶと、その種類に応じた入力欄が下に出ます。</p>
+    <p style="margin-top:10px;">通常：
+      <span class="tag">お困りごと対応</span><span class="tag">点検</span><span class="tag">商談</span><span class="tag">集金</span><span class="tag">その他</span>
+    </p>
+    <p>📄 報告書あり（PDFが自動で作られる）：
+      <span class="tag pdf">現調</span><span class="tag pdf">配達</span><span class="tag pdf">工事</span><span class="tag pdf">修理</span>
+    </p>
+    <table>
+      <tr><th>選んだ種類</th><th>追加で入れること</th></tr>
+      <tr><td>お困りごと対応</td><td><b>要件</b>（何の用事で伺ったか） <span class="req">必須</span></td></tr>
+      <tr><td>点検</td><td>エアコン点検・その他点検の台数</td></tr>
+      <tr><td>配達</td><td><b>商品</b>（大分類→カテゴリを選ぶ） <span class="req">必須</span></td></tr>
+      <tr><td>工事</td><td><b>工事種類</b>（複数可） <span class="req">必須</span></td></tr>
+      <tr><td>修理</td><td>機器種類・症状・修理内容</td></tr>
+      <tr><td>現調</td><td>現調内容／見積書があれば「見積書あり」にチェック</td></tr>
+      <tr><td>商談・集金・その他</td><td>特になし（メモに記入）</td></tr>
+    </table>
+  </div>
+
+  <!-- 4 -->
+  <div class="step">
+    <div class="step__h"><span class="step__n">4</span><span class="step__t">金額・人数・集金</span></div>
+    <ul>
+      <li>売上金額：<b>千円単位・半角</b>で（例：50 → 5万円）。無ければ0のまま</li>
+      <li>作業人数：報告書ありの作業では選ぶ <span class="req">必須</span></li>
+      <li>集金方法：現金／売掛などを選ぶ。<b>売掛</b>のときは集金方法・入金時期も選ぶ</li>
+    </ul>
+  </div>
+
+  <!-- 5 -->
+  <div class="step">
+    <div class="step__h"><span class="step__n">5</span><span class="step__t">写真をあげる</span></div>
+    <ul>
+      <li>写真の種類（現調写真／完了写真）を選んでから撮影・選択</li>
+      <li>現調写真 → 現調写真フォルダ、完了写真 → 完了写真フォルダに自動保存</li>
+      <li>1件あたり最大16枚</li>
+    </ul>
+    <div class="callout" style="margin-bottom:0;">
+      ⚠️ <b>報告書（PDF）は「報告書ありの作業＋写真あり」で自動作成</b>されます。写真がないと報告書は作られません（画面にも注意が出ます）。
+    </div>
+  </div>
+
+  <!-- 6 -->
+  <div class="step">
+    <div class="step__h"><span class="step__n">6</span><span class="step__t">見込商品・メモ</span></div>
+    <ul>
+      <li>見込商品：次につながりそうな商品があれば「➕ 見込商品を追加」（任意）</li>
+      <li>メモ：気づいた点を記入。<b>お困りごと対応は「要件」、点検・商談・集金・その他はメモが必須</b></li>
+    </ul>
+    <p style="font-size:13px;color:var(--ink-soft);margin-top:8px;">※ お困りごと対応のときは、シートに「要件 / メモ」の形で1行にまとまって記録されます。</p>
+  </div>
+
+  <!-- 7 -->
+  <div class="step">
+    <div class="step__h"><span class="step__n">7</span><span class="step__t">送信する</span></div>
+    <ul>
+      <li>「📤 日報を送信する」を押す → 「✅ 送信完了」が出ればOK</li>
+      <li>訪問が複数あれば、1件ごとに1回ずつ送信</li>
+    </ul>
+  </div>
+
+  <!-- 必須まとめ -->
+  <div class="must">
+    <h3>⛔ これが入っていないと送信できません</h3>
+    <ul>
+      <li>担当者 ／ 訪問先名 ／ 作業内容</li>
+      <li>配達 → 商品を選ぶ</li>
+      <li>工事 → 工事種類を選ぶ</li>
+      <li>お困りごと対応 → 要件を書く</li>
+      <li>点検・商談・集金・その他 → メモを書く</li>
+      <li>報告書ありの作業 → 作業人数を選ぶ</li>
+      <li>売掛のとき → 集金方法・入金時期を選ぶ</li>
+    </ul>
+  </div>
+
+  <div class="callout">
+    📋 送信した日報は、<b style="color:inherit">毎日20時（当日分）と翌朝8時（前日分）</b>にまとめてLINEに届きます。<br>
+    朝8時は「20時より後に書いた日報」も拾い直すためのものです。
+  </div>
+</div>
