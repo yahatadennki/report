@@ -269,7 +269,8 @@
 
     <div class="section">
       <label>写真アップロード <span class="label-optional">（任意）</span><span id="pdf-badge" class="pdf-badge hidden">📄 PDF自動生成</span></label>
-      <div class="btn-group" id="photo-type-group" style="margin-bottom:12px;"></div>
+      <div class="btn-group" id="photo-type-group" style="margin-bottom:6px;"></div>
+      <div id="photo-type-hint" style="font-size:12px;font-weight:bold;color:#2e7d32;margin-bottom:10px;"></div>
       <div id="photo-no-report-msg" class="hidden" style="background:#fff3cd;color:#856404;border:1px solid #ffc107;border-radius:6px;padding:8px 12px;font-size:13px;margin-bottom:10px;">⚠️ 写真がないため報告書は作成されません</div>
       <input type="file" id="files" accept="image/*" multiple>
       <div class="photo-count" id="photo-count-display">0/16枚</div>
@@ -349,7 +350,7 @@ const WORK_TYPES = ["お困りごと対応", "点検", "商談", "集金", "そ�
       repairEquipment: "", repairSymptom: "", repairContent: "",
       inspectionContent: "", hasEstimate: false,
       people: "", payment: "", creditMethod: "", creditTiming: "",
-      currentPhotoType: "写真", photos: [], prospectItems: []
+      currentPhotoType: "写真", photoTypeManual: false, photos: [], prospectItems: []
     };
 
     // ══ 顧客検索（商品見積と同じ：入力すると即座に候補が出る方式）══
@@ -530,23 +531,47 @@ const WORK_TYPES = ["お困りごと対応", "点検", "商談", "集金", "そ�
       if (rq) { rq.textContent = memoRequired ? '（必須）' : '（任意）'; rq.style.color = memoRequired ? '#e67e22' : ''; }
     }
 
+    // 作業内容から必要な写真タグを決める（工事・配達・修理→完了／現調→現調。両方あれば両方必要）
+    function expectedPhotoTypes() {
+      const w = state.workType, out = [];
+      if (w.includes('工事') || w.includes('配達') || w.includes('修理')) out.push('完了');
+      if (w.includes('現調')) out.push('現調');
+      return out;
+    }
+    function expectedPhotoType() { return expectedPhotoTypes()[0] || null; }
+
+    function selectPhotoType(type) {
+      document.querySelectorAll('.photo-type-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.photoType === type);
+      });
+      state.currentPhotoType = type;
+      const hint = document.getElementById('photo-type-hint');
+      if (hint) {
+        const exp = expectedPhotoTypes();
+        hint.textContent = 'いま追加する写真：' + type + ' 写真'
+          + (exp.length > 1 ? '　⚠ この日報は【完了】と【現調】の両方が必要です（タグを切り替えて追加）' : '');
+      }
+    }
+
     function updatePhotoTypeButtons() {
       const group = document.getElementById('photo-type-group');
-      if (group.children.length > 0) return;
       const typeClasses = { "現調": "type-genncho", "完了": "type-kanryo" };
-      PHOTO_TYPES.forEach(type => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'photo-type-btn' + (typeClasses[type] ? ' ' + typeClasses[type] : '');
-        btn.textContent = type; btn.dataset.photoType = type;
-        btn.onclick = () => {
-          document.querySelectorAll('.photo-type-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active'); state.currentPhotoType = type;
-        };
-        group.appendChild(btn);
-      });
-      state.currentPhotoType = PHOTO_TYPES[0];
-      group.querySelector('.photo-type-btn').classList.add('active');
+      if (group.children.length === 0) {
+        PHOTO_TYPES.forEach(type => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'photo-type-btn' + (typeClasses[type] ? ' ' + typeClasses[type] : '');
+          btn.textContent = type; btn.dataset.photoType = type;
+          btn.onclick = () => { state.photoTypeManual = true; selectPhotoType(type); };
+          group.appendChild(btn);
+        });
+        selectPhotoType(PHOTO_TYPES[0]);
+      }
+      // 手動で変えていない間は作業内容に合わせて自動で切り替える
+      if (!state.photoTypeManual) {
+        const exp = expectedPhotoType();
+        if (exp) selectPhotoType(exp);
+      }
     }
 
     function updateWorkAmountInfo() {
@@ -812,6 +837,21 @@ createButtons('group-workType', WORK_TYPES, 'workType', true);
       if (needsPeople && !state.people) { alert('作業人数を選択してください'); return; }
       if (state.payment === '売掛' && (!state.creditMethod || !state.creditTiming)) {
         alert('売掛の場合は集金方法と入金時期を選択してください'); return;
+      }
+
+      // 写真0枚（報告書ありの作業）→ 報告書が作られないことを警告
+      if (needsPeople && state.photos.length === 0) {
+        if (!confirm('📷 写真が1枚もありません。\n\nこのまま送ると報告書は作成されません。送信しますか？')) return;
+      }
+      // 写真タグと作業内容の食い違いを警告（例：工事なのに現調写真だけ／配達＋現調で片方しかない）
+      if (state.photos.length > 0) {
+        const missing = expectedPhotoTypes().filter(t => !state.photos.some(p => p.type === t));
+        if (missing.length) {
+          const have = [...new Set(state.photos.map(p => p.type))].join('・');
+          if (!confirm('⚠️ 写真のタグを確認してください。\n\n作業内容「' + state.workType.join('・') + '」には【'
+            + missing.join('】【') + '】写真が必要ですが、付いているのは【' + have + '】写真だけです。\n\n'
+            + 'タグを間違えると保存先フォルダも変わります。このまま送信しますか？')) return;
+        }
       }
 
 
