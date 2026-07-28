@@ -200,6 +200,7 @@ function showApp() {
 let orders = [];
 let currentDate = new Date().toISOString().slice(0, 10);
 let scriptUrl = 'https://script.google.com/macros/s/AKfycbybHVTvastbYdcePLc-WxDZtChBKtpcEPF7IYqMX4UPVs1TbfKnIhvnhlIJGtIfK8Y/exec';
+let selectedKuMark = '';      // 選んだ顧客の区（①④⑤⑥…）。カレンダー予定名に付ける
 let selectedService = '';
 let selectedProduct = '';
 
@@ -291,6 +292,7 @@ document.getElementById('customerModal').classList.remove('active');
 // 検索結果を入力欄に反映
 function applyCustomer(customer) {
 // ☎電話連絡ONのままなら、上書きしてもマークを維持する
+selectedKuMark = kuMark(customer);   // カレンダー予定名に付けるため区の丸数字を覚えておく
 const name = customer.name || '';
 document.getElementById('顧客名').value = (phoneContactOn && !name.startsWith(PHONE_MARK)) ? PHONE_MARK + name : name;
 document.getElementById('住所text').value = customer.address || '';
@@ -380,9 +382,24 @@ function onSearchInput() {
   }
   box.innerHTML = _lastSearchResults.map(function(r, i) {
     return '<div class="customer-search-result" onclick="pickSearchResult(' + i + ')">' +
-      '<div class="font-bold text-gray-800 text-sm">' + (r.name || '') + '</div>' +
+      '<div class="font-bold text-gray-800 text-sm">' + kuMark(r) + (r.name || '') + '</div>' +
       '<div class="text-xs text-gray-500">' + (r.tel || '') + '　' + (r.address || '') + '</div></div>';
   }).join('');
+}
+
+// 顧客マスタI列「1区 角井」などから区番号を取り出して丸数字にする（2区・3区は付けない）
+const KU_MARKS = { 1: '①', 4: '④', 5: '⑤', 6: '⑥', 7: '⑦', 8: '⑧', 9: '⑨' };
+function kuMark(c) {
+  if (!c) return '';
+  const m = String(c.ku || '').match(/(\d+)\s*区/);
+  if (!m) return '';
+  return KU_MARKS[Number(m[1])] || '';
+}
+// 顧客名に丸数字を付ける（既に付いていれば足さない）
+function withKuMark(name, c) {
+  const mk = kuMark(c);
+  if (!mk) return name;
+  return String(name || '').indexOf(mk) === 0 ? name : mk + name;
 }
 
 function pickSearchResult(i) {
@@ -845,6 +862,7 @@ id: Date.now(),
 日付: currentDate,
 登録時刻: new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }),
 担当, 種類, 顧客名: 顧客名送信, 住所, 電話番号, サービス種別, 業者種別, 商品区分, 商品詳細,
+区マーク: selectedKuMark,   // カレンダーの予定名の先頭に付ける（シートには入れない）
 訪問日時, 訪問担当, 訪問担当メール, 予定時間, 内容,
 電話連絡, 受注担当メール,
 見込商品: 見込商品リスト,
