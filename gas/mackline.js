@@ -48,7 +48,7 @@ function ema_(p, n) {
   return o;
 }
 function macd_(c) {
-  var f = ema_(c, 9), s = ema_(c, 20);
+  var f = ema_(c, 12), s = ema_(c, 26);   // ★検証で(9,20,9)より+841pips良かったため標準設定(12,26,9)
   var line = c.map(function(_, i) { return (f[i] !== null && s[i] !== null) ? f[i] - s[i] : null; });
   return { line: line, sig: ema_(line, 9) };
 }
@@ -73,11 +73,29 @@ function fetchCandles_(symbol, interval) {
   };
 }
 
+// 日足はその日のうちは変わらないのでキャッシュする（無料枠 8req/分 を超えないため）
+function fetchDailyCached_(symbol) {
+  var cache = CacheService.getScriptCache();
+  var key = 'DAILY_' + symbol.replace('/', '') + '_' + Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyyMMdd');
+  var hit = cache.get(key);
+  if (hit) {
+    try { return JSON.parse(hit); } catch (e) {}
+  }
+  var d = fetchCandles_(symbol, '1day');
+  // 20MAの判定に必要な分だけ残して軽くする（Cacheは100KB上限）
+  var keep = 60;
+  var slim = {
+    closes: d.closes.slice(-keep), highs: d.highs.slice(-keep), lows: d.lows.slice(-keep), time: d.time.slice(-keep)
+  };
+  try { cache.put(key, JSON.stringify(slim), 21600); } catch (e) {}   // 6時間
+  return slim;
+}
+
 // ===== 判定：日足の方向にMACDがクロスしたか（＝通知の対象）=====
 function checkCross_(symbol) {
   var h1 = fetchCandles_(symbol, '1h');
   Utilities.sleep(400);
-  var dy = fetchCandles_(symbol, '1day');
+  var dy = fetchDailyCached_(symbol);
 
   var last = h1.closes.length - 1;
   var pip = pipSize_(symbol);
@@ -155,6 +173,7 @@ function checkMackline() {
         }
       }
       status.push(r.name + '：' + (r.hit ? 'クロスあり' : (r.dDir === 'flat' ? '日足方向なし' : '待ち')));
+      Utilities.sleep(9000);   // 無料枠 8req/分 を超えないよう通貨ごとに待つ
     } catch (e) {
       status.push(sym + '：エラー ' + e);
     }
@@ -191,6 +210,7 @@ function テスト送信() {
       }
       out.push(t);
     } catch (e) { out.push('■ ' + sym + '：エラー ' + e); }
+    Utilities.sleep(9000);
   });
   var msg = Utilities.formatDate(new Date(), 'Asia/Tokyo', 'M月d日 HH:mm') + ' 時点\n\n' + out.join('\n\n');
   pushMail_('📈 マックライン｜テスト送信', msg);

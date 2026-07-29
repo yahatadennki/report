@@ -9,7 +9,8 @@ function 権限を承認する() {
   UrlFetchApp.fetch('https://www.google.com', { muteHttpExceptions: true });
   ScriptApp.getProjectTriggers();  // トリガー管理スコープ（PDF非同期化に必要）の承認
   CalendarApp.getAllCalendars().length;  // カレンダー読取スコープ（日報の抜けチェックに必要）の承認
-  MailApp.getRemainingDailyQuota();      // メール送信スコープ（マックライン通知に必要）の承認
+  // メール送信スコープの承認。※getRemainingDailyQuota()では許可画面が出ないため実際に1通送る
+  MailApp.sendEmail('yawata51@gmail.com', '【権限確認】マックライン通知', 'メール送信の権限が有効になりました。');
   Logger.log('権限OK');
 }
 
