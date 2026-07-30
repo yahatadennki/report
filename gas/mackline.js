@@ -13,7 +13,9 @@
 var MACKLINE_MAIL_TO = 'yawata51@gmail.com';
 // ★通知モード： 'ishin'（維新流＝教材どおり／既定） | 'claude'（MACDクロスで即入る）
 var MACKLINE_MODE = 'ishin';
-var PAIRS = ['USD/JPY', 'EUR/USD', 'USD/CHF'];   // ポンドドルはユーロドルと相関が強いので除外
+// ★通知はドル円だけ。維新流で PF2.18・勝率47%・最大DD242pips と最も安定していたため。
+//   他の通貨は維新流では負ける（ユーロドル-518 / ドルスイス-1154 / ドルカナダ-779 / ユーロ円-313）
+var PAIRS = ['USD/JPY'];
 var JP_NAME = { 'USD/JPY': 'ドル円', 'EUR/USD': 'ユーロドル', 'GBP/USD': 'ポンドドル', 'USD/CHF': 'ドルスイス' };
 
 var PARAMS = {
