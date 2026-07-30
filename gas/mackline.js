@@ -13,7 +13,7 @@
 var MACKLINE_MAIL_TO = 'yawata51@gmail.com';
 // ★通知モード： 'ishin'（維新流＝教材どおり／既定） | 'claude'（MACDクロスで即入る）
 var MACKLINE_MODE = 'ishin';
-var PAIRS = ['USD/JPY', 'EUR/USD', 'GBP/USD'];   // 仕様書9.1の3通貨
+var PAIRS = ['USD/JPY', 'EUR/USD', 'USD/CHF'];   // ポンドドルはユーロドルと相関が強いので除外
 var JP_NAME = { 'USD/JPY': 'ドル円', 'EUR/USD': 'ユーロドル', 'GBP/USD': 'ポンドドル', 'USD/CHF': 'ドルスイス' };
 
 var PARAMS = {
