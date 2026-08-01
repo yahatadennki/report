@@ -290,9 +290,18 @@ document.getElementById('customerModal').classList.remove('active');
 }
 
 // 検索結果を入力欄に反映
+// 顧客名を手で書き換えたら、前に選んだ顧客の区マークは無効にする
+// （検索でヒットしない顧客を手入力した時に、別人の区が付くのを防ぐ）
+let _kuMarkFor = '';                 // 区マークがどの顧客名に対するものか
+function onCustomerNameEdited() {
+  const now = (document.getElementById('顧客名').value || '').replace('☎】', '').trim();
+  if (now !== _kuMarkFor) selectedKuMark = '';
+}
+
 function applyCustomer(customer) {
 // ☎電話連絡ONのままなら、上書きしてもマークを維持する
 selectedKuMark = kuMark(customer);   // カレンダー予定名に付けるため区の丸数字を覚えておく
+_kuMarkFor = (customer.name || '').trim();   // この顧客名のときだけ区マークを有効にする
 const name = customer.name || '';
 document.getElementById('顧客名').value = (phoneContactOn && !name.startsWith(PHONE_MARK)) ? PHONE_MARK + name : name;
 document.getElementById('住所text').value = customer.address || '';
@@ -999,7 +1008,8 @@ document.getElementById('app').innerHTML = `
            <!-- 顧客名 -->
            <div>
              <label class="block text-sm font-semibold text-gray-700 mb-2">顧客名 <span class="text-red-500">*</span></label>
-             <input type="text" id="顧客名" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="顧客名を入力">
+             <input type="text" id="顧客名" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" placeholder="顧客名を入力"
+                    oninput="onCustomerNameEdited()">
            </div>
 
            <!-- 住所 -->

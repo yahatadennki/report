@@ -13,9 +13,12 @@
 var MACKLINE_MAIL_TO = 'yawata51@gmail.com';
 // ★通知モード： 'ishin'（維新流＝教材どおり／既定） | 'claude'（MACDクロスで即入る）
 var MACKLINE_MODE = 'ishin';
-// ★通知はドル円だけ。維新流で PF2.18・勝率47%・最大DD242pips と最も安定していたため。
-//   他の通貨は維新流では負ける（ユーロドル-518 / ドルスイス-1154 / ドルカナダ-779 / ユーロ円-313）
-var PAIRS = ['USD/JPY'];
+// ★通知する組み合わせ（楽天MT4の実スプレッドで検証してプラスだったものだけ）
+//   維新流   : ドル円のみ（PF2.18・勝率47%・DD242・+2,394pips）
+//   クロード流: ドル円(+2,125) / ユーロドル(+973) / ドルスイス(+564)
+var ISHIN_PAIRS  = ['USD/JPY'];
+var CLAUDE_PAIRS = ['USD/JPY', 'EUR/USD', 'USD/CHF'];
+var PAIRS = ISHIN_PAIRS;   // 旧コードの互換用
 var JP_NAME = { 'USD/JPY': 'ドル円', 'EUR/USD': 'ユーロドル', 'GBP/USD': 'ポンドドル', 'USD/CHF': 'ドルスイス' };
 
 var PARAMS = {
@@ -282,16 +285,19 @@ function pushMail_(subject, text) {
 }
 
 // ===== メイン：15分ごとに実行。日足方向のクロスが出たら知らせる =====
+// ★両モードを毎回チェックする（維新流＝ドル円 / クロード流＝ドル円・ユーロドル・ドルスイス）
 function checkMackline() {
-  if (MACKLINE_MODE === 'ishin') return checkMacklineIshin_();
-  return checkMacklineClaude_();
+  var a = '', b = '';
+  try { a = checkMacklineIshin_(); }  catch (e) { a = '維新流エラー ' + e; }
+  try { b = checkMacklineClaude_(); } catch (e) { b = 'クロード流エラー ' + e; }
+  return '【維新流】' + a + '　／　【クロード流】' + b;
 }
 
 // ── 維新流モード（既定）：準備(SETUP)と確定(ENTRY)で知らせる ──
 function checkMacklineIshin_() {
   var p = PropertiesService.getScriptProperties();
   var hits = [], setups = [], status = [];
-  PAIRS.forEach(function(sym) {
+  ISHIN_PAIRS.forEach(function(sym) {
     try {
       var r = checkIshin_(sym);
       var key = 'ISHIN_' + sym.replace('/', '') + '_' + r.state;
@@ -333,7 +339,7 @@ function checkMacklineClaude_() {
   var p = PropertiesService.getScriptProperties();
   var hits = [], nears = [], status = [];
 
-  PAIRS.forEach(function(sym) {
+  CLAUDE_PAIRS.forEach(function(sym) {
     try {
       var r = checkCross_(sym);
 
@@ -378,7 +384,7 @@ function checkMacklineClaude_() {
     var head = hits.length === 1
       ? hits[0].split('\n')[0].replace('■ ', '').trim()
       : hits.length + '件のクロス';
-    pushMail_('📈 マックライン｜' + head,
+    pushMail_('📈 クロード流｜' + head,
       '【MACDクロス＝エントリーの合図】\n' +
       '検証の結果、クロスした足で即入るのが最も成績が良い形でした。\n' +
       '（高値更新を待つと高値づかみになり成績が落ちます／時間が経ったクロスは追いかけません）\n\n' +
@@ -390,7 +396,7 @@ function checkMacklineClaude_() {
     var nhead = nears.length === 1
       ? nears[0].split('\n')[0].replace('■ ', '').trim()
       : nears.length + '件がクロス間近';
-    pushMail_('⏳ マックライン｜' + nhead,
+    pushMail_('⏳ クロード流｜' + nhead,
       '【まだ入りません。クロス間近の予告です】\n' +
       '検証では、この状態から3時間以内に約8割がクロスします（2割は外れます）。\n' +
       'チャートを開いて構えておき、★クロス確定のメールが来てから入ってください。\n\n' +
@@ -401,49 +407,49 @@ function checkMacklineClaude_() {
 
 // ===== テスト送信（クロスの有無に関係なく今の状態を送る）=====
 function テスト送信() {
-  if (MACKLINE_MODE === 'ishin') {
-    var o = [];
-    PAIRS.forEach(function(sym) {
-      try {
-        var r = checkIshin_(sym);
-        var t = '■ ' + r.name + '　現在値 ' + fmt_(r.price, sym) + '\n';
-        if (r.state === 'ENTRY' || r.state === 'SETUP') {
-          t += '　' + (r.state === 'ENTRY' ? '🔥 確定（エントリー）' : '⏳ 準備（確定待ち）') +
-               '　' + (r.dir === 'up' ? '買い' : '売り') + '／グランビル' + (r.gv === 2 ? '②' : '①') + '\n' +
-               '　確定ライン ' + fmt_(r.trigger, sym) + '／指値 ' + fmt_(r.entry, sym) +
-               '／損切り ' + fmt_(r.stop, sym) + '（' + r.risk.toFixed(1) + 'pips）';
-        } else {
-          t += '　見送り：' + (r.ng.length ? r.ng.join('、') : '条件待ち');
-        }
-        o.push(t);
-      } catch (e) { o.push('■ ' + sym + '：エラー ' + e); }
-      Utilities.sleep(9000);
-    });
-    var msg2 = '【維新流モード】' + Utilities.formatDate(new Date(), 'Asia/Tokyo', 'M月d日 HH:mm') + ' 時点\n\n' + o.join('\n\n');
-    pushMail_('📈 維新流｜テスト送信', msg2);
-    Logger.log(msg2);
-    return msg2;
-  }
   var out = [];
-  PAIRS.forEach(function(sym) {
+
+  // ── 維新流（ドル円）──
+  out.push('◆ 維新流（教材どおり・ドル円）');
+  ISHIN_PAIRS.forEach(function(sym) {
     try {
-      var r = checkCross_(sym);
-      var t = '■ ' + r.name + '\n' +
-              '　日足：' + (r.dDir === 'up' ? '↑上昇' : r.dDir === 'down' ? '↓下落' : '→方向なし') + '\n' +
-              '　現在値：' + fmt_(r.price, sym) + '\n';
-      if (r.hit) {
-        t += '　★' + (r.dir === 'up' ? '買い' : '売り') + '方向のクロスあり（' + r.crossTime + '）\n' +
-             '　▶ ' + fmt_(r.trigger, sym) + ' を' + (r.dir === 'up' ? '上' : '下') + '抜けたらエントリー\n' +
-             '　　損切り目安：' + fmt_(r.stop, sym) + '（' + r.risk.toFixed(1) + 'pips）';
+      var r = checkIshin_(sym);
+      var t = '■ ' + r.name + '　現在値 ' + fmt_(r.price, sym) + '\n';
+      if (r.state === 'ENTRY' || r.state === 'SETUP') {
+        t += '　' + (r.state === 'ENTRY' ? '🔥 確定（エントリー）' : '⏳ 準備（確定待ち）') +
+             '　' + (r.dir === 'up' ? '買い' : '売り') + '／グランビル' + (r.gv === 2 ? '②' : '①') + '\n' +
+             '　確定ライン ' + fmt_(r.trigger, sym) + '／指値 ' + fmt_(r.entry, sym) +
+             '／損切り ' + fmt_(r.stop, sym) + '（' + r.risk.toFixed(1) + 'pips）';
       } else {
-        t += r.near ? '　⏳ クロス間近（残り' + (r.nearRatio * 100).toFixed(0) + '%）' : '　クロス待ち';
+        t += '　見送り：' + (r.ng.length ? r.ng.join('、') : '条件待ち');
       }
       out.push(t);
     } catch (e) { out.push('■ ' + sym + '：エラー ' + e); }
     Utilities.sleep(9000);
   });
+
+  // ── クロード流（ドル円・ユーロドル・ドルスイス）──
+  out.push('◆ クロード流（MACDクロスで即入る）');
+  CLAUDE_PAIRS.forEach(function(sym) {
+    try {
+      var r = checkCross_(sym);
+      var t = '■ ' + r.name + '　現在値 ' + fmt_(r.price, sym) + '\n' +
+              '　日足：' + (r.dDir === 'up' ? '↑上昇' : r.dDir === 'down' ? '↓下落' : '→方向なし') + '\n';
+      if (r.hit && r.barsAgo === 0) {
+        t += '　🔥 今クロス → ' + (r.dir === 'up' ? '買い' : '売り') +
+             '　損切り ' + fmt_(r.stop, sym) + '（' + r.risk.toFixed(1) + 'pips）';
+      } else if (r.near) {
+        t += '　⏳ クロス間近（残り' + (r.nearRatio * 100).toFixed(0) + '%）';
+      } else {
+        t += '　クロス待ち';
+      }
+      out.push(t);
+    } catch (e) { out.push('■ ' + sym + '：エラー ' + e); }
+    Utilities.sleep(9000);
+  });
+
   var msg = Utilities.formatDate(new Date(), 'Asia/Tokyo', 'M月d日 HH:mm') + ' 時点\n\n' + out.join('\n\n');
-  pushMail_('📈 マックライン｜テスト送信', msg);
+  pushMail_('📈 マックライン｜テスト送信（両モード）', msg);
   Logger.log(msg);
   return msg;
 }
