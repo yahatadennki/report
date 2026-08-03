@@ -355,15 +355,34 @@ const WORK_TYPES = ["お困りごと対応", "点検", "商談", "集金", "そ�
 
     // ══ 顧客検索（商品見積と同じ：入力すると即座に候補が出る方式）══
     let customers = [];
+    const CUST_CACHE_KEY = 'kouji_customers_v1';
+    // ★1,549件（182KB）の取得に数秒かかる。前回分を保存しておき、すぐ検索できるようにする
     (async function loadCustomers() {
+      const st = document.getElementById('custLoadStatus');
       try {
-        const res = await fetch(GAS_URL + '?action=customers');
-        customers = await res.json();
-        document.getElementById('custLoadStatus').textContent = '';
-      } catch (e) {
-        console.error(e);
-        document.getElementById('custLoadStatus').textContent = '⚠️ 顧客データの読込に失敗（ページを再読み込みしてください）';
+        const c = JSON.parse(localStorage.getItem(CUST_CACHE_KEY) || 'null');
+        if (c && c.date === new Date().toISOString().slice(0,10) && Array.isArray(c.data) && c.data.length) {
+          customers = c.data;
+          if (st) st.textContent = '';
+        }
+      } catch (e) {}
+      for (let i = 1; i <= 3; i++) {
+        try {
+          const res = await fetch(GAS_URL + '?action=customers');
+          const list = await res.json();
+          if (Array.isArray(list) && list.length) {
+            customers = list;
+            try {
+              localStorage.setItem(CUST_CACHE_KEY,
+                JSON.stringify({ date: new Date().toISOString().slice(0,10), data: list }));
+            } catch (e) {}
+            if (st) st.textContent = '';
+            return;
+          }
+        } catch (e) { console.error('顧客データ読込失敗 (' + i + '回目)', e); }
+        await new Promise(r => setTimeout(r, 1500));
       }
+      if (!customers.length && st) st.textContent = '⚠️ 顧客データの読込に失敗（ページを再読み込みしてください）';
     })();
 
     function toKana(str) {

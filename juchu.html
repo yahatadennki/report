@@ -350,12 +350,59 @@ function updateTimeEstimate() {
 // ── 入力しただけで即候補表示（商品見積・業務日報と同じ：全顧客を起動時に読込→ローカル絞込）──
 let _lastSearchResults = [];
 let _customers = [];
+let _custState = 'loading';          // loading / ready / error
+const CUST_CACHE_KEY = 'juchu_customers_v1';
+
+// ★顧客1,549件（182KB）の取得に7秒ほどかかる。
+//   ①前回のデータを即座に使えるよう保存しておく ②読込中/失敗が画面で分かるようにする
 (async function loadCustomers() {
+  // まず保存済みを使う（当日中のものなら即検索できる）
   try {
-    const resp = await fetch(scriptUrl + '?action=customers');
-    _customers = await resp.json();
-  } catch (e) { console.error('顧客データ読込失敗', e); }
+    const c = JSON.parse(localStorage.getItem(CUST_CACHE_KEY) || 'null');
+    if (c && c.date === new Date().toISOString().slice(0, 10) && Array.isArray(c.data) && c.data.length) {
+      _customers = c.data;
+      _custState = 'ready';
+      showCustStatus();
+    }
+  } catch (e) {}
+
+  // 最新を取り直す（失敗しても保存済みが残っていれば検索できる）
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const resp = await fetch(scriptUrl + '?action=customers');
+      const list = await resp.json();
+      if (Array.isArray(list) && list.length) {
+        _customers = list;
+        _custState = 'ready';
+        try {
+          localStorage.setItem(CUST_CACHE_KEY,
+            JSON.stringify({ date: new Date().toISOString().slice(0, 10), data: list }));
+        } catch (e) {}
+        showCustStatus();
+        return;
+      }
+    } catch (e) {
+      console.error('顧客データ読込失敗 (' + attempt + '回目)', e);
+    }
+    await new Promise(r => setTimeout(r, 1500));
+  }
+  if (!_customers.length) { _custState = 'error'; showCustStatus(); }
 })();
+
+// 検索欄の下に読込状況を出す（黙って何も出ない状態をなくす）
+function showCustStatus() {
+  const box = document.getElementById('searchResults');
+  if (!box) return;
+  const q = (document.getElementById('searchQuery')?.value || '').trim();
+  if (_custState === 'loading' && q) {
+    box.innerHTML = '<div class="p-2 text-sm text-gray-500">⏳ 顧客データを読み込み中です…（数秒お待ちください）</div>';
+  } else if (_custState === 'error') {
+    box.innerHTML = '<div class="p-2 text-sm text-red-600">⚠️ 顧客データを読み込めませんでした。' +
+      '<button onclick="location.reload()" class="underline">再読み込み</button></div>';
+  } else if (_custState === 'ready' && q) {
+    onSearchInput();
+  }
+}
 
 function toKana(str) {
   return String(str)
@@ -379,6 +426,8 @@ function onSearchInput() {
   const box = document.getElementById('searchResults');
   if (!box) return;
   if (!raw) { box.innerHTML = ''; return; }
+  // まだ読込中／失敗しているなら、その旨を出す（黙って「該当なし」にしない）
+  if (!_customers.length) { showCustStatus(); return; }
   const q = normalizeQ(raw);
   const qTel = raw.replace(/[-\s]/g, '');
   _lastSearchResults = _customers.filter(function(c) {
