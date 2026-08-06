@@ -48,6 +48,11 @@ function doGet(e) {
     });
     return ContentService.createTextOutput(JSON.stringify(out)).setMimeType(ContentService.MimeType.JSON);
   }
+  // お礼ハガキ：未訪問リスト
+  if (e && e.parameter && e.parameter.action === 'hagaki') {
+    return ContentService.createTextOutput(JSON.stringify(getHagakiPending_()))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
   if (e && e.parameter && e.parameter.action === 'search') {
     const results = searchCustomer(e.parameter.query);
     return ContentService.createTextOutput(JSON.stringify(results))
@@ -282,6 +287,14 @@ function doPost(e) {
 
   try {
     const data = JSON.parse(e.postData.contents);
+
+    // お礼ハガキ：訪問済の書き戻し
+    if (data.action === 'hagakiDone') {
+      const ok = markHagakiDone_(data.key, data.memo);
+      return ContentService.createTextOutput(JSON.stringify({ ok: ok }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const sheet = ss.getSheetByName("日報") || ss.getSheets()[0];
 
