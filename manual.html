@@ -506,7 +506,7 @@
 </div>
 
 <div class="toolbar">
-  <button class="backBtn" id="backBtn" onclick="showView('home')">← メニューに戻る</button>
+  <button class="backBtn" id="backBtn" onclick="showView('view-home')">← メニューに戻る</button>
   <button onclick="window.print()">🖨️ 印刷 / PDF保存</button>
 </div>
 
@@ -4011,19 +4011,55 @@
   // 今後ガイドを追加する時：①<section class="view sheet" id="view-新id">を1枚追加
   // ②ホームの.menu-gridに<button class="menu-card" onclick="showView('view-新id')">を1枚追加
   var IFRAME_VIEWS = ['jimu', 'himawari', 'service', 'koji', 'company'];
+
+  // ガイド本体から高さを知らせてもらう。
+  // スマホでは iframe.contentWindow.document が読めずに高さ0のまま
+  // 真っ白になることがあるため、中から postMessage で伝える方式にする。
+  var HEIGHT_REPORTER =
+    '<scr' + 'ipt>(function(){function s(){try{var h=Math.max(' +
+    'document.documentElement.scrollHeight,document.body?document.body.scrollHeight:0);' +
+    'parent.postMessage({yhFrame:"__KEY__",height:h},"*");}catch(e){}}' +
+    'window.addEventListener("load",s);window.addEventListener("resize",s);' +
+    'setTimeout(s,200);setTimeout(s,800);setTimeout(s,2000);})();<\/scr' + 'ipt>';
+
+  window.addEventListener('message', function (ev) {
+    var d = ev.data;
+    if (!d || !d.yhFrame || !d.height) return;
+    var f = document.getElementById('frame-' + d.yhFrame);
+    if (f) { f.dataset.ok = '1'; f.style.height = (d.height + 24) + 'px'; }
+  });
+
   IFRAME_VIEWS.forEach(function (key) {
     var iframe = document.getElementById('frame-' + key);
     var html = document.getElementById('data-' + key).textContent;
+    var reporter = HEIGHT_REPORTER.replace('__KEY__', key);
+    html = /<\/body>/i.test(html) ? html.replace(/<\/body>/i, reporter + '</body>') : html + reporter;
+
+    iframe.style.height = '70vh';   // 届くまでの仮の高さ（真っ白にしない）
+
     iframe.addEventListener('load', function () {
+      // 読めるブラウザではこちらでも測る（どちらか通ればよい）
       try {
         var doc = iframe.contentWindow.document;
-        iframe.style.height = doc.documentElement.scrollHeight + 'px';
+        var h = doc.documentElement.scrollHeight;
+        if (h > 100) { iframe.dataset.ok = '1'; iframe.style.height = (h + 24) + 'px'; }
       } catch (e) {}
     });
+
+    // 2.5秒たっても高さが分からなければ、中でスクロールできるようにする
+    setTimeout(function () {
+      if (iframe.dataset.ok !== '1') {
+        iframe.setAttribute('scrolling', 'auto');
+        iframe.style.height = '80vh';
+      }
+    }, 2500);
+
     iframe.srcdoc = html;
   });
 
   function showView(id) {
+    // 存在しないidが来ても真っ白にせずメニューに戻す
+    if (!document.getElementById(id)) id = 'view-home';
     document.querySelectorAll('.view').forEach(function (el) {
       el.classList.toggle('active', el.id === id);
     });
