@@ -24,6 +24,14 @@ function hagakiNormName_(s) {
     .trim();
 }
 
+/* 「【Ｃ】」のような表記から A〜E だけ取り出す */
+function hagakiRank_(v) {
+  var s = String(v || '').replace(/[【】\s]/g, '')
+    .replace(/[Ａ-Ｅ]/g, function(c) { return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); })
+    .toUpperCase();
+  return /^[A-E]$/.test(s) ? s : '';
+}
+
 /* 顧客マスタを { byName:{正規化名:客}, all:[客...] } で返す */
 function hagakiCustomerIndex_() {
   var idx = {};
@@ -45,7 +53,8 @@ function hagakiCustomerIndex_() {
         tel: String(d[i][3] || '').trim(),
         address: [d[i][15], d[i][16]].filter(function(v) { return v; }).join(' '),
         ku: ku,
-        kuMark: m ? (HAGAKI_KU_MARKS[Number(m[1])] || '') : ''
+        kuMark: m ? (HAGAKI_KU_MARKS[Number(m[1])] || '') : '',
+        rfm: hagakiRank_(d[i][10])   // K列 RFMランク
       };
       all.push(obj);
       if (!idx[key]) idx[key] = obj;        // 先勝ち（完全同名は最初の1件）
@@ -108,23 +117,29 @@ function updateHagakiList() {
     sh = ss.insertSheet(HAGAKI_SHEET);
   }
 
-  var HEAD = ['工事日', '区', '顧客名', '住所', 'TEL', '内容', '工事担当', '訪問済', '訪問日', 'メモ', 'KEY'];
-  if (sh.getLastRow() === 0 || String(sh.getRange(1, 1).getValue()) !== '工事日') {
+  var HEAD = ['工事日', '区', 'RFM', '顧客名', '住所', 'TEL', '内容', '工事担当', '訪問済', '訪問日', 'メモ', 'KEY'];
+  // 見出しが今の形と違えば作り直す（列を増やしたときにズレないように）
+  var curHead = sh.getLastColumn() >= HEAD.length
+    ? sh.getRange(1, 1, 1, HEAD.length).getValues()[0].join('\t') : '';
+  if (curHead !== HEAD.join('\t')) {
     sh.clear();
+    sh.clearConditionalFormatRules();
+    try { sh.showColumns(1, Math.max(sh.getMaxColumns(), HEAD.length)); } catch (e) {}
     sh.getRange(1, 1, 1, HEAD.length).setValues([HEAD])
       .setFontWeight('bold').setBackground('#f4b400').setFontColor('#000');
     sh.setFrozenRows(1);
     sh.setColumnWidth(1, 80);   // 工事日
     sh.setColumnWidth(2, 40);   // 区
-    sh.setColumnWidth(3, 130);  // 顧客名
-    sh.setColumnWidth(4, 240);  // 住所
-    sh.setColumnWidth(5, 110);  // TEL
-    sh.setColumnWidth(6, 260);  // 内容
-    sh.setColumnWidth(7, 90);   // 工事担当
-    sh.setColumnWidth(8, 60);   // 訪問済
-    sh.setColumnWidth(9, 80);   // 訪問日
-    sh.setColumnWidth(10, 180); // メモ
-    sh.hideColumns(11);
+    sh.setColumnWidth(3, 50);   // RFM
+    sh.setColumnWidth(4, 130);  // 顧客名
+    sh.setColumnWidth(5, 240);  // 住所
+    sh.setColumnWidth(6, 110);  // TEL
+    sh.setColumnWidth(7, 260);  // 内容
+    sh.setColumnWidth(8, 90);   // 工事担当
+    sh.setColumnWidth(9, 60);   // 訪問済
+    sh.setColumnWidth(10, 80);  // 訪問日
+    sh.setColumnWidth(11, 180); // メモ
+    sh.hideColumns(12);
   }
 
   /* 既存行を KEY で覚える（チェック状態を消さないため） */
@@ -133,8 +148,8 @@ function updateHagakiList() {
   if (eLast >= 2) {
     var ev = sh.getRange(2, 1, eLast - 1, HEAD.length).getValues();
     for (var i = 0; i < ev.length; i++) {
-      var k = String(ev[i][10] || '');
-      if (k) existing[k] = { done: ev[i][7], visitDate: ev[i][8], memo: ev[i][9] };
+      var k = String(ev[i][11] || '');
+      if (k) existing[k] = { done: ev[i][8], visitDate: ev[i][9], memo: ev[i][10] };
     }
   }
 
@@ -169,6 +184,7 @@ function updateHagakiList() {
     rows.push([
       (dd.getMonth() + 1) + '/' + dd.getDate() + '(' + wd + ')',
       hit ? hit.kuMark : '',                    // 区
+      hit ? hit.rfm : '',                       // RFMランク
       (hit ? hit.name : rawName.replace(/☎】/g, '')) + ' 様',
       hit ? hit.address : (c && c.ambiguous ? '⚠️ 同姓が複数：要確認' : '⚠️ 顧客マスタに無し'),
       hit ? hit.tel : '',
@@ -182,7 +198,7 @@ function updateHagakiList() {
   }
 
   /* 新しい順に並べる */
-  rows.sort(function(a, b) { return a[10] < b[10] ? 1 : (a[10] > b[10] ? -1 : 0); });
+  rows.sort(function(a, b) { return a[11] < b[11] ? 1 : (a[11] > b[11] ? -1 : 0); });
 
   if (sh.getLastRow() >= 2) {
     sh.getRange(2, 1, sh.getLastRow() - 1, HEAD.length).clearContent()
@@ -192,25 +208,33 @@ function updateHagakiList() {
 
   sh.getRange(2, 1, rows.length, 1).setNumberFormat('@'); // 「8/6(木)」を日付に変換させない
   sh.getRange(2, 1, rows.length, HEAD.length).setValues(rows);
-  sh.getRange(2, 8, rows.length, 1).insertCheckboxes();
+  sh.getRange(2, 9, rows.length, 1).insertCheckboxes();
   sh.getRange(2, 1, rows.length, HEAD.length).setVerticalAlignment('middle');
-  sh.getRange(2, 2, rows.length, 1).setHorizontalAlignment('center').setFontSize(12);
+  sh.getRange(2, 2, rows.length, 2).setHorizontalAlignment('center');
+  sh.getRange(2, 2, rows.length, 1).setFontSize(12);
 
-  /* 訪問済にチェックが入ったら行をグレー＋取消線にする */
+  /* 訪問済にチェックが入ったら行をグレーにする */
   var rule = SpreadsheetApp.newConditionalFormatRule()
-    .whenFormulaSatisfied('=$H2=TRUE')
+    .whenFormulaSatisfied('=$I2=TRUE')
     .setBackground('#eeeeee').setFontColor('#999999')
-    .setRanges([sh.getRange(2, 1, rows.length, 10)])
+    .setRanges([sh.getRange(2, 1, rows.length, 11)])
     .build();
-  sh.setConditionalFormatRules([rule]);
 
   /* 顧客マスタに無い行は住所セルを赤く */
   var warn = SpreadsheetApp.newConditionalFormatRule()
     .whenTextContains('⚠️')
     .setBackground('#fce8e6').setFontColor('#c5221f')
-    .setRanges([sh.getRange(2, 4, rows.length, 1)])
+    .setRanges([sh.getRange(2, 5, rows.length, 1)])
     .build();
-  sh.setConditionalFormatRules([rule, warn]);
+
+  /* 優良客(Aランク)は目立たせる */
+  var rankA = SpreadsheetApp.newConditionalFormatRule()
+    .whenTextEqualTo('A')
+    .setBackground('#fff2cc').setFontColor('#b06000').setBold(true)
+    .setRanges([sh.getRange(2, 3, rows.length, 1)])
+    .build();
+
+  sh.setConditionalFormatRules([rankA, warn, rule]);
 
   return rows.length;
 }
@@ -230,19 +254,20 @@ function getHagakiPending_() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sh = ss.getSheetByName(HAGAKI_SHEET);
   if (!sh || sh.getLastRow() < 2) return [];
-  var v = sh.getRange(2, 1, sh.getLastRow() - 1, 11).getValues();
+  var v = sh.getRange(2, 1, sh.getLastRow() - 1, 12).getValues();
   var out = [];
   for (var i = 0; i < v.length; i++) {
-    if (v[i][7] === true) continue;
+    if (v[i][8] === true) continue;
     out.push({
       date: String(v[i][0]),
       ku: String(v[i][1] || ''),
-      name: String(v[i][2] || ''),
-      address: String(v[i][3] || ''),
-      tel: String(v[i][4] || ''),
-      work: String(v[i][5] || ''),
-      staff: String(v[i][6] || ''),
-      key: String(v[i][10] || '')
+      rfm: String(v[i][2] || ''),
+      name: String(v[i][3] || ''),
+      address: String(v[i][4] || ''),
+      tel: String(v[i][5] || ''),
+      work: String(v[i][6] || ''),
+      staff: String(v[i][7] || ''),
+      key: String(v[i][11] || '')
     });
   }
   return out;
@@ -253,13 +278,13 @@ function markHagakiDone_(key, memo) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sh = ss.getSheetByName(HAGAKI_SHEET);
   if (!sh || sh.getLastRow() < 2) return false;
-  var keys = sh.getRange(2, 11, sh.getLastRow() - 1, 1).getValues();
+  var keys = sh.getRange(2, 12, sh.getLastRow() - 1, 1).getValues();
   for (var i = 0; i < keys.length; i++) {
     if (String(keys[i][0]) === String(key)) {
       var row = i + 2;
-      sh.getRange(row, 8).setValue(true);
-      sh.getRange(row, 9).setValue(Utilities.formatDate(new Date(), 'Asia/Tokyo', 'M/d'));
-      if (memo) sh.getRange(row, 10).setValue(memo);
+      sh.getRange(row, 9).setValue(true);
+      sh.getRange(row, 10).setValue(Utilities.formatDate(new Date(), 'Asia/Tokyo', 'M/d'));
+      if (memo) sh.getRange(row, 11).setValue(memo);
       return true;
     }
   }

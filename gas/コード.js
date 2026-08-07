@@ -48,6 +48,17 @@ function doGet(e) {
     });
     return ContentService.createTextOutput(JSON.stringify(out)).setMimeType(ContentService.MimeType.JSON);
   }
+  // 顧客のランク集計用（区・顧客ランク・RFMランク）
+  if (e && e.parameter && e.parameter.action === 'custrank') {
+    var _ss = SpreadsheetApp.openById(CUSTOMER_MASTER_SS_ID);
+    var _s = _ss.getSheetByName('顧客マスタ') || _ss.getSheetByName('顧客ﾏｽﾀ');
+    var _d = _s.getDataRange().getValues();
+    var _out = _d.slice(1).filter(function(r) { return r[1]; }).map(function(r) {
+      return { ku: String(r[8] || ''), rank: String(r[9] || ''), rfm: String(r[10] || '') };
+    });
+    return ContentService.createTextOutput(JSON.stringify(_out))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
   // お礼ハガキ：未訪問リスト
   if (e && e.parameter && e.parameter.action === 'hagaki') {
     return ContentService.createTextOutput(JSON.stringify(getHagakiPending_()))

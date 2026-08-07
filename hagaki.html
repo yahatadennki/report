@@ -68,6 +68,10 @@
   .card.done { opacity: .45; }
   .row1 { display: flex; align-items: center; gap: 8px; }
   .ku { flex: 0 0 auto; font-size: 19px; line-height: 1; color: var(--sun); }
+  .rfm { flex: 0 0 auto; font-size: 11px; font-weight: 700; line-height: 1;
+         padding: 3px 6px; border-radius: 4px; border: 1px solid var(--line); color: var(--ink-soft); }
+  .rfm.a { background: #f0a500; border-color: #f0a500; color: #fff; }
+  .rfm.b { background: #fdf0d0; border-color: #e8c98a; color: #8a6100; }
   .nm { font-size: 16px; font-weight: 700; flex: 1; min-width: 0; }
   .work { font-size: 12.5px; color: var(--ink-soft); margin: 6px 0 0; line-height: 1.5; }
   .addr { font-size: 13.5px; margin: 7px 0 0; line-height: 1.5; }
@@ -199,10 +203,15 @@ function render() {
     const n = DATA.filter(x => !x.ku).length;
     chips += '<button class="chip' + (filterKu === '?' ? ' on' : '') + '" onclick="setKu(\'?\')">区なし ' + n + '</button>';
   }
+  const nA = DATA.filter(x => x.rfm === 'A').length;
+  if (nA) chips += '<button class="chip' + (filterKu === 'A' ? ' on' : '') + '" onclick="setKu(\'A\')">⭐Aランク ' + nA + '</button>';
   document.getElementById('filters').innerHTML = chips;
 
   /* 絞り込み */
-  const rows = DATA.filter(x => filterKu === '' || (filterKu === '?' ? !x.ku : x.ku === filterKu));
+  const rows = DATA.filter(x =>
+    filterKu === '' ? true :
+    filterKu === 'A' ? x.rfm === 'A' :
+    filterKu === '?' ? !x.ku : x.ku === filterKu);
   if (!rows.length) {
     list.innerHTML = '<div class="empty">未訪問はありません。<br>お疲れさまでした 🌻</div>';
     return;
@@ -232,6 +241,7 @@ function card(x) {
     '<div class="row1">' +
       (x.ku ? '<span class="ku">' + x.ku + '</span>' : '') +
       '<span class="nm">' + esc(x.name) + '</span>' +
+      (x.rfm ? '<span class="rfm ' + esc(x.rfm.toLowerCase()) + '">' + esc(x.rfm) + '</span>' : '') +
     '</div>' +
     '<p class="work">' + esc(x.work) + '　<span style="opacity:.7">/ ' + esc(x.staff) + '</span></p>' +
     '<p class="addr' + (bad ? ' warn' : '') + '">' +
