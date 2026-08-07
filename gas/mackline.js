@@ -13,13 +13,20 @@
 var MACKLINE_MAIL_TO = 'yawata51@gmail.com';
 // ★通知モード： 'ishin'（維新流＝教材どおり／既定） | 'claude'（MACDクロスで即入る）
 var MACKLINE_MODE = 'ishin';
-// ★通知する組み合わせ（楽天MT4の実スプレッドで検証してプラスだったものだけ）
-//   維新流   : ドル円のみ（PF2.18・勝率47%・DD242・+2,394pips）
-//   クロード流: ドル円(+2,125) / ユーロドル(+973) / ドルスイス(+564)
-var ISHIN_PAIRS  = ['USD/JPY'];
-var CLAUDE_PAIRS = ['USD/JPY', 'EUR/USD', 'USD/CHF'];
+// ★通知する組み合わせ
+//   維新流   : 6通貨。サインだけで機械的に入るのではなく、自分で選ぶ前提の一覧として出す
+//     3年半の検証（スプレッド込み）：ドル円 PF1.85 +1,916 ／ ユーロ円 PF1.14 +329
+//     ユーロドル PF0.99 −97 ／ ポンドドル PF0.99 −156 ／ ドルカナダ PF0.91 −378 ／ ドルスイス PF0.84 −573
+//     ※単体でプラスなのはドル円とユーロ円だけ。他4通貨は参考として通知する
+//   クロード流 : 同じ6通貨。3年半の検証（スプレッド込み）
+//     ドル円 PF1.32 +2,615 ／ ユーロドル PF1.20 +1,242 ／ ドルスイス PF1.14 +55
+//     ポンドドル PF1.03 −270 ／ ユーロ円 PF1.01 −459 ／ ドルカナダ PF0.90 −1,785
+//     ※単体でプラスなのはドル円・ユーロドル・ドルスイス
+var ISHIN_PAIRS  = ['USD/JPY', 'EUR/JPY', 'EUR/USD', 'GBP/USD', 'USD/CAD', 'USD/CHF'];
+var CLAUDE_PAIRS = ['USD/JPY', 'EUR/JPY', 'EUR/USD', 'GBP/USD', 'USD/CAD', 'USD/CHF'];
 var PAIRS = ISHIN_PAIRS;   // 旧コードの互換用
-var JP_NAME = { 'USD/JPY': 'ドル円', 'EUR/USD': 'ユーロドル', 'GBP/USD': 'ポンドドル', 'USD/CHF': 'ドルスイス' };
+var JP_NAME = { 'USD/JPY': 'ドル円', 'EUR/USD': 'ユーロドル', 'GBP/USD': 'ポンドドル',
+                'USD/CHF': 'ドルスイス', 'USD/CAD': 'ドルカナダ', 'EUR/JPY': 'ユーロ円' };
 
 var PARAMS = {
   FLAT: 0.012,      // 傾きがこれ以下(%)なら「方向なし」
@@ -72,6 +79,8 @@ function fetchCandles_(symbol, interval) {
   var url = 'https://api.twelvedata.com/time_series?symbol=' + encodeURIComponent(symbol) +
             '&interval=' + interval + '&outputsize=400&apikey=' + key;
   var j = JSON.parse(UrlFetchApp.fetch(url, { muteHttpExceptions: true }).getContentText());
+  // 無料枠は8回/分。実際に取りに行った時だけ待つ（キャッシュに当たった分は待たない）
+  Utilities.sleep(8000);
   if (!j.values) throw new Error(symbol + ' ' + interval + ': ' + (j.message || '取得失敗'));
   var v = j.values.slice().reverse();
   return {
@@ -100,9 +109,35 @@ function fetchDailyCached_(symbol) {
   return slim;
 }
 
+// 1時間足・4時間足を「その足が確定するまで」キャッシュする
+//   6通貨×2種類を毎回取りに行くと無料枠（800回/日・8回/分）を超えるため。
+//   キーに足の区切りを入れてあるので、新しい足になった最初の実行だけ取りに行く。
+//   → 1時間足=1日24回/通貨、4時間足=1日6回/通貨。6通貨でも合計180回/日程度に収まる。
+function fetchTFCached_(symbol, interval) {
+  var cache = CacheService.getScriptCache();
+  var now = new Date();
+  var bucket;
+  if (interval === '4h') {
+    var h = Number(Utilities.formatDate(now, 'Asia/Tokyo', 'H'));
+    bucket = Utilities.formatDate(now, 'Asia/Tokyo', 'yyyyMMdd') + '_' + Math.floor(h / 4);
+  } else {
+    bucket = Utilities.formatDate(now, 'Asia/Tokyo', 'yyyyMMddHH');
+  }
+  var key = 'TF_' + interval + '_' + symbol.replace('/', '') + '_' + bucket;
+  var hit = cache.get(key);
+  if (hit) { try { return JSON.parse(hit); } catch (e) {} }
+  var d = fetchCandles_(symbol, interval);
+  var keep = 200;   // MACDや20/75MAの判定に十分な本数だけ残す（Cacheは100KB上限）
+  var slim = {
+    closes: d.closes.slice(-keep), highs: d.highs.slice(-keep), lows: d.lows.slice(-keep), time: d.time.slice(-keep)
+  };
+  try { cache.put(key, JSON.stringify(slim), 21600); } catch (e) {}
+  return slim;
+}
+
 // ===== 判定：日足の方向にMACDがクロスしたか（＝通知の対象）=====
 function checkCross_(symbol) {
-  var h1 = fetchCandles_(symbol, '1h');
+  var h1 = fetchTFCached_(symbol, '1h');
   Utilities.sleep(400);
   var dy = fetchDailyCached_(symbol);
 
@@ -176,9 +211,9 @@ function checkCross_(symbol) {
 //  STEP4 MACD(9,20,9)が上位足方向
 //  STEP5 20MAが水平気味 ＋ 20MAに絡んだ付近の高値を更新＝確定
 function checkIshin_(symbol) {
-  var h1 = fetchCandles_(symbol, '1h');
+  var h1 = fetchTFCached_(symbol, '1h');
   Utilities.sleep(400);
-  var h4 = fetchCandles_(symbol, '4h');
+  var h4 = fetchTFCached_(symbol, '4h');
   var last = h1.closes.length - 1, pip = pipSize_(symbol);
   var out = { symbol: symbol, name: JP_NAME[symbol] || symbol, price: h1.closes[last], state: 'WAIT', ng: [] };
 
@@ -284,9 +319,31 @@ function pushMail_(subject, text) {
   return true;
 }
 
+// ===== 相場が開いているか（日本時間で判定） =====
+// 為替は土曜早朝にクローズし、月曜早朝にオープンする。
+// 夏時間／冬時間で1時間ずれるため、広め（土6:00〜月7:00）に止めておく。
+function marketOpen_() {
+  // スクリプトのタイムゾーン設定に依存しないよう、日本時間の壁時計をUTCとして読み直す
+  var jst = Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy-MM-dd HH');
+  var d = new Date(jst.slice(0, 10) + 'T' + jst.slice(11) + ':00:00Z');
+  var day = d.getUTCDay();     // 0=日 1=月 … 6=土
+  var hour = d.getUTCHours();
+
+  if (day === 6 && hour >= 6) return false;   // 土曜6時以降
+  if (day === 0) return false;                // 日曜は終日
+  if (day === 1 && hour < 7) return false;    // 月曜7時前
+  return true;
+}
+
 // ===== メイン：15分ごとに実行。日足方向のクロスが出たら知らせる =====
 // ★両モードを毎回チェックする（維新流＝ドル円 / クロード流＝ドル円・ユーロドル・ドルスイス）
 function checkMackline() {
+  // 相場が閉まっている間は判定もメール送信もしない（土日に通知が飛ぶのを防ぐ）
+  if (!marketOpen_()) {
+    Logger.log('市場クローズ中のためスキップ');
+    return '市場クローズ中';
+  }
+
   var a = '', b = '';
   try { a = checkMacklineIshin_(); }  catch (e) { a = '維新流エラー ' + e; }
   try { b = checkMacklineClaude_(); } catch (e) { b = 'クロード流エラー ' + e; }
@@ -319,7 +376,7 @@ function checkMacklineIshin_() {
           .forEach(function(k) { p.deleteProperty(k); });
       }
       status.push(r.name + '：' + r.state + (r.ng.length ? '(' + r.ng[0] + ')' : ''));
-      Utilities.sleep(9000);
+      Utilities.sleep(500);    // 待ちは fetchCandles_ 側で入れているのでここは短く
     } catch (e) { status.push(sym + '：エラー ' + e); }
   });
 
@@ -374,7 +431,7 @@ function checkMacklineClaude_() {
         }
       }
       status.push(r.name + '：' + (r.hit ? 'クロスあり' : (r.dDir === 'flat' ? '日足方向なし' : '待ち')));
-      Utilities.sleep(9000);   // 無料枠 8req/分 を超えないよう通貨ごとに待つ
+      Utilities.sleep(500);    // 待ちは fetchCandles_ 側で入れているのでここは短く
     } catch (e) {
       status.push(sym + '：エラー ' + e);
     }
@@ -425,7 +482,7 @@ function テスト送信() {
       }
       out.push(t);
     } catch (e) { out.push('■ ' + sym + '：エラー ' + e); }
-    Utilities.sleep(9000);
+    Utilities.sleep(500);    // 待ちは fetchCandles_ 側で入れているのでここは短く
   });
 
   // ── クロード流（ドル円・ユーロドル・ドルスイス）──
@@ -445,7 +502,7 @@ function テスト送信() {
       }
       out.push(t);
     } catch (e) { out.push('■ ' + sym + '：エラー ' + e); }
-    Utilities.sleep(9000);
+    Utilities.sleep(500);    // 待ちは fetchCandles_ 側で入れているのでここは短く
   });
 
   var msg = Utilities.formatDate(new Date(), 'Asia/Tokyo', 'M月d日 HH:mm') + ' 時点\n\n' + out.join('\n\n');
