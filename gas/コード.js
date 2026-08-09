@@ -48,6 +48,40 @@ function doGet(e) {
     });
     return ContentService.createTextOutput(JSON.stringify(out)).setMimeType(ContentService.MimeType.JSON);
   }
+  // AIが呼べるか確認する（キーの設定チェック用）
+  if (e && e.parameter && e.parameter.action === 'aitest') {
+    var _k = PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY');
+    if (!_k) return ContentService.createTextOutput('❌ ANTHROPIC_API_KEY がGASに設定されていません');
+    var _r = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
+      method: 'post',
+      contentType: 'application/json',
+      headers: { 'x-api-key': _k, 'anthropic-version': '2023-06-01' },
+      payload: JSON.stringify({
+        model: 'claude-opus-4-8', max_tokens: 40,
+        messages: [{ role: 'user', content: '「テスト成功」とだけ返してください' }]
+      }),
+      muteHttpExceptions: true
+    });
+    var _c = _r.getResponseCode();
+    if (_c !== 200) return ContentService.createTextOutput('❌ AI呼び出し失敗 status=' + _c + '\n' + _r.getContentText().slice(0, 300));
+    var _j = JSON.parse(_r.getContentText());
+    return ContentService.createTextOutput('✅ AIが使えます\nAIの返事: ' + _j.content[0].text +
+      '\nキーの先頭: ' + _k.slice(0, 14) + '...');
+  }
+  // 見込みの集計用（日報のS列）
+  if (e && e.parameter && e.parameter.action === 'mikomi') {
+    var _sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('日報');
+    var _v = _sh.getRange(2, 1, _sh.getLastRow() - 1, 21).getValues();
+    var _o = [];
+    _v.forEach(function(r) {
+      var t = String(r[18] || '').trim();
+      if (!t) return;
+      _o.push({ ymd: nippoYmd_(r[0]), staff: String(r[1] || ''), visit: String(r[3] || ''),
+                work: String(r[4] || ''), mikomi: t });
+    });
+    return ContentService.createTextOutput(JSON.stringify(_o))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
   // 顧客のランク集計用（区・顧客ランク・RFMランク）
   if (e && e.parameter && e.parameter.action === 'custrank') {
     var _ss = SpreadsheetApp.openById(CUSTOMER_MASTER_SS_ID);
@@ -322,6 +356,10 @@ function doPost(e) {
       return `【${item.location}/${item.product}】${item.content}`;
     }).join("\n");
 
+    // ★銘板写真は報告書に載せず、保有家電として別に貯める
+    const meibanPhotos = (data.photos || []).filter(p => p.type === '銘板');
+    if (meibanPhotos.length) data.photos = (data.photos || []).filter(p => p.type !== '銘板');
+
     let photoUrls = [];
     if (data.photos && data.photos.length > 0) {
       photoUrls = data.photos.map((photo, index) => {
@@ -365,6 +403,12 @@ function doPost(e) {
     ];
 
     sheet.appendRow(rowData);
+
+    // ★銘板写真は裏でAIに読ませて「保有家電」に貯める（送信を待たせない）
+    if (meibanPhotos.length) {
+      try { queueMeiban_(data.visitName, data.staff, meibanPhotos); }
+      catch (mErr) { sheet.appendRow(['銘板キューエラー', new Date(), String(mErr)]); }
+    }
 
     // 現調・配達・工事・修理＋写真ありなら報告書PDFを自動生成（見積書ありの場合はスキップ）
     // ★PDF生成＋LINE送信は重いので裏（別実行）に回し、記録・写真保存が済んだ時点ですぐ完了を返す

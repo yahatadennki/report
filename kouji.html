@@ -71,6 +71,9 @@
     .photo-type-btn.type-kanryo { border-color: #17a2b8; }
     .photo-type-btn.type-kanryo:hover { border-color: #138496; background: #e6f7f9; }
     .photo-type-btn.type-kanryo.active { background: #17a2b8; border-color: #17a2b8; color: white; }
+    .photo-type-btn.type-meiban { border-color: #f0a500; }
+    .photo-type-btn.type-meiban:hover { border-color: #d99400; background: #fdf3de; }
+    .photo-type-btn.type-meiban.active { background: #f0a500; border-color: #f0a500; color: white; }
     .customer-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
     .customer-modal.active { display: flex; }
     .customer-modal-content { background: white; border-radius: 12px; max-width: 500px; width: 90%; max-height: 70vh; overflow-y: auto; }
@@ -339,7 +342,8 @@ const WORK_TYPES = ["お困りごと対応", "点検", "商談", "集金", "そ�
       '照明・電材': ['管球','照明器具','電池・電池応用品','配線','住宅火災警報器','ﾀﾞｳﾝﾗｲﾄ','器具本体','ﾗｲﾄﾊﾞｰ(40形)','ﾗｲﾄﾊﾞｰ(20形)']
     };
     const CONSTRUCTION_TYPES = ["電気", "水道", "アンテナ", "エアコン", "照明", "レンジフード", "換気扇", "ドアホン", "トイレ", "洗面台", "IH", "エコキュート", "管球", "その他"];
-    const PHOTO_TYPES = ["現調", "完了"];
+    // 銘板＝型番シール。撮っておくと保有家電として貯まり、10年超えは買換見込みになる
+    const PHOTO_TYPES = ["現調", "完了", "銘板"];
     const PROSPECT_LOCATIONS = ["リビング", "台所", "寝室", "洗面所", "トイレ", "玄関", "廊下", "その他"];
     const PROSPECT_PRODUCTS = ["エアコン", "冷蔵庫", "洗濯機", "TV", "照明", "換気扇", "レンジフード", "IH", "エコキュート", "温水器", "その他"];
 
@@ -567,14 +571,16 @@ const WORK_TYPES = ["お困りごと対応", "点検", "商談", "集金", "そ�
       const hint = document.getElementById('photo-type-hint');
       if (hint) {
         const exp = expectedPhotoTypes();
-        hint.textContent = 'いま追加する写真：' + type + ' 写真'
-          + (exp.length > 1 ? '　⚠ この日報は【完了】と【現調】の両方が必要です（タグを切り替えて追加）' : '');
+        hint.textContent = type === '銘板'
+          ? '型番シールを撮ってください。メーカー・型番・製造年を自動で読み取り、10年超えは買換見込みになります（報告書には載りません）'
+          : 'いま追加する写真：' + type + ' 写真'
+            + (exp.length > 1 ? '　⚠ この日報は【完了】と【現調】の両方が必要です（タグを切り替えて追加）' : '');
       }
     }
 
     function updatePhotoTypeButtons() {
       const group = document.getElementById('photo-type-group');
-      const typeClasses = { "現調": "type-genncho", "完了": "type-kanryo" };
+      const typeClasses = { "現調": "type-genncho", "完了": "type-kanryo", "銘板": "type-meiban" };
       if (group.children.length === 0) {
         PHOTO_TYPES.forEach(type => {
           const btn = document.createElement('button');
@@ -858,15 +864,17 @@ createButtons('group-workType', WORK_TYPES, 'workType', true);
         alert('売掛の場合は集金方法と入金時期を選択してください'); return;
       }
 
+      // 銘板は報告書に使わないので、以下の判定からは除く
+      const reportPhotos = state.photos.filter(p => p.type !== '銘板');
       // 写真0枚（報告書ありの作業）→ 報告書が作られないことを警告
-      if (needsPeople && state.photos.length === 0) {
+      if (needsPeople && reportPhotos.length === 0) {
         if (!confirm('📷 写真が1枚もありません。\n\nこのまま送ると報告書は作成されません。送信しますか？')) return;
       }
       // 写真タグと作業内容の食い違いを警告（例：工事なのに現調写真だけ／配達＋現調で片方しかない）
-      if (state.photos.length > 0) {
-        const missing = expectedPhotoTypes().filter(t => !state.photos.some(p => p.type === t));
+      if (reportPhotos.length > 0) {
+        const missing = expectedPhotoTypes().filter(t => !reportPhotos.some(p => p.type === t));
         if (missing.length) {
-          const have = [...new Set(state.photos.map(p => p.type))].join('・');
+          const have = [...new Set(reportPhotos.map(p => p.type))].join('・');
           if (!confirm('⚠️ 写真のタグを確認してください。\n\n作業内容「' + state.workType.join('・') + '」には【'
             + missing.join('】【') + '】写真が必要ですが、付いているのは【' + have + '】写真だけです。\n\n'
             + 'タグを間違えると保存先フォルダも変わります。このまま送信しますか？')) return;
