@@ -7,97 +7,66 @@
 <style>
   :root{
     --bg:#fffaf2; --card:#fff; --ink:#2b2b2b; --soft:#7a7a7a; --line:#eee2d2;
-    --orange:#ff9500; --orange-d:#e07f00; --teal:#00b3a4; --pink:#ff5c7a;
-    --blue:#3d9df6; --yellow:#ffd84d; --purple:#8b6ff0;
+    --orange:#ff9500; --orange-d:#e07f00; --teal:#00b3a4; --pink:#ff5c7a; --blue:#3d9df6;
   }
   @media (prefers-color-scheme:dark){
     :root{ --bg:#191614; --card:#241f1c; --ink:#f2ece6; --soft:#a99f95; --line:#3a322c; }
   }
   *{box-sizing:border-box}
   body{
-    margin:0;background:var(--bg);color:var(--ink);line-height:1.8;
+    margin:0;background:var(--bg);color:var(--ink);line-height:1.85;
     font-family:"Hiragino Maru Gothic ProN","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
     -webkit-text-size-adjust:100%;
   }
-  .wrap{max-width:680px;margin:0 auto;padding:0 18px 70px}
+  .wrap{max-width:640px;margin:0 auto;padding:0 20px 70px}
 
   header{
     background:linear-gradient(135deg,#ff9500,#ffc531);
-    color:#fff;padding:30px 18px 26px;text-align:center;
-    border-radius:0 0 28px 28px;margin-bottom:10px;
+    color:#fff;padding:34px 20px 30px;text-align:center;
+    border-radius:0 0 28px 28px;margin-bottom:14px;
   }
   header .emo{font-size:40px;line-height:1}
-  header h1{margin:8px 0 4px;font-size:23px;letter-spacing:.02em}
+  header h1{margin:10px 0 6px;font-size:25px;line-height:1.4}
   header p{margin:0;font-size:13px;opacity:.95}
 
-  .chap{margin:44px 0 10px;text-align:center}
-  .chap .tag{
-    display:inline-block;color:#fff;border-radius:999px;
-    padding:4px 20px;font-size:13px;font-weight:700;letter-spacing:.14em;
-  }
-  .chap.why  .tag{background:var(--pink)}
-  .chap.how  .tag{background:var(--teal)}
+  .chap{margin:46px 0 14px;text-align:center}
+  .chap .tag{display:inline-block;color:#fff;border-radius:999px;
+    padding:4px 20px;font-size:13px;font-weight:700;letter-spacing:.14em}
+  .chap.why .tag{background:var(--pink)}
+  .chap.how .tag{background:var(--teal)}
   .chap.what .tag{background:var(--blue)}
-  .chap h2{margin:10px 0 0;font-size:22px;line-height:1.4}
 
-  h3{font-size:17px;margin:30px 0 6px;line-height:1.5}
-  p{margin:0 0 14px;font-size:15px}
+  p{margin:0 0 16px;font-size:16px}
+  .lead{font-size:17px;font-weight:700;line-height:1.7}
 
-  .box{background:var(--card);border-radius:18px;padding:18px 20px;margin:14px 0;
-       box-shadow:0 2px 10px rgba(0,0,0,.05)}
+  .box{background:var(--card);border-radius:20px;padding:22px;margin:16px 0;
+       text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.05)}
   .box.orange{background:linear-gradient(135deg,#fff1dc,#ffe6c2)}
   .box.pink{background:#ffe9ee}
   .box.teal{background:#dff7f4}
-  .box.purple{background:#eee9ff}
   @media (prefers-color-scheme:dark){
-    .box.orange{background:#3a2b16}.box.pink{background:#3a2028}
-    .box.teal{background:#123230}.box.purple{background:#241f38}
+    .box.orange{background:#3a2b16}.box.pink{background:#3a2028}.box.teal{background:#123230}
   }
-  .huge{font-size:32px;font-weight:800;line-height:1.25;letter-spacing:-.01em}
-  .huge.orange{color:var(--orange-d)} .huge.pink{color:var(--pink)}
-  .huge.teal{color:var(--teal)} .huge.purple{color:var(--purple)}
-  .sub{font-size:13px;color:var(--soft);margin-top:4px}
+  .huge{font-size:27px;font-weight:800;line-height:1.4}
+  .huge.orange{color:var(--orange-d)} .huge.pink{color:var(--pink)} .huge.teal{color:var(--teal)}
+  .sub{font-size:14px;color:var(--soft);margin-top:8px}
 
   .steps{margin:18px 0}
   .steps .s{background:var(--card);border-radius:16px;padding:14px 16px;
-    display:flex;gap:12px;align-items:flex-start;box-shadow:0 2px 8px rgba(0,0,0,.05)}
-  .steps .s .ico{font-size:26px;line-height:1.2;flex:0 0 auto}
-  .steps .s b{font-size:15.5px}
-  .steps .s div{font-size:14px}
-  .steps .ar{text-align:center;font-size:20px;color:var(--orange);margin:3px 0}
+    display:flex;gap:12px;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.05);font-size:15px}
+  .steps .s .ico{font-size:24px;flex:0 0 auto}
+  .steps .ar{text-align:center;font-size:19px;color:var(--orange);margin:3px 0}
 
-  .tblwrap{overflow-x:auto;margin:14px 0}
-  table{border-collapse:separate;border-spacing:0;width:100%;font-size:14px;min-width:400px;
-        background:var(--card);border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.05)}
-  th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)}
-  th{background:var(--orange);color:#fff;font-size:13px;white-space:nowrap}
-  tr:last-child td{border-bottom:none}
-  td.num{text-align:right;white-space:nowrap;font-weight:700}
-  tr.hi td{background:#fff6dd;font-weight:700}
-  @media (prefers-color-scheme:dark){tr.hi td{background:#3a3218}}
+  .q{background:var(--card);border-radius:16px;padding:14px 18px;margin:10px 0;
+     box-shadow:0 2px 8px rgba(0,0,0,.05);border-left:6px solid var(--blue);font-size:16px;font-weight:700}
 
-  .q{background:var(--card);border-radius:18px;padding:15px 18px;margin:12px 0;
-     box-shadow:0 2px 8px rgba(0,0,0,.05);border-left:6px solid var(--blue)}
-  .q b{font-size:16px;display:block;margin-bottom:2px}
-  .q .hint{font-size:13px;color:var(--soft)}
-
-  ul{margin:0 0 14px;padding-left:1.25em;font-size:15px}
-  li{margin-bottom:7px}
-
-  .quote{background:var(--card);border-radius:14px;padding:13px 16px;margin:12px 0;
-         font-size:14px;border-left:5px solid var(--yellow)}
-
-  .cross{text-decoration:line-through;color:var(--soft)}
-
-  .foot{margin-top:46px;text-align:center;font-size:12px;color:var(--soft)}
+  .foot{margin-top:50px;text-align:center;font-size:12px;color:var(--soft)}
 
   @media print{
     body{background:#fff}
     header{background:#ff9500!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-    th{background:#ff9500!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .chap .tag{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-    .box,.q,table,.steps{page-break-inside:avoid}
-    .chap,h3{page-break-after:avoid}
+    .box,.q,.steps{page-break-inside:avoid}
   }
 </style>
 </head>
@@ -111,259 +80,71 @@
 
 <div class="wrap">
 
-<!-- ========== WHY ========== -->
-<div class="chap why">
-  <span class="tag">WHY</span>
-  <h2>なんでやるの？</h2>
-</div>
-
-<h3>壊れてから呼ばれる仕事は、しんどい</h3>
-
-<p>
-待っているだけだと、お客様から声がかかるのは<b>「壊れた」時だけ</b>です。
-急に呼ばれて、急いで直して、また next。お客様も困るし、こっちも段取りが組めません。
-</p>
+<div class="chap why"><span class="tag">WHY</span></div>
 
 <div class="box pink">
-  <div class="huge pink">壊れる前に<br>気づける人になる</div>
-  <div class="sub">「そろそろですね」と先に言える人には、お客様も相談してくれる。</div>
+  <div class="huge pink">壊れる前に気づく。<br>壊れたら相談される。</div>
 </div>
 
-<h3>目指す形</h3>
+<p class="lead">「かゆいところに手が届く」では、もう遅い。</p>
+
+<div class="box teal">
+  <div class="huge teal">かゆくなる前に</div>
+</div>
+
+<p>電球1個でも、パッキン1個でもいい。<br>
+行けること、話せることに意味がある。<br>
+<b>そこから次の仕事が生まれます。</b></p>
 
 <div class="box orange">
   <div class="huge orange">塵も積もれば<br>山となる</div>
-  <div class="sub">毎日ちょっとずつ。まずはこれだけです。</div>
+  <div class="sub">毎日ちょっとずつ。売上は結果です。</div>
 </div>
 
-<p>
-一気に大きくしようとしなくていいです。
-小さい仕事を毎日ちゃんと拾っていけば、<b>積み上がった分がそのまま数字になります。</b>
-</p>
+<p class="sub">100万 → 200万 → 300万。<br>
+そのうちそうなります。今日から狙う数字ではありません。<br>
+比べるのは他の人じゃなく、先月の自分。</p>
 
-<div class="tblwrap">
-  <table>
-    <tr><th>そのうち</th><th>こうなっていくはず</th></tr>
-    <tr><td>まず</td><td class="num">月 100万</td></tr>
-    <tr><td>次に</td><td class="num">月 200万</td></tr>
-    <tr class="hi"><td>いずれ</td><td class="num">月 300万</td></tr>
-  </table>
-</div>
+<div class="chap how"><span class="tag">HOW</span></div>
 
-<p class="sub">
-  300万は<b>ずっと先の目安</b>です。今日から狙う数字ではありません。
-</p>
-
-<h3>でも、同じ数字を横並びで見ない</h3>
-
-<p>
-サービスは<b>修理が主</b>です。1件あたりの金額は、どうしても安くなります。
-それを工事や販売と<b>同じ土俵で並べたら、心が折れます。</b>
-</p>
-
-<p>
-<b>比べる相手は、他の人じゃなく先月の自分です。</b>
-</p>
-
-<div class="box pink">
-  <div class="huge pink">金額じゃなく<br>仕事を追う</div>
-  <div class="sub">単価の高い低いで、仕事の価値は決まりません。</div>
-</div>
-
-<h3>電球1個の交換に、意味がある</h3>
-
-<p>
-電球1個。パッキン1個。金額にすれば数百円です。
-でも、その1件で<b>お客様の家に上がれます。</b>
-</p>
-
-<div class="steps">
-  <div class="s"><div class="ico">🔧</div><div><b>小さな修理で伺う</b><br>電球でも、パッキンでも</div></div>
-  <div class="ar">↓</div>
-  <div class="s"><div class="ico">💬</div><div><b>会話ができる</b><br>「そういえば冷蔵庫の音が…」</div></div>
-  <div class="ar">↓</div>
-  <div class="s"><div class="ico">👀</div><div><b>他のものが目に入る</b><br>古いエアコン、暗い照明</div></div>
-  <div class="ar">↓</div>
-  <div class="s"><div class="ico">🌱</div><div><b>次の仕事になる</b><br>しかも「お願いされる」形で</div></div>
-</div>
-
-<p>
-訪問できて、会話ができる。<b>これ以上に強いものはありません。</b>
-チラシを何枚まいても、この1回にはかないません。
-</p>
-
-<div class="box">
-  <span class="cross">単価が安いから意味がない</span> 😖<br>
-  <b style="font-size:17px">単価が安くても、行けることに意味がある</b> 😊
-  <div class="sub">小さい仕事を断らない人のところに、大きい仕事が来ます。</div>
-</div>
-
-<h3>だから、売上は「結果」</h3>
-
-<p>
-数えるのは<b>「何軒まわったか」「何件見つけたか」「何件直したか」</b>。
-金額は、それをやっていれば<b>後からついてきます</b>。
-</p>
-
-<div class="box">
-  <span class="cross">今月あと◯万売らなきゃ</span> 😖<br>
-  <b style="font-size:17px">今月あと◯軒まわろう</b> 😊
-  <div class="sub">追いかけるものが変わると、やることがはっきりします。</div>
-</div>
-
-<h3>できるようになったら、次のステップへ</h3>
-
-<p>
-これが回るようになったら、<b>「エアコンが壊れたー」「照明がつかないー」</b>の
-発生業務も任せられます。そこまでが目標です。
-</p>
-
-<!-- ========== HOW ========== -->
-<div class="chap how">
-  <span class="tag">HOW</span>
-  <h2>どうやって？</h2>
-</div>
-
-<h3>気づいても、忘れる</h3>
-
-<p>
-訪問すると、必ず何かに気づきます。
-「このエアコン古いな」「照明が暗いな」「そういえば来年って言ってたな」。
-</p>
-
-<div class="quote">
-  【リビング/エアコン】三菱重工 2016年 ランプ点滅<br>
-  【その他】ダイニングが寒いから床暖3畳くらい、<b>来年の秋に欲しい</b> 👀
-</div>
-
-<p>
-これ、めちゃくちゃ見込みですよね。
-<b>でも、書き残さないと必ず忘れます。</b>
-</p>
-
-<p><b>そして、書くのは続かない</b></p>
-<ul>
-  <li>「これは見込みって書くほどか？」と<b>考えるのがめんどう</b></li>
-  <li>書いても<b>その後に何も起きない</b></li>
-</ul>
-
-<p>ここを人の気合いでどうにかしよう、というのは無理があります。</p>
-
-<h3>だから、考えるのをやめる</h3>
+<p class="lead">気づいても、書かなきゃ忘れる。<br>でも「これは見込みかな」と考えると続かない。</p>
 
 <div class="box teal">
-  <div class="huge teal">型番シールを📷</div>
-  <div class="sub">判断しない。年式は嘘つかない。10年経ってたら、それは見込み。</div>
+  <div class="huge teal">考えるのをやめて<br>撮るだけにする</div>
+  <div class="sub">年式は嘘をつきません。</div>
 </div>
 
-<p>
-うまい人だけができる方法だと広がりません。
-<b>撮るだけなら誰でもできる</b>し、続きます。
-</p>
-
-<!-- ========== WHAT ========== -->
-<div class="chap what">
-  <span class="tag">WHAT</span>
-  <h2>何をするの？</h2>
-</div>
+<div class="chap what"><span class="tag">WHAT</span></div>
 
 <div class="steps">
-  <div class="s"><div class="ico">📷</div><div><b>型番シールを撮る</b><br>エアコン・冷蔵庫・洗濯機、新しくても全部</div></div>
+  <div class="s"><span class="ico">📷</span><div><b>型番シールを撮る</b>／新しくても全部</div></div>
   <div class="ar">↓</div>
-  <div class="s"><div class="ico">📱</div><div><b>日報を送る</b><br>写真タグを「銘板」にするだけ</div></div>
+  <div class="s"><span class="ico">📱</span><div>日報のタグを<b>「銘板」</b>にして送る</div></div>
   <div class="ar">↓</div>
-  <div class="s"><div class="ico">🤖</div><div><b>AIが勝手に読む</b><br>メーカー・型番・製造年</div></div>
+  <div class="s"><span class="ico">🤖</span><div>AIがメーカー・型番・年式を読む</div></div>
   <div class="ar">↓</div>
-  <div class="s"><div class="ico">✨</div><div><b>お客様の家電台帳ができる</b><br>次に行くとき「そろそろですね」が言える</div></div>
+  <div class="s"><span class="ico">✨</span><div>お客様ごとの<b>家電台帳</b>ができる</div></div>
 </div>
 
-<div class="tblwrap">
-  <table>
-    <tr><th>お客様</th><th>種別</th><th>型番</th><th>年</th><th>状態</th></tr>
-    <tr class="hi"><td>田中 文隆</td><td>エアコン</td><td>SRK40TX</td><td class="num">2016</td><td>そろそろ 🔥</td></tr>
-    <tr><td>田中 文隆</td><td>冷蔵庫</td><td>NR-F506XT</td><td class="num">2019</td><td>使用中</td></tr>
-    <tr><td>田中 文隆</td><td>洗濯機</td><td>NA-FA80H</td><td class="num">2023</td><td>使用中</td></tr>
-  </table>
-</div>
-
-<div class="box teal">
-  <b style="font-size:16px">新しくても、ぜんぶ撮る 📷</b>
-  <div class="sub">どれもいつかは古くなります。撮っておけば<b>年数が経つと勝手に浮かんできます</b>。<br>
-  「古そうなやつだけ」と選ぶと、また考える手間が戻ってきます。</div>
-</div>
-
-<p class="sub">
-  報告書には載りません。日報の送信も待たされません。読めなかった写真もちゃんと残ります。<br>
-  <b>もう動いてます。今日から使えます。</b>
-</p>
-
-<h3>数えるのはこの3つ</h3>
-
-<div class="tblwrap">
-  <table>
-    <tr><th>数えるもの</th><th>ひと月</th></tr>
-    <tr class="hi"><td>🚗 まわった軒数</td><td class="num">◯軒</td></tr>
-    <tr class="hi"><td>👀 見つけた数（10年超え・調子悪い）</td><td class="num">◯件</td></tr>
-    <tr class="hi"><td>🔧 直した・替えた数</td><td class="num">◯件</td></tr>
-  </table>
-</div>
-
-<div class="box purple">
-  <b style="font-size:16px">売上はここには書きません</b>
-  <div class="sub">上の3つをやっていれば、勝手についてきます。<br>
-  100万 → 200万 → 300万 は<b>あとから振り返って「なってた」</b>もの。毎月にらむ数字ではない。<br>
-  他の人の数字とも比べません。</div>
-</div>
-
-<h3>今日決めたいこと</h3>
+<p class="sub">古くなったものから順に浮かんできます。<br>
+撮るのはサービスだけ。工事はやりません。<br>
+<b>もう動いてます。今日から使えます。</b></p>
 
 <div class="box">
-  <b style="font-size:16px">撮るのは、まずサービスだけ</b>
-  <div class="sub">工事はやりません（作業に集中してもらう）。<br>
-  ひまわりスタッフに広げるかは、回りはじめてから考えます。</div>
+  <b style="font-size:17px">数えるのは3つだけ</b>
+  <div class="sub" style="font-size:15px;color:var(--ink);margin-top:10px">
+    🚗 まわった軒数<br>👀 見つけた数<br>🔧 直した数
+  </div>
 </div>
 
-<div class="q">
-  <b>① 点検、月に何軒いける？</b>
-  <div class="hint">1日◯軒 × 稼働日で。まずここが決まらないと始まらない</div>
-</div>
+<p class="lead" style="margin-top:34px">今日決めたいこと</p>
 
-<div class="q">
-  <b>② 1軒で何台まで撮る？</b>
-  <div class="hint">1枚1円くらい。目についたもの全部でも平気です</div>
-</div>
+<div class="q">① 点検、月に何軒いける？</div>
+<div class="q">② 見つけたあと、誰が動く？</div>
 
-<div class="q">
-  <b>③ 何年で「そろそろ」にする？</b>
-  <div class="hint">いまは10年。エアコンと冷蔵庫で変えてもいい</div>
-</div>
+<p class="sub">あとは動かしながらで。</p>
 
-<div class="q">
-  <b>④ 見つけたあと、誰が動く？</b>
-  <div class="hint">自分で提案する？ 高山に渡す？ ここが繋がってないと止まります</div>
-</div>
-
-<div class="q">
-  <b>⑤ リスト、誰がいつ見る？</b>
-  <div class="hint">ここ大事。見る人と日を決めないと、貯めるだけになります 😇</div>
-</div>
-
-<div class="box orange">
-  <b style="font-size:16px">今日は ①④ が決まれば充分！</b>
-  <div class="sub">全部決めようとすると終わらないので。残りは動かしながらで。</div>
-</div>
-
-<h3>そのあと</h3>
-
-<ul>
-  <li>「まわった・見つけた・直した」を<b>毎月見られる形</b>にする</li>
-  <li>実際に<b>何軒か撮ってみる</b>（ちゃんと読めるか確認）</li>
-  <li>そろそろリストを<b>スマホで見られる形</b>に</li>
-</ul>
-
-<div class="foot">
-  ㈲ヤハタ電機商会<br>2026.8.10
-</div>
+<div class="foot">㈲ヤハタ電機商会<br>2026.8.10</div>
 
 </div>
 </body>
