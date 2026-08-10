@@ -3,258 +3,291 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>サービススタッフ ステップアップ - 打合せ資料</title>
+<title>点検で見込みを貯めよう - 打合せメモ</title>
 <style>
-  :root {
-    --navy:#1a3a5c; --navy-deep:#12283f; --blue:#2e75b6; --sun:#f0a500;
-    --paper:#f4f7fa; --card:#fff; --ink:#1c2530; --ink-soft:#4a5a6a; --line:#d7e0e8;
-    --warn-bg:#fce8e6; --warn-ink:#c5221f; --ok-bg:#e8f5e9; --ok-ink:#2e7d32;
+  :root{
+    --bg:#fffaf2; --card:#fff; --ink:#2b2b2b; --soft:#7a7a7a; --line:#eee2d2;
+    --orange:#ff9500; --orange-d:#e07f00; --teal:#00b3a4; --pink:#ff5c7a;
+    --blue:#3d9df6; --yellow:#ffd84d; --purple:#8b6ff0;
   }
-  @media (prefers-color-scheme: dark) {
-    :root { --paper:#10161d; --card:#1a2028; --ink:#e8edf2; --ink-soft:#a9b6c2;
-            --line:#2c3844; --navy:#3f6a94; --warn-bg:#3a2320; --ok-bg:#1e3020; }
+  @media (prefers-color-scheme:dark){
+    :root{ --bg:#191614; --card:#241f1c; --ink:#f2ece6; --soft:#a99f95; --line:#3a322c; }
   }
-  * { box-sizing: border-box; }
-  body {
-    margin:0; background:var(--paper); color:var(--ink); line-height:1.75;
-    font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo",system-ui,sans-serif;
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);line-height:1.8;
+    font-family:"Hiragino Maru Gothic ProN","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
     -webkit-text-size-adjust:100%;
   }
-  .wrap { max-width:820px; margin:0 auto; padding:0 16px 80px; }
+  .wrap{max-width:680px;margin:0 auto;padding:0 18px 70px}
 
-  header { background:var(--navy); color:#fff; padding:26px 16px 22px; margin-bottom:24px; }
-  header .inner { max-width:820px; margin:0 auto; }
-  header .eyebrow { font-size:11px; letter-spacing:.18em; opacity:.75; margin:0 0 6px; }
-  header h1 { margin:0; font-size:21px; letter-spacing:.03em; }
-  header .meta { font-size:12px; opacity:.8; margin-top:8px; }
-
-  h2 {
-    font-size:16px; margin:34px 0 12px; padding-left:11px;
-    border-left:4px solid var(--sun); line-height:1.4;
+  header{
+    background:linear-gradient(135deg,#ff9500,#ffc531);
+    color:#fff;padding:30px 18px 26px;text-align:center;
+    border-radius:0 0 28px 28px;margin-bottom:10px;
   }
-  h3 { font-size:14px; margin:20px 0 8px; color:var(--ink); }
-  p { margin:0 0 12px; font-size:14px; }
-  .lead { font-size:15px; }
+  header .emo{font-size:40px;line-height:1}
+  header h1{margin:8px 0 4px;font-size:23px;letter-spacing:.02em}
+  header p{margin:0;font-size:13px;opacity:.95}
 
-  .card { background:var(--card); border:1px solid var(--line); border-radius:11px;
-          padding:16px 18px; margin:14px 0; }
-  .card.warn { background:var(--warn-bg); border-color:#f0b7b2; }
-  .card.warn .big { color:var(--warn-ink); }
-  .card.ok { background:var(--ok-bg); border-color:#a9d3ab; }
-  .big { font-size:22px; font-weight:700; line-height:1.35; }
-  .note { font-size:12.5px; color:var(--ink-soft); }
-
-  .tblwrap { overflow-x:auto; margin:14px 0; }
-  table { border-collapse:collapse; width:100%; font-size:13.5px; min-width:420px; }
-  th, td { border:1px solid var(--line); padding:8px 10px; text-align:left; }
-  th { background:var(--navy); color:#fff; font-weight:700; white-space:nowrap; }
-  td.num { text-align:right; white-space:nowrap; }
-  tr.hi td { background:#fff8e6; font-weight:700; }
-  @media (prefers-color-scheme: dark) { tr.hi td { background:#332a17; } }
-
-  .flow { margin:16px 0; }
-  .flow .step {
-    background:var(--card); border:1px solid var(--line); border-left:4px solid var(--blue);
-    border-radius:8px; padding:11px 14px; font-size:14px;
+  /* Why / How / What の大見出し */
+  .chap{margin:44px 0 10px;text-align:center}
+  .chap .tag{
+    display:inline-block;color:#fff;border-radius:999px;
+    padding:4px 20px;font-size:13px;font-weight:700;letter-spacing:.14em;
   }
-  .flow .arrow { text-align:center; color:var(--ink-soft); font-size:16px; margin:2px 0; }
+  .chap.why  .tag{background:var(--pink)}
+  .chap.how  .tag{background:var(--teal)}
+  .chap.what .tag{background:var(--blue)}
+  .chap h2{margin:10px 0 0;font-size:22px;line-height:1.4}
 
-  ul, ol { margin:0 0 12px; padding-left:1.3em; font-size:14px; }
-  li { margin-bottom:6px; }
+  h3{font-size:17px;margin:30px 0 6px;line-height:1.5}
+  p{margin:0 0 14px;font-size:15px}
 
-  .q { background:var(--card); border:1px solid var(--line); border-radius:11px;
-       padding:14px 16px; margin:12px 0; }
-  .q .qh { font-weight:700; font-size:14.5px; margin-bottom:6px; }
-  .q .qh span { display:inline-block; background:var(--sun); color:#fff; border-radius:5px;
-                padding:1px 8px; font-size:12px; margin-right:8px; vertical-align:2px; }
-  .q .opt { font-size:13.5px; color:var(--ink-soft); margin-top:6px; }
+  .box{background:var(--card);border-radius:18px;padding:18px 20px;margin:14px 0;
+       box-shadow:0 2px 10px rgba(0,0,0,.05)}
+  .box.orange{background:linear-gradient(135deg,#fff1dc,#ffe6c2)}
+  .box.pink{background:#ffe9ee}
+  .box.teal{background:#dff7f4}
+  .box.purple{background:#eee9ff}
+  @media (prefers-color-scheme:dark){
+    .box.orange{background:#3a2b16}.box.pink{background:#3a2028}
+    .box.teal{background:#123230}.box.purple{background:#241f38}
+  }
+  .huge{font-size:32px;font-weight:800;line-height:1.25;letter-spacing:-.01em}
+  .huge.orange{color:var(--orange-d)} .huge.pink{color:var(--pink)}
+  .huge.teal{color:var(--teal)} .huge.purple{color:var(--purple)}
+  .sub{font-size:13px;color:var(--soft);margin-top:4px}
 
-  .foot { margin-top:44px; padding-top:16px; border-top:1px solid var(--line);
-          font-size:12px; color:var(--ink-soft); }
+  .steps{margin:18px 0}
+  .steps .s{background:var(--card);border-radius:16px;padding:14px 16px;
+    display:flex;gap:12px;align-items:flex-start;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .steps .s .ico{font-size:26px;line-height:1.2;flex:0 0 auto}
+  .steps .s b{font-size:15.5px}
+  .steps .s div{font-size:14px}
+  .steps .ar{text-align:center;font-size:20px;color:var(--orange);margin:3px 0}
 
-  @media print {
-    body { background:#fff; }
-    header { background:#1a3a5c !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-    th { background:#1a3a5c !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-    h2 { page-break-after:avoid; }
-    .card, .q, table { page-break-inside:avoid; }
+  .tblwrap{overflow-x:auto;margin:14px 0}
+  table{border-collapse:separate;border-spacing:0;width:100%;font-size:14px;min-width:400px;
+        background:var(--card);border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)}
+  th{background:var(--orange);color:#fff;font-size:13px;white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  td.num{text-align:right;white-space:nowrap;font-weight:700}
+  tr.hi td{background:#fff6dd;font-weight:700}
+  @media (prefers-color-scheme:dark){tr.hi td{background:#3a3218}}
+
+  .q{background:var(--card);border-radius:18px;padding:15px 18px;margin:12px 0;
+     box-shadow:0 2px 8px rgba(0,0,0,.05);border-left:6px solid var(--blue)}
+  .q b{font-size:16px;display:block;margin-bottom:2px}
+  .q .hint{font-size:13px;color:var(--soft)}
+
+  ul{margin:0 0 14px;padding-left:1.25em;font-size:15px}
+  li{margin-bottom:7px}
+
+  .quote{background:var(--card);border-radius:14px;padding:13px 16px;margin:12px 0;
+         font-size:14px;border-left:5px solid var(--yellow)}
+
+  .foot{margin-top:46px;text-align:center;font-size:12px;color:var(--soft)}
+
+  @media print{
+    body{background:#fff}
+    header{background:#ff9500!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    th{background:#ff9500!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .chap .tag{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .box,.q,table,.steps{page-break-inside:avoid}
+    .chap,h3{page-break-after:avoid}
   }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="inner">
-    <p class="eyebrow">ヤハタ電機商会　打合せ資料</p>
-    <h1>サービススタッフ ステップアップ<br>― 見込みを貯める仕組み ―</h1>
-    <div class="meta">2026年8月10日　高山 × 伊藤</div>
-  </div>
+  <div class="emo">📸</div>
+  <h1>点検で見込みを貯めよう</h1>
+  <p>2026.8.10 ／ 高山 × 伊藤</p>
 </header>
 
 <div class="wrap">
 
-  <p class="lead">
-    サービススタッフに<strong>メンテナンス中心で数字を作れるようになってほしい</strong>。
-    そのために何が足りていないかを整理し、今日決めたいことをまとめました。
-  </p>
+<!-- ========== WHY ========== -->
+<div class="chap why">
+  <span class="tag">WHY</span>
+  <h2>なんでやるの？</h2>
+</div>
 
-  <h2>1. 目指す姿</h2>
+<h3>壊れてから呼ばれる仕事は、しんどい</h3>
 
-  <div class="flow">
-    <div class="step"><strong>ステップ1　メンテナンス中心</strong><br>
-      こちらから点検に伺い、観察して提案する。<span class="note">← いまここ</span></div>
-    <div class="arrow">▼</div>
-    <div class="step"><strong>ステップ2　お困りごと対応中心</strong><br>
-      「エアコンが壊れた」「照明がつかない」に対応する。発生業務を任せられる。</div>
-  </div>
+<p>
+待っているだけだと、お客様から声がかかるのは<b>「壊れた」時だけ</b>です。
+急に呼ばれて、急いで直して、また next。数字も読めないし、疲れます。
+</p>
 
-  <p>この2段階は<strong>すでにサービススタッフガイドに書いてあります</strong>。
-     足りないのは「<strong>いつステップ2に上がれるのか</strong>」の基準です。</p>
+<div class="box pink">
+  <div class="huge pink">壊れる前に<br>気づける人になる</div>
+  <div class="sub">これができると、お客様も助かるし、こっちも段取りが組める。</div>
+</div>
 
-  <div class="card">
-    <div class="big">最終目標　年間 300万</div>
-    <p class="note" style="margin:8px 0 0">
-      ただし、いきなりは無理。<strong>まず年間100万</strong>を最初の目標に置く。</p>
-  </div>
+<p>
+「そろそろですね」と<b>先に言える人</b>には、お客様も相談してくれます。
+それが「困ったらヤハタさん」になる、いちばんの近道です。
+</p>
 
-  <h2>2. いまの問題 ― 見込みがゼロ</h2>
+<h3>そして、自分の数字になる</h3>
 
-  <p>数字を作るには「<strong>見込み</strong>」が要ります。ところが、その見込みが手元にありません。</p>
+<div class="box orange">
+  <div class="huge orange">月 100万</div>
+  <div class="sub">メンテナンス中心で。慣れたら月300万、その先は発生業務も。</div>
+</div>
 
-  <div class="card warn">
-    <div class="big">見込みの記録　9件</div>
-    <p style="margin:8px 0 0">業務日報に見込み欄はある。しかし──</p>
-    <ul style="margin:8px 0 0">
-      <li>書いたのは<strong>高山だけ</strong></li>
-      <li>最後の記録は<strong>4月18日</strong>。以降ゼロ</li>
-    </ul>
-  </div>
+<p>
+いきなり月300万は無理です。<b>まず月100万</b>。
+これができたら「壊れたー」の対応も任せられる、という順番でいきたい。
+</p>
 
-  <p><strong>仕組みはあるのに使われていません。</strong>
-     中身は良いものが入っていました。</p>
+<!-- ========== HOW ========== -->
+<div class="chap how">
+  <span class="tag">HOW</span>
+  <h2>どうやって？</h2>
+</div>
 
-  <div class="card">
-    <p style="margin:0; font-size:13.5px">
-      【リビング/エアコン】三菱重工 / 2016年 / ランプ点滅<br>
-      【その他/その他】ダイニングが寒いから床暖3畳くらい、<strong>来年の秋に欲しい</strong>
-    </p>
-  </div>
+<h3>まず、見込みがゼロという現実</h3>
 
-  <p>これは<strong>そのまま見込み</strong>です。放っておけば忘れます。</p>
+<div class="box">
+  <div class="huge">見込み 9件 😵</div>
+  <div class="sub">書いたのは高山だけ。しかも4月18日で止まってる。</div>
+</div>
 
-  <h3>なぜ続かなかったか</h3>
-  <ul>
-    <li><strong>何を見込みと呼ぶか、判断が要る</strong> ── 迷うと書かなくなる</li>
-    <li><strong>書いても何も起きなかった</strong> ── 溜まっている実感がない</li>
-  </ul>
+<p>日報に見込み欄はあるんです。中身も悪くない。</p>
 
-  <h2>3. 打ち手 ― 判断をやめて「撮るだけ」にする</h2>
+<div class="quote">
+  【リビング/エアコン】三菱重工 2016年 ランプ点滅<br>
+  【その他】ダイニングが寒いから床暖3畳くらい、<b>来年の秋に欲しい</b> 👀
+</div>
 
-  <div class="card ok">
-    <div class="big">型番シールを撮る。それだけ。</div>
-    <p style="margin:8px 0 0">見込みかどうかの判断は要りません。<strong>年式は嘘をつきません。</strong></p>
-  </div>
+<p>これ、めちゃくちゃ見込みですよね。<b>でも放っておいたら忘れます。</b></p>
 
-  <div class="flow">
-    <div class="step">点検でエアコン・冷蔵庫・洗濯機の<strong>型番シールを撮る</strong></div>
-    <div class="arrow">▼</div>
-    <div class="step">日報を送る（写真タグを<strong>「銘板」</strong>にするだけ）</div>
-    <div class="arrow">▼</div>
-    <div class="step">AIが<strong>メーカー・型番・製造年</strong>を読み取る</div>
-    <div class="arrow">▼</div>
-    <div class="step"><strong>「保有家電」シート</strong>に貯まる</div>
-    <div class="arrow">▼</div>
-    <div class="step"><strong>10年超え → 自動で「買換見込み」</strong></div>
-  </div>
+<p><b>なんで続かなかったか</b></p>
+<ul>
+  <li>「これは見込み？」と<b>考えるのがめんどう</b></li>
+  <li>書いても<b>何も起きなかった</b></li>
+</ul>
 
-  <h3>貯まるもの</h3>
-  <div class="tblwrap">
-    <table>
-      <tr><th>顧客名</th><th>区</th><th>種別</th><th>メーカー</th><th>型番</th><th>製造年</th><th>経過</th><th>状態</th></tr>
-      <tr class="hi"><td>田中 文隆</td><td>④</td><td>エアコン</td><td>三菱重工</td><td>SRK40TX-W</td><td class="num">2016</td><td class="num">10年</td><td>買換見込み</td></tr>
-      <tr><td>田中 文隆</td><td>④</td><td>冷蔵庫</td><td>パナソニック</td><td>NR-F506XT</td><td class="num">2019</td><td class="num">7年</td><td>使用中</td></tr>
-    </table>
-  </div>
+<h3>だから、考えるのをやめる</h3>
 
-  <p class="note">
-    ※ 銘板写真は報告書PDFには載りません。現調・完了写真とは別扱いです。<br>
-    ※ 日報の送信は待たされません（読み取りは裏で動きます）。<br>
-    ※ 読めなかった写真も行として残るので、取りこぼしはありません。
-  </p>
+<div class="box teal">
+  <div class="huge teal">型番シールを📷</div>
+  <div class="sub">判断しない。年式は嘘つかない。10年経ってたら、それは見込み。</div>
+</div>
 
-  <p><strong>この仕組みは本日すでに動いています。</strong>今日から使えます。</p>
+<p>
+うまい人だけができる方法だと広がりません。
+<b>撮るだけなら誰でもできる</b>し、続きます。
+</p>
 
-  <h2>4. 100万への逆算（たたき台）</h2>
+<!-- ========== WHAT ========== -->
+<div class="chap what">
+  <span class="tag">WHAT</span>
+  <h2>何をするの？</h2>
+</div>
 
-  <p>数字は<strong>仮に置いたもの</strong>です。ここを一緒に詰めたいところです。</p>
+<div class="steps">
+  <div class="s"><div class="ico">📷</div><div><b>型番シールを撮る</b><br>エアコン・冷蔵庫・洗濯機、目についたやつ</div></div>
+  <div class="ar">↓</div>
+  <div class="s"><div class="ico">📱</div><div><b>日報を送る</b><br>写真タグを「銘板」にするだけ</div></div>
+  <div class="ar">↓</div>
+  <div class="s"><div class="ico">🤖</div><div><b>AIが勝手に読む</b><br>メーカー・型番・製造年</div></div>
+  <div class="ar">↓</div>
+  <div class="s"><div class="ico">✨</div><div><b>10年超えたら「買換見込み」</b><br>自動でリストに載る</div></div>
+</div>
 
-  <div class="tblwrap">
-    <table>
-      <tr><th>段階</th><th>必要数</th><th>前提</th></tr>
-      <tr class="hi"><td>年間売上</td><td class="num">100万</td><td>最初の目標</td></tr>
-      <tr><td>受注</td><td class="num">年10件（月1件弱）</td><td>平均単価 10万</td></tr>
-      <tr><td>見込み</td><td class="num">年30件（月2〜3件）</td><td>3件に1件が決まる</td></tr>
-      <tr><td>点検</td><td class="num">年150件（月12〜13件）</td><td>5件に1件で見込みが出る</td></tr>
-    </table>
-  </div>
+<div class="tblwrap">
+  <table>
+    <tr><th>お客様</th><th>種別</th><th>型番</th><th>年</th><th>状態</th></tr>
+    <tr class="hi"><td>田中 文隆</td><td>エアコン</td><td>SRK40TX</td><td class="num">2016</td><td>買換見込み 🔥</td></tr>
+    <tr><td>田中 文隆</td><td>冷蔵庫</td><td>NR-F506XT</td><td class="num">2019</td><td>使用中</td></tr>
+  </table>
+</div>
 
-  <p>こう置ければ、本人に「<strong>今月あと何件回ればいいか</strong>」が見えます。
-     数字が本人の手元で完結するのが大事です。</p>
+<p class="sub">
+  報告書には載りません。日報の送信も待たされません。読めなかった写真もちゃんと残ります。<br>
+  <b>もう動いてます。今日から使えます。</b>
+</p>
 
-  <h2>5. 今日決めたいこと</h2>
+<h3>月100万までの道のり</h3>
 
-  <div class="q">
-    <div class="qh"><span>1</span>平均単価はいくらで見るか</div>
-    <p style="margin:0">エアコン買換なら20〜25万、修理や小物なら数万。<strong>ならすといくらか。</strong></p>
-    <p class="opt">この数字で「年何件受注すればいいか」が決まります。</p>
-  </div>
+<p>数字は<b>仮</b>です。ここを一緒に決めたい。</p>
 
-  <div class="q">
-    <div class="qh"><span>2</span>見込みから受注になる割合</div>
-    <p style="margin:0">3件に1件か、5件に1件か。<strong>実感で構いません。</strong></p>
-  </div>
+<div class="tblwrap">
+  <table>
+    <tr><th>ひと月</th><th>どのくらい</th><th>前提</th></tr>
+    <tr class="hi"><td>売上</td><td class="num">100万</td><td>これが目標</td></tr>
+    <tr><td>受注</td><td class="num">10件</td><td>1件ならして10万</td></tr>
+    <tr><td>見込み</td><td class="num">30件</td><td>3件に1件決まる</td></tr>
+    <tr><td>点検</td><td class="num">150件</td><td>5件に1件見込みが出る</td></tr>
+  </table>
+</div>
 
-  <div class="q">
-    <div class="qh"><span>3</span>点検は月に何件回れるか</div>
-    <p style="margin:0">1日何件 × 稼働日で。<strong>ここが一番の制約になります。</strong></p>
-  </div>
+<div class="box pink">
+  <b style="font-size:16px">⚠️ 点検150件／月 は無理では？</b>
+  <div class="sub">22日稼働で<b>1日7件</b>。さすがにキツい。<br>
+  つまり<b>単価をいくつで見るか</b>で、必要な点検数がまるっきり変わります。</div>
+</div>
 
-  <div class="q">
-    <div class="qh"><span>4</span>銘板を撮るのは誰の仕事か</div>
-    <p style="margin:0">サービススタッフだけか、工事やひまわりも撮るか。</p>
-    <p class="opt">工事で伺ったときに他の家電も撮れれば、貯まる速度が何倍にもなります。</p>
-  </div>
+<div class="box purple">
+  <b style="font-size:16px">もし1件ならして25万なら</b><br>
+  点検 <b>60件</b> → 見込み <b>12件</b> → 受注 <b>4件</b> → <b>100万</b>
+  <div class="sub">1日3件の点検。これなら現実的 💪</div>
+</div>
 
-  <div class="q">
-    <div class="qh"><span>5</span>1軒で何台まで撮るか</div>
-    <p style="margin:0">目についたもの全部か、エアコンだけか。</p>
-    <p class="opt">1枚あたり約1円。全部撮っても費用は問題になりません。</p>
-  </div>
+<h3>今日決めたいこと</h3>
 
-  <div class="q">
-    <div class="qh"><span>6</span>買換見込みリストを誰がいつ見るか</div>
-    <p style="margin:0">貯めるだけでは前と同じです。<strong>見て動く人と、そのタイミング</strong>を決めたい。</p>
-    <p class="opt">例：毎週月曜に朝礼で確認 / 月初にLINEで配信</p>
-  </div>
+<div class="q">
+  <b>① 1件ならしていくら？</b>
+  <div class="hint">エアコン買換なら20〜25万、修理なら数万。感覚でOK</div>
+</div>
 
-  <h2>6. 次にやること</h2>
+<div class="q">
+  <b>② 見込み何件で1件決まる？</b>
+  <div class="hint">3件に1件？ 5件に1件？</div>
+</div>
 
-  <ol>
-    <li>上の①〜⑥を決める</li>
-    <li>決まった数字で<strong>逆算表</strong>を作り、本人が毎月見られるようにする</li>
-    <li>銘板撮影を<strong>実際に何軒か試す</strong>（読み取り精度を見る）</li>
-    <li>買換見込みリストの<strong>見せ方</strong>を作る（スマホで見られる一覧）</li>
-  </ol>
+<div class="q">
+  <b>③ 点検、月に何件いける？</b>
+  <div class="hint">ここが一番のカベ。1日◯件 × 稼働日で</div>
+</div>
 
-  <div class="card">
-    <p style="margin:0"><strong>今日は①〜③（数字）と④（誰が撮るか）が決まれば十分です。</strong>
-    残りは動かしながらでも間に合います。</p>
-  </div>
+<div class="q">
+  <b>④ 銘板は誰が撮る？</b>
+  <div class="hint">工事やひまわりも撮ってくれると、貯まる速さが何倍にもなる</div>
+</div>
 
-  <div class="foot">
-    ㈲ヤハタ電機商会　千葉市稲毛区長沼町330-24　TEL 043-259-0463<br>
-    作成：2026年8月10日
-  </div>
+<div class="q">
+  <b>⑤ 1軒で何台まで撮る？</b>
+  <div class="hint">1枚1円くらい。全部撮っても平気です</div>
+</div>
+
+<div class="q">
+  <b>⑥ 買換見込みリスト、誰がいつ見る？</b>
+  <div class="hint">ここ大事。前はこれが無くて見込み欄が死にました 😇</div>
+</div>
+
+<div class="box orange">
+  <b style="font-size:16px">今日は ①〜④ が決まれば充分！</b>
+  <div class="sub">全部決めようとすると終わらないので。残りは動かしながらで。</div>
+</div>
+
+<h3>そのあと</h3>
+
+<ul>
+  <li>決まった数字で<b>逆算表</b>を作る（毎月見られるように）</li>
+  <li>実際に<b>何軒か撮ってみる</b>（ちゃんと読めるか確認）</li>
+  <li>買換見込みリストを<b>スマホで見られる形</b>に</li>
+</ul>
+
+<div class="foot">
+  ㈲ヤハタ電機商会<br>2026.8.10
+</div>
 
 </div>
 </body>
