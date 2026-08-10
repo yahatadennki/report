@@ -212,3 +212,42 @@ function getKaikaeMikomi_() {
   out.sort(function(a, b) { return (b.age || 0) - (a.age || 0); });
   return out;
 }
+
+/**
+ * 保有家電の一覧（アプリ用）。顧客マスタから住所・電話も足す。
+ * 絞り込みは画面側でやるので、ここでは全部返す。
+ */
+function getKadenList_() {
+  var sh = meibanSheet_();
+  if (sh.getLastRow() < 2) return [];
+  var v = sh.getRange(2, 1, sh.getLastRow() - 1, 13).getValues();
+  var cust = hagakiCustomerIndex_();
+  var thisYear = new Date().getFullYear();
+  var out = [];
+
+  for (var i = 0; i < v.length; i++) {
+    var name = String(v[i][1] || '').trim();
+    if (!name) continue;
+    var year = Number(v[i][6]) || null;
+    var hit = hagakiFindCustomer_(name, cust);
+    var c = (hit && !hit.ambiguous) ? hit : null;
+    out.push({
+      row: i + 2,
+      name: c ? c.name : name,
+      ku: String(v[i][2] || (c ? c.kuMark : '')),
+      kind: String(v[i][3] || ''),
+      maker: String(v[i][4] || ''),
+      model: String(v[i][5] || ''),
+      year: year,
+      age: year ? thisYear - year : null,
+      place: String(v[i][8] || ''),
+      status: String(v[i][9] || ''),
+      tel: c ? c.tel : '',
+      address: c ? c.address : '',
+      rfm: c ? c.rfm : '',
+      staff: String(v[i][10] || '')
+    });
+  }
+  out.sort(function(a, b) { return (b.age || -1) - (a.age || -1); });
+  return out;
+}

@@ -93,6 +93,11 @@ function doGet(e) {
     return ContentService.createTextOutput(JSON.stringify(_out))
       .setMimeType(ContentService.MimeType.JSON);
   }
+  // 保有家電（そろそろリスト）
+  if (e && e.parameter && e.parameter.action === 'kaden') {
+    return ContentService.createTextOutput(JSON.stringify(getKadenList_()))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
   // お礼ハガキ：未訪問リスト
   if (e && e.parameter && e.parameter.action === 'hagaki') {
     return ContentService.createTextOutput(JSON.stringify(getHagakiPending_()))
