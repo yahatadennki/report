@@ -1,5 +1,5 @@
 /**
- * マックライン シグナル通知（メール）
+ * MACライン シグナル通知（メール）  ※MACDのラインが由来なので K は付けない
  * アプリ https://yahatadennki.github.io/report/mackline/ と同じ判定ロジック。
  *
  * ★通知＝「日足のトレンド方向に1時間足のMACDがクロスした時」＝そのままエントリーの合図
@@ -310,11 +310,15 @@ function macd9_(c) {
 }
 
 // ===== メール送信 =====
+// 送信元を特定するための印。このスクリプトから出たメールには必ず末尾に付く。
+//   印が無いメールが届いたら、それは別のスクリプトが送っている。
+var MAIL_TAG = '[src:himawari-gas/mackline.js 2026-08-11]';
+
 function pushMail_(subject, text) {
   MailApp.sendEmail({
     to: MACKLINE_MAIL_TO,
     subject: subject,
-    body: text + '\n\n▼アプリで確認\nhttps://yahatadennki.github.io/report/mackline/\n'
+    body: text + '\n\n▼アプリで確認\nhttps://yahatadennki.github.io/report/mackline/\n\n' + MAIL_TAG + '\n'
   });
   return true;
 }
@@ -344,10 +348,11 @@ function checkMackline() {
     return '市場クローズ中';
   }
 
-  var a = '', b = '';
-  try { a = checkMacklineIshin_(); }  catch (e) { a = '維新流エラー ' + e; }
-  try { b = checkMacklineClaude_(); } catch (e) { b = 'クロード流エラー ' + e; }
-  return '【維新流】' + a + '　／　【クロード流】' + b;
+  var a = '', b = '', c = '';
+  try { a = checkMacklineIshin_(); }   catch (e) { a = '維新流エラー ' + e; }
+  try { b = checkMacklineClaude_(); }  catch (e) { b = 'クロード流エラー ' + e; }
+  try { c = checkMacklineReverse_(); } catch (e) { c = '逆張りエラー ' + e; }
+  return '【維新流】' + a + '　／　【クロード流】' + b + '　／　【逆張り(ドル円)】' + c;
 }
 
 // ── 維新流モード（既定）：準備(SETUP)と確定(ENTRY)で知らせる ──
@@ -384,10 +389,8 @@ function checkMacklineIshin_() {
     pushMail_('🔥 維新流｜' + hits[0].split('\n')[0].replace('■ ', '').trim(),
       '【確定＝エントリー】\n20MAの方向を確定させる高値を更新しました。\n\n' + hits.join('\n\n'));
   }
-  if (setups.length) {
-    pushMail_('⏳ 維新流｜準備：' + setups[0].split('\n')[0].replace('■ ', '').trim(),
-      '【準備サイン】\n環境・収束→拡散・グランビル・MACDはすべて揃いました。\nあとは確定ライン（高安値）を更新したらエントリーです。\n\n' + setups.join('\n\n'));
-  }
+  // 準備(SETUP)のメールはユーザー指示により送らない。エントリー確定時のみ通知する
+  //   （状態の記録は残してあるので、必要になったらここを戻すだけで復活する）
   return status.join(' / ');
 }
 
@@ -449,17 +452,89 @@ function checkMacklineClaude_() {
   }
 
   // クロス間近の予告（確定メールとは別に送る）
-  if (nears.length) {
-    var nhead = nears.length === 1
-      ? nears[0].split('\n')[0].replace('■ ', '').trim()
-      : nears.length + '件がクロス間近';
-    pushMail_('⏳ クロード流｜' + nhead,
-      '【まだ入りません。クロス間近の予告です】\n' +
-      '検証では、この状態から3時間以内に約8割がクロスします（2割は外れます）。\n' +
-      'チャートを開いて構えておき、★クロス確定のメールが来てから入ってください。\n\n' +
-      nears.join('\n\n'));
-  }
+  // クロス間近の予告メールはユーザー指示により送らない。クロス確定時のみ通知する
+  //   （near判定と記録は残してあるので、必要になったらここを戻すだけで復活する）
   return status.join(' / ');
+}
+
+// ── 逆張り（ドル円のみ）：日足に逆らう方向へMACDが転換し、その後1時間足の高安値を更新したら知らせる ──
+//   検証(2024-01〜2026-07・スプレッド0.5込み)：175件 勝率47% PF1.37 最大DD616 +2,178pips
+//   ・年別 +1,281 / +737 / +160 と直近3年すべてプラス
+//   ・待ち本数は6/12/24本のどれでも成立（+1,491〜+2,178）。ここでは12本を採用
+//   ・利確は損切り幅×1.5が最良。トレーリングはドル円だけ良く他5通貨で全滅したため使わない
+var REV_PAIR = 'USD/JPY';
+var REV_WAIT_BARS = 12;      // クロスから1時間足で何本まで更新を待つか
+var REV_TP_RATIO  = 1.5;     // 利確＝損切り幅×これ
+
+function checkMacklineReverse_() {
+  var p = PropertiesService.getScriptProperties();
+  var sym = REV_PAIR, name = JP_NAME[sym] || sym, pip = pipSize_(sym);
+  var key = 'REV_ARM_' + sym.replace('/', '');
+
+  var h1 = fetchTFCached_(sym, '1h');       // クロード流と同じキャッシュを使うので追加取得なし
+  var dy = fetchDailyCached_(sym);
+  var last = h1.closes.length - 1;
+  var dma = sma_(dy.closes, 20);
+  var dDir = dirOf_(slopeAt_(dma, dma.length - 1));
+
+  var raw = p.getProperty(key), arm = null;
+  if (raw) { try { arm = JSON.parse(raw); } catch (e) { arm = null; } }
+
+  // ── 待機中：高安値を更新したか見る ──
+  if (arm) {
+    // キャッシュは常に直近200本なので本数では測れない。経過時間で判定する（1時間足12本＝12時間）
+    if (Date.now() - arm.at > REV_WAIT_BARS * 60 * 60 * 1000) { p.deleteProperty(key); return '時間切れ'; }
+    var broke = arm.dir === 'up' ? (h1.highs[last] > arm.level) : (h1.lows[last] < arm.level);
+    if (!broke) return '更新待ち(' + fmt_(arm.level, sym) + ')';
+    p.deleteProperty(key);
+
+    // 損切り＝直近10本の逆側極値／利確＝その幅×1.5
+    var from = Math.max(0, last - 10), ext = arm.dir === 'up' ? Infinity : -Infinity;
+    for (var q = from; q <= last; q++) ext = arm.dir === 'up' ? Math.min(ext, h1.lows[q]) : Math.max(ext, h1.highs[q]);
+    var stop = arm.dir === 'up' ? ext - PARAMS.BUFFER * pip : ext + PARAMS.BUFFER * pip;
+    var price = h1.closes[last];
+    var risk = Math.abs(price - stop) / pip;
+    var tp = arm.dir === 'up' ? price + risk * REV_TP_RATIO * pip : price - risk * REV_TP_RATIO * pip;
+
+    try {
+      pushMail_('🔄 1時間足の転換｜' + name + '　' + (arm.dir === 'up' ? '買い' : '売り') + '　高安値を更新',
+        '【日足には逆行、1時間足には順行するサインです】\n' +
+        'MACDが転換し、その方向の直近高安値も更新しました。1時間足の勢いには乗っています。\n' +
+        '検証(2024-01〜2026-07)：勝率47%・PF1.37・+2,178pips。利確は損切り幅の1.5倍。\n' +
+        '※日足のトレンドには逆らうので、クロード流と反対のポジションになる場面があります。\n\n' +
+        '■ ' + name + '　' + (arm.dir === 'up' ? '買い' : '売り') + '\n' +
+        '　日足：' + (dDir === 'up' ? '上昇' : dDir === 'down' ? '下落' : '方向なし') + '（これに逆らう方向）\n' +
+        '　MACD転換：' + arm.crossTime + '\n' +
+        '　' + (arm.dir === 'up' ? '直近高値' : '直近安値') + ' ' + fmt_(arm.level, sym) + ' を更新しました\n' +
+        '　現在値 ' + fmt_(price, sym) + '\n' +
+        '　損切り ' + fmt_(stop, sym) + '（' + risk.toFixed(1) + 'pips）\n' +
+        '　利確の目安 ' + fmt_(tp, sym) + '（' + (risk * REV_TP_RATIO).toFixed(1) + 'pips）');
+    } catch (e) { Logger.log('逆張りメール送信に失敗: ' + e); }
+    return '🔄 高値更新で通知';
+  }
+
+  // ── 待機なし：日足と逆方向のクロスが出ていたら、更新を待つ体勢に入る ──
+  if (dDir === 'flat') return '日足の方向なし';
+  var want = dDir === 'up' ? 'down' : 'up';       // 日足に逆らう方向
+  var m = macd_(h1.closes);
+  var m0 = m.line[last], s0 = m.sig[last], m1 = m.line[last - 1], s1 = m.sig[last - 1];
+  if (m0 == null || s0 == null || m1 == null || s1 == null) return 'データ不足';
+  var crossed = want === 'up' ? (m1 <= s1 && m0 > s0) : (m1 >= s1 && m0 < s0);
+  if (!crossed) return '待ち';
+
+  // 更新の基準＝確定済み（後続3本あり）の直近スイング
+  var SWn = PARAMS.SWING, level = null;
+  for (var k = last - SWn - 1; k >= Math.max(SWn, last - 200); k--) {
+    var isSw = true;
+    for (var j = k - SWn; j <= k + SWn; j++) {
+      if (j === k) continue;
+      if (want === 'up' ? h1.highs[j] >= h1.highs[k] : h1.lows[j] <= h1.lows[k]) { isSw = false; break; }
+    }
+    if (isSw) { level = want === 'up' ? h1.highs[k] : h1.lows[k]; break; }
+  }
+  if (level == null) return 'スイング無し';
+  p.setProperty(key, JSON.stringify({ dir: want, level: level, at: Date.now(), crossTime: h1.time[last] }));
+  return '転換を検知（' + fmt_(level, sym) + ' の更新待ち）';
 }
 
 // ===== テスト送信（クロスの有無に関係なく今の状態を送る）=====
@@ -506,7 +581,7 @@ function テスト送信() {
   });
 
   var msg = Utilities.formatDate(new Date(), 'Asia/Tokyo', 'M月d日 HH:mm') + ' 時点\n\n' + out.join('\n\n');
-  pushMail_('📈 マックライン｜テスト送信（両モード）', msg);
+  pushMail_('📈 MACライン｜テスト送信（両モード）', msg);
   Logger.log(msg);
   return msg;
 }
