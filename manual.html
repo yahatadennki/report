@@ -548,6 +548,14 @@
         <span class="menu-card__tag">携帯用</span>
       </span>
     </button>
+    <button class="menu-card" onclick="location.href='enquete.html'">
+      <span class="menu-card__icon">✂️</span>
+      <span>
+        <p class="menu-card__title">工事・配達後アンケート（半券つき）</p>
+        <p class="menu-card__desc">説明→手渡し→半券を持ち帰る→ひまわりが回収。用紙の印刷もここから。</p>
+        <span class="menu-card__tag">お客様用</span>
+      </span>
+    </button>
   </div>
 
   <p class="portal-head__sub" style="max-width:780px;margin:32px auto 10px;text-align:left;font-size:12px;letter-spacing:0.1em;color:var(--ink-soft);">会社・職種ガイド</p>
@@ -969,6 +977,25 @@
             <span class="phrase__tag">お礼</span>
             何かお困りごとがあれば、いつでもご連絡ください。本日はありがとうございました。
           </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step__num">7</div>
+        <div>
+          <p class="step__title">アンケートをお渡しする（工事・配達は全件）</p>
+          <div class="phrase">
+            <span class="phrase__tag">そのまま言う</span>
+            最後にこちらのアンケートをお願いできますか。書きっぱなしにはしませんので、後日ひまわりの者がお預かりに伺います。
+          </div>
+          <p class="step__note" style="margin-top:8px">→ お渡ししたら、その場で<b>半券を切り取って持ち帰る</b></p>
+          <ul class="checklist">
+            <li>半券に <b>お客様名</b> と <b>作業内容</b> を書く（住所は区・町名だけでOK）</li>
+            <li>帰社したら、半券を<b>ひまわりBOX</b>へ入れる。ここまでで作業完了</li>
+            <li>ひまわりスタッフが1週間以内に回収へ伺います</li>
+          </ul>
+          <p class="step__note" style="margin-top:8px">用紙の印刷は
+            <a href="enquete.html" style="color:var(--blue);font-weight:700">工事・配達後アンケート</a> のページから。</p>
         </div>
       </div>
 
@@ -1932,6 +1959,22 @@
                 <ul class="work-list">
                     <li>消耗品の在庫を確認し、お客様のタイミングでお届けする</li>
                     <li>配達時にお客様の様子を確認し、困りごとをキャッチする</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="work-card">
+            <div class="work-header"><div class="work-icon">✂️</div>
+                <div><div class="work-name">アンケート回収</div><div class="work-tagline">工事・配達のあとに、もう一度お客様の顔を見に行く</div></div>
+            </div>
+            <div class="work-body">
+                <div class="work-desc"><strong>この業務の目的:</strong><br>工事・配達を終えたスタッフが、お客様にアンケートをお渡しし、半券を持ち帰ってひまわりBOXに入れます。ひまわりスタッフはその半券を訪問リストとして、記入済みのアンケートをお預かりに伺います。回収は「行く口実」です。回収率より、行った回数のほうが大切です。</div>
+                <ul class="work-list">
+                    <li>ひまわりBOXの半券を確認し、1週間以内に回収へ伺う</li>
+                    <li>回収のついでに「その後お使いいただけていますか」と様子を伺う</li>
+                    <li>書いていただけていない場合は、その場で伺って代筆してもよい</li>
+                    <li>気になる家電・お困りごとが書かれていたら、その日のうちに受注日報へ記録して担当につなぐ</li>
+                    <li>回収した用紙は事務スタッフへ渡し、集めた声は会議で共有する</li>
                 </ul>
             </div>
         </div>
@@ -3185,8 +3228,34 @@
                     <li>養生を徹底し、お客様宅を傷・汚れから守る</li>
                     <li>安全でスマートな作業を心がける</li>
                     <li>現場での片付けを丁寧に行う</li>
-                    <li>お客様に合わせた使い方の説明をする</li>
+                    <li>お客様に合わせた使い方の説明をする（下の「取扱説明とアンケート」を参照）</li>
                     <li>必要に応じて集金を行う</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 取扱説明とアンケート -->
+        <div class="step-card" style="border-color:#e0e0e0; margin-bottom:16px;">
+            <div class="step-header" style="background:linear-gradient(135deg,#2e7d32,#43a047);">
+                <div class="step-icon">📖</div>
+                <div>
+                    <div class="step-name">取扱説明とアンケート</div>
+                    <div class="step-tagline">工事・配達が終わったら、必ずその場で説明する</div>
+                </div>
+            </div>
+            <div class="step-body">
+                <div class="step-why">
+                    <strong>この業務の目的:</strong><br>
+                    どれだけキレイに仕上げても、使い方が分からなければ「買ったのに使えない」で終わってしまいます。
+                    取扱説明までが工事です。説明した人が、次に相談される人になります。
+                    説明が終わったらアンケートをお渡しし、半券を切り取って持ち帰ります。
+                </div>
+                <ul class="step-list">
+                    <li>一緒に一回動かす（明日から使うボタンだけでよい）</li>
+                    <li>お手入れの場所と頻度を見せる（フィルター・排水など）</li>
+                    <li>取扱説明書・保証書の置き場所を決めて手渡し、困ったときの連絡先を伝える</li>
+                    <li>アンケートをお渡しし、「後日ひまわりの者が伺います」と伝える</li>
+                    <li>半券に<strong>お客様名と作業内容</strong>を記入して切り取り、帰社後ひまわりBOXへ入れる</li>
                 </ul>
             </div>
         </div>
