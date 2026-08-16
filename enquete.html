@@ -63,6 +63,8 @@
     border-bottom:3px solid #f0a500;padding-bottom:8px;margin-bottom:14px}
   .sheet .hd h2{margin:0;font-size:21px;line-height:1.4;color:#1c2530}
   .sheet .hd .co{font-size:12px;color:#555;text-align:right;line-height:1.6}
+  .sheet .greet{font-size:17px;font-weight:700;color:#1c2530;margin:0 0 10px;display:flex;align-items:flex-end;gap:8px}
+  .sheet .greet .nm{flex:0 0 auto;min-width:180px;border-bottom:1.6px solid #444;height:26px}
   .sheet .intro{font-size:13.5px;color:#333;margin:0 0 14px}
   .sheet .intro b{background:linear-gradient(transparent 62%, #ffe9b0 62%)}
 
@@ -85,15 +87,10 @@
   .stub .sh{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 9px}
   .stub .sh b{font-size:16px;color:#1f5f4a}
   .stub .sh span{font-size:11.5px;color:#1f5f4a;border:1px solid #1f5f4a;border-radius:999px;padding:1px 10px}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px}
-  .fld{font-size:13.5px;display:flex;align-items:flex-end;gap:6px}
+  .fld{font-size:15px;display:flex;align-items:flex-end;gap:8px;margin:0 0 10px}
   .fld .lb{flex:0 0 auto;color:#1f5f4a;font-weight:700}
-  .fld .in{flex:1;border-bottom:1px solid #888;height:22px}
-  .fld.big .lb{font-size:15px}
-  .fld.big .in{height:27px;border-bottom:1.6px solid #444}
-  .stub .work{margin-top:9px;font-size:13.5px}
-  .stub .work .opts{margin-top:5px;gap:6px 16px;font-size:13.5px}
-  .stub .foot{margin-top:10px;font-size:12px;color:#1f5f4a;background:#e7f2ed;border-radius:6px;padding:7px 10px}
+  .fld .in{flex:1;border-bottom:1.6px solid #444;height:28px}
+  .stub .foot{margin-top:12px;font-size:12px;color:#1f5f4a;background:#e7f2ed;border-radius:6px;padding:7px 10px}
 
   @media print{
     @page{size:A4 portrait;margin:10mm}
@@ -123,7 +120,7 @@
     <div class="arrow">↓</div>
     <div class="fl"><span class="n">2</span><div><b>アンケートを手渡す</b><p>「後日ひまわりの者がお預かりに伺います」と一言添えてお渡しする。</p></div></div>
     <div class="arrow">↓</div>
-    <div class="fl"><span class="n">3</span><div><b>半券を切り取って持ち帰る</b><p>お客様名と作業内容を記入。書くのはこれだけ。</p></div></div>
+    <div class="fl"><span class="n">3</span><div><b>半券を切り取って持ち帰る</b><p>日にち・お客様名・工事／配達の内容。書くのはこの3つだけ。</p></div></div>
     <div class="arrow">↓</div>
     <div class="fl h"><span class="n">4</span><div><b>帰社したら、ひまわりBOXへ入れる</b><p>渡すのを忘れない。入れた時点で自分の仕事は完了。</p></div></div>
     <div class="arrow">↓</div>
@@ -154,8 +151,12 @@
     <div class="co">㈲ヤハタ電機商会<br>TEL 043-259-0463</div>
   </div>
 
+  <p class="greet">
+    <span class="nm">&nbsp;</span> 様　本日はありがとうございました。
+  </p>
+
   <p class="intro">
-    本日はありがとうございました。これからも末長くお使いいただくために、率直なお声を聞かせてください。<br>
+    これからも末長くお使いいただくために、率直なお声を聞かせてください。<br>
     <b>ご記入いただいた用紙は、後日ひまわりスタッフがお伺いしてお預かりします。</b>切手も、送っていただく手間もいりません。
   </p>
 
@@ -198,14 +199,6 @@
     <div class="lines"><div class="ln"></div><div class="ln"></div></div>
   </div>
 
-  <div class="q">
-    <p class="qt"><span class="num">5</span>お名前（差し支えなければ）</p>
-    <div class="opts" style="gap:8px 26px">
-      <span>お名前 <span class="fill" style="min-width:200px">&nbsp;</span> 様</span>
-      <span>ご記入日 <span class="fill" style="min-width:110px">&nbsp;</span></span>
-    </div>
-  </div>
-
   <div class="cut">✂ ここから下は、スタッフが切り取って持ち帰ります</div>
 
   <div class="stub">
@@ -214,26 +207,9 @@
       <span>ひまわりスタッフへ</span>
     </div>
 
-    <div class="grid2">
-      <div class="fld big"><span class="lb">お客様名</span><span class="in"></span></div>
-      <div class="fld big"><span class="lb">作業内容</span><span class="in"></span></div>
-      <div class="fld"><span class="lb">ご住所（区・町名）</span><span class="in"></span></div>
-      <div class="fld"><span class="lb">電話</span><span class="in"></span></div>
-      <div class="fld"><span class="lb">実施日</span><span class="in"></span></div>
-      <div class="fld"><span class="lb">担当者</span><span class="in"></span></div>
-    </div>
-
-    <div class="work">
-      作業の種類（○をつける）
-      <div class="opts">
-        <span class="opt"><span class="bx"></span>工事</span>
-        <span class="opt"><span class="bx"></span>配達</span>
-        <span class="opt"><span class="bx"></span>修理</span>
-        <span class="opt"><span class="bx"></span>その他</span>
-        <span class="opt" style="margin-left:12px"><span class="bx"></span>取扱説明ずみ</span>
-        <span class="opt"><span class="bx"></span>アンケートを手渡した</span>
-      </div>
-    </div>
+    <div class="fld"><span class="lb">日にち</span><span class="in" style="max-width:180px"></span></div>
+    <div class="fld"><span class="lb">お客様名</span><span class="in"></span><span class="lb" style="font-weight:400;color:#444">様</span></div>
+    <div class="fld"><span class="lb">工事・配達の内容</span><span class="in"></span></div>
 
     <div class="foot">帰社したら、この半券を<b>ひまわりBOX</b>へ。ひまわりスタッフが1週間以内に回収へ伺います。</div>
   </div>
