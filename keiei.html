@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>経営ポータル｜ヤハタ電機商会</title>
+<style>
+  :root {
+    --paper:#f4f7fa; --card:#ffffff; --ink:#1c2530; --ink-soft:#4a5a6a; --line:#d7e0e8;
+    --sun:#f0a500; --blue:#2e75b6; --navy:#1a3a5c; --coral:#c94f4f;
+    --kazu-bg:#fde7ec;   --kazu-fg:#8f2340;
+    --kimeru-bg:#ffedd5; --kimeru-fg:#9a3412;
+    --tsutaeru-bg:#e3f2ec; --tsutaeru-fg:#1f5f4a;
+    --hito-bg:#e4eefa;   --hito-fg:#164a7a;
+    --sheet-bg:#eceff1;  --sheet-fg:#37474f;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:#10161d; --card:#1a2028; --ink:#e8edf2; --ink-soft:#a9b6c2; --line:#2c3844;
+      --navy:#3f6a94;
+      --kazu-bg:#3a1a24;   --kazu-fg:#f0a0b4;
+      --kimeru-bg:#3a2410; --kimeru-fg:#f5a86a;
+      --tsutaeru-bg:#153026; --tsutaeru-fg:#8fd6bb;
+      --hito-bg:#152a3d;   --hito-fg:#8ec2ef;
+      --sheet-bg:#242c33;  --sheet-fg:#a7bac6;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#10161d; --card:#1a2028; --ink:#e8edf2; --ink-soft:#a9b6c2; --line:#2c3844;
+    --navy:#3f6a94;
+    --kazu-bg:#3a1a24;   --kazu-fg:#f0a0b4;
+    --kimeru-bg:#3a2410; --kimeru-fg:#f5a86a;
+    --tsutaeru-bg:#153026; --tsutaeru-fg:#8fd6bb;
+    --hito-bg:#152a3d;   --hito-fg:#8ec2ef;
+    --sheet-bg:#242c33;  --sheet-fg:#a7bac6;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP","Meiryo",sans-serif;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.75;
+    padding: 32px 16px 70px;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; }
+
+  .strip-title {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
+    color: var(--ink-soft);
+    margin: 30px 0 12px; padding-left: 11px;
+    border-left: 3px solid var(--sun);
+  }
+  .strip-note { font-size: 12px; color: var(--ink-soft); margin: -6px 0 12px; padding-left: 14px; }
+
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(265px, 1fr)); gap: 12px; }
+  .card {
+    display: block; background: var(--card);
+    border: 1px solid var(--line); border-radius: 10px;
+    overflow: hidden; text-decoration: none; color: inherit;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    transition: box-shadow .18s, transform .18s;
+  }
+  .card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.11); transform: translateY(-1px); }
+  .card__head {
+    display: flex; align-items: center; gap: 8px;
+    padding: 9px 14px; font-size: 13px; font-weight: 700;
+  }
+  .card__head .ic { font-size: 17px; line-height: 1; }
+  .card__body { padding: 12px 15px 14px; }
+  .card__title { font-size: 16px; font-weight: 700; margin: 0 0 3px; }
+  .card__desc { font-size: 12.5px; color: var(--ink-soft); margin: 0; }
+
+  .c-kazu     .card__head { background: var(--kazu-bg);     color: var(--kazu-fg); }
+  .c-kimeru   .card__head { background: var(--kimeru-bg);   color: var(--kimeru-fg); }
+  .c-tsutaeru .card__head { background: var(--tsutaeru-bg); color: var(--tsutaeru-fg); }
+  .c-hito     .card__head { background: var(--hito-bg);     color: var(--hito-fg); }
+  .c-sheet    .card__head { background: var(--sheet-bg);    color: var(--sheet-fg); }
+
+  /* これから作るもの（リンクなし） */
+  .card.soon { border-style: dashed; box-shadow: none; opacity: .78; cursor: default; }
+  .card.soon:hover { transform: none; box-shadow: none; }
+  .card.soon .card__head { background: var(--sheet-bg); color: var(--sheet-fg); }
+  .soon-badge { margin-left: auto; font-size: 11px; font-weight: 700; padding: 0 8px;
+                border-radius: 999px; background: var(--card); color: var(--ink-soft); }
+
+  .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+  .tag { font-size: 11px; padding: 1px 9px; border-radius: 999px;
+         background: var(--sheet-bg); color: var(--sheet-fg); }
+
+  .axis { background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--sun);
+          border-radius: 10px; padding: 14px 18px; margin: 0 0 4px; }
+  .axis p { margin: 0 0 4px; font-size: 13px; color: var(--ink-soft); }
+  .axis p:last-child { margin-bottom: 0; }
+  .axis b { color: var(--ink); }
+
+  .portal-links { margin: 38px 0 0; }
+  .portal-links > p { font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
+                      color: var(--ink-soft); margin: 0 0 12px; padding-left: 11px;
+                      border-left: 3px solid var(--sun); }
+  .plink { display: block; padding: 16px 18px; border-radius: 10px;
+           text-decoration: none; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .plink .e { display: block; font-size: 11px; letter-spacing: .14em; color: rgba(255,255,255,.72); }
+  .plink .t { display: block; font-size: 17px; font-weight: 700; color: #fff; margin: 3px 0 2px; }
+  .plink .s { display: block; font-size: 12px; color: rgba(255,255,255,.82); }
+
+  /* PINロック画面 */
+  #pinGate { position: fixed; inset: 0; z-index: 9999; background: var(--paper); display: flex; align-items: center; justify-content: center; padding: 20px; }
+  #pinGate.hidden { display: none; }
+  #pinGate .pinbox { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 30px 28px; text-align: center; max-width: 320px; width: 100%; box-shadow: 0 6px 24px rgba(0,0,0,0.12); }
+  #pinGate .pin-emoji { font-size: 34px; }
+  #pinGate .pin-title { font-weight: 700; font-size: 16px; margin: 8px 0 2px; color: var(--ink); }
+  #pinGate .pin-sub { font-size: 12.5px; color: var(--ink-soft); margin: 0 0 16px; }
+  #pinGate input { font-family: inherit; font-size: 24px; letter-spacing: 0.35em; text-align: center; padding: 10px 8px; width: 170px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--ink); }
+  #pinGate input:focus { outline: 2px solid var(--blue); }
+  #pinGate .pin-err { color: var(--coral); font-size: 12px; height: 16px; margin: 6px 0; }
+  #pinGate button { font-family: inherit; font-size: 15px; font-weight: 700; margin-top: 6px; padding: 10px 28px; border: none; border-radius: 8px; background: var(--blue); color: #fff; cursor: pointer; }
+  #pinGate button:hover { background: var(--navy); }
+</style>
+</head>
+<body>
+
+<div id="pinGate">
+  <div class="pinbox">
+    <div class="pin-emoji">🔒</div>
+    <p class="pin-title">ヤハタ電機商会 経営ポータル</p>
+    <p class="pin-sub">4桁のPINを入力してください</p>
+    <input id="pinInput" type="tel" inputmode="numeric" maxlength="4" placeholder="••••" autocomplete="off">
+    <div class="pin-err" id="pinErr"></div>
+    <button type="button" onclick="checkPin()">入る</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="pt-head" style="background:linear-gradient(135deg,#6b2436 0%,#43121f 100%);color:#fff;border-radius:10px;padding:26px 30px 24px;margin:0 0 20px">
+    <p style="font-size:12px;letter-spacing:.14em;color:rgba(255,255,255,.72);margin:0 0 6px">舵を取る</p>
+    <h1 style="font-size:23px;font-weight:700;margin:0 0 6px;color:#fff;line-height:1.4">経営ポータル</h1>
+    <p style="font-size:13px;color:rgba(255,255,255,.82);margin:0">数字を見る。先を決める。みんなに伝える。</p>
+  </div>
+
+  <div class="axis">
+    <p><b>売上は「結果」。</b>金額を追わず、仕事を追う。</p>
+    <p><b>記録させたら、見る場と動く人を決める。</b>貯めるだけの仕組みは必ず死ぬ。</p>
+    <p><b>人に判断させない。</b>撮るだけ・押すだけにする。</p>
+  </div>
+
+  <p class="strip-title">数字を見る</p>
+  <div class="card-grid">
+
+    <div class="card soon">
+      <div class="card__head"><span class="ic">📈</span>月次<span class="soon-badge">これから</span></div>
+      <div class="card__body">
+        <p class="card__title">会議資料（月次実績まとめ）</p>
+        <p class="card__desc">売上・点検・受注経路・ひまわり活動を1枚に／いまはPCのデスクトップに保存</p>
+      </div>
+    </div>
+
+    <div class="card soon">
+      <div class="card__head"><span class="ic">🧭</span>いつでも<span class="soon-badge">これから</span></div>
+      <div class="card__body">
+        <p class="card__title">実績ダッシュボード</p>
+        <p class="card__desc">今月の売上・点検台数・受注件数を開いたらすぐ見られる場所</p>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="strip-title">先を決める</p>
+  <div class="card-grid">
+
+    <a class="card c-kimeru" href="roadmap.html">
+      <div class="card__head"><span class="ic">🗓️</span>一年の流れ</div>
+      <div class="card__body">
+        <p class="card__title">年間販促スケジュール</p>
+        <p class="card__desc">フェア・招待状・かわら版・お店誌／次にやることの逆算</p>
+      </div>
+    </a>
+
+    <div class="card soon">
+      <div class="card__head"><span class="ic">📌</span>今月<span class="soon-badge">これから</span></div>
+      <div class="card__body">
+        <p class="card__title">今月の予定・会議スケジュール</p>
+        <p class="card__desc">店舗会議・勉強会・フェア準備の締切を1か所に</p>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="strip-title">みんなに伝える</p>
+  <p class="strip-note">スタッフが見るものは「現場サポート」に置き、ここは作る・直す側の入口です。</p>
+  <div class="card-grid">
+
+    <a class="card c-tsutaeru" href="manual.html">
+      <div class="card__head"><span class="ic">📗</span>ポータル</div>
+      <div class="card__body">
+        <p class="card__title">現場サポート（みんなのマニュアル）</p>
+        <p class="card__desc">職種別ガイド・訪問トーク・工事手順書のまとめ</p>
+      </div>
+    </a>
+
+    <a class="card c-tsutaeru" href="nippo-manual.html">
+      <div class="card__head"><span class="ic">📝</span>使い方</div>
+      <div class="card__body">
+        <p class="card__title">業務日報の入力マニュアル</p>
+        <p class="card__desc">何を・どこまで書くか／新しく入った人に最初に渡す</p>
+      </div>
+    </a>
+
+    <a class="card c-tsutaeru" href="aircon-manual.html">
+      <div class="card__head"><span class="ic">❄️</span>手順書</div>
+      <div class="card__body">
+        <p class="card__title">エアコン取付工事</p>
+        <p class="card__desc">段取り・注意点・お客様への一言</p>
+      </div>
+    </a>
+
+    <a class="card c-tsutaeru" href="toilet-manual.html">
+      <div class="card__head"><span class="ic">🚽</span>手順書</div>
+      <div class="card__body">
+        <p class="card__title">トイレ工事</p>
+        <p class="card__desc">段取り・注意点・お客様への一言</p>
+      </div>
+    </a>
+
+    <a class="card c-hito" href="service-stepup.html">
+      <div class="card__head"><span class="ic">🌱</span>育てる</div>
+      <div class="card__body">
+        <p class="card__title">サービススタッフ ステップ1</p>
+        <p class="card__desc">壊れる前に気づける人になる／かゆくなる前に手を打つ</p>
+      </div>
+    </a>
+
+    <div class="card soon">
+      <div class="card__head"><span class="ic">📖</span>これから<span class="soon-badge">これから</span></div>
+      <div class="card__body">
+        <p class="card__title">経営のマニュアル</p>
+        <p class="card__desc">月初・月末にやること、フェアの回し方、採用・教育の型</p>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="strip-title">元データ</p>
+  <div class="card-grid">
+
+    <a class="card c-sheet" href="https://docs.google.com/spreadsheets/d/1L57wd6u7MaX0Nw4SdpPtbCgVEbtLJkx6Pa1dvJpeZqg/edit" target="_blank">
+      <div class="card__head"><span class="ic">📊</span>スプレッドシート</div>
+      <div class="card__body">
+        <p class="card__title">業務日報</p>
+        <div class="tags"><span class="tag">売上</span><span class="tag">工事・配達</span><span class="tag">点検台数</span></div>
+      </div>
+    </a>
+
+    <a class="card c-sheet" href="https://docs.google.com/spreadsheets/d/1Cg5FACS_HqpAlchsU6O4ansNHc7GO_FOWAYhpX_72_w/edit" target="_blank">
+      <div class="card__head"><span class="ic">📊</span>スプレッドシート</div>
+      <div class="card__body">
+        <p class="card__title">受注日報</p>
+        <div class="tags"><span class="tag">受注</span><span class="tag">経路</span></div>
+      </div>
+    </a>
+
+    <a class="card c-sheet" href="https://docs.google.com/spreadsheets/d/1WMsviRURr3Lwfi4zy4-dvH7DHO3uq4WXb4NBScwLqi4/edit" target="_blank">
+      <div class="card__head"><span class="ic">📊</span>スプレッドシート</div>
+      <div class="card__body">
+        <p class="card__title">ひまわりスタッフ日報</p>
+        <div class="tags"><span class="tag">面談</span><span class="tag">TEL</span><span class="tag">ポスティング</span></div>
+      </div>
+    </a>
+
+    <a class="card c-sheet" href="https://docs.google.com/spreadsheets/d/1Pqb_DY3utvxKhTCIb4PJ0yNGra3hi1aSyFOHrydmuY0/edit" target="_blank">
+      <div class="card__head"><span class="ic">📊</span>スプレッドシート</div>
+      <div class="card__body">
+        <p class="card__title">見積・マスタ</p>
+        <div class="tags"><span class="tag">見積書</span><span class="tag">商品マスタ</span><span class="tag">顧客マスタ</span></div>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="portal-links">
+    <p>ほかのポータル</p>
+    <div class="card-grid">
+      <a class="plink" href="menu.html" style="background:linear-gradient(135deg,#1a3a5c 0%,#12283f 100%)">
+        <span class="e">毎日つかう</span>
+        <span class="t">業務ポータル</span>
+        <span class="s">日報を書く。見積をつくる。リストを見る。</span>
+      </a>
+      <a class="plink" href="manual.html" style="background:linear-gradient(135deg,#1f5f4a 0%,#123d31 100%)">
+        <span class="e">迷ったら開く</span>
+        <span class="t">現場サポート</span>
+        <span class="s">スタッフガイドと、工事の手順書。</span>
+      </a>
+      <a class="plink" href="roadmap.html" style="background:linear-gradient(135deg,#7a4d10 0%,#573608 100%)">
+        <span class="e">先を読む</span>
+        <span class="t">年間販促スケジュール</span>
+        <span class="s">フェア・チラシ・かわら版。一年の流れ。</span>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ===== PINロック（7860）※軽い目隠しです =====
+  (function () {
+    var KEY = 'yahataKeieiAuth_v1';
+    var PIN = '7860';
+    function reveal() { var g = document.getElementById('pinGate'); if (g) g.classList.add('hidden'); }
+    window.checkPin = function () {
+      var v = (document.getElementById('pinInput').value || '').trim();
+      if (v === PIN) { try { localStorage.setItem(KEY, '1'); } catch (e) {} reveal(); }
+      else { document.getElementById('pinErr').textContent = 'PINが違います'; }
+    };
+    var already = false;
+    try { already = localStorage.getItem(KEY) === '1'; } catch (e) {}
+    if (already) { reveal(); }
+    else {
+      var inp = document.getElementById('pinInput');
+      if (inp) {
+        inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') window.checkPin(); });
+        setTimeout(function () { try { inp.focus(); } catch (e) {} }, 100);
+      }
+    }
+  })();
+</script>
+
+</body>
+</html>
