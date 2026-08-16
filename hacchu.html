@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>発注取込 - ヤハタ電機商会</title>
+<style>
+  :root{
+    --paper:#f4f7fa; --card:#fff; --ink:#1c2530; --soft:#4a5a6a; --line:#d7e0e8;
+    --navy:#1a3a5c; --navy2:#12283f; --blue:#2e75b6; --ok:#2e7d32; --warn:#c5221f;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--soft:#a9b6c2;--line:#2c3844;--navy:#3f6a94;}
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);line-height:1.75;
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;
+    padding:0 0 60px;-webkit-text-size-adjust:100%}
+  .wrap{max-width:640px;margin:0 auto;padding:0 16px}
+
+  .head{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);
+    color:#fff;border-radius:0 0 14px 14px;padding:22px 20px 20px;margin-bottom:18px}
+  .head .e{font-size:11px;letter-spacing:.14em;color:rgba(255,255,255,.72);margin:0 0 5px}
+  .head h1{font-size:21px;font-weight:700;margin:0 0 5px}
+  .head p{font-size:12.5px;color:rgba(255,255,255,.82);margin:0}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;
+    padding:16px 18px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  h2{font-size:14px;margin:0 0 8px;padding-left:9px;border-left:3px solid #f0a500}
+  p{margin:0 0 10px;font-size:13.5px}
+  .note{font-size:12.5px;color:var(--soft)}
+  ol{margin:0 0 4px;padding-left:1.3em;font-size:13.5px}
+  li{margin-bottom:5px}
+
+  .drop{border:2px dashed var(--line);border-radius:10px;padding:22px 14px;text-align:center;
+    background:var(--paper);cursor:pointer}
+  .drop:hover{border-color:var(--blue)}
+  .drop .ic{font-size:32px;line-height:1}
+  .drop b{display:block;font-size:14px;margin-top:6px}
+  .drop span{font-size:12px;color:var(--soft)}
+  input[type=file]{display:none}
+
+  .thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-top:12px}
+  .thumb{position:relative;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}
+  .thumb img{width:100%;height:110px;object-fit:cover;display:block}
+  .thumb button{position:absolute;top:3px;right:3px;width:22px;height:22px;border:none;
+    border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:13px;line-height:1}
+
+  .btn{width:100%;font-family:inherit;font-size:15px;font-weight:700;padding:13px 0;
+    border:none;border-radius:9px;background:var(--blue);color:#fff;margin-top:14px}
+  .btn:disabled{opacity:.5}
+  .btn.sub{background:var(--card);color:var(--ink);border:1px solid var(--line);font-weight:400;font-size:13.5px;padding:10px 0}
+
+  #log{font-size:13px;white-space:pre-wrap;margin-top:12px}
+  .ok{color:var(--ok);font-weight:700}
+  .ng{color:var(--warn);font-weight:700}
+
+  #pinGate{position:fixed;inset:0;z-index:9999;background:var(--paper);
+    display:flex;align-items:center;justify-content:center;padding:20px}
+  #pinGate.hidden{display:none}
+  #pinGate .box{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:30px 28px;text-align:center;max-width:320px;width:100%}
+  #pinGate input{font-family:inherit;font-size:24px;letter-spacing:.35em;text-align:center;
+    padding:10px 8px;width:170px;border:1px solid var(--line);border-radius:10px;
+    background:var(--paper);color:var(--ink)}
+  #pinGate .err{color:var(--warn);font-size:12px;height:16px;margin:6px 0}
+  #pinGate button{font-family:inherit;font-size:15px;font-weight:700;margin-top:6px;
+    padding:10px 28px;border:none;border-radius:8px;background:var(--blue);color:#fff}
+</style>
+</head>
+<body>
+
+<div id="pinGate"><div class="box">
+  <div style="font-size:34px">📦</div>
+  <p style="font-weight:700;font-size:16px;margin:8px 0 2px">発注取込</p>
+  <p style="font-size:12.5px;color:var(--soft);margin:0 0 16px">4桁のPINを入力してください</p>
+  <input id="pinInput" type="tel" inputmode="numeric" maxlength="4" placeholder="••••" autocomplete="off">
+  <div class="err" id="pinErr"></div>
+  <button type="button" onclick="checkPin()">入る</button>
+</div></div>
+
+<div class="head">
+  <p class="e">発注サイトから</p>
+  <h1>発注取込</h1>
+  <p>画面を撮って送るだけ。納期は自動で在庫表に入ります。</p>
+</div>
+
+<div class="wrap">
+
+  <div class="card">
+    <h2>やり方</h2>
+    <ol>
+      <li>パナソニックの発注サイトで<b>発注一覧</b>を開く</li>
+      <li>画面を<b>スクリーンショット</b>で撮る（何ページでも）</li>
+      <li>下から選んで<b>取り込む</b>を押す</li>
+    </ol>
+    <p class="note">同じ内容を何度送っても増えません。納期が出たものは上書きされます。</p>
+  </div>
+
+  <div class="card">
+    <h2>スクリーンショット</h2>
+    <label class="drop" for="file">
+      <div class="ic">📷</div>
+      <b>写真を選ぶ</b>
+      <span>まとめて選べます</span>
+    </label>
+    <input id="file" type="file" accept="image/*" multiple onchange="pick(this)">
+    <div class="thumbs" id="thumbs"></div>
+    <button class="btn" id="go" onclick="send()" disabled>取り込む</button>
+    <div id="log"></div>
+  </div>
+
+  <div class="card">
+    <h2>取り込んだあと</h2>
+    <p class="note">
+      納期が出た分は、エアコン在庫表に <b>「8/17入荷」</b> として自動で入ります（青いマス）。<br>
+      現物が届いたら、発注シートの状態を<b>「入荷済」</b>にして、在庫表のマスを<b>「在庫」</b>に書き換えてください。
+    </p>
+    <button class="btn sub" onclick="location.href='kaden.html'">🔍 そろそろリストへ</button>
+    <button class="btn sub" onclick="location.href='menu.html'">🛠 業務ポータルへ</button>
+  </div>
+
+</div>
+
+<script>
+const API='https://script.google.com/macros/s/AKfycbwvdA3LTxWHAEk2PLPKcOdWjS8hJMSLJYApa3O2EU9vvBsgdsRn8SA3Q-EZSgGccvM/exec';
+let SHOTS=[];
+
+const PIN='7860',PKEY='hacchu_pin_ok';
+function checkPin(){
+  const v=(document.getElementById('pinInput').value||'').trim();
+  if(v===PIN){try{localStorage.setItem(PKEY,'1')}catch(e){}reveal();}
+  else document.getElementById('pinErr').textContent='PINが違います';
+}
+function reveal(){document.getElementById('pinGate').classList.add('hidden');}
+document.getElementById('pinInput').addEventListener('keydown',e=>{if(e.key==='Enter')checkPin()});
+try{if(localStorage.getItem(PKEY)==='1')reveal()}catch(e){}
+
+/* 大きすぎるとAIに渡せないので幅1600pxまで縮める（文字は読める大きさを保つ） */
+function shrink(file){
+  return new Promise(res=>{
+    const r=new FileReader();
+    r.onload=e=>{
+      const img=new Image();
+      img.onload=()=>{
+        const MAX=1600;
+        let w=img.width,h=img.height;
+        if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}
+        const c=document.createElement('canvas');c.width=w;c.height=h;
+        c.getContext('2d').drawImage(img,0,0,w,h);
+        res(c.toDataURL('image/jpeg',0.85));
+      };
+      img.src=e.target.result;
+    };
+    r.readAsDataURL(file);
+  });
+}
+
+async function pick(el){
+  for(const f of el.files){ SHOTS.push(await shrink(f)); }
+  el.value='';
+  render();
+}
+function del(i){SHOTS.splice(i,1);render();}
+function render(){
+  document.getElementById('thumbs').innerHTML=SHOTS.map((s,i)=>
+    '<div class="thumb"><img src="'+s+'"><button onclick="del('+i+')">✕</button></div>').join('');
+  document.getElementById('go').disabled=!SHOTS.length;
+  document.getElementById('go').textContent=SHOTS.length?('取り込む（'+SHOTS.length+'枚）'):'取り込む';
+}
+
+function send(){
+  const go=document.getElementById('go'),log=document.getElementById('log');
+  go.disabled=true;go.textContent='読み取り中…';
+  log.textContent='AIが画面を読んでいます。1枚あたり10秒ほどかかります。';
+  fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify({action:'hacchuImport',shots:SHOTS})})
+    .then(r=>r.json())
+    .then(d=>{
+      go.disabled=false;go.textContent='取り込む';
+      if(!d.ok){log.innerHTML='<span class="ng">取り込めませんでした</span>\n'+(d.msg||'');return;}
+      log.innerHTML='<span class="ok">取り込みました</span>\n'
+        +'読んだ行：'+d.read+'\n新しく追加：'+d.added+'\n納期などを更新：'+d.updated;
+      SHOTS=[];render();
+    })
+    .catch(err=>{
+      go.disabled=false;go.textContent='取り込む';
+      log.innerHTML='<span class="ng">通信できませんでした</span>\n'+err;
+    });
+}
+</script>
+</body>
+</html>
