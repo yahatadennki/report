@@ -14,6 +14,7 @@
     --mitsu-bg:#fce7f3;    --mitsu-fg:#9d174d;
     --kaden-bg:#ffedd5;    --kaden-fg:#9a3412;
     --sheet-bg:#eceff1;    --sheet-fg:#37474f;
+    --enq-bg:#e3f2ec;      --enq-fg:#1f5f4a;
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -24,6 +25,7 @@
       --mitsu-bg:#331b28;   --mitsu-fg:#f0a0c8;
       --kaden-bg:#3a2410;   --kaden-fg:#f5a86a;
       --sheet-bg:#242c33;   --sheet-fg:#a7bac6;
+      --enq-bg:#153026;     --enq-fg:#8fd6bb;
     }
   }
 
@@ -70,6 +72,7 @@
   .c-mitsu    .card__head { background: var(--mitsu-bg);    color: var(--mitsu-fg); }
   .c-kaden    .card__head { background: var(--kaden-bg);    color: var(--kaden-fg); }
   .c-sheet    .card__head { background: var(--sheet-bg);    color: var(--sheet-fg); }
+  .c-enq      .card__head { background: var(--enq-bg);      color: var(--enq-fg); }
 
   .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
   .tag { font-size: 11px; padding: 1px 9px; border-radius: 999px;
@@ -132,6 +135,14 @@
       <div class="card__body">
         <p class="card__title">見積アプリ</p>
         <p class="card__desc">見積書・請求書の作成と管理</p>
+      </div>
+    </a>
+
+    <a class="card c-enq" href="https://yahatadennki.github.io/report/enquete.html" target="_blank">
+      <div class="card__head"><span class="ic">✂️</span>印刷</div>
+      <div class="card__body">
+        <p class="card__title">工事・配達後アンケート</p>
+        <p class="card__desc">お客様にお渡しする用紙（半券つき）／流れの確認もここから</p>
       </div>
     </a>
 
