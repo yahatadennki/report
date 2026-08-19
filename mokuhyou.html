@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>スタッフ目標｜ヤハタ電機商会</title>
+<style>
+  :root{
+    --paper:#f4f7fa; --card:#ffffff; --ink:#1c2530; --ink-soft:#4a5a6a; --line:#d7e0e8;
+    --sun:#f0a500;
+    --sv-bg:#e4eefa; --sv-fg:#164a7a;
+    --kj-bg:#e8f5e9; --kj-fg:#2e7d32;
+    --hm-bg:#fff3e0; --hm-fg:#8a5a00;
+    --spark:#e08900; --bolt:#2e75b6; --thunder:#7b3fb5;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --paper:#10161d; --card:#1a2028; --ink:#e8edf2; --ink-soft:#a9b6c2; --line:#2c3844;
+      --sv-bg:#152a3d; --sv-fg:#8ec2ef;
+      --kj-bg:#152e18; --kj-fg:#8fd694;
+      --hm-bg:#3a2b16; --hm-fg:#ffc76b;
+      --spark:#ffb340; --bolt:#7bb4e8; --thunder:#bf94e8;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#10161d; --card:#1a2028; --ink:#e8edf2; --ink-soft:#a9b6c2; --line:#2c3844;
+    --sv-bg:#152a3d; --sv-fg:#8ec2ef;
+    --kj-bg:#152e18; --kj-fg:#8fd694;
+    --hm-bg:#3a2b16; --hm-fg:#ffc76b;
+    --spark:#ffb340; --bolt:#7bb4e8; --thunder:#bf94e8;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP","Meiryo",sans-serif;
+    font-variant-numeric:tabular-nums;line-height:1.75;padding:32px 16px 70px;
+  }
+  .wrap{max-width:900px;margin:0 auto}
+
+  .pt-head{background:linear-gradient(135deg,#6b2436 0%,#43121f 100%);color:#fff;border-radius:10px;
+    padding:26px 30px 24px;margin:0 0 20px}
+  .pt-head .e{font-size:12px;letter-spacing:.14em;color:rgba(255,255,255,.72);margin:0 0 6px}
+  .pt-head h1{font-size:23px;font-weight:700;margin:0 0 6px;line-height:1.4}
+  .pt-head .s{font-size:13px;color:rgba(255,255,255,.82);margin:0}
+
+  .axis{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--sun);
+    border-radius:10px;padding:14px 18px;margin:0 0 6px}
+  .axis p{margin:0 0 4px;font-size:13.5px;color:var(--ink-soft)}
+  .axis p:last-child{margin:0}
+  .axis b{color:var(--ink)}
+
+  .strip-title{font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--ink-soft);
+    margin:32px 0 12px;padding-left:11px;border-left:3px solid var(--sun)}
+
+  .goal{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:0 0 12px}
+  .goal__head{display:flex;align-items:center;gap:9px;padding:10px 16px;font-size:13px;font-weight:700}
+  .goal.sv .goal__head{background:var(--sv-bg);color:var(--sv-fg)}
+  .goal.kj .goal__head{background:var(--kj-bg);color:var(--kj-fg)}
+  .goal.hm .goal__head{background:var(--hm-bg);color:var(--hm-fg)}
+  .goal__body{padding:14px 18px 16px}
+  .goal__what{font-size:15px;font-weight:700;margin:0 0 10px}
+  .goal__what span{font-weight:400;color:var(--ink-soft);font-size:13px}
+
+  .nums{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:0 0 10px}
+  .num{display:flex;align-items:baseline;gap:5px}
+  .num .v{font-size:31px;font-weight:800;line-height:1.1}
+  .num .u{font-size:13px;color:var(--ink-soft)}
+  .num .lbl{font-size:11px;color:var(--ink-soft);display:block}
+  .to{font-size:20px;color:var(--ink-soft)}
+  .now .v{color:var(--bolt)} .next .v{color:var(--thunder)}
+
+  .why{font-size:13px;color:var(--ink-soft);margin:0}
+  .why b{color:var(--ink)}
+
+  /* ランク表 */
+  .ranks{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:12px}
+  .rank{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;
+    border-top:4px solid var(--line)}
+  .rank.r1{border-top-color:var(--spark)} .rank.r2{border-top-color:var(--bolt)} .rank.r3{border-top-color:var(--thunder)}
+  .rank .em{font-size:26px;line-height:1}
+  .rank .nm{font-size:20px;font-weight:800;letter-spacing:.06em;margin:6px 0 0}
+  .rank.r1 .nm{color:var(--spark)} .rank.r2 .nm{color:var(--bolt)} .rank.r3 .nm{color:var(--thunder)}
+  .rank .jp{font-size:12px;color:var(--ink-soft);margin:0 0 10px}
+  .rank .cond{font-size:13px;border-top:1px dashed var(--line);padding-top:9px;margin:0}
+  .rank .cond div{display:flex;justify-content:space-between;gap:8px;padding:1px 0}
+  .rank .cond span:first-child{color:var(--ink-soft)}
+  .rank .cond b{font-variant-numeric:tabular-nums}
+  .rank .msg{font-size:12.5px;color:var(--ink-soft);margin:9px 0 0;border-top:1px dashed var(--line);padding-top:8px}
+
+  .note{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 18px;margin:14px 0 0}
+  .note p{margin:0 0 5px;font-size:12.5px;color:var(--ink-soft)}
+  .note p:last-child{margin:0}
+  .note b{color:var(--ink)}
+
+  .back{display:inline-block;margin:30px 0 0;font-size:13px;color:var(--ink-soft);text-decoration:none}
+  .back:hover{color:var(--ink)}
+
+  @media print{
+    @page{size:A4 portrait;margin:10mm}
+    body{background:#fff;padding:0}
+    .back{display:none}
+    .goal,.rank,.note{page-break-inside:avoid}
+    .pt-head{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="pt-head">
+    <p class="e">今月、何をどれだけ</p>
+    <h1>スタッフ目標</h1>
+    <p class="s">金額ではなく、仕事の数を追う。比べるのは、先月の自分。</p>
+  </div>
+
+  <div class="axis">
+    <p><b>売上は「結果」です。</b>数えるのは、自分で増やせる仕事の数だけにしています。</p>
+    <p><b>届かない月があっていい。</b>下の段にも名前があります。止まっていないことが大事です。</p>
+  </div>
+
+  <p class="strip-title">職種ごとの目標（1か月）</p>
+
+  <div class="goal sv">
+    <div class="goal__head"><span>🔧</span>サービススタッフ</div>
+    <div class="goal__body">
+      <p class="goal__what">見込み商品の記録 <span>／ 業務日報に残した件数</span></p>
+      <div class="nums">
+        <span class="num now"><span><span class="lbl">まずここ</span><span class="v">30</span></span><span class="u">件/月</span></span>
+        <span class="to">→</span>
+        <span class="num next"><span><span class="lbl">その先</span><span class="v">60</span></span><span class="u">件/月</span></span>
+      </div>
+      <p class="why">見込みは<b>次の仕事の種</b>です。「これは見込みかな」と考えず、気づいたら記録する。1日1〜2件で30件、3件で60件に届きます。</p>
+    </div>
+  </div>
+
+  <div class="goal kj">
+    <div class="goal__head"><span>⚙️</span>工事スタッフ</div>
+    <div class="goal__body">
+      <p class="goal__what">工事売上 <span>／ 人数で割ったあとの1人あたり金額</span></p>
+      <div class="nums">
+        <span class="num now"><span><span class="lbl">まずここ</span><span class="v">3,000</span></span><span class="u">千円/月</span></span>
+        <span class="to">→</span>
+        <span class="num next"><span><span class="lbl">その先</span><span class="v">6,000</span></span><span class="u">千円/月</span></span>
+      </div>
+      <p class="why">2人で行った工事は<b>半分ずつ</b>で数えます。金額を狙うのではなく、丁寧な工事と取扱説明を積み重ねた結果として見る数字です。</p>
+    </div>
+  </div>
+
+  <div class="goal hm">
+    <div class="goal__head"><span>🌻</span>ひまわりスタッフ</div>
+    <div class="goal__body">
+      <p class="goal__what">点検 と アンケート回収 <span>／ 訪問して会えた数</span></p>
+      <div class="nums">
+        <span class="num now"><span><span class="lbl">点検</span><span class="v">30</span></span><span class="u">件/月</span></span>
+        <span class="num next"><span><span class="lbl">アンケート回収</span><span class="v">60</span></span><span class="u">件/月</span></span>
+      </div>
+      <p class="why">どちらも<b>お客様に会いに行く口実</b>です。回収できたかより、行った回数。半券が来たら1週間以内に伺います。</p>
+    </div>
+  </div>
+
+  <p class="strip-title">3つのステージ（工事・サービス共通）</p>
+
+  <div class="ranks">
+
+    <div class="rank r1">
+      <div class="em">⚡</div>
+      <p class="nm">SPARK</p>
+      <p class="jp">スパーク ── 火花が飛んだ</p>
+      <div class="cond">
+        <div><span>サービス（見込み）</span><b>30件 未満</b></div>
+        <div><span>工事（売上）</span><b>3,000千円 未満</b></div>
+      </div>
+      <p class="msg">走り出しの段階。数より、毎日続けること。</p>
+    </div>
+
+    <div class="rank r2">
+      <div class="em">🔋</div>
+      <p class="nm">BOLT</p>
+      <p class="jp">ボルト ── 電気が流れている</p>
+      <div class="cond">
+        <div><span>サービス（見込み）</span><b>30件 以上</b></div>
+        <div><span>工事（売上）</span><b>3,000千円 以上</b></div>
+      </div>
+      <p class="msg">一人で回せる段階。ここを毎月続けられたら本物。</p>
+    </div>
+
+    <div class="rank r3">
+      <div class="em">🌩️</div>
+      <p class="nm">THUNDER</p>
+      <p class="jp">サンダー ── 店を動かす</p>
+      <div class="cond">
+        <div><span>サービス（見込み）</span><b>60件 以上</b></div>
+        <div><span>工事（売上）</span><b>6,000千円 以上</b></div>
+      </div>
+      <p class="msg">後輩に教えられる段階。お店の柱です。</p>
+    </div>
+
+  </div>
+
+  <div class="note">
+    <p><b>数え方。</b>サービス＝業務日報の見込商品の件数。工事＝業務日報の工事売上（人数割りのあとの金額）。ひまわり＝ひまわり日報の点検件数と、回収したアンケートの枚数。</p>
+    <p><b>見る場。</b>毎月の店舗会議で先月分を確認します。誰かと比べるためではなく、先月の自分と比べるためです。</p>
+  </div>
+
+  <a class="back" href="keiei.html">← 経営ポータルへ戻る</a>
+
+</div>
+</body>
+</html>
