@@ -8,6 +8,56 @@ var MEIBAN_SHEET = '保有家電';
 var MEIBAN_TAG = '銘板';
 var MEIBAN_KAIKAE_YEARS = 10;   // 何年で買換見込みとするか
 
+var MIKOMI_SHEET = '見込';
+
+/* ---- 見込シート（日報とは別タブ。あとで抽出しやすいように1行1件） ---- */
+function mikomiSheet_() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName(MIKOMI_SHEET);
+  var HEAD = ['登録日', 'ランク', 'いつ頃', '顧客名', '区', 'RFM',
+              '種別', 'メーカー', '型番', '製造年', '経過年', '設置場所',
+              '気づいたこと', '撮影者', '写真', '状況'];
+  var W    = [80, 60, 90, 140, 45, 55, 90, 100, 130, 70, 60, 90, 240, 70, 60, 90];
+  if (!sh) {
+    sh = ss.insertSheet(MIKOMI_SHEET);
+    sh.getRange(1, 1, 1, HEAD.length).setValues([HEAD])
+      .setFontWeight('bold').setBackground('#1a3a5c').setFontColor('#fff')
+      .setHorizontalAlignment('center');
+    sh.setFrozenRows(1);
+    sh.setFrozenColumns(4);
+    W.forEach(function(w, i) { sh.setColumnWidth(i + 1, w); });
+  }
+  if (sh.getLastColumn() < HEAD.length) {
+    sh.getRange(1, 1, 1, HEAD.length).setValues([HEAD])
+      .setFontWeight('bold').setBackground('#1a3a5c').setFontColor('#fff')
+      .setHorizontalAlignment('center');
+  }
+  return sh;
+}
+
+/* 見込シートの色分けと絞り込み（ランクA=赤 B=黄 C=グレー） */
+function mikomiFormat_(sh) {
+  if (sh.getLastRow() < 2) return;
+  var n = sh.getLastRow() - 1;
+  var rk = sh.getRange(2, 2, n, 1);
+  var mk = function(t, bg, fc, bold) {
+    return SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo(t)
+      .setBackground(bg).setFontColor(fc).setBold(!!bold).setRanges([rk]).build();
+  };
+  sh.setConditionalFormatRules([
+    mk('A', '#fce8e6', '#c5221f', true),
+    mk('B', '#fff2cc', '#b06000', false),
+    mk('C', '#eceff1', '#546e7a', false),
+    SpreadsheetApp.newConditionalFormatRule().whenTextContains('済')
+      .setBackground('#e6f4ea').setFontColor('#137333')
+      .setRanges([sh.getRange(2, 16, n, 1)]).build()
+  ]);
+  try { if (sh.getFilter()) sh.getFilter().remove(); } catch (e) {}
+  try { sh.getRange(1, 1, sh.getLastRow(), 16).createFilter(); } catch (e) {}
+  // 新しいものが上に来るように、ランク→登録日 の順で並べる
+  try { sh.getRange(2, 1, n, 16).sort([{ column: 2, ascending: true }, { column: 1, ascending: false }]); } catch (e) {}
+}
+
 /* ---- シート ---- */
 function meibanSheet_() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -140,7 +190,8 @@ function processMeibanQueue() {
   }
   if (!q.length) return;
 
-  var sh = meibanSheet_();
+  var sh = mikomiSheet_();
+  var cust = hagakiCustomerIndex_();
   var thisYear = new Date().getFullYear();
   var rows = [];
 
@@ -149,25 +200,23 @@ function processMeibanQueue() {
     try {
       file = DriveApp.getFileById(fileId);
       var job = JSON.parse(file.getBlob().getDataAsString());
-      var ku = meibanKuMark_(job.visitName);
+      var ci = mikomiCustomer_(job.visitName, cust);
       (job.photos || []).forEach(function(p) {
         try {
           var r = readMeiban_(p.data, p.note);
           if (!r || !r._read) {
-            rows.push([new Date(), job.visitName, ku, '', '', '', '', '', '', '⚠️読取失敗',
-                       job.staff, p.url || '', '写真から型番を読めませんでした',
-                       (r && r.rank) || 'B', (r && r.timing) || '', p.note || '']);
+            rows.push(mikomiRow_(job, p, ci, (r && r.rank) || 'B', (r && r.timing) || '',
+                                 '', '', '', '', '', '', '⚠️型番が読めず'));
             return;
           }
           var y = meibanYear_(r.year);
           var age = y ? thisYear - y : '';
-          var status = (y && age >= MEIBAN_KAIKAE_YEARS) ? '買換見込み' : (y ? '使用中' : '製造年不明');
-          rows.push([new Date(), job.visitName, ku, r.kind || '', r.maker || '', r.model || '',
-                     y || '', age, r.place || '', status, job.staff, p.url || '', '',
-                     r.rank || 'B', r.timing || '', p.note || '']);
+          rows.push(mikomiRow_(job, p, ci, r.rank || 'B', r.timing || '',
+                               r.kind || '', r.maker || '', r.model || '', y || '', age,
+                               r.place || '', ''));
         } catch (er) {
-          rows.push([new Date(), job.visitName, ku, p.kind || '', '', '', '', '', p.place || '', '⚠️エラー',
-                     job.staff, p.url || '', String(er).slice(0, 120), '', '', p.note || '']);
+          rows.push(mikomiRow_(job, p, ci, 'B', '', '', '', '', '', '', '',
+                               '⚠️' + String(er).slice(0, 60)));
         }
       });
     } catch (e) {
@@ -178,11 +227,30 @@ function processMeibanQueue() {
 
   if (rows.length) {
     sh.getRange(sh.getLastRow() + 1, 1, rows.length, rows[0].length).setValues(rows);
-    meibanFormat_(sh);
+    mikomiFormat_(sh);
   }
 
   var remain = JSON.parse(props.getProperty('MEIBAN_QUEUE') || '[]');
   if (remain.length) ScriptApp.newTrigger('processMeibanQueue').timeBased().after(1000).create();
+}
+
+
+/* 顧客マスタから フルネーム・区・RFMランク を引く */
+function mikomiCustomer_(name, cust) {
+  try {
+    var hit = hagakiFindCustomer_(name, cust);
+    if (hit && !hit.ambiguous) {
+      return { name: hit.name || name, ku: hit.kuMark || '', rfm: hit.rfm || '' };
+    }
+  } catch (e) {}
+  return { name: name, ku: '', rfm: '' };
+}
+
+/* 見込シートの1行を作る（列の順番はここだけ見れば分かるようにする） */
+function mikomiRow_(job, p, ci, rank, timing, kind, maker, model, year, age, place, note) {
+  return [new Date(), rank, timing, ci.name || job.visitName, ci.ku, ci.rfm,
+          kind, maker, model, year, age, place,
+          p.note || '', job.staff, p.url || '', note || ''];
 }
 
 /* 買換見込みの行を目立たせる */
