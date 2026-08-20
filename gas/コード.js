@@ -405,6 +405,14 @@ function doPost(e) {
       }
     });
 
+    // ★見込商品欄を使わずに、通常のメモへ書かれた見込みも拾う（取りこぼし防止）。
+    //   見込商品欄に書いてあるときは、そちらを正としてメモは見ない（二重登録を防ぐ）
+    if (!prospects.length) {
+      const memoAll = [data.remarks, data.troubleMatter]
+        .map(v => String(v || '').trim()).filter(Boolean).join(' / ');
+      if (memoAll) meibanPhotos.push({ data: '', note: memoAll, scan: true });
+    }
+
     let photoUrls = [];
     if (data.photos && data.photos.length > 0) {
       photoUrls = data.photos.map((photo, index) => {
@@ -813,7 +821,9 @@ function buildDailyNippoPdf_(ymd) {
   METRICS.push({ h: 'ｴｱｺﾝ点検', d: dayT.aircon, m: monT.aircon });
   METRICS.push({ h: '他点検', d: dayT.other, m: monT.other });
   METRICS.push({ h: '売上(千円)', d: dayT.kouji, m: monT.kouji });
-  METRICS.push({ h: '見込み', d: dayT.mikomi, m: monT.mikomi });
+  // 見込みは「見込」シートの件数で数える（メモから拾った分・写真だけの分も入るため）
+  var mk = mikomiCount_(ymd);
+  METRICS.push({ h: '見込み', d: Math.max(dayT.mikomi, mk.day), m: Math.max(monT.mikomi, mk.month) });
 
   var staffAll = monT.staffOrder.slice();
   dayT.staffOrder.forEach(function(st) { if (staffAll.indexOf(st) < 0) staffAll.push(st); });
