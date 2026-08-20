@@ -48,6 +48,27 @@ function doGet(e) {
     });
     return ContentService.createTextOutput(JSON.stringify(out)).setMimeType(ContentService.MimeType.JSON);
   }
+  // 日報まとめのトリガーを設定し直す
+  if (e && e.parameter && e.parameter.action === 'trigset') {
+    return ContentService.createTextOutput(日報まとめ20時トリガー設定());
+  }
+  // トリガーの状態を確認する
+  if (e && e.parameter && e.parameter.action === 'trigdiag') {
+    var _ts = ScriptApp.getProjectTriggers();
+    var _o = ['トリガー数=' + _ts.length];
+    _ts.forEach(function(t) {
+      _o.push('  ' + t.getHandlerFunction() + '  種類=' + t.getEventType());
+    });
+    // 最近の実行ログ（エラー行）も見る
+    var _sh = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+    var _last = _sh.getLastRow();
+    var _v = _sh.getRange(Math.max(1, _last - 30), 1, Math.min(30, _last), 4).getValues();
+    _o.push('', '■ エラー記録');
+    _v.forEach(function(r) {
+      if (String(r[0]).indexOf('エラー') >= 0) _o.push('  ' + r.join(' | ').slice(0, 200));
+    });
+    return ContentService.createTextOutput(_o.join('\n'));
+  }
   // AIが呼べるか確認する（キーの設定チェック用）
   if (e && e.parameter && e.parameter.action === 'aitest') {
     var _k = PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY');
@@ -357,13 +378,37 @@ function doPost(e) {
       perPersonAmount = Math.floor(workAmount / peopleNum);
     }
 
-    const prospectText = (data.prospectItems || []).map(item => {
-      return `【${item.location}/${item.product}】${item.content}`;
-    }).join("\n");
+    // 写真タグの「見込商品」（旧名「銘板」）は廃止。古いアプリからの送信だけ受け付ける
+    const isMeiban = p => p.type === '見込商品' || p.type === '銘板';
+    const meibanPhotos = (data.photos || []).filter(isMeiban);
+    if (meibanPhotos.length) data.photos = (data.photos || []).filter(p => !isMeiban(p));
 
-    // ★銘板写真は報告書に載せず、保有家電として別に貯める
-    const meibanPhotos = (data.photos || []).filter(p => p.type === '銘板');
-    if (meibanPhotos.length) data.photos = (data.photos || []).filter(p => p.type !== '銘板');
+    // 見込商品：場所／品名／いつ頃／備考。写真は報告書に載せず、AIに読ませて保有家電に貯める
+    const prospects = data.prospectItems || [];
+    let prospectText = prospects.map(item => {
+      let t = `【${item.location || ''}/${item.product || ''}】`;
+      if (item.timing) t += `(${item.timing})`;
+      t += item.content || '';
+      const n = (item.photos || []).length;
+      if (n) t += ` 📷${n}`;
+      return t;
+    }).join("\n");
+    if (meibanPhotos.length) {
+      prospectText += (prospectText ? "\n" : "") + `【写真】見込商品 ${meibanPhotos.length}点`;
+    }
+
+    // 見込みに付いた写真を、時期・備考ごと銘板キューへ回す
+    prospects.forEach(item => {
+      (item.photos || []).forEach(p => {
+        meibanPhotos.push({
+          data: p.data,
+          place: item.location || '',
+          kind: item.product || '',
+          timing: item.timing || '',
+          note: item.content || ''
+        });
+      });
+    });
 
     let photoUrls = [];
     if (data.photos && data.photos.length > 0) {

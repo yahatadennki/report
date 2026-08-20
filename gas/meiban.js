@@ -13,14 +13,20 @@ function meibanSheet_() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sh = ss.getSheetByName(MEIBAN_SHEET);
   var HEAD = ['登録日', '顧客名', '区', '種別', 'メーカー', '型番', '製造年', '経過年',
-              '設置場所', '状態', '撮影者', '写真', 'メモ'];
+              '設置場所', '状態', '撮影者', '写真', 'メモ', 'いつ頃', '見込メモ'];
   if (!sh) {
     sh = ss.insertSheet(MEIBAN_SHEET);
     sh.getRange(1, 1, 1, HEAD.length).setValues([HEAD])
       .setFontWeight('bold').setBackground('#1a3a5c').setFontColor('#fff');
     sh.setFrozenRows(1);
-    [80, 130, 40, 90, 110, 140, 70, 70, 100, 90, 80, 60, 180]
+    [80, 130, 40, 90, 110, 140, 70, 70, 100, 90, 80, 60, 180, 100, 200]
       .forEach(function(w, i) { sh.setColumnWidth(i + 1, w); });
+  }
+  // 古いシートには「いつ頃」「見込メモ」の列が無いので足す
+  if (sh.getLastColumn() < HEAD.length) {
+    sh.getRange(1, 1, 1, HEAD.length).setValues([HEAD])
+      .setFontWeight('bold').setBackground('#1a3a5c').setFontColor('#fff');
+    sh.setColumnWidth(14, 100); sh.setColumnWidth(15, 200);
   }
   return sh;
 }
@@ -131,18 +137,18 @@ function processMeibanQueue() {
         try {
           var r = readMeiban_(p.data);
           if (!r) {
-            rows.push([new Date(), job.visitName, ku, '', '', '', '', '', '', '⚠️読取失敗',
-                       job.staff, p.url || '', '写真から文字を読めませんでした']);
+            rows.push([new Date(), job.visitName, ku, p.kind || '', '', '', '', '', p.place || '', '⚠️読取失敗',
+                       job.staff, p.url || '', '写真から文字を読めませんでした', p.timing || '', p.note || '']);
             return;
           }
           var y = meibanYear_(r.year);
           var age = y ? thisYear - y : '';
           var status = (y && age >= MEIBAN_KAIKAE_YEARS) ? '買換見込み' : (y ? '使用中' : '製造年不明');
-          rows.push([new Date(), job.visitName, ku, r.kind || '', r.maker || '', r.model || '',
-                     y || '', age, r.place || '', status, job.staff, p.url || '', '']);
+          rows.push([new Date(), job.visitName, ku, r.kind || p.kind || '', r.maker || '', r.model || '',
+                     y || '', age, r.place || p.place || '', status, job.staff, p.url || '', '', p.timing || '', p.note || '']);
         } catch (er) {
-          rows.push([new Date(), job.visitName, ku, '', '', '', '', '', '', '⚠️エラー',
-                     job.staff, p.url || '', String(er).slice(0, 120)]);
+          rows.push([new Date(), job.visitName, ku, p.kind || '', '', '', '', '', p.place || '', '⚠️エラー',
+                     job.staff, p.url || '', String(er).slice(0, 120), p.timing || '', p.note || '']);
         }
       });
     } catch (e) {
@@ -201,7 +207,7 @@ function queueMeiban_(visitName, staff, photos) {
 function getKaikaeMikomi_() {
   var sh = meibanSheet_();
   if (sh.getLastRow() < 2) return [];
-  var v = sh.getRange(2, 1, sh.getLastRow() - 1, 13).getValues();
+  var v = sh.getRange(2, 1, sh.getLastRow() - 1, 15).getValues();
   var out = [];
   v.forEach(function(r) {
     if (String(r[9]) !== '買換見込み') return;
@@ -220,7 +226,7 @@ function getKaikaeMikomi_() {
 function getKadenList_() {
   var sh = meibanSheet_();
   if (sh.getLastRow() < 2) return [];
-  var v = sh.getRange(2, 1, sh.getLastRow() - 1, 13).getValues();
+  var v = sh.getRange(2, 1, sh.getLastRow() - 1, 15).getValues();
   var cust = hagakiCustomerIndex_();
   var thisYear = new Date().getFullYear();
   var out = [];

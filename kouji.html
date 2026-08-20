@@ -342,9 +342,10 @@ const WORK_TYPES = ["お困りごと対応", "点検", "商談", "集金", "そ�
       '照明・電材': ['管球','照明器具','電池・電池応用品','配線','住宅火災警報器','ﾀﾞｳﾝﾗｲﾄ','器具本体','ﾗｲﾄﾊﾞｰ(40形)','ﾗｲﾄﾊﾞｰ(20形)']
     };
     const CONSTRUCTION_TYPES = ["電気", "水道", "アンテナ", "エアコン", "照明", "レンジフード", "換気扇", "ドアホン", "トイレ", "洗面台", "IH", "エコキュート", "管球", "その他"];
-    // 銘板＝型番シール。撮っておくと保有家電として貯まり、10年超えは買換見込みになる
-    const PHOTO_TYPES = ["現調", "完了", "銘板"];
+    // 見込みの写真は「見込商品」セクションで撮る（ここは報告書に載る写真だけ）
+    const PHOTO_TYPES = ["現調", "完了"];
     const PROSPECT_LOCATIONS = ["リビング", "台所", "寝室", "洗面所", "トイレ", "玄関", "廊下", "その他"];
+    const PROSPECT_TIMINGS = ["すぐにでも", "3ヶ月以内", "半年以内", "来年の春前", "来年の夏前", "来年の冬前", "1年以上先", "未定"];
     const PROSPECT_PRODUCTS = ["エアコン", "冷蔵庫", "洗濯機", "TV", "照明", "換気扇", "レンジフード", "IH", "エコキュート", "温水器", "その他"];
 
     const state = {
@@ -571,8 +572,8 @@ const WORK_TYPES = ["お困りごと対応", "点検", "商談", "集金", "そ�
       const hint = document.getElementById('photo-type-hint');
       if (hint) {
         const exp = expectedPhotoTypes();
-        hint.textContent = type === '銘板'
-          ? '型番シールを撮ってください。メーカー・型番・製造年を自動で読み取り、10年超えは買換見込みになります（報告書には載りません）'
+        hint.textContent = type === '見込商品'
+          ? 'そのうち買い替えそうな家電の型番シールを撮ってください。メーカー・型番・製造年を自動で読み取り、見込みとして記録します（報告書には載りません）'
           : 'いま追加する写真：' + type + ' 写真'
             + (exp.length > 1 ? '　⚠ この日報は【完了】と【現調】の両方が必要です（タグを切り替えて追加）' : '');
       }
@@ -580,7 +581,7 @@ const WORK_TYPES = ["お困りごと対応", "点検", "商談", "集金", "そ�
 
     function updatePhotoTypeButtons() {
       const group = document.getElementById('photo-type-group');
-      const typeClasses = { "現調": "type-genncho", "完了": "type-kanryo", "銘板": "type-meiban" };
+      const typeClasses = { "現調": "type-genncho", "完了": "type-kanryo", "見込商品": "type-meiban" };
       if (group.children.length === 0) {
         PHOTO_TYPES.forEach(type => {
           const btn = document.createElement('button');
@@ -830,14 +831,69 @@ createButtons('group-workType', WORK_TYPES, 'workType', true);
           b.onclick=()=>{item.product=prod;updateProspectItems();}; pg.appendChild(b);
         }); d.appendChild(pg);
 
-        const cl = document.createElement('label'); cl.textContent='内容'; d.appendChild(cl);
-        const ci = document.createElement('input'); ci.type='text'; ci.placeholder='例：省エネに変えたい、古い'; ci.value=item.content||'';
+        const tl = document.createElement('label'); tl.textContent='いつ頃？'; d.appendChild(tl);
+        const tg = document.createElement('div'); tg.className='prospect-product-group';
+        PROSPECT_TIMINGS.forEach(t => {
+          const b=document.createElement('button'); b.type='button'; b.className='prospect-btn'; b.textContent=t;
+          if(item.timing===t) b.classList.add('active');
+          b.onclick=()=>{item.timing=(item.timing===t?'':t);updateProspectItems();}; tg.appendChild(b);
+        }); d.appendChild(tg);
+
+        const cl = document.createElement('label'); cl.textContent='内容・備考'; d.appendChild(cl);
+        const ci = document.createElement('input'); ci.type='text'; ci.placeholder='例：来年の夏前に変えたい、省エネにしたい'; ci.value=item.content||'';
         ci.oninput=e=>{item.content=e.target.value;}; d.appendChild(ci);
+
+        // 写真（型番シールを撮ると、メーカー・型番・製造年をAIが読み取る）
+        const pl2 = document.createElement('label'); pl2.textContent='写真（型番シールがあると製造年まで分かります）'; d.appendChild(pl2);
+        const pv = document.createElement('div'); pv.className='photo-preview'; pv.style.marginTop='6px';
+        (item.photos||[]).forEach((ph, pi) => {
+          const wrap=document.createElement('div'); wrap.style.position='relative'; wrap.style.display='inline-block'; wrap.style.marginRight='6px';
+          const im=document.createElement('img'); im.src=ph.data; im.style.width='80px'; im.style.height='80px';
+          im.style.objectFit='cover'; im.style.borderRadius='6px'; wrap.appendChild(im);
+          const x=document.createElement('button'); x.type='button'; x.textContent='✕';
+          x.style.cssText='position:absolute;top:-6px;right:-6px;background:#dc3545;color:#fff;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:12px;';
+          x.onclick=()=>{item.photos.splice(pi,1);updateProspectItems();}; wrap.appendChild(x);
+          pv.appendChild(wrap);
+        });
+        d.appendChild(pv);
+        const pb = document.createElement('button'); pb.type='button'; pb.className='toggle-btn';
+        pb.style.cssText='width:100%;margin-top:6px;'; pb.textContent='📷 見込みの写真を撮る';
+        const pf = document.createElement('input'); pf.type='file'; pf.accept='image/*'; pf.multiple=true; pf.style.display='none';
+        pf.onchange = e => addProspectPhotos(item, e.target.files, () => { pf.value=''; updateProspectItems(); });
+        pb.onclick = () => pf.click();
+        d.append(pb, pf);
+
         c.appendChild(d);
       });
     }
 
-    document.getElementById('addProspectBtn').onclick = () => { state.prospectItems.push({location:'',product:'',content:''}); updateProspectItems(); };
+    /* 見込みの写真を縮小して item.photos に入れる（報告書の写真とは別扱い） */
+    function addProspectPhotos(item, files, done) {
+      if (!item.photos) item.photos = [];
+      let left = files.length;
+      if (!left) { done(); return; }
+      Array.from(files).forEach(file => {
+        const rd = new FileReader();
+        rd.onload = ev => {
+          const img = new Image();
+          img.onload = () => {
+            const max = 1200;
+            let w = img.width, hh = img.height;
+            if (w > max || hh > max) { const r = Math.min(max/w, max/hh); w = w*r|0; hh = hh*r|0; }
+            const cv = document.createElement('canvas'); cv.width = w; cv.height = hh;
+            cv.getContext('2d').drawImage(img, 0, 0, w, hh);
+            item.photos.push({ data: cv.toDataURL('image/jpeg', 0.7) });
+            if (--left === 0) done();
+          };
+          img.onerror = () => { if (--left === 0) done(); };
+          img.src = ev.target.result;
+        };
+        rd.onerror = () => { if (--left === 0) done(); };
+        rd.readAsDataURL(file);
+      });
+    }
+
+    document.getElementById('addProspectBtn').onclick = () => { state.prospectItems.push({location:'',product:'',timing:'',content:'',photos:[]}); updateProspectItems(); };
 
 
     document.getElementById('sendBtn').onclick = async () => {
@@ -860,12 +916,21 @@ createButtons('group-workType', WORK_TYPES, 'workType', true);
       }
       const needsPeople = state.workType.some(t => PDF_TYPES.includes(t));
       if (needsPeople && !state.people) { alert('作業人数を選択してください'); return; }
+
+      // 見込商品は「品名」だけ必須（場所・時期・写真は任意）。空の見込みは捨てる
+      state.prospectItems = state.prospectItems.filter(
+        it => it.product || it.location || (it.content || '').trim() || (it.photos || []).length
+      );
+      const badProspect = state.prospectItems.findIndex(it => !it.product);
+      if (badProspect >= 0) {
+        alert('見込商品 ' + (badProspect + 1) + ' の「品名」を選んでください'); return;
+      }
       if (state.payment === '売掛' && (!state.creditMethod || !state.creditTiming)) {
         alert('売掛の場合は集金方法と入金時期を選択してください'); return;
       }
 
-      // 銘板は報告書に使わないので、以下の判定からは除く
-      const reportPhotos = state.photos.filter(p => p.type !== '銘板');
+      // 見込商品の写真は報告書に使わないので、以下の判定からは除く
+      const reportPhotos = state.photos.filter(p => p.type !== '見込商品');
       // 写真0枚（報告書ありの作業）→ 報告書が作られないことを警告
       if (needsPeople && reportPhotos.length === 0) {
         if (!confirm('📷 写真が1枚もありません。\n\nこのまま送ると報告書は作成されません。送信しますか？')) return;
