@@ -405,14 +405,6 @@ function doPost(e) {
       }
     });
 
-    // ★見込商品欄を使わずに、通常のメモへ書かれた見込みも拾う（取りこぼし防止）。
-    //   見込商品欄に書いてあるときは、そちらを正としてメモは見ない（二重登録を防ぐ）
-    if (!prospects.length) {
-      const memoAll = [data.remarks, data.troubleMatter]
-        .map(v => String(v || '').trim()).filter(Boolean).join(' / ');
-      if (memoAll) meibanPhotos.push({ data: '', note: memoAll, scan: true });
-    }
-
     let photoUrls = [];
     if (data.photos && data.photos.length > 0) {
       photoUrls = data.photos.map((photo, index) => {

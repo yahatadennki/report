@@ -228,59 +228,6 @@ function readMikomiMemo_(memo) {
   return o;
 }
 
-/**
- * 通常のメモ・要件から、買い替えの見込みが混じっていないか拾う。
- * 見込みが書かれていなければ null（＝行を作らない）。
- * 見込商品欄に書いてくれなくても取りこぼさないための保険。
- */
-function readMikomiScan_(memo) {
-  var key = PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY');
-  if (!key) throw new Error('ANTHROPIC_API_KEY が未設定です');
-  memo = String(memo || '').trim();
-  if (memo.length < 6) return null;
-
-  var prompt =
-    '電器店スタッフが書いた訪問メモです。この中に「お客様の家電の買い替えの見込み」が\n' +
-    '書かれているかどうかだけを見てください。\n\n' +
-    'メモ：「' + memo + '」\n\n' +
-    '■ 見込みとみなすもの\n' +
-    '  お客様が家電の買い替え・購入について、意思や関心を口にしている。\n' +
-    '  例）「年内に冷蔵庫を変えたい」「エアコンの調子が悪い」「そろそろテレビを替えたい」\n' +
-    '■ 見込みとみなさないもの\n' +
-    '  今回やった作業の報告、故障の修理内容、集金、世間話、次回の訪問予定など。\n' +
-    '  すでに売れた・工事した商品のことも見込みではない。\n' +
-    '  迷ったら found=false にしてください。取りこぼしより、間違って拾う方が困ります。\n\n' +
-    '次のJSONだけ返してください（説明文は不要）:\n' +
-    '{"found":true/false,"kind":"","place":"","rank":"","timing":"","why":""}\n' +
-    '  kind   … 種別。エアコン/冷蔵庫/洗濯機/テレビ/給湯器/照明/換気扇/レンジ/ドアホン/その他\n' +
-    '  place  … 設置場所。書いてあれば。無ければ空文字\n' +
-    '  rank   … A=買換予定（意思あり） B=気になる（不調・関心） C=壊れたら\n' +
-    '  timing … rank が A のときだけ。すぐにでも/3ヶ月以内/半年以内/年内/来年の春前/来年の夏前/来年の冬前/1年以上先/未定\n' +
-    '  why    … 見込みと判断した部分をメモから短く抜き出す（40字以内）';
-
-  var res = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
-    method: 'post',
-    contentType: 'application/json',
-    headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01' },
-    payload: JSON.stringify({
-      model: 'claude-opus-4-8',
-      max_tokens: 300,
-      messages: [{ role: 'user', content: [{ type: 'text', text: prompt }] }]
-    }),
-    muteHttpExceptions: true
-  });
-  if (res.getResponseCode() !== 200) return null;
-  var txt = JSON.parse(res.getContentText()).content[0].text;
-  var mm = txt.match(/\{[\s\S]*\}/);
-  if (!mm) return null;
-  var o = JSON.parse(mm[0]);
-  if (!o.found) return null;
-  o.maker = ''; o.model = ''; o.year = '';
-  o._read = true;
-  o._fromMemo = true;
-  return o;
-}
-
 /* 顧客マスタから 区マーク を引く（お礼ハガキと同じ仕組みを使う） */
 function meibanKuMark_(name) {
   try {
@@ -324,10 +271,7 @@ function processMeibanQueue() {
       var ci = mikomiCustomer_(job.visitName, cust);
       (job.photos || []).forEach(function(p) {
         try {
-          var r = p.scan ? readMikomiScan_(p.note)
-                 : p.data ? readMeiban_(p.data, p.note)
-                 : readMikomiMemo_(p.note);
-          if (p.scan && !r) return;   // メモに見込みが書かれていなければ行を作らない
+          var r = p.data ? readMeiban_(p.data, p.note) : readMikomiMemo_(p.note);
           if (!r || !r._read) {
             rows.push(mikomiRow_(job, p, ci, (r && r.rank) || 'B', (r && r.timing) || '',
                                  '', '', '', '', '', '', p.data ? '⚠️型番が読めず' : '⚠️内容が読めず'));
@@ -337,8 +281,7 @@ function processMeibanQueue() {
           var age = y ? thisYear - y : '';
           rows.push(mikomiRow_(job, p, ci, r.rank || 'B', r.timing || '',
                                r.kind || '', r.maker || '', r.model || '', y || '', age,
-                               r.place || '', r._fromMemo ? 'メモから拾った' : (r._memoOnly ? '会話で聞いた' : ''),
-                               r.why || ''));
+                               r.place || '', r._memoOnly ? '会話で聞いた' : ''));
         } catch (er) {
           rows.push(mikomiRow_(job, p, ci, 'B', '', '', '', '', '', '', '',
                                '⚠️' + String(er).slice(0, 60)));
@@ -372,10 +315,10 @@ function mikomiCustomer_(name, cust) {
 }
 
 /* 見込シートの1行を作る（列の順番はここだけ見れば分かるようにする） */
-function mikomiRow_(job, p, ci, rank, timing, kind, maker, model, year, age, place, note, why) {
+function mikomiRow_(job, p, ci, rank, timing, kind, maker, model, year, age, place, note) {
   return [new Date(), rank, timing, ci.name || job.visitName, ci.ku, ci.rfm,
           kind, maker, model, year, age, place,
-          why || p.note || '', job.staff, p.url || '', note || ''];
+          p.note || '', job.staff, p.url || '', note || ''];
 }
 
 /* 買換見込みの行を目立たせる */
