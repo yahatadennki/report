@@ -812,13 +812,13 @@ createButtons('group-workType', WORK_TYPES, 'workType', true);
         del.onclick = () => { state.prospectItems.splice(i,1); updateProspectItems(); };
         hdr.append(num, del); d.appendChild(hdr);
 
-        const cl = document.createElement('label'); cl.textContent='気づいたこと（任意）'; d.appendChild(cl);
+        const cl = document.createElement('label'); cl.textContent='気づいたこと（写真が無いときは、ここだけでOK）'; d.appendChild(cl);
         const ci = document.createElement('input'); ci.type='text';
-        ci.placeholder='例：来年の夏前に変えたい／音がうるさい／壊れたら'; ci.value=item.content||'';
+        ci.placeholder='例：年内に冷蔵庫を変えたい／エアコンの音がうるさい／壊れたら'; ci.value=item.content||'';
         ci.oninput=e=>{item.content=e.target.value;}; d.appendChild(ci);
 
         // 写真（型番シールを撮ると、メーカー・型番・製造年をAIが読み取る）
-        const pl2 = document.createElement('label'); pl2.textContent='写真（型番シールを撮ると、商品名・メーカー・製造年をAIが読み取ります）'; d.appendChild(pl2);
+        const pl2 = document.createElement('label'); pl2.textContent='写真（任意。型番シールを撮ると、商品名・メーカー・製造年まで分かります）'; d.appendChild(pl2);
         const pv = document.createElement('div'); pv.className='photo-preview'; pv.style.marginTop='6px';
         (item.photos||[]).forEach((ph, pi) => {
           const wrap=document.createElement('div'); wrap.style.position='relative'; wrap.style.display='inline-block'; wrap.style.marginRight='6px';

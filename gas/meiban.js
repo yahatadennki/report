@@ -125,7 +125,7 @@ function readMeiban_(dataUrl, memo) {
     '     C ＝ 壊れたら。壊れるまで使う（例「壊れたら」「まだ使える」「当分いい」）\n' +
     '     備考が無いときは B にする。\n' +
     '  timing … rank が A のときだけ、買い替え時期。\n' +
-    '     すぐにでも/3ヶ月以内/半年以内/来年の春前/来年の夏前/来年の冬前/1年以上先/未定 から選ぶ。\n' +
+    '     すぐにでも/3ヶ月以内/半年以内/年内/来年の春前/来年の夏前/来年の冬前/1年以上先/未定 から選ぶ。\n' +
     '     A でない、または備考に時期が書いていなければ空文字。\n\n' +
     '次のJSONだけを返してください（説明文は不要）:\n' +
     '{"kind":"","maker":"","model":"","year":"","place":"","rank":"","timing":""}\n' +
@@ -157,6 +157,55 @@ function readMeiban_(dataUrl, memo) {
   if (!m) return null;
   var o = JSON.parse(m[0]);
   o._read = !!(o.model || o.maker || o.kind);   // 写真から何か読めたか
+  return o;
+}
+
+/**
+ * 写真が無い見込み（会話で聞いただけ）を、書いてもらった文章から読み取る。
+ * 例）「年内には冷蔵庫変えたいなー」→ 種別=冷蔵庫 ランク=A いつ頃=年内
+ */
+function readMikomiMemo_(memo) {
+  var key = PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY');
+  if (!key) throw new Error('ANTHROPIC_API_KEY が未設定です');
+  memo = String(memo || '').trim();
+  if (!memo) return null;
+
+  var prompt =
+    'お客様先で聞いた「そのうち買い替えそうな家電」のメモです。写真はありません。\n' +
+    'メモ：「' + memo + '」\n\n' +
+    '次を判断してJSONだけ返してください（説明文は不要）:\n' +
+    '  kind  … 種別。エアコン/冷蔵庫/洗濯機/テレビ/給湯器/照明/換気扇/レンジ/ドアホン/その他。分からなければ空文字\n' +
+    '  place … 設置場所。メモに書いてあれば リビング/台所/寝室/洗面所/トイレ/玄関/廊下/屋外 など。無ければ空文字\n' +
+    '  rank  … A / B / C\n' +
+    '     A ＝ 買換予定。買い替える意思がある（例「年内に変えたい」「そろそろ替える」「見積が欲しい」）\n' +
+    '     B ＝ 気になる。不調・古い・関心はあるが決めていない（例「調子が悪い」「古い」）\n' +
+    '     C ＝ 壊れたら。壊れるまで使う（例「壊れたら」「まだ使える」）\n' +
+    '  timing … rank が A のときだけ。\n' +
+    '     すぐにでも/3ヶ月以内/半年以内/年内/来年の春前/来年の夏前/来年の冬前/1年以上先/未定 から選ぶ。\n' +
+    '     A でない、または時期が書いていなければ空文字。\n\n' +
+    '{"kind":"","place":"","rank":"","timing":""}';
+
+  var res = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
+    method: 'post',
+    contentType: 'application/json',
+    headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01' },
+    payload: JSON.stringify({
+      model: 'claude-opus-4-8',
+      max_tokens: 200,
+      messages: [{ role: 'user', content: [{ type: 'text', text: prompt }] }]
+    }),
+    muteHttpExceptions: true
+  });
+  if (res.getResponseCode() !== 200) {
+    throw new Error('AI応答エラー ' + res.getResponseCode() + ' ' + res.getContentText().slice(0, 200));
+  }
+  var txt = JSON.parse(res.getContentText()).content[0].text;
+  var mm = txt.match(/\{[\s\S]*\}/);
+  if (!mm) return null;
+  var o = JSON.parse(mm[0]);
+  o.maker = ''; o.model = ''; o.year = '';
+  o._read = true;          // 写真が無いだけで、読み取り失敗ではない
+  o._memoOnly = true;
   return o;
 }
 
@@ -203,17 +252,17 @@ function processMeibanQueue() {
       var ci = mikomiCustomer_(job.visitName, cust);
       (job.photos || []).forEach(function(p) {
         try {
-          var r = readMeiban_(p.data, p.note);
+          var r = p.data ? readMeiban_(p.data, p.note) : readMikomiMemo_(p.note);
           if (!r || !r._read) {
             rows.push(mikomiRow_(job, p, ci, (r && r.rank) || 'B', (r && r.timing) || '',
-                                 '', '', '', '', '', '', '⚠️型番が読めず'));
+                                 '', '', '', '', '', '', p.data ? '⚠️型番が読めず' : '⚠️内容が読めず'));
             return;
           }
           var y = meibanYear_(r.year);
           var age = y ? thisYear - y : '';
           rows.push(mikomiRow_(job, p, ci, r.rank || 'B', r.timing || '',
                                r.kind || '', r.maker || '', r.model || '', y || '', age,
-                               r.place || '', ''));
+                               r.place || '', r._memoOnly ? '会話で聞いた' : ''));
         } catch (er) {
           rows.push(mikomiRow_(job, p, ci, 'B', '', '', '', '', '', '', '',
                                '⚠️' + String(er).slice(0, 60)));

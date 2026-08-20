@@ -394,11 +394,15 @@ function doPost(e) {
       prospectText += (prospectText ? "\n" : "") + `【写真】見込商品 ${meibanPhotos.length}点`;
     }
 
-    // 見込みの写真を、気づいたことと一緒にAI読み取りキューへ回す
+    // 見込みをAI読み取りキューへ回す。
+    // 写真があれば写真＋備考、写真が無ければ備考だけ（会話で聞いた見込み）でも登録する
     prospects.forEach(item => {
-      (item.photos || []).forEach(ph => {
-        meibanPhotos.push({ data: ph.data, note: item.content || '' });
-      });
+      const phs = item.photos || [];
+      if (phs.length) {
+        phs.forEach(ph => meibanPhotos.push({ data: ph.data, note: item.content || '' }));
+      } else if ((item.content || '').trim()) {
+        meibanPhotos.push({ data: '', note: item.content.trim() });
+      }
     });
 
     let photoUrls = [];
