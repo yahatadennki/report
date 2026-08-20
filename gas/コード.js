@@ -383,31 +383,21 @@ function doPost(e) {
     const meibanPhotos = (data.photos || []).filter(isMeiban);
     if (meibanPhotos.length) data.photos = (data.photos || []).filter(p => !isMeiban(p));
 
-    // 見込商品：場所／品名／いつ頃／備考。写真は報告書に載せず、AIに読ませて保有家電に貯める
+    // 見込商品：スタッフは「写真」と「気づいたこと」だけ入れる。
+    // 商品名・メーカー・型番・製造年は写真からAIが読み、ランクと時期は備考からAIが判断する。
     const prospects = data.prospectItems || [];
     let prospectText = prospects.map(item => {
-      let t = (item.rank ? item.rank + ' ' : '') + `【${item.location || ''}/${item.product || ''}】`;
-      if (item.timing) t += `(${item.timing})`;
-      t += item.content || '';
       const n = (item.photos || []).length;
-      if (n) t += ` 📷${n}`;
-      return t;
+      return (item.content || '（写真のみ）') + (n ? ` 📷${n}` : '');
     }).join("\n");
     if (meibanPhotos.length) {
       prospectText += (prospectText ? "\n" : "") + `【写真】見込商品 ${meibanPhotos.length}点`;
     }
 
-    // 見込みに付いた写真を、時期・備考ごと銘板キューへ回す
+    // 見込みの写真を、気づいたことと一緒にAI読み取りキューへ回す
     prospects.forEach(item => {
-      (item.photos || []).forEach(p => {
-        meibanPhotos.push({
-          data: p.data,
-          place: item.location || '',
-          kind: item.product || '',
-          rank: item.rank || '',
-          timing: item.timing || '',
-          note: item.content || ''
-        });
+      (item.photos || []).forEach(ph => {
+        meibanPhotos.push({ data: ph.data, note: item.content || '' });
       });
     });
 

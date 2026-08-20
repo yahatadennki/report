@@ -44,25 +44,42 @@ function meibanYear_(v) {
 }
 
 /**
- * 銘板の写真1枚をAIに読ませる。
- * 読めなければ null。読めたら {kind, maker, model, year, place} を返す。
+ * 見込商品の写真1枚をAIに読ませる。
+ * 写真から 種別・メーカー・型番・製造年・設置場所 を、
+ * 備考から ランク(A/B/C)・時期 を判断させる。
+ * 読めなければ null。
  */
-function readMeiban_(dataUrl) {
+function readMeiban_(dataUrl, memo) {
   var key = PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY');
   if (!key) throw new Error('ANTHROPIC_API_KEY が未設定です');
 
   var parts = String(dataUrl).split(',');
   var mime = parts[0].split(':')[1].split(';')[0];
   var b64 = parts[1];
+  memo = String(memo || '').trim();
 
   var prompt =
-    'これは家電製品の銘板（型番シール）の写真です。写っている文字だけを読み取ってください。\n' +
-    '推測で補わないでください。読めない項目は空文字にします。\n' +
+    'これは家電製品の写真です（銘板＝型番シールが写っていることが多い）。\n' +
+    'スタッフが「そのうち買い替えそうなお客様の家電」として撮ったものです。\n\n' +
+    '■ 写真から読み取ること（写っている文字だけ。推測で補わない。読めなければ空文字）\n' +
+    '  kind  … 種別。エアコン/冷蔵庫/洗濯機/テレビ/給湯器/照明/換気扇/レンジ/ドアホン/その他 から選ぶ\n' +
+    '  maker … メーカー名\n' +
+    '  model … 型番\n' +
+    '  year  … 製造年。西暦4桁。和暦しか無ければ西暦に直す（H28→2016、R3→2021）\n' +
+    '  place … 設置場所。写真から分かれば リビング/台所/寝室/洗面所/トイレ/玄関/廊下/屋外 など。分からなければ空文字\n\n' +
+    '■ スタッフの備考から判断すること\n' +
+    '  備考：' + (memo ? '「' + memo + '」' : '（記入なし）') + '\n' +
+    '  rank … A / B / C のどれか\n' +
+    '     A ＝ 買換予定。買い替える意思がある（例「来年変えたい」「そろそろ替える」「見積が欲しい」）\n' +
+    '     B ＝ 気になる。不調・古い・関心はあるが、まだ決めていない（例「調子が悪い」「音がうるさい」「古い」）\n' +
+    '     C ＝ 壊れたら。壊れるまで使う（例「壊れたら」「まだ使える」「当分いい」）\n' +
+    '     備考が無いときは B にする。\n' +
+    '  timing … rank が A のときだけ、買い替え時期。\n' +
+    '     すぐにでも/3ヶ月以内/半年以内/来年の春前/来年の夏前/来年の冬前/1年以上先/未定 から選ぶ。\n' +
+    '     A でない、または備考に時期が書いていなければ空文字。\n\n' +
     '次のJSONだけを返してください（説明文は不要）:\n' +
-    '{"kind":"種別","maker":"メーカー名","model":"型番","year":"製造年","place":""}\n' +
-    '種別は エアコン/冷蔵庫/洗濯機/テレビ/給湯器/照明/換気扇/その他 から選ぶ。\n' +
-    '製造年は西暦4桁。和暦しか無ければ西暦に直す。\n' +
-    '銘板が写っていない、または文字が読めない場合は {"kind":"","maker":"","model":"","year":"","place":""} を返す。';
+    '{"kind":"","maker":"","model":"","year":"","place":"","rank":"","timing":""}\n' +
+    '写真から何も読み取れない場合も、rank と timing は備考から判断して入れてください。';
 
   var res = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
     method: 'post',
@@ -89,7 +106,7 @@ function readMeiban_(dataUrl) {
   var m = txt.match(/\{[\s\S]*\}/);
   if (!m) return null;
   var o = JSON.parse(m[0]);
-  if (!o.model && !o.maker && !o.kind) return null;   // 何も読めなかった
+  o._read = !!(o.model || o.maker || o.kind);   // 写真から何か読めたか
   return o;
 }
 
@@ -135,20 +152,22 @@ function processMeibanQueue() {
       var ku = meibanKuMark_(job.visitName);
       (job.photos || []).forEach(function(p) {
         try {
-          var r = readMeiban_(p.data);
-          if (!r) {
-            rows.push([new Date(), job.visitName, ku, p.kind || '', '', '', '', '', p.place || '', '⚠️読取失敗',
-                       job.staff, p.url || '', '写真から文字を読めませんでした', p.rank || '', p.timing || '', p.note || '']);
+          var r = readMeiban_(p.data, p.note);
+          if (!r || !r._read) {
+            rows.push([new Date(), job.visitName, ku, '', '', '', '', '', '', '⚠️読取失敗',
+                       job.staff, p.url || '', '写真から型番を読めませんでした',
+                       (r && r.rank) || 'B', (r && r.timing) || '', p.note || '']);
             return;
           }
           var y = meibanYear_(r.year);
           var age = y ? thisYear - y : '';
           var status = (y && age >= MEIBAN_KAIKAE_YEARS) ? '買換見込み' : (y ? '使用中' : '製造年不明');
-          rows.push([new Date(), job.visitName, ku, r.kind || p.kind || '', r.maker || '', r.model || '',
-                     y || '', age, r.place || p.place || '', status, job.staff, p.url || '', '', p.rank || '', p.timing || '', p.note || '']);
+          rows.push([new Date(), job.visitName, ku, r.kind || '', r.maker || '', r.model || '',
+                     y || '', age, r.place || '', status, job.staff, p.url || '', '',
+                     r.rank || 'B', r.timing || '', p.note || '']);
         } catch (er) {
           rows.push([new Date(), job.visitName, ku, p.kind || '', '', '', '', '', p.place || '', '⚠️エラー',
-                     job.staff, p.url || '', String(er).slice(0, 120), p.rank || '', p.timing || '', p.note || '']);
+                     job.staff, p.url || '', String(er).slice(0, 120), '', '', p.note || '']);
         }
       });
     } catch (e) {
