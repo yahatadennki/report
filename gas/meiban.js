@@ -13,20 +13,20 @@ function meibanSheet_() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sh = ss.getSheetByName(MEIBAN_SHEET);
   var HEAD = ['登録日', '顧客名', '区', '種別', 'メーカー', '型番', '製造年', '経過年',
-              '設置場所', '状態', '撮影者', '写真', 'メモ', 'いつ頃', '見込メモ'];
+              '設置場所', '状態', '撮影者', '写真', 'メモ', 'ランク', 'いつ頃', '見込メモ'];
   if (!sh) {
     sh = ss.insertSheet(MEIBAN_SHEET);
     sh.getRange(1, 1, 1, HEAD.length).setValues([HEAD])
       .setFontWeight('bold').setBackground('#1a3a5c').setFontColor('#fff');
     sh.setFrozenRows(1);
-    [80, 130, 40, 90, 110, 140, 70, 70, 100, 90, 80, 60, 180, 100, 200]
+    [80, 130, 40, 90, 110, 140, 70, 70, 100, 90, 80, 60, 180, 70, 100, 200]
       .forEach(function(w, i) { sh.setColumnWidth(i + 1, w); });
   }
   // 古いシートには「いつ頃」「見込メモ」の列が無いので足す
   if (sh.getLastColumn() < HEAD.length) {
     sh.getRange(1, 1, 1, HEAD.length).setValues([HEAD])
       .setFontWeight('bold').setBackground('#1a3a5c').setFontColor('#fff');
-    sh.setColumnWidth(14, 100); sh.setColumnWidth(15, 200);
+    sh.setColumnWidth(14, 70); sh.setColumnWidth(15, 100); sh.setColumnWidth(16, 200);
   }
   return sh;
 }
@@ -138,17 +138,17 @@ function processMeibanQueue() {
           var r = readMeiban_(p.data);
           if (!r) {
             rows.push([new Date(), job.visitName, ku, p.kind || '', '', '', '', '', p.place || '', '⚠️読取失敗',
-                       job.staff, p.url || '', '写真から文字を読めませんでした', p.timing || '', p.note || '']);
+                       job.staff, p.url || '', '写真から文字を読めませんでした', p.rank || '', p.timing || '', p.note || '']);
             return;
           }
           var y = meibanYear_(r.year);
           var age = y ? thisYear - y : '';
           var status = (y && age >= MEIBAN_KAIKAE_YEARS) ? '買換見込み' : (y ? '使用中' : '製造年不明');
           rows.push([new Date(), job.visitName, ku, r.kind || p.kind || '', r.maker || '', r.model || '',
-                     y || '', age, r.place || p.place || '', status, job.staff, p.url || '', '', p.timing || '', p.note || '']);
+                     y || '', age, r.place || p.place || '', status, job.staff, p.url || '', '', p.rank || '', p.timing || '', p.note || '']);
         } catch (er) {
           rows.push([new Date(), job.visitName, ku, p.kind || '', '', '', '', '', p.place || '', '⚠️エラー',
-                     job.staff, p.url || '', String(er).slice(0, 120), p.timing || '', p.note || '']);
+                     job.staff, p.url || '', String(er).slice(0, 120), p.rank || '', p.timing || '', p.note || '']);
         }
       });
     } catch (e) {
@@ -180,7 +180,15 @@ function meibanFormat_(sh) {
     .setBackground('#fce8e6').setFontColor('#c5221f')
     .setRanges([sh.getRange(2, 10, n, 1)])
     .build();
-  sh.setConditionalFormatRules([rule, warn]);
+  // ランク（N列）：A=買換予定は赤、B=気になるは黄、C=壊れたらはグレー
+  var rk = sh.getRange(2, 14, n, 1);
+  var rA = SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('A')
+    .setBackground('#fce8e6').setFontColor('#c5221f').setBold(true).setRanges([rk]).build();
+  var rB = SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('B')
+    .setBackground('#fff2cc').setFontColor('#b06000').setRanges([rk]).build();
+  var rC = SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('C')
+    .setBackground('#eceff1').setFontColor('#546e7a').setRanges([rk]).build();
+  sh.setConditionalFormatRules([rule, warn, rA, rB, rC]);
 }
 
 /* 日報送信時に呼ぶ：銘板写真をキューに積んで、あとで読ませる */
@@ -207,7 +215,7 @@ function queueMeiban_(visitName, staff, photos) {
 function getKaikaeMikomi_() {
   var sh = meibanSheet_();
   if (sh.getLastRow() < 2) return [];
-  var v = sh.getRange(2, 1, sh.getLastRow() - 1, 15).getValues();
+  var v = sh.getRange(2, 1, sh.getLastRow() - 1, 16).getValues();
   var out = [];
   v.forEach(function(r) {
     if (String(r[9]) !== '買換見込み') return;
@@ -226,7 +234,7 @@ function getKaikaeMikomi_() {
 function getKadenList_() {
   var sh = meibanSheet_();
   if (sh.getLastRow() < 2) return [];
-  var v = sh.getRange(2, 1, sh.getLastRow() - 1, 15).getValues();
+  var v = sh.getRange(2, 1, sh.getLastRow() - 1, 16).getValues();
   var cust = hagakiCustomerIndex_();
   var thisYear = new Date().getFullYear();
   var out = [];

@@ -386,7 +386,7 @@ function doPost(e) {
     // 見込商品：場所／品名／いつ頃／備考。写真は報告書に載せず、AIに読ませて保有家電に貯める
     const prospects = data.prospectItems || [];
     let prospectText = prospects.map(item => {
-      let t = `【${item.location || ''}/${item.product || ''}】`;
+      let t = (item.rank ? item.rank + ' ' : '') + `【${item.location || ''}/${item.product || ''}】`;
       if (item.timing) t += `(${item.timing})`;
       t += item.content || '';
       const n = (item.photos || []).length;
@@ -404,6 +404,7 @@ function doPost(e) {
           data: p.data,
           place: item.location || '',
           kind: item.product || '',
+          rank: item.rank || '',
           timing: item.timing || '',
           note: item.content || ''
         });

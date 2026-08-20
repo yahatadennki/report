@@ -345,6 +345,7 @@ const WORK_TYPES = ["お困りごと対応", "点検", "商談", "集金", "そ�
     // 見込みの写真は「見込商品」セクションで撮る（ここは報告書に載る写真だけ）
     const PHOTO_TYPES = ["現調", "完了"];
     const PROSPECT_LOCATIONS = ["リビング", "台所", "寝室", "洗面所", "トイレ", "玄関", "廊下", "その他"];
+    const PROSPECT_RANKS = [["A","買換予定","#dc3545"],["B","気になる","#f0a500"],["C","壊れたら","#6c757d"]];
     const PROSPECT_TIMINGS = ["すぐにでも", "3ヶ月以内", "半年以内", "来年の春前", "来年の夏前", "来年の冬前", "1年以上先", "未定"];
     const PROSPECT_PRODUCTS = ["エアコン", "冷蔵庫", "洗濯機", "TV", "照明", "換気扇", "レンジフード", "IH", "エコキュート", "温水器", "その他"];
 
@@ -815,6 +816,16 @@ createButtons('group-workType', WORK_TYPES, 'workType', true);
         del.onclick = () => { state.prospectItems.splice(i,1); updateProspectItems(); };
         hdr.append(num, del); d.appendChild(hdr);
 
+        const rl = document.createElement('label'); rl.textContent='ランク'; d.appendChild(rl);
+        const rg = document.createElement('div'); rg.className='prospect-product-group';
+        PROSPECT_RANKS.forEach(([k, name, col]) => {
+          const b=document.createElement('button'); b.type='button'; b.className='prospect-btn';
+          b.textContent = k + ' ' + name;
+          b.style.borderColor = col;
+          if(item.rank===k){ b.style.background=col; b.style.color='#fff'; }
+          b.onclick=()=>{item.rank=(item.rank===k?'':k);updateProspectItems();}; rg.appendChild(b);
+        }); d.appendChild(rg);
+
         const ll = document.createElement('label'); ll.textContent='場所'; d.appendChild(ll);
         const lg = document.createElement('div'); lg.className='prospect-location-group';
         PROSPECT_LOCATIONS.forEach(loc => {
@@ -831,13 +842,18 @@ createButtons('group-workType', WORK_TYPES, 'workType', true);
           b.onclick=()=>{item.product=prod;updateProspectItems();}; pg.appendChild(b);
         }); d.appendChild(pg);
 
-        const tl = document.createElement('label'); tl.textContent='いつ頃？'; d.appendChild(tl);
-        const tg = document.createElement('div'); tg.className='prospect-product-group';
-        PROSPECT_TIMINGS.forEach(t => {
-          const b=document.createElement('button'); b.type='button'; b.className='prospect-btn'; b.textContent=t;
-          if(item.timing===t) b.classList.add('active');
-          b.onclick=()=>{item.timing=(item.timing===t?'':t);updateProspectItems();}; tg.appendChild(b);
-        }); d.appendChild(tg);
+        // 「いつ頃」はA（買換予定）のときだけ聞く。B・Cは時期が読めないので聞かない
+        if (item.rank === 'A') {
+          const tl = document.createElement('label'); tl.textContent='いつ頃？'; d.appendChild(tl);
+          const tg = document.createElement('div'); tg.className='prospect-product-group';
+          PROSPECT_TIMINGS.forEach(t => {
+            const b=document.createElement('button'); b.type='button'; b.className='prospect-btn'; b.textContent=t;
+            if(item.timing===t) b.classList.add('active');
+            b.onclick=()=>{item.timing=(item.timing===t?'':t);updateProspectItems();}; tg.appendChild(b);
+          }); d.appendChild(tg);
+        } else if (item.timing) {
+          item.timing = '';   // A以外に変えたら時期は消す
+        }
 
         const cl = document.createElement('label'); cl.textContent='内容・備考'; d.appendChild(cl);
         const ci = document.createElement('input'); ci.type='text'; ci.placeholder='例：来年の夏前に変えたい、省エネにしたい'; ci.value=item.content||'';
@@ -893,7 +909,7 @@ createButtons('group-workType', WORK_TYPES, 'workType', true);
       });
     }
 
-    document.getElementById('addProspectBtn').onclick = () => { state.prospectItems.push({location:'',product:'',timing:'',content:'',photos:[]}); updateProspectItems(); };
+    document.getElementById('addProspectBtn').onclick = () => { state.prospectItems.push({rank:'',location:'',product:'',timing:'',content:'',photos:[]}); updateProspectItems(); };
 
 
     document.getElementById('sendBtn').onclick = async () => {
@@ -919,11 +935,11 @@ createButtons('group-workType', WORK_TYPES, 'workType', true);
 
       // 見込商品は「品名」だけ必須（場所・時期・写真は任意）。空の見込みは捨てる
       state.prospectItems = state.prospectItems.filter(
-        it => it.product || it.location || (it.content || '').trim() || (it.photos || []).length
+        it => it.rank || it.product || it.location || (it.content || '').trim() || (it.photos || []).length
       );
-      const badProspect = state.prospectItems.findIndex(it => !it.product);
+      const badProspect = state.prospectItems.findIndex(it => !it.product || !it.rank);
       if (badProspect >= 0) {
-        alert('見込商品 ' + (badProspect + 1) + ' の「品名」を選んでください'); return;
+        alert('見込商品 ' + (badProspect + 1) + ' の「ランク」と「品名」を選んでください'); return;
       }
       if (state.payment === '売掛' && (!state.creditMethod || !state.creditTiming)) {
         alert('売掛の場合は集金方法と入金時期を選択してください'); return;
