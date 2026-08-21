@@ -670,7 +670,49 @@ createButtons('group-workType', WORK_TYPES, 'workType', true);
     })();
     updatePhotoTypeButtons();
 
-    document.getElementById('date').value = new Date().toISOString().split('T')[0];
+    /* ★仮設定（まとめて過去分を入力するため）：一度日付を変えたら、そのまま覚えておく。
+       送信して画面が読み込み直されても今日には戻らない。
+       元に戻すときは、この dateKeep のかたまりを消して
+       document.getElementById('date').value = new Date().toISOString().split('T')[0]; だけにする */
+    (function dateKeep() {
+      const el = document.getElementById('date');
+      const today = new Date().toISOString().split('T')[0];
+      const kept = localStorage.getItem('yahata_nippo_date');
+      el.value = kept || today;
+      el.onchange = () => {
+        if (el.value) localStorage.setItem('yahata_nippo_date', el.value);
+      };
+      // 今日と違う日付のときは、うっかり気づかないよう色を付けて知らせる
+      const mark = () => {
+        const other = el.value && el.value !== today;
+        el.style.background = other ? '#fff3cd' : '';
+        el.style.borderColor = other ? '#f0a500' : '';
+        let tip = document.getElementById('date-keep-tip');
+        if (!tip) {
+          tip = document.createElement('div');
+          tip.id = 'date-keep-tip';
+          tip.style.cssText = 'font-size:12px;margin-top:6px;color:#9a4a00;font-weight:bold;';
+          el.parentNode.insertBefore(tip, el.nextSibling);
+        }
+        tip.textContent = '';
+        tip.style.display = other ? 'block' : 'none';
+        if (other) {
+          tip.append('⚠️ 今日ではない日付のままです（' + el.value + '）。この日付で登録され続けます　');
+          const back = document.createElement('button');
+          back.type = 'button';
+          back.textContent = '今日に戻す';
+          back.style.cssText = 'padding:4px 10px;border:1px solid #f0a500;border-radius:6px;background:#fff;cursor:pointer;font-size:12px;';
+          back.onclick = () => {
+            el.value = today;
+            localStorage.removeItem('yahata_nippo_date');
+            mark();
+          };
+          tip.appendChild(back);
+        }
+      };
+      el.addEventListener('change', mark);
+      mark();
+    })();
     document.getElementById('inspectionAircon').oninput = e => { state.inspectionAircon = parseInt(e.target.value) || 0; };
     document.getElementById('inspectionOther').oninput = e => { state.inspectionOther = parseInt(e.target.value) || 0; };
     document.getElementById('workAmount').oninput = () => updateWorkAmountInfo();
