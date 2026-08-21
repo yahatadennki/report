@@ -90,6 +90,48 @@ function doGet(e) {
       '\nキーの先頭: ' + _k.slice(0, 14) + '...');
   }
   // 見込みの集計用（日報のS列）
+  // 見込シートの中身を見る（動作確認用）
+  if (e && e.parameter && e.parameter.action === 'mikomisheet') {
+    var _ms = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('見込');
+    if (!_ms) {
+      var _q0 = JSON.parse(PropertiesService.getScriptProperties().getProperty('MEIBAN_QUEUE') || '[]');
+      var _tg = ScriptApp.getProjectTriggers().filter(function(t) {
+        return t.getHandlerFunction() === 'processMeibanQueue';
+      }).length;
+      return ContentService.createTextOutput(
+        '見込シートはまだありません\n待ち行列=' + _q0.length + '件　処理トリガー=' + _tg + '本');
+    }
+    var _mv = _ms.getRange(1, 1, _ms.getLastRow(), 16).getValues();
+    var _mo = ['行数=' + (_mv.length - 1), ''];
+    _mv.forEach(function(r, i) {
+      _mo.push((i === 0 ? '■ ' : '  ') + r.map(function(x) {
+        return (x instanceof Date) ? Utilities.formatDate(x, 'Asia/Tokyo', 'MM/dd') : String(x || '');
+      }).join(' | '));
+    });
+    return ContentService.createTextOutput(_mo.join('\n'));
+  }
+  // 見込の顧客引き当てを試す（?action=mikomicust&name=鹿内典子）
+  if (e && e.parameter && e.parameter.action === 'mikomicust') {
+    var _n = String(e.parameter.name || '');
+    var _ci = mikomiCustomer_(_n, hagakiCustomerIndex_());
+    return ContentService.createTextOutput(
+      '入力=' + _n + '\n引き当て=' + JSON.stringify(_ci));
+  }
+  // 見込シートの行を消す（?action=mikomidel&row=3）
+  if (e && e.parameter && e.parameter.action === 'mikomidel') {
+    var _ds = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('見込');
+    if (!_ds) return ContentService.createTextOutput('見込シートがありません');
+    var _dr = Number(e.parameter.row);
+    if (!_dr || _dr < 2) return ContentService.createTextOutput('rowを指定してください（2以上）');
+    var _got = _ds.getRange(_dr, 1, 1, 16).getValues()[0];
+    _ds.deleteRow(_dr);
+    return ContentService.createTextOutput('消しました：' + _got.slice(1, 8).join(' | '));
+  }
+  // 見込の読み取り待ちを今すぐ処理する
+  if (e && e.parameter && e.parameter.action === 'mikomirun') {
+    processMeibanQueue();
+    return ContentService.createTextOutput('処理しました');
+  }
   if (e && e.parameter && e.parameter.action === 'mikomi') {
     var _sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('日報');
     var _v = _sh.getRange(2, 1, _sh.getLastRow() - 1, 21).getValues();
@@ -396,12 +438,11 @@ function doPost(e) {
 
     // 見込みをAI読み取りキューへ回す。
     // 写真があれば写真＋備考、写真が無ければ備考だけ（会話で聞いた見込み）でも登録する
+    // ★見込み1件＝1行。写真を何枚撮っても1行にまとめる
     prospects.forEach(item => {
-      const phs = item.photos || [];
-      if (phs.length) {
-        phs.forEach(ph => meibanPhotos.push({ data: ph.data, note: item.content || '' }));
-      } else if ((item.content || '').trim()) {
-        meibanPhotos.push({ data: '', note: item.content.trim() });
+      const datas = (item.photos || []).map(ph => ph.data).filter(Boolean);
+      if (datas.length || (item.content || '').trim()) {
+        meibanPhotos.push({ datas: datas, note: (item.content || '').trim() });
       }
     });
 

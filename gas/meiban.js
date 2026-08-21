@@ -271,17 +271,35 @@ function processMeibanQueue() {
       var ci = mikomiCustomer_(job.visitName, cust);
       (job.photos || []).forEach(function(p) {
         try {
-          var r = p.data ? readMeiban_(p.data, p.note) : readMikomiMemo_(p.note);
+          // 1つの見込みにつき1行。写真が複数あれば全部読んで、読めた内容を寄せ集める
+          var datas = p.datas || (p.data ? [p.data] : []);   // 古い形式(p.data)にも対応
+          var r = null;
+          if (datas.length) {
+            for (var d = 0; d < datas.length; d++) {
+              var one = readMeiban_(datas[d], p.note);
+              if (!one) continue;
+              if (!r) { r = one; continue; }
+              // 空いている項目だけを、あとの写真で埋める
+              ['kind', 'maker', 'model', 'year', 'place', 'rank', 'timing'].forEach(function(f) {
+                if (!r[f] && one[f]) r[f] = one[f];
+              });
+              r._read = r._read || one._read;
+            }
+          } else {
+            r = readMikomiMemo_(p.note);
+          }
+
           if (!r || !r._read) {
             rows.push(mikomiRow_(job, p, ci, (r && r.rank) || 'B', (r && r.timing) || '',
-                                 '', '', '', '', '', '', p.data ? '⚠️型番が読めず' : '⚠️内容が読めず'));
+                                 (r && r.kind) || '', '', '', '', '', (r && r.place) || '',
+                                 datas.length ? '⚠️型番が読めず' : '⚠️内容が読めず'));
             return;
           }
           var y = meibanYear_(r.year);
           var age = y ? thisYear - y : '';
           rows.push(mikomiRow_(job, p, ci, r.rank || 'B', r.timing || '',
                                r.kind || '', r.maker || '', r.model || '', y || '', age,
-                               r.place || '', r._memoOnly ? '会話で聞いた' : ''));
+                               r.place || '', datas.length ? '' : '会話で聞いた'));
         } catch (er) {
           rows.push(mikomiRow_(job, p, ci, 'B', '', '', '', '', '', '', '',
                                '⚠️' + String(er).slice(0, 60)));
