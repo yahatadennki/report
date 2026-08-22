@@ -210,6 +210,16 @@
 
   </div>
 
+  <!-- ▼ 今月の達成状況（業務日報・見込シートから自動集計） -->
+  <div class="live">
+    <div class="live__head">
+      <h2>今月の達成状況</h2>
+      <select id="ymSel" aria-label="対象の月"></select>
+    </div>
+    <p class="live__note" id="liveNote">読み込んでいます…</p>
+    <div id="liveList"></div>
+  </div>
+
   <div class="note">
     <p><b>数え方。</b>見込み＝業務日報の見込商品の件数。売上＝業務日報の工事売上（人数割りのあとの金額）。ひまわり＝ひまわり日報の点検件数と、回収したアンケートの枚数（<b>1人あたり10件・20件 × 人数</b>）。</p>
     <p><b>サービスは途中で数えるものが変わります。</b>ステップ1は見込みの件数、発生業務の担当になったら売上。同じステージ名のまま、ものさしだけ入れ替わります。</p>
@@ -219,5 +229,98 @@
   <a class="back" href="keiei.html">← 経営ポータルへ戻る</a>
 
 </div>
+
+<style>
+  .live{background:#fff;border:1px solid #e6e6ea;border-radius:14px;padding:18px 16px;margin:22px 0}
+  .live__head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px}
+  .live__head h2{font-size:17px;margin:0}
+  .live__head select{padding:6px 10px;border:1px solid #d5d5dd;border-radius:8px;font-size:14px;background:#fff}
+  .live__note{font-size:13px;color:#6b6b76;margin:0 0 14px}
+  .card{border:1px solid #ececf1;border-left-width:6px;border-radius:12px;padding:12px 14px;margin-bottom:10px}
+  .card__top{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
+  .card__nm{font-size:17px;font-weight:700}
+  .card__rk{font-size:13px;font-weight:700;letter-spacing:.04em}
+  .card__val{font-size:15px;margin:6px 0 8px}
+  .card__val b{font-size:26px;letter-spacing:-.02em}
+  .card__val span{color:#6b6b76;font-size:13px;margin-left:6px}
+  .bar{height:9px;border-radius:99px;background:#f0f0f4;overflow:hidden}
+  .bar i{display:block;height:100%;border-radius:99px}
+  .card__rest{font-size:13px;color:#6b6b76;margin-top:8px}
+  .card__sub{font-size:12px;color:#8a8a94;margin-top:6px}
+  @media(prefers-color-scheme:dark){
+    .live{background:#1c1c20;border-color:#33333c}
+    .card{border-color:#33333c}
+    .bar{background:#2a2a31}
+    .live__head select{background:#1c1c20;color:#eee;border-color:#44444e}
+  }
+</style>
+
+<script>
+/* 業務日報のGASから、今月のスタッフ別成績をもらって表示する */
+const MK_API = 'https://script.google.com/macros/s/AKfycbwDhQVpdoB_Dt92NXiCXHFHREWf8O1EVU8jY_YyHtPH8wg7pB4INrcf7bTnN0QN-TAL/exec';
+
+function mkYmList() {
+  const out = [], d = new Date();
+  for (let i = 0; i < 12; i++) {
+    const y = d.getFullYear(), m = d.getMonth() + 1;
+    out.push({ v: y + '-' + String(m).padStart(2, '0'), t: y + '年' + m + '月' });
+    d.setMonth(d.getMonth() - 1);
+  }
+  return out;
+}
+
+function mkRender(data) {
+  const note = document.getElementById('liveNote');
+  const list = document.getElementById('liveList');
+  if (!data || !data.staff || !data.staff.length) {
+    note.textContent = 'この月はまだ記録がありません。';
+    list.innerHTML = '';
+    return;
+  }
+  note.innerHTML = '業務日報と見込シートから自動で集計しています。'
+    + '<b>比べるのは先月の自分</b>。誰かと競うための表ではありません。';
+  list.innerHTML = data.staff.map(s => {
+    const rest = s.nextTarget
+      ? `あと <b>${s.nextRest.toLocaleString()}</b> ${s.unit} で ${s.nextTarget === s.top ? 'MEGAVOLT' : 'KILOVOLT'}`
+      : '<b>今月の上まで到達しています。</b>';
+    return `
+      <div class="card" style="border-left-color:${s.color}">
+        <div class="card__top">
+          <span class="card__nm">${s.name}</span>
+          <span class="card__rk" style="color:${s.color}">${s.mark} ${s.rank}</span>
+        </div>
+        <p class="card__val">
+          <b>${s.value.toLocaleString()}</b> ${s.unit}
+          <span>${s.monosashi}／${s.step.toLocaleString()}・${s.top.toLocaleString()}${s.unit}</span>
+        </p>
+        <div class="bar"><i style="width:${s.pct}%;background:${s.color}"></i></div>
+        <p class="card__rest">${rest}</p>
+        <p class="card__sub">訪問 ${s.count} 件${s.tenken ? '／点検 ' + s.tenken + ' 件' : ''}${s.monosashi === '工事売上' && s.mikomi ? '／見込み ' + s.mikomi + ' 件' : ''}</p>
+      </div>`;
+  }).join('');
+}
+
+function mkLoad(ym) {
+  document.getElementById('liveNote').textContent = '読み込んでいます…';
+  document.getElementById('liveList').innerHTML = '';
+  fetch(MK_API + '?action=mokuhyou&ym=' + encodeURIComponent(ym))
+    .then(r => r.json())
+    .then(mkRender)
+    .catch(() => {
+      document.getElementById('liveNote').textContent =
+        '集計を読み込めませんでした。時間をおいて開き直してください。';
+    });
+}
+
+(function () {
+  const sel = document.getElementById('ymSel');
+  mkYmList().forEach(o => {
+    const op = document.createElement('option');
+    op.value = o.v; op.textContent = o.t; sel.appendChild(op);
+  });
+  sel.onchange = () => mkLoad(sel.value);
+  mkLoad(sel.value);
+})();
+</script>
 </body>
 </html>

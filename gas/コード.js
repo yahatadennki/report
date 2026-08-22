@@ -90,6 +90,11 @@ function doGet(e) {
       '\nキーの先頭: ' + _k.slice(0, 14) + '...');
   }
   // 見込みの集計用（日報のS列）
+  // スタッフ目標の達成状況（?action=mokuhyou&ym=2026-08）
+  if (e && e.parameter && e.parameter.action === 'mokuhyou') {
+    return ContentService.createTextOutput(JSON.stringify(目標の達成状況(e.parameter.ym)))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
   // 見込シートの中身を見る（動作確認用）
   if (e && e.parameter && e.parameter.action === 'mikomisheet') {
     var _ms = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('見込');
