@@ -222,6 +222,7 @@
 
   <div class="note">
     <p><b>数え方。</b>見込み＝業務日報の見込商品の件数。売上＝業務日報の工事売上（人数割りのあとの金額）。ひまわり＝ひまわり日報の点検件数と、回収したアンケートの枚数（<b>1人あたり10件・20件 × 人数</b>）。</p>
+    <p><b>役割の外でやった仕事も消えません。</b>サービススタッフが工事を手伝ったら <b>200千円＝見込1件</b>、工事スタッフが見込を見つけたら <b>1件＝50千円</b> として、自分のものさしに換算して足します。手伝いも、気づきも、どちらも仕事だからです。</p>
     <p><b>サービスは途中で数えるものが変わります。</b>ステップ1は見込みの件数、発生業務の担当になったら売上。同じステージ名のまま、ものさしだけ入れ替わります。</p>
     <p><b>見る場。</b>毎月の店舗会議で先月分を確認します。誰かと比べるためではなく、先月の自分と比べるためです。</p>
   </div>
@@ -246,6 +247,7 @@
   .bar{height:9px;border-radius:99px;background:#f0f0f4;overflow:hidden}
   .bar i{display:block;height:100%;border-radius:99px}
   .card__rest{font-size:13px;color:#6b6b76;margin-top:8px}
+  .card__conv{font-size:12px;color:#2c7a4b;background:#eef8f1;border-radius:8px;padding:6px 9px;margin:8px 0 0}
   .card__sub{font-size:12px;color:#8a8a94;margin-top:6px}
   @media(prefers-color-scheme:dark){
     .live{background:#1c1c20;border-color:#33333c}
@@ -295,7 +297,8 @@ function mkRender(data) {
         </p>
         <div class="bar"><i style="width:${s.pct}%;background:${s.color}"></i></div>
         <p class="card__rest">${rest}</p>
-        <p class="card__sub">訪問 ${s.count} 件${s.tenken ? '／点検 ' + s.tenken + ' 件' : ''}${s.monosashi === '工事売上' && s.mikomi ? '／見込み ' + s.mikomi + ' 件' : ''}</p>
+        ${s.add ? `<p class="card__conv">うち <b>${s.add.toLocaleString()}</b> ${s.unit} は ${s.addNote}</p>` : ''}
+        <p class="card__sub">訪問 ${s.count} 件${s.tenken ? '／点検 ' + s.tenken + ' 件' : ''}</p>
       </div>`;
   }).join('');
 }

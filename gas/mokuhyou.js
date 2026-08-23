@@ -24,6 +24,17 @@ var MK_GOAL = {
 };
 
 /**
+ * ものさしの換算。
+ * 役割が違っても、やった仕事が消えないようにするための決まり。
+ *   サービススタッフが工事を手伝った  … 工事売上 200千円 ＝ 見込 1件ぶん
+ *   工事スタッフが見込を見つけた      … 見込 1件   ＝ 工事売上 50千円ぶん
+ */
+var MK_CONV = {
+  koujiPerMikomi: 200,   // 千円。これだけ手伝えば見込1件と同じ
+  mikomiToKouji:   50    // 千円。見込1件はこれだけの売上と同じ
+};
+
+/**
  * 誰を何で見るか。役割が決まっている人はここに書く。
  *   'kouji'  … 工事売上で見る（工事スタッフ・発生業務の担当）
  *   'mikomi' … 見込みの記録件数で見る（サービス ステップ1）
@@ -110,7 +121,13 @@ function 目標の達成状況(ym) {
     var role = MK_ROLE[t.name] || (t.kouji > 0 ? 'kouji' : 'mikomi');
     var useKouji = (role === 'kouji');
     var goal = useKouji ? MK_GOAL.kouji : MK_GOAL.mikomi;
-    var val  = useKouji ? t.kouji : t.mikomi;
+
+    // ★役割の外でやった仕事も、換算して足す（やったことが消えないように）
+    var base = useKouji ? t.kouji : t.mikomi;   // 本来のものさしの分
+    var add  = useKouji
+      ? t.mikomi * MK_CONV.mikomiToKouji                       // 工事の人が見つけた見込 → 売上に換算
+      : Math.floor(t.kouji / MK_CONV.koujiPerMikomi);          // サービスの人の工事手伝い → 件数に換算
+    var val = base + add;
     var rk = mkRank_(val, goal);
     var nx = mkNext_(val, goal);
     return {
@@ -121,6 +138,13 @@ function 目標の達成状況(ym) {
       tenken: t.tenken,
       monosashi: useKouji ? '工事売上' : '見込みの記録',
       value: val,
+      base: base,                 // 本来のものさしぶん
+      add: add,                   // 役割の外でやった分（換算後）
+      addFrom: useKouji ? t.mikomi : t.kouji,   // 換算のもとの数
+      addNote: !add ? '' : (useKouji
+        ? '見込み' + t.mikomi + '件を換算（1件＝' + MK_CONV.mikomiToKouji + '千円）'
+        : '工事の手伝い' + t.kouji.toLocaleString() + '千円を換算（' +
+          MK_CONV.koujiPerMikomi + '千円＝1件）'),
       unit: goal.unit,
       step: goal.step,
       top: goal.top,
