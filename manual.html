@@ -512,8 +512,11 @@
 
 <!-- ホーム：メニュー -->
 <section class="view active" id="view-home">
-  
-<div class="pt-head" style="background:linear-gradient(135deg,#1f5f4a 0%,#123d31 100%);color:#fff;border-radius:10px;padding:26px 30px 24px;margin:0 auto 20px;max-width:900px"><p style="font-size:12px;letter-spacing:.14em;color:rgba(255,255,255,.72);margin:0 0 6px">迷ったら開く</p><h1 style="font-size:23px;font-weight:700;margin:0 0 6px;color:#fff;line-height:1.4">現場サポート</h1><p style="font-size:13px;color:rgba(255,255,255,.82);margin:0">スタッフガイドと、工事の手順書。</p></div>
+  <div class="portal-head">
+    <p class="portal-head__eyebrow">ヤハタ電機商会</p>
+    <h1 class="portal-head__title">現場サポートポータル</h1>
+    <p class="portal-head__sub">訪問の前後で迷ったら、ここから開いてください。</p>
+  </div>
   <p class="portal-head__sub" style="max-width:780px;margin:0 auto 10px;text-align:left;font-size:12px;letter-spacing:0.1em;color:var(--ink-soft);">実践ガイド</p>
   <div class="menu-grid">
     <button class="menu-card" onclick="showView('view-talk')">
@@ -544,16 +547,8 @@
       <span class="menu-card__icon">📦</span>
       <span>
         <p class="menu-card__title">納品時 説明マニュアル</p>
-        <p class="menu-card__desc">工事・配達のあとの使い方説明とキャッチボールの流れ。工事もサービスも共通。</p>
+        <p class="menu-card__desc">工事完了後の使い方説明とキャッチボールの流れ。</p>
         <span class="menu-card__tag">携帯用</span>
-      </span>
-    </button>
-    <button class="menu-card" onclick="location.href='enquete.html'">
-      <span class="menu-card__icon">✂️</span>
-      <span>
-        <p class="menu-card__title">工事・配達後アンケート（半券つき）</p>
-        <p class="menu-card__desc">説明→手渡し→半券を持ち帰る→ひまわりが回収。用紙の印刷もここから。</p>
-        <span class="menu-card__tag">お客様用</span>
       </span>
     </button>
   </div>
@@ -624,17 +619,6 @@
       </span>
     </button>
   </div>
-
-
-
-<!-- ほかのポータル -->
-<div class="portal-links" style="max-width:900px;margin:34px auto 0;padding:0 0 20px">
-  <p style="font-size:12px;letter-spacing:.14em;opacity:.55;margin:0 0 10px">ほかのポータル</p>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px">
-    <a href="menu.html" style="display:block;padding:16px 18px;border-radius:10px;text-decoration:none;color:inherit;background:linear-gradient(135deg,#1a3a5c 0%,#12283f 100%)"><span style="display:block;font-size:11px;letter-spacing:.14em;color:rgba(255,255,255,.7)">毎日つかう</span><span style="display:block;font-size:17px;font-weight:700;color:#fff;margin:3px 0 2px">業務ポータル</span><span style="display:block;font-size:12px;color:rgba(255,255,255,.8)">日報を書く。見積をつくる。リストを見る。</span></a>
-    <a href="roadmap.html" style="display:block;padding:16px 18px;border-radius:10px;text-decoration:none;color:inherit;background:linear-gradient(135deg,#7a4d10 0%,#573608 100%)"><span style="display:block;font-size:11px;letter-spacing:.14em;color:rgba(255,255,255,.7)">先を読む</span><span style="display:block;font-size:17px;font-weight:700;color:#fff;margin:3px 0 2px">年間販促スケジュール</span><span style="display:block;font-size:12px;color:rgba(255,255,255,.8)">フェア・チラシ・かわら版。一年の流れ。</span></a>
-  </div>
-</div>
 </section>
 
 <!-- ページ1：訪問トークガイド（本人携帯用） -->
@@ -882,7 +866,7 @@
     <span class="sheet__badge">携帯用</span>
     <p class="sheet__eyebrow">ヤハタ電機商会　訪問トークガイド</p>
     <h1 class="sheet__title">納品時 説明マニュアル</h1>
-    <p class="sheet__sub">工事・配達が終わって、お客様にお渡しする際の流れです。<b>工事スタッフもサービススタッフも同じ</b>。一方通行にならないよう、各ステップで一言お伺いしてから進みます。</p>
+    <p class="sheet__sub">工事完了後、お客様にお渡しする際の流れです。一方通行にならないよう、各ステップで一言お伺いしてから進みます。</p>
   </div>
   <div class="sheet__body">
     <div class="flow">
@@ -977,19 +961,6 @@
             <span class="phrase__tag">お礼</span>
             何かお困りごとがあれば、いつでもご連絡ください。本日はありがとうございました。
           </div>
-        </div>
-      </div>
-
-      <div class="step">
-        <div class="step__num">7</div>
-        <div>
-          <p class="step__title">アンケートをお渡しする（工事・配達は全件）</p>
-          <div class="phrase">
-            <span class="phrase__tag">そのまま言う</span>
-            最後にこちらのアンケートをお願いできますか。書きっぱなしにはしませんので、後日ひまわりの者がお預かりに伺います。
-          </div>
-          <p class="step__note" style="margin-top:8px">→ 半券に<b>お客様名と作業内容</b>を書いて切り取り、帰社したら<b>ひまわりBOX</b>へ。ここまでで完了です。<br>
-            用紙とくわしい流れは <a href="enquete.html" style="color:var(--blue);font-weight:700">工事・配達後アンケート</a> のページ。</p>
         </div>
       </div>
 
@@ -1958,20 +1929,6 @@
         </div>
 
         <div class="work-card">
-            <div class="work-header"><div class="work-icon">✂️</div>
-                <div><div class="work-name">アンケート回収</div><div class="work-tagline">工事・配達のあとに、もう一度お客様の顔を見に行く</div></div>
-            </div>
-            <div class="work-body">
-                <div class="work-desc"><strong>この業務の目的:</strong><br>工事・配達の担当が持ち帰った半券が、そのまま訪問リストになります。記入済みのアンケートをお預かりに伺いましょう。回収は「行く口実」です。回収率より、行った回数のほうが大切です。</div>
-                <ul class="work-list">
-                    <li>ひまわりBOXの半券を確認し、1週間以内に回収へ伺う</li>
-                    <li>書けていなければ、その場で伺って代筆してもよい</li>
-                    <li>お困りごとが書かれていたら、その日のうちに受注日報へ記録する</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="work-card">
             <div class="work-header"><div class="work-icon">👥</div>
                 <div><div class="work-name">顧客管理</div><div class="work-tagline">お客様のかゆい所に手が届く存在になる</div></div>
             </div>
@@ -2478,23 +2435,22 @@
             <div class="step-header">
                 <div class="step-icon">🌱</div>
                 <div>
-                    <div class="step-name">ステップ1: メンテナンスと配達</div>
-                    <div class="step-tagline">こちらから訪問する仕事 ── 観察する力と、伝える力を身につける</div>
+                    <div class="step-name">ステップ1: メンテナンス中心</div>
+                    <div class="step-tagline">ヤハタからのアプローチ ── 観察力と提案力を身につける</div>
                 </div>
             </div>
             <div class="step-body">
                 <div class="step-why">
                     <strong>このステップの目的:</strong><br>
                     定期点検やエアコンフィルター清掃など、こちらから訪問する業務を通じて、
-                    お客様の暮らしを「観察する力」を身につけます。
-                    配達も同じです。届けて終わりではなく、<strong>その場で取扱説明までするのがサービスの配達</strong>。
-                    観察して気づき、わかるように伝える。この2つで信頼の基礎を固める段階です。
+                    お客様の暮らしを「観察する力」と「提案する力」を身につけます。
+                    お客様との信頼関係を築き、対応力の基礎を固める段階です。
                 </div>
                 <ul class="step-list">
                     <li>定期点検でお客様宅を訪問し、家電の状態を確認する</li>
                     <li>エアコンフィルターの清掃など、簡単なメンテナンスを行う</li>
-                    <li>1人で納品できる商品を配達し、その場で取扱説明までする</li>
-                    <li>お客様の暮らしを観察し、「そろそろ交換時期ですね」と自然に提案する</li>
+                    <li>お客様の暮らしを観察し、困りごとや改善点に気づく力を養う</li>
+                    <li>「そろそろ交換時期ですね」など、自然な形で提案する練習をする</li>
                     <li>顔を覚えてもらい、「この人なら安心」という信頼を得る</li>
                 </ul>
             </div>
@@ -2514,14 +2470,14 @@
                     <strong>このステップの目的:</strong><br>
                     お客様からの電話、公式LINE、訪問活動で聞いた困りごとに対応します。
                     ステップ1で培った観察力・提案力・信頼をもとに、
-                    修理の一次対応や買い替えの見積りなど、幅広い対応を担います。
+                    修理・買い替えの見積り、配達業務など、幅広い対応を担います。
                     「困ったときはヤハタさん」と頼られる存在になる段階です。
                 </div>
                 <ul class="step-list">
                     <li>お客様からの電話や公式LINEで困りごとを受ける</li>
                     <li>訪問して症状を確認し、一次対応を行う</li>
                     <li>修理が必要なら工事スタッフへ引継ぎ、買い替えなら見積りを作成</li>
-                    <li>見積りから納品・集金まで、一件を最後まで見届ける</li>
+                    <li>小型家電や消耗品の配達業務を担当する</li>
                     <li>お客様の「ありがとう」を直接受け取り、信頼を深める</li>
                 </ul>
             </div>
@@ -2530,7 +2486,7 @@
         <div class="summary-box">
             <h3>ステップ1とステップ2の違い</h3>
             <p>
-                <strong>ステップ1:</strong> こちらから訪問（点検・配達）→ 観察力と伝える力を磨く → 信頼を得る<br>
+                <strong>ステップ1:</strong> こちらから訪問 → 観察力・提案力を磨く → 信頼を得る<br>
                 <strong>ステップ2:</strong> お客様から依頼 → 困りごとを解決 → 頼られる存在になる
             </p>
         </div>
@@ -2595,11 +2551,11 @@
                 <div><div class="step-name">配達業務</div><div class="step-tagline">1人で納品可能なもの・工事スタッフの補助</div></div>
             </div>
             <div class="step-body">
-                <div class="step-why">1人で納品可能な商品の配達や、工事スタッフの補助として配達をサポートします。届けて終わりではなく、取扱説明までが配達です。</div>
+                <div class="step-why">1人で納品可能な商品の配達や、工事スタッフの補助として配達をサポートします。配達時もお客様との関係づくりを大切にします。</div>
                 <ul class="step-list">
-                    <li>1人で納品可能な商品を配達する（工事スタッフの補助・運搬も含む）</li>
-                    <li>その場で取扱説明をする（一緒に一回動かす・お手入れ・連絡先）</li>
-                    <li>アンケートをお渡しし、半券を持ち帰ってひまわりBOXへ（<a href="enquete.html" target="_top" style="color:#b71c1c;font-weight:700">くわしくはこちら</a>）</li>
+                    <li>1人で納品可能な商品を配達する</li>
+                    <li>工事スタッフの補助として配達・運搬をサポートする</li>
+                    <li>配達時にお客様の困りごとを確認する</li>
                 </ul>
             </div>
         </div>
@@ -3221,32 +3177,8 @@
                     <li>養生を徹底し、お客様宅を傷・汚れから守る</li>
                     <li>安全でスマートな作業を心がける</li>
                     <li>現場での片付けを丁寧に行う</li>
-                    <li>お客様に合わせた使い方の説明をする（下の「取扱説明とアンケート」を参照）</li>
+                    <li>お客様に合わせた使い方の説明をする</li>
                     <li>必要に応じて集金を行う</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- 取扱説明とアンケート -->
-        <div class="step-card" style="border-color:#e0e0e0; margin-bottom:16px;">
-            <div class="step-header" style="background:linear-gradient(135deg,#2e7d32,#43a047);">
-                <div class="step-icon">📖</div>
-                <div>
-                    <div class="step-name">取扱説明とアンケート</div>
-                    <div class="step-tagline">工事・配達が終わったら、必ずその場で説明する</div>
-                </div>
-            </div>
-            <div class="step-body">
-                <div class="step-why">
-                    <strong>この業務の目的:</strong><br>
-                    どれだけキレイに仕上げても、使い方が分からなければ「買ったのに使えない」で終わってしまいます。
-                    取扱説明までが工事です。説明した人が、次に相談される人になります。
-                    説明が終わったらアンケートをお渡しし、半券を切り取って持ち帰ります。
-                </div>
-                <ul class="step-list">
-                    <li>一緒に一回動かす（明日から使うボタンだけでよい）</li>
-                    <li>お手入れの場所と頻度、取扱説明書・保証書の置き場所を伝える</li>
-                    <li>アンケートをお渡しし、半券を切り取って帰社後ひまわりBOXへ</li>
                 </ul>
             </div>
         </div>
