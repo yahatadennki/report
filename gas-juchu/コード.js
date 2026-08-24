@@ -307,6 +307,68 @@ function authorize() {
 
 // ウェブアプリとしてHTMLを配信
 function doGet(e) {
+  // 直近の受注が、なぜカレンダーに入らなかったか調べる
+  if (e && e.parameter && e.parameter.action === 'caldiag2') {
+    const ss2 = SpreadsheetApp.getActiveSpreadsheet();
+    const sh2 = ss2.getSheetByName('受注日報シート') || ss2.getSheetByName('受注表')
+             || ss2.getSheetByName('受注日報') || ss2.getSheets()[0];
+    const n2 = Math.min(Number(e.parameter.n || 10), 40);
+    const last2 = sh2.getLastRow();
+    const from2 = Math.max(2, last2 - n2 + 1);
+    const head2 = sh2.getRange(1, 1, 1, sh2.getLastColumn()).getValues()[0];
+    const col2 = {};
+    head2.forEach(function(h, i) { col2[String(h).trim()] = i; });
+    const v2 = sh2.getRange(from2, 1, last2 - from2 + 1, sh2.getLastColumn()).getValues();
+    const o2 = ['シート=' + sh2.getName() + '　最終行=' + last2, ''];
+    v2.forEach(function(r, i) {
+      const g = function(k) { return col2[k] === undefined ? '' : String(r[col2[k]] || '').trim(); };
+      const ng = [];
+      if (!g('訪問日時')) ng.push('訪問日時なし');
+      if (!g('予定時間')) ng.push('予定時間なし');
+      if (!g('訪問担当')) ng.push('訪問担当なし');
+      o2.push('行' + (from2 + i) + ' ' + g('顧客名') +
+              ' 訪問=[' + g('訪問日時') + '] 担当=[' + g('訪問担当') + '] 時間=[' + g('予定時間') + ']' +
+              ' カレンダーID=[' + g('ｶﾚﾝﾀﾞｰID') + g('カレンダーID') + '] ' +
+              (ng.length ? '→ ' + ng.join('・') : '→ 条件OK'));
+    });
+    return ContentService.createTextOutput(o2.join('\n'));
+  }
+  // カレンダーに書けるか実際に試す（?action=caltest&mail=...）
+  if (e && e.parameter && e.parameter.action === 'caltest') {
+    const mail3 = String(e.parameter.mail || 'yawata51@gmail.com');
+    const o3 = ['宛先: ' + mail3];
+    try {
+      const cal3 = CalendarApp.getCalendarById(mail3);
+      o3.push('カレンダー: ' + (cal3 ? cal3.getName() : 'null（開けません）'));
+      if (cal3) {
+        const st3 = new Date();
+        st3.setHours(st3.getHours() + 1, 0, 0, 0);
+        const en3 = new Date(st3.getTime() + 30 * 60 * 1000);
+        const ev3 = cal3.createEvent('【テスト】受注日報の動作確認', st3, en3,
+                                     { description: 'この予定は自動で消えます' });
+        o3.push('作成できました id=' + ev3.getId());
+        ev3.deleteEvent();
+        o3.push('（テストなので消しました）');
+      }
+    } catch (er3) {
+      o3.push('エラー: ' + er3.toString());
+    }
+    return ContentService.createTextOutput(o3.join('\n'));
+  }
+  // デバッグシートの最近の記録を見る
+  if (e && e.parameter && e.parameter.action === 'dbg') {
+    const ss4 = SpreadsheetApp.getActiveSpreadsheet();
+    const d4 = ss4.getSheetByName('デバッグ');
+    if (!d4 || d4.getLastRow() < 1) return ContentService.createTextOutput('デバッグシートは空です');
+    const n4 = Math.min(Number(e.parameter.n || 20), 100);
+    const f4 = Math.max(1, d4.getLastRow() - n4 + 1);
+    const v4 = d4.getRange(f4, 1, d4.getLastRow() - f4 + 1, d4.getLastColumn()).getValues();
+    return ContentService.createTextOutput(v4.map(function(r) {
+      return r.map(function(x) {
+        return (x instanceof Date) ? Utilities.formatDate(x, 'Asia/Tokyo', 'MM/dd HH:mm') : String(x || '');
+      }).join(' | ');
+    }).join('\n'));
+  }
   if (e && e.parameter && e.parameter.action === 'search') {
     const results = searchCustomer(e.parameter.query);
     return ContentService.createTextOutput(JSON.stringify(results))
@@ -459,6 +521,10 @@ function doPost(e) {
           sheet.getRange(sheet.getLastRow(), 17).setValue(eventId);
         }
       } catch (calendarError) {
+        try {
+          const dbgS = ss.getSheetByName('デバッグ') || ss.insertSheet('デバッグ');
+          dbgS.appendRow([new Date(), 'カレンダー作成エラー', String(data.顧客名 || ''), String(data.訪問担当メール || ''), calendarError.toString()]);
+        } catch (e9) {}
         console.log('カレンダー作成エラー: ' + calendarError.toString());
       }
     }
@@ -662,6 +728,10 @@ function saveOrderData(data) {
           sheet.getRange(lastRow, 17).setValue(event.getId());
         }
       } catch (calendarError) {
+        try {
+          const dbgS = ss.getSheetByName('デバッグ') || ss.insertSheet('デバッグ');
+          dbgS.appendRow([new Date(), 'カレンダー作成エラー', String(data.顧客名 || ''), String(data.訪問担当メール || ''), calendarError.toString()]);
+        } catch (e9) {}
         console.log('カレンダー作成エラー: ' + calendarError.toString());
       }
     }
