@@ -287,6 +287,40 @@
     </div>
 
     <div class="section">
+    </div>
+
+    <div class="section">
+      <label>次の訪問 <span class="label-optional">（その場で約束したとき）</span></label>
+      <p style="font-size:12.5px;color:#666;margin:4px 0 10px">
+        「冷蔵庫が壊れたから見に来て」など、訪問先で次のお約束をしたら、ここに入れてください。<br>
+        <b>受注日報に登録され、担当者のカレンダーにも入ります。</b>
+      </p>
+      <button type="button" id="nextVisitBtn" class="toggle-btn" style="width:100%">📅 次の訪問を約束した</button>
+      <div id="nextVisitArea" class="hidden" style="background:#eef6ff;border:1px solid #b9d5f2;border-radius:10px;padding:14px;margin-top:10px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div><label style="margin-top:0">日にち</label><input type="date" id="nvDate"></div>
+          <div><label style="margin-top:0">時刻</label><input type="time" id="nvTime"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+          <div>
+            <label style="margin-top:0">誰が行く</label>
+            <select id="nvStaff"><option value="">選択</option></select>
+          </div>
+          <div>
+            <label style="margin-top:0">予定時間</label>
+            <select id="nvHours">
+              <option value="">選択</option>
+              <option>0.5時間</option><option selected>1時間</option>
+              <option>1.5時間</option><option>2時間</option><option>3時間</option>
+            </select>
+          </div>
+        </div>
+        <label>何をしに行く</label>
+        <input type="text" id="nvContent" placeholder="例：冷蔵庫を見に行く／エアコンの見積">
+      </div>
+    </div>
+
+    <div class="section">
       <label>メモ <span class="label-optional" id="remarks-req">（任意）</span></label>
       <input type="text" id="remarks" placeholder="気が付いた点はなんでも記入してください">
     </div>
@@ -911,6 +945,50 @@ createButtons('group-workType', WORK_TYPES, 'workType', true);
 
     document.getElementById('addProspectBtn').onclick = () => { state.prospectItems.push({content:'',photos:[]}); updateProspectItems(); };
 
+    /* ===== 次の訪問（その場で約束した分を受注日報＋カレンダーへ） ===== */
+    const NV_STAFF = [
+      { name: '高山', email: 'yawata51@gmail.com' },
+      { name: '伊藤', email: 'yahata.itou@gmail.com' },
+      { name: '服部', email: 'yahata.hattori@gmail.com' },
+      { name: '宇留野', email: 'yahata.uruno@gmail.com' }
+    ];
+    (function initNextVisit() {
+      const sel = document.getElementById('nvStaff');
+      NV_STAFF.forEach(s => {
+        const o = document.createElement('option');
+        o.value = s.name; o.textContent = s.name; sel.appendChild(o);
+      });
+      const btn = document.getElementById('nextVisitBtn');
+      const area = document.getElementById('nextVisitArea');
+      btn.onclick = () => {
+        const open = area.classList.toggle('hidden') === false;
+        btn.classList.toggle('active', open);
+        if (open) {
+          // 日報の担当者を既定にしておく（たいてい自分が行くため）
+          if (!sel.value && state.staff) sel.value = state.staff;
+          document.getElementById('nvDate').focus();
+        }
+      };
+    })();
+
+    /* 入っていれば { 日時, 担当, メール, 予定時間, 内容 } を返す。空なら null */
+    function getNextVisit() {
+      const area = document.getElementById('nextVisitArea');
+      if (!area || area.classList.contains('hidden')) return null;
+      const d = document.getElementById('nvDate').value;
+      const t = document.getElementById('nvTime').value;
+      const st = document.getElementById('nvStaff').value;
+      const hr = document.getElementById('nvHours').value;
+      const ct = document.getElementById('nvContent').value.trim();
+      if (!d && !t && !st && !ct) return null;          // 開いただけなら無視
+      if (!d || !t || !st || !hr) {
+        alert('次の訪問は「日にち・時刻・誰が行く・予定時間」をすべて入れてください。\n入れないとカレンダーに入りません。');
+        return 'NG';
+      }
+      const em = (NV_STAFF.find(x => x.name === st) || {}).email || '';
+      return { 訪問日時: d + ' ' + t, 訪問担当: st, 訪問担当メール: em, 予定時間: hr, 内容: ct };
+    }
+
 
     document.getElementById('sendBtn').onclick = async () => {
       const btn = document.getElementById('sendBtn');
@@ -959,6 +1037,10 @@ createButtons('group-workType', WORK_TYPES, 'workType', true);
       }
 
 
+      // 次の訪問（その場で約束した分）。入力に不備があればここで止める
+      const nextVisit = getNextVisit();
+      if (nextVisit === 'NG') return;
+
       btn.disabled = true; btn.textContent = '送信中...';
 
       const entry = {
@@ -989,7 +1071,8 @@ workType: state.workType.join('、'),
           var memo = document.getElementById('remarks').value.trim();
           return matter ? (memo ? matter + ' / ' + memo : matter) : memo;
         })(),
-        photos: state.photos
+        photos: state.photos,
+        nextVisit: nextVisit || null
       };
 
       try {

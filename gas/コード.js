@@ -495,6 +495,17 @@ function doPost(e) {
 
     sheet.appendRow(rowData);
 
+    // ★訪問先で次の約束をしたら、受注日報＋カレンダーに入れる
+    if (data.nextVisit) {
+      try {
+        次の訪問を登録する_(data.nextVisit, {
+          date: data.date, staff: data.staff, visitName: data.visitName
+        });
+      } catch (nvErr) {
+        try { sheet.appendRow(['次の訪問エラー', new Date(), String(nvErr)]); } catch (e4) {}
+      }
+    }
+
     // ★銘板写真は裏でAIに読ませて「保有家電」に貯める（送信を待たせない）
     if (meibanPhotos.length) {
       try { queueMeiban_(data.visitName, data.staff, meibanPhotos); }
@@ -651,6 +662,74 @@ function buildNippoSummaryText_(ymd) {
   var mdLabel = (d.getMonth() + 1) + '月' + d.getDate() + '日(' + wd + ')';
   return '📋【業務日報まとめ】' + mdLabel + '（' + lines.length + '件）\n\n' +
     lines.map(function(t, i) { return (i + 1) + '. ' + t; }).join('\n');
+}
+
+/**
+ * 日報で「次の訪問」を約束したとき、受注日報に1行足して担当者のカレンダーにも入れる。
+ * 点検の最中に「冷蔵庫が壊れたから見に来て」と言われる場面のための入口。
+ * 受注日報と同じ表に書くので、あとの流れ（完了・集計）は今までどおり。
+ */
+function 次の訪問を登録する_(nv, base) {
+  if (!nv || !nv.訪問日時 || !nv.訪問担当メール || !nv.予定時間) return '';
+  var eventId = '';
+
+  /* 1. カレンダーに入れる */
+  try {
+    var cal = CalendarApp.getCalendarById(nv.訪問担当メール);
+    if (cal) {
+      var st = new Date(String(nv.訪問日時).replace(/-/g, '/'));
+      var hm = String(nv.予定時間).match(/(\d+(\.\d+)?)/);
+      var hours = hm ? parseFloat(hm[1]) : 1;
+      var en = new Date(st.getTime() + hours * 60 * 60 * 1000);
+      if (!isNaN(st.getTime())) {
+        var title = base.visitName + ' 様' + (nv.内容 ? ' - ' + nv.内容 : '');
+        var desc = ['【顧客名】 ' + base.visitName + ' 様',
+                    '【受注種類】 訪問先で約束'];
+        if (nv.内容) desc.push('【内容】 ' + nv.内容);
+        desc.push('---');
+        desc.push('業務日報から登録（' + base.staff + ' / ' + base.date + '）');
+        var ev = cal.createEvent(title, st, en, { description: desc.join('\n') });
+        eventId = ev.getId();
+      }
+    }
+  } catch (calErr) {
+    try {
+      var dbg = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('デバッグ')
+             || SpreadsheetApp.getActiveSpreadsheet().insertSheet('デバッグ');
+      dbg.appendRow([new Date(), '次の訪問カレンダーエラー', base.visitName, nv.訪問担当メール, calErr.toString()]);
+    } catch (e2) {}
+  }
+
+  /* 2. 受注日報の表に1行足す（列の並びは受注日報アプリと同じ） */
+  try {
+    var jss = SpreadsheetApp.openById('1Cg5FACS_HqpAlchsU6O4ansNHc7GO_FOWAYhpX_72_w');
+    var jsh = jss.getSheetByName('受注日報シート') || jss.getSheetByName('受注表')
+           || jss.getSheetByName('受注日報') || jss.getSheets()[0];
+    if (jsh) {
+      jsh.appendRow([
+        base.date,                                                   // 日付
+        Utilities.formatDate(new Date(), 'Asia/Tokyo', 'HH:mm'),     // 時刻
+        base.staff,                                                  // 担当（受けた人）
+        '訪問',                                                       // 種類
+        base.visitName,                                              // 顧客名
+        '', '',                                                       // 住所・電話（日報にはない）
+        '', '', '', '',                                               // サービス種別〜商品詳細
+        nv.訪問日時,                                                  // 訪問日時
+        nv.訪問担当,                                                  // 訪問担当
+        nv.予定時間,                                                  // 予定時間
+        nv.内容 || '',                                                // 内容
+        '',                                                           // 見込み商品
+        eventId                                                       // カレンダーID
+      ]);
+    }
+  } catch (jErr) {
+    try {
+      var dbg2 = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('デバッグ')
+              || SpreadsheetApp.getActiveSpreadsheet().insertSheet('デバッグ');
+      dbg2.appendRow([new Date(), '次の訪問 受注表エラー', base.visitName, '', jErr.toString()]);
+    } catch (e3) {}
+  }
+  return eventId;
 }
 
 // 受注日報スプレッドシートの集計（件数・担当別）。読めなければ ok:false
