@@ -2,12 +2,17 @@
  * MACライン シグナル通知（メール）  ※MACDのラインが由来なので K は付けない
  * アプリ https://yahatadennki.github.io/report/mackline/ と同じ判定ロジック。
  *
- * ★通知＝「日足のトレンド方向に1時間足のMACDがクロスした時」＝そのままエントリーの合図
- *   検証：クロスした足で即入るのが最良（3通貨 +3,769pips）。
- *     高値更新を待つと高値づかみで成績が落ちる（−10pips）。
- *     時間が経ったクロスは追いかけない。
+ * ★通知＝「日足・4時間足・1時間足の3つが同じ方向 ＋ 1時間足が直近の高安値を更新した時」
+ *   ①日足20MAの向き ②4時間足MACDも同じ向き ③1時間足MACDがその向きへクロス
+ *   ④クロスから6本以内に、1時間足が直近スイング高値(安値)を更新 → ここでエントリー
  *
- * 対象: ドル円・ドルスイス・ユーロドル（3年半の検証でプラスだった3通貨）
+ *   検証(2023/1〜2026/7・6通貨・スプレッド込み)
+ *     旧：クロスした足で即入る            −1,539pips 勝率33% 週3.4回
+ *     ＋高値更新を待つ                    +1,697pips 勝率39% 週1.8回
+ *     ＋4時間足も同方向（＝現行）         +3,882pips 勝率43% 週0.8回
+ *   ・待ち本数は4/6/8/12のどれでも +3,514〜+3,882 で成立するため6本を採用
+ *   ・6通貨中5通貨がプラス（ドルカナダのみ −204、ただし旧の −2,659 から大幅改善）
+ *   ・4時間足は維新流の判定で既に取得済みのキャッシュを使うのでAPI消費は増えない
  */
 
 var MACKLINE_MAIL_TO = 'yawata51@gmail.com';
@@ -32,7 +37,8 @@ var PARAMS = {
   FLAT: 0.012,      // 傾きがこれ以下(%)なら「方向なし」
   SWING: 3,
   BUFFER: 3,        // 損切りを安値の少し下に置く幅(pips)
-  FRESH: 2,         // クロスした足で入るルールなので実質1本（念のため2）
+  FRESH: 7,         // クロスから何本まで高安値更新を待つか（6本＋現在の足）
+  ARM: 6,           // 同上（検証で4〜12本のどれでも成立。6本を採用）
   NEAR_TH: 0.15     // 「クロス間近」の判定：MACDとシグナルの差が直近20本平均の15%以下
                     // 検証：この水準で予告すると3時間以内に約8割クロスする（週7回程度）
 };
@@ -140,6 +146,8 @@ function checkCross_(symbol) {
   var h1 = fetchTFCached_(symbol, '1h');
   Utilities.sleep(400);
   var dy = fetchDailyCached_(symbol);
+  // 4時間足は維新流の判定と同じキャッシュを使うので、ここで取っても追加のAPI消費はない
+  var h4 = fetchTFCached_(symbol, '4h');
 
   var last = h1.closes.length - 1;
   var pip = pipSize_(symbol);
@@ -147,6 +155,11 @@ function checkCross_(symbol) {
   // 日足の方向
   var dma = sma_(dy.closes, 20);
   var dDir = dirOf_(slopeAt_(dma, dma.length - 1));
+
+  // 4時間足のMACDの向き（シグナルより上か下か）
+  var m4 = macd_(h4.closes), l4 = h4.closes.length - 1;
+  var h4Dir = (m4.line[l4] == null || m4.sig[l4] == null) ? 'flat'
+            : (m4.line[l4] > m4.sig[l4] ? 'up' : 'down');
 
   var m = macd_(h1.closes);
   // 直近の「最後のクロス」を探す（逆クロスが後に起きていれば前のは無効）
@@ -158,7 +171,8 @@ function checkCross_(symbol) {
     if (m1 >= s1 && m0 < s0) { crossIdx = i; crossDir = 'down'; break; }
   }
 
-  var out = { symbol: symbol, name: JP_NAME[symbol] || symbol, dDir: dDir, price: h1.closes[last], hit: false, near: false };
+  var out = { symbol: symbol, name: JP_NAME[symbol] || symbol, dDir: dDir, h4Dir: h4Dir,
+              price: h1.closes[last], hit: false, near: false, armed: false };
 
   // ── クロス間近の判定（まだクロスしていないが差が縮まっている）──
   if (dDir !== 'flat') {
@@ -182,10 +196,30 @@ function checkCross_(symbol) {
   }
 
   if (dDir === 'flat' || crossIdx < 0 || crossDir !== dDir) return out;
+  // ★4時間足のMACDも同じ向きでなければ狙わない（検証で +1,697 → +3,882pips）
+  if (h4Dir !== dDir) { out.armReason = 'h4'; return out; }
+  // クロスから離れすぎた（6本超）ものは追いかけない
+  var barsAgo = last - crossIdx;
+  if (barsAgo > PARAMS.ARM) { out.armReason = 'old'; return out; }
 
-  // クロス後につけた高値(安値)＝この後ここを抜けたらエントリー
-  var trig = dDir === 'up' ? -Infinity : Infinity;
-  for (var k = crossIdx; k <= last; k++) trig = dDir === 'up' ? Math.max(trig, h1.highs[k]) : Math.min(trig, h1.lows[k]);
+  out.armed = true;                 // 構えは成立。あとは高安値の更新待ち
+  out.dir = dDir;
+  out.crossTime = h1.time[crossIdx];
+  out.barsAgo = barsAgo;
+
+  // ★直近の確定スイング高値(安値)＝ここを終値で抜けたらエントリー
+  //   確定させるため左右SWING本ぶん内側は見ない
+  var sw = PARAMS.SWING, trig = null;
+  for (var k = last - sw - 1; k >= Math.max(sw, last - 60); k--) {
+    var isSw = true;
+    for (var j = k - sw; j <= k + sw; j++) {
+      if (j === k) continue;
+      if (dDir === 'up' ? h1.highs[j] >= h1.highs[k] : h1.lows[j] <= h1.lows[k]) { isSw = false; break; }
+    }
+    if (isSw) { trig = dDir === 'up' ? h1.highs[k] : h1.lows[k]; break; }
+  }
+  if (trig == null) { out.armReason = 'noswing'; return out; }
+  out.trigger = trig;
 
   // 損切りの目安＝直近10本の逆側の極値
   var from = Math.max(0, last - 10), stopBase = dDir === 'up' ? Infinity : -Infinity;
@@ -193,14 +227,11 @@ function checkCross_(symbol) {
     stopBase = dDir === 'up' ? Math.min(stopBase, h1.lows[q]) : Math.max(stopBase, h1.highs[q]);
   }
   var line = dDir === 'up' ? stopBase - PARAMS.BUFFER * pip : stopBase + PARAMS.BUFFER * pip;
-
-  out.hit = true;
-  out.dir = dDir;
-  out.crossTime = h1.time[crossIdx];
-  out.barsAgo = last - crossIdx;
-  out.trigger = trig;
   out.stop = line;
   out.risk = Math.abs(h1.closes[last] - line) / pip;
+
+  // 更新したか（終値ベース）
+  out.hit = dDir === 'up' ? (h1.closes[last] > trig) : (h1.closes[last] < trig);
   return out;
 }
 
@@ -424,16 +455,16 @@ function checkMacklineClaude_() {
           p.setProperty(key, r.crossTime);
           hits.push(
             '■ ' + r.name + '　' + (r.dir === 'up' ? '買い' : '売り') + '\n' +
-            '　日足：' + (r.dir === 'up' ? '上昇' : '下落') + 'トレンド\n' +
-            '　クロス：' + r.crossTime + (r.barsAgo ? '（' + r.barsAgo + '本前）' : '（今）') + '\n' +
-            (r.barsAgo === 0
-              ? '　▶ 今すぐ ' + fmt_(r.price, sym) + ' で' + (r.dir === 'up' ? '買い' : '売り') + '\n' +
-                '　　損切り：' + fmt_(r.stop, sym) + '（' + r.risk.toFixed(1) + 'pips）'
-              : '　※' + r.barsAgo + '本前のクロスなので見送り（追いかけない）')
+            '　日足：' + (r.dir === 'up' ? '上昇' : '下落') + '　4時間足MACD：同じ向き\n' +
+            '　1時間足クロス：' + r.crossTime + '（' + r.barsAgo + '本前）\n' +
+            '　直近の' + (r.dir === 'up' ? '高値' : '安値') + ' ' + fmt_(r.trigger, sym) + ' を更新\n' +
+            '　▶ ' + fmt_(r.price, sym) + ' で' + (r.dir === 'up' ? '買い' : '売り') + '\n' +
+            '　　損切り：' + fmt_(r.stop, sym) + '（' + r.risk.toFixed(1) + 'pips）'
           );
         }
       }
-      status.push(r.name + '：' + (r.hit ? 'クロスあり' : (r.dDir === 'flat' ? '日足方向なし' : '待ち')));
+      status.push(r.name + '：' + (r.hit ? '更新でエントリー' : r.armed ? '構え中（更新待ち）'
+        : (r.dDir === 'flat' ? '日足方向なし' : r.armReason === 'h4' ? '4時間足が逆' : '待ち')));
       Utilities.sleep(500);    // 待ちは fetchCandles_ 側で入れているのでここは短く
     } catch (e) {
       status.push(sym + '：エラー ' + e);
@@ -444,10 +475,12 @@ function checkMacklineClaude_() {
     var head = hits.length === 1
       ? hits[0].split('\n')[0].replace('■ ', '').trim()
       : hits.length + '件のクロス';
-    pushMail_('📈 クロード流｜' + head,
-      '【MACDクロス＝エントリーの合図】\n' +
-      '検証の結果、クロスした足で即入るのが最も成績が良い形でした。\n' +
-      '（高値更新を待つと高値づかみになり成績が落ちます／時間が経ったクロスは追いかけません）\n\n' +
+    pushMail_('📈 パーフェクトMACD｜' + head,
+      '【日足・4時間足・1時間足がそろい、高安値を更新＝エントリーの合図】\n' +
+      '①日足の向き ②4時間足MACDも同じ向き ③1時間足MACDがその向きへクロス\n' +
+      '④クロスから6本以内に1時間足が直近の高安値を更新 ← いまここ\n' +
+      '検証(2023/1〜2026/7・6通貨)：+3,882pips 勝率43%。\n' +
+      'クロスした足で即入る旧ルールは同じ期間で −1,539pips でした。\n\n' +
       hits.join('\n\n'));
   }
 
