@@ -497,23 +497,68 @@ function renderPhoneStaff(show) {
   ).join('');
   area.innerHTML =
     '<div class="bg-green-50 border-2 border-green-200 rounded-lg p-3 mt-1">' +
-    '<p class="text-xs font-semibold text-green-700 mb-2">📅 誰のカレンダーに入れますか？（選ぶと自動送信します）</p>' +
+    '<p class="text-xs font-semibold text-green-700 mb-2">📅 誰のカレンダーに入れますか？</p>' +
     '<div class="grid grid-cols-4 gap-2">' + btns + '</div>' +
+    '<div id="phoneNaiyoArea" class="hidden mt-3">' +
+      '<label class="block text-xs font-semibold text-green-700 mb-1">📝 何の件で連絡しますか？</label>' +
+      '<textarea id="電話内容" rows="2" class="w-full p-2 border-2 border-green-300 rounded-lg text-sm focus:border-green-500 focus:outline-none" placeholder="例：エアコンの調子を見てほしい／見積の相談"></textarea>' +
+      '<div class="grid grid-cols-2 gap-2 mt-2">' +
+        '<button onclick="sendPhoneContact()" class="p-2 rounded-lg bg-green-600 text-white font-bold text-sm">この内容で送信</button>' +
+        '<button onclick="cancelPhoneStaff()" class="p-2 rounded-lg border-2 border-gray-300 font-semibold text-sm">選び直す</button>' +
+      '</div>' +
+    '</div>' +
     '</div>';
 }
 
+let phoneStaffPicked = '';
+
+/* 担当者を選んだら、まず内容を書いてもらう（すぐには送らない） */
 function selectPhoneStaffAndSend(name) {
   const custEl = document.getElementById('顧客名');
   const rawName = (custEl && custEl.value || '').replace(/^☎】/, '').trim();
   if (!rawName) { alert('先に顧客名を入力してください'); return; }
-  // 受注担当者を選択
-  document.querySelectorAll('.staff-btn').forEach(b => { if (b.dataset.name === name) selectStaff(b); });
+
+  phoneStaffPicked = name;
+  document.querySelectorAll('#phoneStaffArea .btn-select').forEach(b => {
+    b.classList.toggle('ring-4', b.textContent === name);
+    b.classList.toggle('ring-green-400', b.textContent === name);
+  });
+  const area = document.getElementById('phoneNaiyoArea');
+  if (area) {
+    area.classList.remove('hidden');
+    const t = document.getElementById('電話内容');
+    if (t) { t.value = document.getElementById('内容').value || ''; t.focus(); }
+  }
+}
+
+/* 「選び直す」 */
+function cancelPhoneStaff() {
+  phoneStaffPicked = '';
+  const area = document.getElementById('phoneNaiyoArea');
+  if (area) area.classList.add('hidden');
+  document.querySelectorAll('#phoneStaffArea .btn-select').forEach(b => {
+    b.classList.remove('ring-4', 'ring-green-400');
+  });
+}
+
+/* 内容を入れてから送信する */
+function sendPhoneContact() {
+  if (!phoneStaffPicked) { alert('担当者を選んでください'); return; }
+  const t = document.getElementById('電話内容');
+  const naiyo = (t && t.value || '').trim();
+  if (!naiyo) { alert('連絡する内容を入れてください'); if (t) t.focus(); return; }
+
+  document.getElementById('内容').value = naiyo;   // 受注内容として保存＆カレンダーに載る
+  document.querySelectorAll('.staff-btn').forEach(b => {
+    if (b.dataset.name === phoneStaffPicked) selectStaff(b);
+  });
   // 受注種類が未選択なら「電話」を自動選択
   if (!document.querySelector('.type-btn.active')) {
-    const t = document.querySelector('.type-btn[data-name="電話"]');
-    if (t) selectType(t);
+    const ty = document.querySelector('.type-btn[data-name="電話"]');
+    if (ty) selectType(ty);
   }
   handleAddOrder();
+  cancelPhoneStaff();
 }
 
 function selectQuickTemplate(name) {

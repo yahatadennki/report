@@ -471,7 +471,10 @@ function doPost(e) {
           const cleanName = String(data.顧客名 || '').replace(/^☎】/, '').trim();
           const base = new Date(String(data.日付 || '').replace(/-/g, '/') + ' 00:00:00');
           if (!isNaN(base.getTime())) {
-            const title = (data.区マーク || '') + '☎】' + cleanName + ' 様 電話連絡';
+            // 件名にも用件を入れる（カレンダーを開かなくても何の件か分かるように）
+            const youken = String(data.内容 || '').split(/[\r\n]/)[0].trim();
+            const title = (data.区マーク || '') + '☎】' + cleanName + ' 様 電話連絡'
+                        + (youken ? '（' + (youken.length > 20 ? youken.slice(0, 20) + '…' : youken) + '）' : '');
             const descParts = ['【電話連絡】 ' + cleanName + ' 様'];
             if (data.電話番号) descParts.push('【電話】 ' + data.電話番号);
             if (data.内容) descParts.push('【内容】 ' + data.内容);
