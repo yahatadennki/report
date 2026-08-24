@@ -985,6 +985,12 @@ createButtons('group-workType', WORK_TYPES, 'workType', true);
         alert('次の訪問は「日にち・時刻・誰が行く・予定時間」をすべて入れてください。\n入れないとカレンダーに入りません。');
         return 'NG';
       }
+      // エアコン点検は 午前9:30 / 午後13:30 の開始でお願いしている
+      if (ct.includes('エアコン点検') && ['09:30', '9:30', '13:30'].indexOf(t) < 0) {
+        if (!confirm('❄️ エアコン点検の開始時刻が ' + t + ' になっています。\n\n'
+                   + '点検は【午前は9時半から／午後は13時半から】でお願いしています。\n\n'
+                   + 'このまま登録するなら「OK」、直すなら「キャンセル」を押してください。')) return 'NG';
+      }
       const em = (NV_STAFF.find(x => x.name === st) || {}).email || '';
       return { 訪問日時: d + ' ' + t, 訪問担当: st, 訪問担当メール: em, 予定時間: hr, 内容: ct };
     }
