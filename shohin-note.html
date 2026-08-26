@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>商品ノート｜ヤハタ電機商会</title>
+<style>
+  :root{
+    --paper:#f4f7fa; --card:#ffffff; --ink:#1c2530; --ink-soft:#4a5a6a; --line:#d7e0e8;
+    --sun:#f0a500; --deep:#164a7a; --deep-bg:#e4eefa;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --paper:#10161d; --card:#1a2028; --ink:#e8edf2; --ink-soft:#a9b6c2; --line:#2c3844;
+           --deep:#8ec2ef; --deep-bg:#152a3d; }
+  }
+  :root[data-theme="dark"]{
+    --paper:#10161d; --card:#1a2028; --ink:#e8edf2; --ink-soft:#a9b6c2; --line:#2c3844;
+    --deep:#8ec2ef; --deep-bg:#152a3d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP","Meiryo",sans-serif;
+    line-height:1.75;padding:30px 16px 70px}
+  .wrap{max-width:900px;margin:0 auto}
+
+  .pt-head{background:linear-gradient(135deg,#1a3a5c 0%,#12283f 100%);color:#fff;border-radius:10px;
+    padding:26px 24px;margin-bottom:20px}
+  .pt-head .e{margin:0 0 6px;font-size:12px;letter-spacing:.16em;opacity:.78}
+  .pt-head h1{margin:0 0 6px;font-size:24px}
+  .pt-head .s{margin:0;font-size:13.5px;opacity:.9}
+
+  .how{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--sun);
+    border-radius:10px;padding:16px 20px;margin-bottom:16px}
+  .how p{margin:0 0 7px;font-size:14px}
+  .how p:last-child{margin:0}
+  .how b{color:var(--ink)}
+
+  .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 0}
+  .btn{font-family:inherit;font-size:15px;font-weight:700;padding:12px 24px;border:none;
+    border-radius:9px;background:var(--deep);color:#fff;cursor:pointer}
+  .btn.sub{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+
+  /* ===== 印刷する用紙 ===== */
+  .sheet{background:#fff;color:#222;max-width:210mm;margin:26px auto 0;padding:12mm 11mm;
+    border:1px solid var(--line);border-radius:6px;box-shadow:0 2px 14px rgba(0,0,0,.08)}
+  .sheet .hd{display:flex;justify-content:space-between;align-items:flex-end;
+    border-bottom:3px solid #164a7a;padding-bottom:7px;margin-bottom:10px}
+  .sheet .hd h2{margin:0;font-size:20px;color:#1c2530}
+  .sheet .hd .co{font-size:11.5px;color:#555;text-align:right;line-height:1.6}
+  .meta{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;margin:0 0 10px}
+  .meta span{display:flex;align-items:flex-end;gap:6px}
+  .meta i{font-style:normal;color:#164a7a;font-weight:700;flex:0 0 auto}
+  .meta u{text-decoration:none;border-bottom:1px solid #888;display:inline-block;min-width:120px;height:20px}
+
+  table{width:100%;border-collapse:collapse;table-layout:fixed}
+  th,td{border:1px solid #999;padding:5px 7px;font-size:12px;vertical-align:top}
+  th{background:#e4eefa;color:#164a7a;font-size:11.5px;text-align:left}
+  td{height:23mm}
+  .cap{font-size:11px;color:#555;margin:8px 0 0}
+  .cap b{color:#164a7a}
+
+  @media print{
+    @page{size:A4 portrait;margin:10mm}
+    body{background:#fff;padding:0}
+    .screen-only{display:none !important}
+    .sheet{max-width:none;margin:0;padding:0;border:none;border-radius:0;box-shadow:none}
+    table{page-break-inside:auto}
+    tr{page-break-inside:avoid}
+    th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .sheet .hd{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap screen-only">
+
+  <div class="pt-head">
+    <p class="e">圧倒的な商品知識をつくる</p>
+    <h1>商品ノート</h1>
+    <p class="s">読むだけでは残りません。1台ずつ、自分の言葉で書く。</p>
+  </div>
+
+  <div class="how">
+    <p><b>1日1台でいい。</b>カタログを開いて、端から順に。売れる・売れないは考えません。<b>そのテーマの商品を、残らず</b>書き出します。</p>
+    <p><b>書くのは4つだけ。</b>商品名／この1台の売り／上との違い（値段の理由）／こんな人に。長い文章は要りません。</p>
+    <p><b>週に一度、朝礼で1台えらんで話す。</b>書いて終わりにしないための場です。話せたら、その1台は身についたということ。</p>
+  </div>
+
+  <div class="btnrow">
+    <button class="btn" onclick="window.print()">🖨️ この用紙を印刷する</button>
+    <button class="btn sub" onclick="location.href='jinzai-service.html'">← サービススタッフに求めることへ</button>
+  </div>
+
+</div>
+
+<!-- ===== 印刷される用紙 ===== -->
+<div class="sheet">
+
+  <div class="hd">
+    <h2>商品ノート</h2>
+    <div class="co">㈲ヤハタ電機商会<br>圧倒的な商品知識をつくるシート</div>
+  </div>
+
+  <div class="meta">
+    <span><i>テーマ</i><u></u></span>
+    <span><i>お名前</i><u></u></span>
+    <span><i>日付</i><u></u></span>
+    <span><i>枚数</i><u style="min-width:60px"></u></span>
+  </div>
+
+  <table>
+    <colgroup>
+      <col style="width:23%"><col style="width:26%"><col style="width:26%"><col style="width:25%">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>商品名（型番）</th>
+        <th>この1台の売り（ひとつ）</th>
+        <th>ひとつ上との違い＝値段の理由</th>
+        <th>こんな人に</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <p class="cap"><b>まずは全部。</b>そのテーマの現行商品を、カタログの端から端まで。売れ筋を選ぶのはあとの話です。／<b>週に一度、朝礼で1台。</b>書いた中から選んで、自分の言葉で話してください。</p>
+
+</div>
+
+</body>
+</html>
