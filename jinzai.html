@@ -78,6 +78,21 @@
 
   .back{display:inline-block;margin-top:26px;font-size:14px;color:var(--ink-soft);text-decoration:none}
   .back:hover{text-decoration:underline}
+  .order{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+  .order .o{flex:1 1 120px;background:var(--card);border:1px solid var(--line);border-radius:10px;
+    padding:10px 12px;text-align:center}
+  .order .o .n{display:block;font-size:11px;color:var(--ink-soft);letter-spacing:.1em}
+  .order .o .t{display:block;font-size:16px;font-weight:700;margin-top:2px}
+  .steps4{counter-reset:st;margin:0 0 12px}
+  .steps4 .s{background:var(--card);border:1px solid var(--line);border-radius:10px;
+    padding:12px 16px;margin-bottom:8px;display:flex;gap:12px;align-items:flex-start}
+  .steps4 .s .k{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--deep);
+    color:var(--card);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .steps4 .s .b{flex:1 1 auto;min-width:0}
+  .steps4 .s h4{margin:1px 0 4px;font-size:15px}
+  .steps4 .s p{margin:0;font-size:13px;color:var(--ink-soft)}
+  .clear{background:var(--deep-bg);border-left:6px solid var(--deep);border-radius:10px;
+    padding:12px 16px;font-size:13.5px;margin:0 0 4px}
 </style>
 </head>
 <body>
@@ -142,7 +157,23 @@
     </div>
   </div>
 
-  <p style="margin:2px 0 0;font-size:13px;color:var(--ink-soft)">※「何ができたら身についた」と言えるかの基準は、これから決めます。まずは言葉として持っておいてください。</p>
+  <div class="order">
+    <div class="o"><span class="n">STEP 1</span><span class="t">名前</span></div>
+    <div class="o"><span class="n">STEP 2</span><span class="t">置き場所</span></div>
+    <div class="o"><span class="n">STEP 3</span><span class="t">使い方</span></div>
+    <div class="o"><span class="n">STEP 4</span><span class="t">拾える</span></div>
+  </div>
+
+  <p style="margin:-6px 0 14px;font-size:13px;color:var(--ink-soft)">道具から始めて、材料へ。材料は<b>エアコンから</b>覚えると、いちばん早く役に立ちます。</p>
+
+  <div class="steps4">
+    <div class="s"><span class="k">1</span><div class="b"><h4>名前が言える</h4><p>先輩に「あれ取って」と言われて、迷わず取れる状態。まずはここからです。</p></div></div>
+    <div class="s"><span class="k">2</span><div class="b"><h4>置き場所が分かる</h4><p>車と店の、どこに何があるか。<b>使ったら戻せる</b>ところまでが置き場所です。</p></div></div>
+    <div class="s"><span class="k">3</span><div class="b"><h4>正しく使える</h4><p>使い方と、やってはいけない使い方が言える。道具を壊さない人が、道具に助けてもらえます。</p></div></div>
+    <div class="s"><span class="k">4</span><div class="b"><h4>材料が一人で拾える</h4><p>エアコン1台分の材料を、指示なしで用意できる。ここまで来ると<b>段取りが読めます</b>＝約束の日時が守れます。</p></div></div>
+  </div>
+
+  <p class="clear"><b>4つできたら、道具と材料はクリア。</b>次はエアコン以外の材料（アンテナ・配線・配管）へ広げていきます。</p>
 
   <div class="note">
     <p><b>この3つは、評価のための項目ではありません。</b>できているかを点数にして給料を決めるものではなく、いっしょに働くうえでの土台です。</p>
