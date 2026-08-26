@@ -345,7 +345,8 @@ function macd9_(c) {
 // ===== メール送信 =====
 // 送信元を特定するための印。このスクリプトから出たメールには必ず末尾に付く。
 //   印が無いメールが届いたら、それは別のスクリプトが送っている。
-var MAIL_TAG = '[src:himawari-gas/mackline.js 2026-08-11]';
+// ★このファイルから送ったメールか判別するための印。仕様を変えたら日付も変える
+var MAIL_TAG = '[src:himawari-gas/mackline.js 2026-08-25 パーフェクトMACD版]';
 
 function pushMail_(subject, text) {
   MailApp.sendEmail({
