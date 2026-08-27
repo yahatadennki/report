@@ -493,18 +493,35 @@ function checkMacklineClaude_() {
   return status.join(' / ');
 }
 
-// ── 逆張り（ドル円のみ）：日足に逆らう方向へMACDが転換し、その後1時間足の高安値を更新したら知らせる ──
-//   検証(2024-01〜2026-07・スプレッド0.5込み)：175件 勝率47% PF1.37 最大DD616 +2,178pips
-//   ・年別 +1,281 / +737 / +160 と直近3年すべてプラス
-//   ・待ち本数は6/12/24本のどれでも成立（+1,491〜+2,178）。ここでは12本を採用
-//   ・利確は損切り幅×1.5が最良。トレーリングはドル円だけ良く他5通貨で全滅したため使わない
-var REV_PAIR = 'USD/JPY';
+// ── 逆張り：日足に逆らう方向へMACDが転換し、その後1時間足の高安値を更新したら知らせる ──
+//   検証(2023-01〜2026-07・実スプレッド込み。逆指値は成行より有利に約定しない前提で計算)
+//     ユーロ円   273件 勝率44% PF1.22 +1,885  年 +798/+678/-90/+499
+//     ポンドドル 200件 勝率43% PF1.23 +1,035  年 -105/-125/+398/+867
+//     ドル円     167件 勝率41% PF1.11   +677  年   +0/+934/-130/-127
+//     ドルスイス 194件 勝率45% PF1.21   +629  年 +228/+125/+75/+200 ← 4年とも黒字で最も安定
+//     （除外）ユーロドル PF0.88 -907 ／ ドルカナダ PF0.97 -595
+//   ※旧コメントの「勝率47% +2,178pips」は約定を甘く見ていた頃の数字。上が訂正後
+//   ・待ち本数は6/12/24本のどれでも成立。ここでは12本を採用
+//   ・利確は損切り幅×1.5。トレーリングは他通貨で全滅したため使わない
+//   ・1時間足と日足はパーフェクトMACDと同じキャッシュを使うのでAPI消費は増えない
+var REV_PAIRS = ['EUR/JPY', 'GBP/USD', 'USD/JPY', 'USD/CHF'];
 var REV_WAIT_BARS = 12;      // クロスから1時間足で何本まで更新を待つか
 var REV_TP_RATIO  = 1.5;     // 利確＝損切り幅×これ
 
 function checkMacklineReverse_() {
+  var out = [];
+  REV_PAIRS.forEach(function(sym) {
+    try { out.push(JP_NAME[sym] + (String.fromCharCode(65306)) + checkReverseOne_(sym)); }
+    catch (e) { out.push(JP_NAME[sym] + (String.fromCharCode(65306)) + e); }
+    Utilities.sleep(300);
+  });
+  return out.join(String.fromCharCode(12288));
+}
+
+// 1通貨ぶんの逆張り判定
+function checkReverseOne_(sym) {
   var p = PropertiesService.getScriptProperties();
-  var sym = REV_PAIR, name = JP_NAME[sym] || sym, pip = pipSize_(sym);
+  var name = JP_NAME[sym] || sym, pip = pipSize_(sym);
   var key = 'REV_ARM_' + sym.replace('/', '');
 
   var h1 = fetchTFCached_(sym, '1h');       // パーフェクトMACDと同じキャッシュを使うので追加取得なし
@@ -536,7 +553,7 @@ function checkMacklineReverse_() {
       pushMail_('🔄 1時間足の転換｜' + name + '　' + (arm.dir === 'up' ? '買い' : '売り') + '　高安値を更新',
         '【日足には逆行、1時間足には順行するサインです】\n' +
         'MACDが転換し、その方向の直近高安値も更新しました。1時間足の勢いには乗っています。\n' +
-        '検証(2024-01〜2026-07)：勝率47%・PF1.37・+2,178pips。利確は損切り幅の1.5倍。\n' +
+        '検証(2023-01〜2026-07・ユーロ円/ポンドドル/ドル円/ドルスイスの4通貨計)：勝率41〜45%・+4,226pips。利確は損切り幅の1.5倍。\n' +
         '※日足のトレンドには逆らうので、パーフェクトMACDと反対のポジションになる場面があります。\n\n' +
         '■ ' + name + '　' + (arm.dir === 'up' ? '買い' : '売り') + '\n' +
         '　日足：' + (dDir === 'up' ? '上昇' : dDir === 'down' ? '下落' : '方向なし') + '（これに逆らう方向）\n' +
