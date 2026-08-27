@@ -25,7 +25,7 @@ var MACKLINE_MODE = 'ishin';
 //     3年半の検証（スプレッド込み）：ドル円 PF1.85 +1,916 ／ ユーロ円 PF1.14 +329
 //     ユーロドル PF0.99 −97 ／ ポンドドル PF0.99 −156 ／ ドルカナダ PF0.91 −378 ／ ドルスイス PF0.84 −573
 //     ※単体でプラスなのはドル円とユーロ円だけ。他4通貨は参考として通知する
-//   クロード流 : 同じ6通貨。3年半の検証（スプレッド込み）
+//   パーフェクトMACD : 同じ6通貨。3年半の検証（スプレッド込み）
 //     ドル円 PF1.32 +2,615 ／ ユーロドル PF1.20 +1,242 ／ ドルスイス PF1.14 +55
 //     ポンドドル PF1.03 −270 ／ ユーロ円 PF1.01 −459 ／ ドルカナダ PF0.90 −1,785
 //     ※単体でプラスなのはドル円・ユーロドル・ドルスイス
@@ -374,7 +374,7 @@ function marketOpen_() {
 }
 
 // ===== メイン：15分ごとに実行。日足方向のクロスが出たら知らせる =====
-// ★両モードを毎回チェックする（維新流＝ドル円 / クロード流＝ドル円・ユーロドル・ドルスイス）
+// ★両モードを毎回チェックする（維新流／パーフェクトMACD とも6通貨）
 function checkMackline() {
   // 相場が閉まっている間は判定もメール送信もしない（土日に通知が飛ぶのを防ぐ）
   if (!marketOpen_()) {
@@ -384,9 +384,9 @@ function checkMackline() {
 
   var a = '', b = '', c = '';
   try { a = checkMacklineIshin_(); }   catch (e) { a = '維新流エラー ' + e; }
-  try { b = checkMacklineClaude_(); }  catch (e) { b = 'クロード流エラー ' + e; }
+  try { b = checkMacklineClaude_(); }  catch (e) { b = 'パーフェクトMACDエラー ' + e; }
   try { c = checkMacklineReverse_(); } catch (e) { c = '逆張りエラー ' + e; }
-  return '【維新流】' + a + '　／　【クロード流】' + b + '　／　【逆張り(ドル円)】' + c;
+  return '【維新流】' + a + '　／　【パーフェクトMACD】' + b + '　／　【逆張り(ドル円)】' + c;
 }
 
 // ── 維新流モード（既定）：準備(SETUP)と確定(ENTRY)で知らせる ──
@@ -428,7 +428,7 @@ function checkMacklineIshin_() {
   return status.join(' / ');
 }
 
-// ── クロード流モード：MACDクロスで即入る ──
+// ── パーフェクトMACDモード：日足・4時間足・1時間足がそろって高安値更新 ──
 function checkMacklineClaude_() {
   var p = PropertiesService.getScriptProperties();
   var hits = [], nears = [], status = [];
@@ -507,7 +507,7 @@ function checkMacklineReverse_() {
   var sym = REV_PAIR, name = JP_NAME[sym] || sym, pip = pipSize_(sym);
   var key = 'REV_ARM_' + sym.replace('/', '');
 
-  var h1 = fetchTFCached_(sym, '1h');       // クロード流と同じキャッシュを使うので追加取得なし
+  var h1 = fetchTFCached_(sym, '1h');       // パーフェクトMACDと同じキャッシュを使うので追加取得なし
   var dy = fetchDailyCached_(sym);
   var last = h1.closes.length - 1;
   var dma = sma_(dy.closes, 20);
@@ -537,7 +537,7 @@ function checkMacklineReverse_() {
         '【日足には逆行、1時間足には順行するサインです】\n' +
         'MACDが転換し、その方向の直近高安値も更新しました。1時間足の勢いには乗っています。\n' +
         '検証(2024-01〜2026-07)：勝率47%・PF1.37・+2,178pips。利確は損切り幅の1.5倍。\n' +
-        '※日足のトレンドには逆らうので、クロード流と反対のポジションになる場面があります。\n\n' +
+        '※日足のトレンドには逆らうので、パーフェクトMACDと反対のポジションになる場面があります。\n\n' +
         '■ ' + name + '　' + (arm.dir === 'up' ? '買い' : '売り') + '\n' +
         '　日足：' + (dDir === 'up' ? '上昇' : dDir === 'down' ? '下落' : '方向なし') + '（これに逆らう方向）\n' +
         '　MACD転換：' + arm.crossTime + '\n' +
@@ -596,8 +596,8 @@ function テスト送信() {
     Utilities.sleep(500);    // 待ちは fetchCandles_ 側で入れているのでここは短く
   });
 
-  // ── クロード流（ドル円・ユーロドル・ドルスイス）──
-  out.push('◆ クロード流（MACDクロスで即入る）');
+  // ── パーフェクトMACD（6通貨）──
+  out.push('◆ パーフェクトMACD（日足・4時間足・1時間足がそろって高安値更新）');
   CLAUDE_PAIRS.forEach(function(sym) {
     try {
       var r = checkCross_(sym);
