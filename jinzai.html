@@ -93,6 +93,20 @@
   .steps4 .s p{margin:0;font-size:13px;color:var(--ink-soft)}
   .clear{background:var(--deep-bg);border-left:6px solid var(--deep);border-radius:10px;
     padding:12px 16px;font-size:13.5px;margin:0 0 4px}
+
+  /* 印刷 */
+  .print-btn{position:fixed;right:16px;bottom:16px;z-index:99;font-family:inherit;font-size:15px;
+    font-weight:700;padding:12px 22px;border:none;border-radius:999px;background:var(--deep);
+    color:#fff;box-shadow:0 3px 12px rgba(0,0,0,.25);cursor:pointer}
+  @media print{
+    @page{size:A4 portrait;margin:12mm 10mm}
+    body{background:#fff;padding:0}
+    .print-btn,.back{display:none !important}
+    .item,.root,.note,.clear,.steps4 .s,.order{page-break-inside:avoid}
+    h2.sec{page-break-after:avoid}
+    .pt-head,.item .no,.steps4 .s .k,.root,.order .o,.clear{
+      -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
 </style>
 </head>
 <body>
@@ -201,5 +215,6 @@
   <a class="back" href="keiei.html">← 経営ポータルへ戻る</a>
 
 </div>
+<button class="print-btn" onclick="window.print()">🖨️ 印刷する</button>
 </body>
 </html>
