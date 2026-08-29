@@ -55,6 +55,21 @@
   .ok{color:var(--ok);font-weight:700}
   .ng{color:var(--warn);font-weight:700}
 
+  .odr{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;
+    display:flex;gap:10px;align-items:center}
+  .odr .bd{flex:1 1 auto;min-width:0}
+  .odr .m{font-weight:700;font-size:14px}
+  .odr .s{font-size:12px;color:var(--soft);margin-top:2px}
+  .odr .x{flex:0 0 auto;font-family:inherit;font-size:13px;font-weight:700;
+    padding:8px 14px;border:1px solid var(--warn);border-radius:8px;
+    background:transparent;color:var(--warn)}
+  .odr .x:disabled{opacity:.4}
+  .odr .e{flex:0 0 auto;font-family:inherit;font-size:13px;font-weight:700;
+    padding:8px 12px;border:1px solid var(--line);border-radius:8px;
+    background:transparent;color:var(--soft)}
+  .kubun{display:inline-block;font-size:11px;font-weight:700;padding:1px 6px;
+    border-radius:4px;background:#fff3cd;color:#9a4a00;margin-left:6px}
+
   #pinGate{position:fixed;inset:0;z-index:9999;background:var(--paper);
     display:flex;align-items:center;justify-content:center;padding:20px}
   #pinGate.hidden{display:none}
@@ -111,6 +126,16 @@
   </div>
 
   <div class="card">
+    <h2>いま発注中のもの</h2>
+    <p class="note">
+      品番の読み違いや「誰の分か」は<b>「直す」</b>で直せます（在庫表にもすぐ反映します）。<br>
+      キャンセルしたものは<b>「取消」</b>を押してください。在庫表のマスも消えます。
+    </p>
+    <div id="orders">読み込み中…</div>
+    <button class="btn sub" onclick="loadOrders()">🔄 一覧を読み直す</button>
+  </div>
+
+  <div class="card">
     <h2>取り込んだあと</h2>
     <p class="note">
       納期が出た分は、エアコン在庫表に <b>「8/17入荷」</b> として自動で入ります（青いマス）。<br>
@@ -133,7 +158,7 @@ function checkPin(){
   if(v===PIN){try{localStorage.setItem(PKEY,'1')}catch(e){}reveal();}
   else document.getElementById('pinErr').textContent='PINが違います';
 }
-function reveal(){document.getElementById('pinGate').classList.add('hidden');}
+function reveal(){document.getElementById('pinGate').classList.add('hidden');loadOrders();}
 document.getElementById('pinInput').addEventListener('keydown',e=>{if(e.key==='Enter')checkPin()});
 try{if(localStorage.getItem(PKEY)==='1')reveal()}catch(e){}
 
@@ -170,6 +195,70 @@ function render(){
   document.getElementById('go').textContent=SHOTS.length?('取り込む（'+SHOTS.length+'枚）'):'取り込む';
 }
 
+/* いま発注中のもの（未入荷）を出す */
+function loadOrders(){
+  const box=document.getElementById('orders');
+  box.textContent='読み込み中…';
+  fetch(API+'?action=hacchulist')
+    .then(r=>r.json())
+    .then(d=>{
+      window.ORDERS=d.rows||[];
+      if(!d.ok||!d.rows.length){box.innerHTML='<p class="note">発注中のものはありません。</p>';return;}
+      box.innerHTML=d.rows.map(function(r){
+        const kb=r.kubun?'<span class="kubun">'+r.kubun+'</span>':'';
+        return '<div class="odr" id="odr'+r.row+'">'
+          +'<div class="bd"><div class="m">'+r.model+'　'+r.qty+'台'+kb+'</div>'
+          +'<div class="s">'+r.who+'　納期 '+r.noki+'</div></div>'
+          +'<button class="e" onclick="editOrder('+r.row+')">直す</button>'
+          +'<button class="x" onclick="cancelOrder('+r.row+',this)">取消</button></div>';
+      }).join('');
+    })
+    .catch(function(err){box.innerHTML='<span class="ng">読めませんでした</span>';});
+}
+
+/* 品番の読み違いや「誰の分か」を直す。照合キーも一緒に作り直すので二重にならない */
+function editOrder(row){
+  const r=(window.ORDERS||[]).find(x=>x.row===row);
+  if(!r)return;
+  const code=prompt('品番を直せます（そのままでOK）',r.code);
+  if(code===null)return;
+  const who=prompt('誰の分ですか？
+店の在庫にするときは「ザイコ」と入れてください',
+                   r.who==='自社'?'ザイコ':r.who);
+  if(who===null)return;
+  const box=document.getElementById('orders');
+  box.style.opacity='.5';
+  fetch(API+'?action=hacchuedit&row='+row
+        +'&code='+encodeURIComponent(code.trim())
+        +'&memo='+encodeURIComponent(who.trim()))
+    .then(x=>x.json())
+    .then(d=>{
+      box.style.opacity='1';
+      document.getElementById('log').innerHTML=
+        d.ok?('<span class="ok">'+d.msg+'</span>'):('<span class="ng">'+(d.msg||'できませんでした')+'</span>');
+      loadOrders();
+    })
+    .catch(err=>{box.style.opacity='1';alert('通信できませんでした');});
+}
+
+function cancelOrder(row,btn){
+  const el=document.getElementById('odr'+row);
+  const name=el.querySelector('.m').textContent+' / '+el.querySelector('.s').textContent;
+  if(!confirm('この発注をキャンセルにします。よろしいですか？
+
+'+name))return;
+  btn.disabled=true;btn.textContent='…';
+  fetch(API+'?action=hacchucancel&row='+row)
+    .then(r=>r.json())
+    .then(d=>{
+      if(!d.ok){btn.disabled=false;btn.textContent='取消';alert(d.msg||'できませんでした');return;}
+      el.remove();
+      const log=document.getElementById('log');
+      log.innerHTML='<span class="ok">'+d.msg+'</span>';
+    })
+    .catch(function(err){btn.disabled=false;btn.textContent='取消';alert('通信できませんでした');});
+}
+
 function send(){
   const go=document.getElementById('go'),log=document.getElementById('log');
   go.disabled=true;go.textContent='読み取り中…';
@@ -181,8 +270,10 @@ function send(){
       go.disabled=false;go.textContent='取り込む';
       if(!d.ok){log.innerHTML='<span class="ng">取り込めませんでした</span>\n'+(d.msg||'');return;}
       log.innerHTML='<span class="ok">取り込みました</span>\n'
-        +'読んだ行：'+d.read+'\n新しく追加：'+d.added+'\n納期などを更新：'+d.updated;
-      SHOTS=[];render();
+        +'読んだ行：'+d.read+'\n新しく追加：'+d.added+'\n納期などを更新：'+d.updated
+        +(d.kita?'\n届いたので入荷済にした：'+d.kita+'件':'')
+        +(d.kieta?'\n\n⚠️ 納期前なのに一覧から消えた発注が '+d.kieta+' 件あります。在庫表の確認欄で「キャンセルしましたか？」と聞きます。':'');
+      SHOTS=[];render();loadOrders();
     })
     .catch(err=>{
       go.disabled=false;go.textContent='取り込む';
