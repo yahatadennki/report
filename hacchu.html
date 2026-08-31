@@ -222,8 +222,7 @@ function editOrder(row){
   if(!r)return;
   const code=prompt('品番を直せます（そのままでOK）',r.code);
   if(code===null)return;
-  const who=prompt('誰の分ですか？
-店の在庫にするときは「ザイコ」と入れてください',
+  const who=prompt('誰の分ですか？（店の在庫にするときは「ザイコ」）',
                    r.who==='自社'?'ザイコ':r.who);
   if(who===null)return;
   const box=document.getElementById('orders');
@@ -244,9 +243,7 @@ function editOrder(row){
 function cancelOrder(row,btn){
   const el=document.getElementById('odr'+row);
   const name=el.querySelector('.m').textContent+' / '+el.querySelector('.s').textContent;
-  if(!confirm('この発注をキャンセルにします。よろしいですか？
-
-'+name))return;
+  if(!confirm('この発注をキャンセルにします。よろしいですか？　'+name))return;
   btn.disabled=true;btn.textContent='…';
   fetch(API+'?action=hacchucancel&row='+row)
     .then(r=>r.json())
