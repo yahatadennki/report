@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>育成ポータル｜ヤハタ電機商会</title>
+<style>
+  :root {
+    --paper:#f4f7fa; --card:#ffffff; --ink:#1c2530; --ink-soft:#4a5a6a; --line:#d7e0e8;
+    --sun:#f0a500;
+    --kj-bg:#e8f5e9;  --kj-fg:#2e7d32;
+    --sv-bg:#e4eefa;  --sv-fg:#164a7a;
+    --hm-bg:#fff3e0;  --hm-fg:#8a5a00;
+    --ts-bg:#e3f2ec;  --ts-fg:#14524f;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:#10161d; --card:#1a2028; --ink:#e8edf2; --ink-soft:#a9b6c2; --line:#2c3844;
+      --kj-bg:#152e18; --kj-fg:#8fd694;
+      --sv-bg:#152a3d; --sv-fg:#8ec2ef;
+      --hm-bg:#3a2b16; --hm-fg:#ffc76b;
+      --ts-bg:#123230; --ts-fg:#8fd6bb;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#10161d; --card:#1a2028; --ink:#e8edf2; --ink-soft:#a9b6c2; --line:#2c3844;
+    --kj-bg:#152e18; --kj-fg:#8fd694;
+    --sv-bg:#152a3d; --sv-fg:#8ec2ef;
+    --hm-bg:#3a2b16; --hm-fg:#ffc76b;
+    --ts-bg:#123230; --ts-fg:#8fd6bb;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: "Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP","Meiryo",sans-serif;
+    font-variant-numeric: tabular-nums; line-height: 1.75; padding: 32px 16px 70px;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; }
+
+  .strip-title {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.1em; color: var(--ink-soft);
+    margin: 30px 0 12px; padding-left: 11px; border-left: 3px solid var(--sun);
+  }
+  .strip-note { font-size: 12px; color: var(--ink-soft); margin: -6px 0 12px; padding-left: 14px; }
+
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(265px, 1fr)); gap: 12px; }
+  .card {
+    display: block; background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+    overflow: hidden; text-decoration: none; color: inherit; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    transition: box-shadow .18s, transform .18s;
+  }
+  .card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.11); transform: translateY(-1px); }
+  .card__head { display: flex; align-items: center; gap: 8px; padding: 9px 14px; font-size: 13px; font-weight: 700; }
+  .card__head .ic { font-size: 17px; line-height: 1; }
+  .card__body { padding: 12px 15px 14px; }
+  .card__title { font-size: 16px; font-weight: 700; margin: 0 0 3px; }
+  .card__desc { font-size: 12.5px; color: var(--ink-soft); margin: 0; }
+
+  .c-kj .card__head { background: var(--kj-bg); color: var(--kj-fg); }
+  .c-sv .card__head { background: var(--sv-bg); color: var(--sv-fg); }
+  .c-hm .card__head { background: var(--hm-bg); color: var(--hm-fg); }
+  .c-ts .card__head { background: var(--ts-bg); color: var(--ts-fg); }
+
+  .axis { background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--sun);
+          border-radius: 10px; padding: 14px 18px; margin: 0 0 4px; }
+  .axis p { margin: 0 0 4px; font-size: 13px; color: var(--ink-soft); }
+  .axis p:last-child { margin-bottom: 0; }
+  .axis b { color: var(--ink); }
+
+  .portal-links { margin: 38px 0 0; }
+  .portal-links > p { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; color: var(--ink-soft);
+                      margin: 0 0 12px; padding-left: 11px; border-left: 3px solid var(--sun); }
+  .plink { display: block; padding: 16px 18px; border-radius: 10px; text-decoration: none;
+           box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .plink .e { display: block; font-size: 11px; letter-spacing: .14em; color: rgba(255,255,255,.72); }
+  .plink .t { display: block; font-size: 17px; font-weight: 700; color: #fff; margin: 3px 0 2px; }
+  .plink .s { display: block; font-size: 12px; color: rgba(255,255,255,.82); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="pt-head" style="background:linear-gradient(135deg,#14524f 0%,#0c3331 100%);color:#fff;border-radius:10px;padding:26px 30px 24px;margin:0 0 20px">
+    <p style="font-size:12px;letter-spacing:.14em;color:rgba(255,255,255,.72);margin:0 0 6px">人を育てる</p>
+    <h1 style="font-size:23px;font-weight:700;margin:0 0 6px;color:#fff;line-height:1.4">育成ポータル</h1>
+    <p style="font-size:13px;color:rgba(255,255,255,.82);margin:0">求めることを伝える。身につける。確かめる。</p>
+  </div>
+
+  <div class="axis">
+    <p><b>3つは、初日からできること。</b>うまい下手ではなく、やるかやらないかで決まることだけにしています。</p>
+    <p><b>身につけることは、順番に。</b>1つのテーマに2週間。終わったら次のテーマへ。</p>
+    <p><b>テストに点数はつけません。</b>書けなかったところが、次に覚えるところです。</p>
+  </div>
+
+  <p class="strip-title">求めること</p>
+  <div class="card-grid">
+
+    <a class="card c-kj" href="jinzai.html">
+      <div class="card__head"><span class="ic">⚙️</span>工事スタッフ</div>
+      <div class="card__body">
+        <p class="card__title">工事スタッフに求めること</p>
+        <p class="card__desc">道具を大切に／報連相／約束の日時を守る　＋道具と材料の8テーマ</p>
+      </div>
+    </a>
+
+    <a class="card c-sv" href="jinzai-service.html">
+      <div class="card__head"><span class="ic">🔧</span>サービススタッフ</div>
+      <div class="card__body">
+        <p class="card__title">サービススタッフに求めること</p>
+        <p class="card__desc">笑顔で伺う／報連相／聞き上手　＋商品知識の14テーマ</p>
+      </div>
+    </a>
+
+    <a class="card c-hm" href="jinzai-himawari.html">
+      <div class="card__head"><span class="ic">🌻</span>ひまわりスタッフ</div>
+      <div class="card__body">
+        <p class="card__title">ひまわりスタッフに求めること</p>
+        <p class="card__desc">笑顔で伺う／おしゃべりを楽しむ／小物を気軽に届ける</p>
+      </div>
+    </a>
+
+  </div>
+
+  <p class="strip-title">確かめる（確認テスト）</p>
+  <p class="strip-note">2週間の終わりに1枚。書いたら先輩と答え合わせをします。</p>
+  <div class="card-grid">
+
+    <a class="card c-sv" href="test-service-1.html">
+      <div class="card__head"><span class="ic">📝</span>サービス｜テーマ1</div>
+      <div class="card__body">
+        <p class="card__title">テレビ・ブルーレイ・アンテナ</p>
+        <p class="card__desc">全9問／A4 1枚・印刷できます</p>
+      </div>
+    </a>
+
+    <a class="card c-kj" href="test-koji-1.html">
+      <div class="card__head"><span class="ic">📝</span>工事｜テーマ1</div>
+      <div class="card__body">
+        <p class="card__title">ビスと電線の種類</p>
+        <p class="card__desc">全9問／A4 1枚・印刷できます</p>
+      </div>
+    </a>
+
+  </div>
+
+  <p class="strip-title">書きためる</p>
+  <div class="card-grid">
+
+    <a class="card c-ts" href="shohin-note.html">
+      <div class="card__head"><span class="ic">📓</span>サービス</div>
+      <div class="card__body">
+        <p class="card__title">商品ノート</p>
+        <p class="card__desc">1日1台、カタログの端から。商品名／売り／上との違い／こんな人に</p>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="portal-links">
+    <p>ほかのポータル</p>
+    <div class="card-grid">
+      <a class="plink" href="menu.html" style="background:linear-gradient(135deg,#1a3a5c 0%,#12283f 100%)">
+        <span class="e">毎日つかう</span><span class="t">業務ポータル</span>
+        <span class="s">日報を書く。見積をつくる。リストを見る。</span>
+      </a>
+      <a class="plink" href="manual.html" style="background:linear-gradient(135deg,#1f5f4a 0%,#123d31 100%)">
+        <span class="e">迷ったら開く</span><span class="t">現場サポート</span>
+        <span class="s">スタッフガイドと、工事の手順書。</span>
+      </a>
+      <a class="plink" href="roadmap.html" style="background:linear-gradient(135deg,#7a4d10 0%,#573608 100%)">
+        <span class="e">先を読む</span><span class="t">年間販促スケジュール</span>
+        <span class="s">フェア・チラシ・かわら版。一年の流れ。</span>
+      </a>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
