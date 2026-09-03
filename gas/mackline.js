@@ -132,6 +132,10 @@ function fetchTFCached_(symbol, interval) {
   if (interval === '4h') {
     var h = Number(Utilities.formatDate(now, 'Asia/Tokyo', 'H'));
     bucket = Utilities.formatDate(now, 'Asia/Tokyo', 'yyyyMMdd') + '_' + Math.floor(h / 4);
+  } else if (interval === '15min') {
+    // 15分足は15分ごとに更新される。トリガーも15分間隔なので実質毎回取りに行く
+    var mi = Number(Utilities.formatDate(now, 'Asia/Tokyo', 'm'));
+    bucket = Utilities.formatDate(now, 'Asia/Tokyo', 'yyyyMMddHH') + '_' + Math.floor(mi / 15);
   } else {
     bucket = Utilities.formatDate(now, 'Asia/Tokyo', 'yyyyMMddHH');
   }
@@ -390,7 +394,9 @@ function checkMackline() {
   try { a = checkMacklineIshin_(); }   catch (e) { a = '維新流エラー ' + e; }
   try { b = checkMacklineClaude_(); }  catch (e) { b = 'パーフェクトMACDエラー ' + e; }
   try { c = checkMacklineReverse_(); } catch (e) { c = '逆張りエラー ' + e; }
-  return '【維新流】' + a + '　／　【パーフェクトMACD】' + b + '　／　【逆張り(ドル円)】' + c;
+  var d80 = '';
+  try { d80 = checkMackline80_(); } catch (e) { d80 = '80MAエラー ' + e; }
+  return '【維新流】' + a + '　／　【パーフェクトMACD】' + b + '　／　【逆張り】' + c + '　／　【80MA押し目】' + d80;
 }
 
 // ── 維新流モード（既定）：準備(SETUP)と確定(ENTRY)で知らせる ──
@@ -496,6 +502,105 @@ function checkMacklineClaude_() {
   //   （near判定と記録は残してあるので、必要になったらここを戻すだけで復活する）
   return status.join(' / ');
 }
+
+
+// ── 80MAの押し目・戻り目（1時間足・15分足）──
+//   ①上位足が同じ方向 ②そのTFの80MAも同じ向き ③直近12本で80MAに触れた（押し目・戻り目）
+//   ④80MAの外側に戻ったうえで、直近の確定スイング高安値を終値で更新 → ここで通知
+//   検証(ドル円・スプレッド0.5込み・決済はトレール＋勢い減退)
+//     1時間足＋日足20MA   2023/1〜2026/7  135件 勝率44% PF1.46 +1,126pips（週0.8回）
+//     15分足＋4時間足MACD 2025/1〜2026/7  257件 勝率40% PF1.23   +655pips（週4.9回）
+//   ※「80MAに触れて戻っただけ」で入る形は損益ゼロ〜マイナスだったので採用していない
+//     （1時間足 -40pips ／ 4時間足環境 -361pips）。必ず動き出しの確認を入れる
+//   ※15分足は取引数が2.3倍なのに利益は半分。1回あたり2.5pips対12.5pipsでコスト負けしやすい
+var MA80_PAIRS = ['USD/JPY'];
+var MA80_PULL  = 12;    // 何本前までの80MAタッチを押し目とみなすか
+
+function checkMackline80_() {
+  var out = [];
+  MA80_PAIRS.forEach(function(sym) {
+    [['1h', '1時間足', 'day'], ['15min', '15分足', 'h4']].forEach(function(tf) {
+      try { out.push(JP_NAME[sym] + tf[1] + '：' + check80One_(sym, tf[0], tf[1], tf[2])); }
+      catch (e) { out.push(JP_NAME[sym] + tf[1] + '：' + e); }
+      Utilities.sleep(300);
+    });
+  });
+  return out.join('　');
+}
+
+function check80One_(sym, interval, tfName, envKind) {
+  var b = fetchTFCached_(sym, interval);
+  var last = b.closes.length - 1, pip = pipSize_(sym), name = JP_NAME[sym] || sym;
+
+  // 上位足の方向
+  var dir;
+  if (envKind === 'day') {
+    var dy = fetchDailyCached_(sym);
+    var dma = sma_(dy.closes, 20);
+    dir = dirOf_(slopeAt_(dma, dma.length - 1));
+    if (dir === 'flat') return '上位足の方向なし';
+  } else {
+    var h4 = fetchTFCached_(sym, '4h');
+    var q = macd_(h4.closes), L = h4.closes.length - 1;
+    if (q.line[L] == null || q.sig[L] == null) return 'データ不足';
+    dir = q.line[L] > q.sig[L] ? 'up' : 'down';
+  }
+
+  var ma = sma_(b.closes, 80);
+  if (ma[last] == null || ma[last - 3] == null) return '80MAが出せない';
+  var maUp = ma[last] > ma[last - 3];
+  if (dir === 'up' ? !maUp : maUp) return '80MAの向きが不一致';
+
+  // 直近PULL本で80MAに触れたか（押し目・戻り目）と、その間の極値
+  var touched = -1, ext = dir === 'up' ? Infinity : -Infinity;
+  for (var k = last; k > Math.max(0, last - MA80_PULL); k--) {
+    if (ma[k] == null) continue;
+    ext = dir === 'up' ? Math.min(ext, b.lows[k]) : Math.max(ext, b.highs[k]);
+    if (touched < 0 && (dir === 'up' ? b.lows[k] <= ma[k] : b.highs[k] >= ma[k])) touched = k;
+  }
+  if (touched < 0) return '80MAに触れていない';
+
+  var price = b.closes[last];
+  if (dir === 'up' ? !(price > ma[last]) : !(price < ma[last])) return 'まだ80MAの内側';
+
+  // 直近の確定スイング高安値（右にSWING本ある＝確定済み）を終値で更新したか
+  var SWn = PARAMS.SWING, level = null;
+  for (var j = last - SWn - 1; j >= Math.max(SWn, last - 60); j--) {
+    var isSw = true;
+    for (var z = j - SWn; z <= j + SWn; z++) {
+      if (z === j) continue;
+      if (dir === 'up' ? b.highs[z] >= b.highs[j] : b.lows[z] <= b.lows[j]) { isSw = false; break; }
+    }
+    if (isSw) { level = dir === 'up' ? b.highs[j] : b.lows[j]; break; }
+  }
+  if (level == null) return 'スイングが見つからない';
+  if (dir === 'up' ? !(price > level) : !(price < level)) return '更新待ち(' + fmt_(level, sym) + ')';
+
+  // 同じ足で何度も送らない
+  var p = PropertiesService.getScriptProperties();
+  var key = 'MA80_' + interval + '_' + sym.replace('/', '');
+  if (p.getProperty(key) === b.time[last]) return '通知済み';
+  p.setProperty(key, b.time[last]);
+
+  var stop = dir === 'up' ? ext - PARAMS.BUFFER * pip : ext + PARAMS.BUFFER * pip;
+  var risk = Math.abs(price - stop) / pip;
+  var note = interval === '1h'
+    ? '検証(2023/1〜2026/7)：135件 勝率44% PF1.46 +1,126pips。週0.8回。'
+    : '検証(2025/1〜2026/7)：257件 勝率40% PF1.23 +655pips。週4.9回。1回あたりの利益が小さくコスト負けしやすいので1時間足より慎重に。';
+
+  pushMail_('📐 80MAの' + (dir === 'up' ? '押し目' : '戻り目') + '｜' + name + '　' + tfName + '　' + (dir === 'up' ? '買い' : '売り'),
+    '【上位足の方向へ、80MAまで引きつけてから動き出したサインです】\n' +
+    (envKind === 'day' ? '日足20MA' : '4時間足MACD') + 'が' + (dir === 'up' ? '上' : '下') + '向き。' + tfName + 'の80MAも同じ向きです。\n' +
+    note + '\n' +
+    '※80MAに触れただけでは通知しません。触れたあと直近の高安値を更新して初めて出します。\n\n' +
+    '■ ' + name + '　' + tfName + '　' + (dir === 'up' ? '買い' : '売り') + '\n' +
+    '　80MA ' + fmt_(ma[last], sym) + '　押し目の' + (dir === 'up' ? '安値' : '高値') + ' ' + fmt_(ext, sym) + '\n' +
+    '　直近の' + (dir === 'up' ? '高値' : '安値') + ' ' + fmt_(level, sym) + ' を更新\n' +
+    '　▶ ' + fmt_(price, sym) + ' で' + (dir === 'up' ? '買い' : '売り') + '\n' +
+    '　　損切り ' + fmt_(stop, sym) + '（' + risk.toFixed(1) + 'pips）');
+  return '📐 更新で通知';
+}
+
 
 // ── 逆張り：日足に逆らう方向へMACDが転換し、その後1時間足の高安値を更新したら知らせる ──
 //   検証(2023-01〜2026-07・実スプレッド込み。逆指値は成行より有利に約定しない前提で計算)
