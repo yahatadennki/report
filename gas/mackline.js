@@ -29,8 +29,12 @@ var MACKLINE_MODE = 'ishin';
 //     ドル円 PF1.32 +2,615 ／ ユーロドル PF1.20 +1,242 ／ ドルスイス PF1.14 +55
 //     ポンドドル PF1.03 −270 ／ ユーロ円 PF1.01 −459 ／ ドルカナダ PF0.90 −1,785
 //     ※単体でプラスなのはドル円・ユーロドル・ドルスイス
-var ISHIN_PAIRS  = ['USD/JPY', 'EUR/JPY', 'EUR/USD', 'GBP/USD', 'USD/CAD', 'USD/CHF'];
-var CLAUDE_PAIRS = ['USD/JPY', 'EUR/JPY', 'EUR/USD', 'GBP/USD', 'USD/CAD', 'USD/CHF'];
+// ★2026-09-03 ユーザー指示：維新流とパーフェクトMACDはドル円のみ通知する
+//   （逆張り🔄は6通貨のまま。REV_PAIRS を参照）
+//   単体でプラスなのは維新流=ドル円・ユーロ円、パーフェクトMACD=ドル円ほか4通貨だが、
+//   通知過多を避けるため一番成績の良いドル円に絞る。戻す時は下の1行を6通貨に戻すだけ
+var ISHIN_PAIRS  = ['USD/JPY'];
+var CLAUDE_PAIRS = ['USD/JPY'];
 var PAIRS = ISHIN_PAIRS;   // 旧コードの互換用
 var JP_NAME = { 'USD/JPY': 'ドル円', 'EUR/USD': 'ユーロドル', 'GBP/USD': 'ポンドドル',
                 'USD/CHF': 'ドルスイス', 'USD/CAD': 'ドルカナダ', 'EUR/JPY': 'ユーロ円' };
