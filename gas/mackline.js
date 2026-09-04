@@ -133,9 +133,11 @@ function fetchTFCached_(symbol, interval) {
     var h = Number(Utilities.formatDate(now, 'Asia/Tokyo', 'H'));
     bucket = Utilities.formatDate(now, 'Asia/Tokyo', 'yyyyMMdd') + '_' + Math.floor(h / 4);
   } else if (interval === '15min') {
-    // 15分足は15分ごとに更新される。トリガーも15分間隔なので実質毎回取りに行く
+    // 15分足は本来15分ごとに変わるが、6通貨ぶん毎回取ると無料枠800回/日をほぼ使い切る
+    // （15分ごと＝約540回/日）。80MAへの接近を知らせるだけの用途なので30分ごとに間引く。
+    // 80MA(=15分足80本＝20時間)は30分ではほとんど動かないため、判定への影響は小さい。
     var mi = Number(Utilities.formatDate(now, 'Asia/Tokyo', 'm'));
-    bucket = Utilities.formatDate(now, 'Asia/Tokyo', 'yyyyMMddHH') + '_' + Math.floor(mi / 15);
+    bucket = Utilities.formatDate(now, 'Asia/Tokyo', 'yyyyMMddHH') + '_' + Math.floor(mi / 30);
   } else {
     bucket = Utilities.formatDate(now, 'Asia/Tokyo', 'yyyyMMddHH');
   }
@@ -514,12 +516,18 @@ function checkMacklineClaude_() {
 //     80MAに触れて戻っただけで入る    → 1時間足 -40pips ／ 4時間足環境 -361pips（成立せず）
 //     触れたあと直近の高安値を更新して入る → 1時間足 135件 勝率44% PF1.46 +1,126pips
 //   つまり「近づいた＝買い」ではない。動き出しを見てから入るのが前提。
-var MA80_PAIRS = ['USD/JPY'];
+var MA80_PAIRS = ['USD/JPY', 'EUR/JPY', 'EUR/USD', 'GBP/USD', 'USD/CAD', 'USD/CHF'];   // 接近を知らせるだけなので6通貨
 var MA80_TOL   = 1.0;   // 接近とみなす幅＝直近20本の平均レンジ×これ
 
+// 6通貨×2つの時間足を毎回まとめて見ると、1回の実行が6分（GASの上限）を超える。
+// 15分足のデータは30分キャッシュなので、通貨を半分ずつ交互に処理しても取得回数は変わらない。
+//   :00/:30 の回 → 前半3通貨　　:15/:45 の回 → 後半3通貨
 function checkMackline80_() {
   var out = [];
-  MA80_PAIRS.forEach(function(sym) {
+  var slot = Math.floor(Number(Utilities.formatDate(new Date(), 'Asia/Tokyo', 'm')) / 15) % 2;
+  var half = Math.ceil(MA80_PAIRS.length / 2);
+  var list = slot === 0 ? MA80_PAIRS.slice(0, half) : MA80_PAIRS.slice(half);
+  list.forEach(function(sym) {
     [['1h', '1時間足', 'day'], ['15min', '15分足', 'h4']].forEach(function(tf) {
       try { out.push(JP_NAME[sym] + tf[1] + '：' + check80One_(sym, tf[0], tf[1], tf[2])); }
       catch (e) { out.push(JP_NAME[sym] + tf[1] + '：' + e); }
