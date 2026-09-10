@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RFMランク別 顧客対応表｜ヤハタ電機商会</title>
+<style>
+  :root{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;
+    --sun:#f0a500;--navy:#1a3a5c;
+    --a:#c62828;--b:#ef6c00;--c:#2e7d32;--d:#1565c0;--e:#6a1b9a}
+  @media (prefers-color-scheme:dark){:root{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}}
+  :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);line-height:1.7;padding:28px 16px 70px;
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP","Meiryo",sans-serif}
+  .wrap{max-width:960px;margin:0 auto}
+  .pt-head{background:linear-gradient(135deg,#1a3a5c 0%,#12283f 100%);color:#fff;border-radius:10px;
+    padding:24px 26px;margin:0 0 18px}
+  .pt-head .e{font-size:12px;letter-spacing:.14em;opacity:.75;margin:0 0 6px}
+  .pt-head h1{font-size:22px;margin:0;line-height:1.4}
+
+  .tbl{width:100%;border-collapse:collapse;background:var(--card);font-size:14px;
+    border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .tbl th,.tbl td{border:1px solid var(--line);padding:10px 12px;text-align:center;vertical-align:middle}
+  .tbl thead th{background:#eef3f8;color:var(--navy);font-size:12.5px;line-height:1.5}
+  .tbl td.rank{font-size:17px;font-weight:800;color:#fff;width:92px}
+  .tbl td.rank small{display:block;font-size:11px;font-weight:400;opacity:.92;letter-spacing:0}
+  .r-a{background:var(--a)} .r-b{background:var(--b)} .r-c{background:var(--c)}
+  .r-d{background:var(--d)} .r-e{background:var(--e)}
+  .tbl td.left{text-align:left}
+  .yes{font-weight:700}
+  .yes small{display:block;font-size:11px;font-weight:400;color:var(--ink-soft)}
+  .no{color:#bbb}
+  @media (prefers-color-scheme:dark){.tbl thead th{background:#20303f;color:#cfe0f0}.no{color:#555}}
+
+  .list{display:none}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--sun);
+    border-radius:10px;padding:12px 16px;margin:16px 0 0;font-size:13px;color:var(--ink-soft)}
+  .print-btn{position:fixed;right:16px;bottom:16px;z-index:99;font-family:inherit;font-size:15px;
+    font-weight:700;padding:12px 22px;border:none;border-radius:999px;background:var(--navy);
+    color:#fff;box-shadow:0 3px 12px rgba(0,0,0,.25);cursor:pointer}
+
+  @media (max-width:640px){
+    .tbl{display:none}
+    .list{display:block}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:10px;margin:0 0 10px;overflow:hidden}
+    .card h2{margin:0;font-size:16px;color:#fff;padding:8px 14px}
+    .card ul{margin:0;padding:10px 18px 12px 30px}
+    .card li{font-size:14px;margin:0 0 4px}
+    .card li small{color:var(--ink-soft)}
+  }
+  @media print{
+    @page{size:A4 landscape;margin:12mm}
+    body{background:#fff;padding:0}
+    .print-btn{display:none !important}
+    .tbl{display:table !important} .list{display:none !important}
+    .tbl thead th,.tbl td.rank{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="pt-head">
+    <p class="e">ひまわり訪問・販促</p>
+    <h1>RFMランク別 顧客対応表</h1>
+  </div>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>ランク</th>
+        <th>招待状</th>
+        <th>できること<br>カレンダー</th>
+        <th>カレンダー<br>（パナ）</th>
+        <th>年賀タオル</th>
+        <th>ハガキ</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="rank r-a">A</td>
+        <td class="yes">○<small>面談</small></td>
+        <td class="yes">○</td>
+        <td class="yes">○</td>
+        <td class="yes">○</td>
+        <td class="no">—</td>
+      </tr>
+      <tr>
+        <td class="rank r-b">B</td>
+        <td class="yes">○<small>面談</small></td>
+        <td class="yes">○</td>
+        <td class="no">—</td>
+        <td class="no">—</td>
+        <td class="no">—</td>
+      </tr>
+      <tr>
+        <td class="rank r-c">C<small>24ヶ月</small></td>
+        <td class="yes">○<small>ポスティング</small></td>
+        <td class="yes">○</td>
+        <td class="no">—</td>
+        <td class="no">—</td>
+        <td class="no">—</td>
+      </tr>
+      <tr>
+        <td class="rank r-c">C<small>24ヶ月以外</small></td>
+        <td class="no">—</td>
+        <td class="yes">○<small>郵送</small></td>
+        <td class="no">—</td>
+        <td class="no">—</td>
+        <td class="no">—</td>
+      </tr>
+      <tr>
+        <td class="rank r-d">D</td>
+        <td class="no">—</td>
+        <td class="no">—</td>
+        <td class="no">—</td>
+        <td class="no">—</td>
+        <td class="yes">○<small>ごぶさたハガキ（予定）</small></td>
+      </tr>
+      <tr>
+        <td class="rank r-e">E</td>
+        <td class="yes">○<small>面談</small></td>
+        <td class="no">—</td>
+        <td class="no">—</td>
+        <td class="no">—</td>
+        <td class="yes">○<small>新規用ハガキ（予定）</small></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="list">
+    <div class="card"><h2 class="r-a" style="background:var(--a)">A</h2>
+      <ul><li>招待状 <small>（面談）</small></li><li>できることカレンダー</li><li>カレンダー（パナ）</li><li>年賀タオル</li></ul></div>
+    <div class="card"><h2 class="r-b" style="background:var(--b)">B</h2>
+      <ul><li>招待状 <small>（面談）</small></li><li>できることカレンダー</li></ul></div>
+    <div class="card"><h2 class="r-c" style="background:var(--c)">C（24ヶ月）</h2>
+      <ul><li>招待状 <small>（ポスティング）</small></li><li>できることカレンダー</li></ul></div>
+    <div class="card"><h2 class="r-c" style="background:var(--c)">C（24ヶ月以外）</h2>
+      <ul><li>できることカレンダー <small>（郵送）</small></li></ul></div>
+    <div class="card"><h2 class="r-d" style="background:var(--d)">D</h2>
+      <ul><li>ごぶさたハガキ <small>（予定）</small></li></ul></div>
+    <div class="card"><h2 class="r-e" style="background:var(--e)">E</h2>
+      <ul><li>招待状 <small>（面談）</small></li><li>新規用ハガキ <small>（予定）</small></li></ul></div>
+  </div>
+
+  <div class="note">（予定）＝これから始めるもの。</div>
+
+</div>
+<button class="print-btn" onclick="window.print()">🖨️ 印刷する</button>
+</body>
+</html>
