@@ -56,6 +56,17 @@
     .tbl{display:table !important} .list{display:none !important}
     .tbl thead th,.tbl td.rank{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   }
+  h2.sec{font-size:15px;margin:34px 0 12px;padding-left:11px;border-left:3px solid var(--sun);color:var(--ink-soft);letter-spacing:.08em}
+  .cal{width:100%;border-collapse:collapse;background:var(--card);font-size:12.5px;border:1px solid var(--line)}
+  .cal th,.cal td{border:1px solid var(--line);padding:6px 4px;text-align:center;white-space:nowrap}
+  .cal thead th{background:#eef3f8;color:var(--navy);font-size:11.5px}
+  .cal td.item{text-align:left;white-space:normal;font-weight:700;font-size:12.5px;min-width:130px}
+  .cal td.item small{display:block;font-weight:400;color:var(--ink-soft);font-size:11px}
+  .cal .on{font-weight:700;font-size:11px;color:#fff;border-radius:4px}
+  .cal .fair{background:#7a4d10;color:#fff;font-weight:700}
+  .m-a{background:#c62828}.m-b{background:#ef6c00}.m-c{background:#2e7d32}.m-d{background:#1565c0}.m-e{background:#6a1b9a}.m-all{background:#455a64}
+  @media (prefers-color-scheme:dark){.cal thead th{background:#20303f;color:#cfe0f0}}
+  @media (max-width:640px){ .cal{display:block;overflow-x:auto;white-space:nowrap} }
 </style>
 </head>
 <body>
@@ -150,6 +161,23 @@
     <div class="card"><h2 class="r-e" style="background:var(--e)">E</h2>
       <ul><li>招待状 <small>（面談）</small></li><li>できることカレンダー</li><li>新規用ハガキ <small>（予定）</small></li></ul></div>
   </div>
+
+  <h2 class="sec" id="nenkan">年間スケジュール（いつ・誰に）</h2>
+  <table class="cal">
+    <thead><tr><th>配布するもの</th><th>1月</th><th>2月</th><th>3月</th><th>4月</th><th>5月</th><th>6月</th><th>7月</th><th>8月</th><th>9月</th><th>10月</th><th>11月</th><th>12月</th></tr></thead>
+    <tbody>
+      <tr><td class="item">🎪 フェア<small>年4回</small></td><td>&nbsp;</td><td>&nbsp;</td><td class="fair">開催</td><td>&nbsp;</td><td>&nbsp;</td><td class="fair">開催</td><td>&nbsp;</td><td>&nbsp;</td><td class="fair">開催</td><td>&nbsp;</td><td class="fair">開催</td><td>&nbsp;</td></tr>
+      <tr><td class="item">📮 招待状<small>A・B・E＝面談／C1＝ポスティング</small></td><td>&nbsp;</td><td><span class="on m-all">配布</span></td><td>&nbsp;</td><td>&nbsp;</td><td><span class="on m-all">配布</span></td><td>&nbsp;</td><td>&nbsp;</td><td><span class="on m-all">配布</span></td><td>&nbsp;</td><td><span class="on m-all">配布</span></td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td class="item">📅 できることカレンダー<small>全ランク（A・B・Eは面談、C・Dは郵送orポスティング）</small></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td><span class="on m-all">配布</span></td><td><span class="on m-all">配布</span></td></tr>
+      <tr><td class="item">📅 カレンダー（パナ）<small>A</small></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td><span class="on m-a">A</span></td><td><span class="on m-a">A</span></td></tr>
+      <tr><td class="item">🎍 年賀タオル<small>A</small></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td><span class="on m-a">A</span></td></tr>
+      <tr><td class="item">🎁 未来店記念品<small>A／フェアに来られなかった方へ</small></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td><span class="on m-a">A</span></td><td>&nbsp;</td><td>&nbsp;</td><td><span class="on m-a">A</span></td><td>&nbsp;</td><td>&nbsp;</td><td><span class="on m-a">A</span></td><td>&nbsp;</td><td><span class="on m-a">A</span></td></tr>
+      <tr><td class="item">🎂 顧客BDハガキ<small>A・B／誕生月に</small></td><td><span class="on m-b">A・B</span></td><td><span class="on m-b">A・B</span></td><td><span class="on m-b">A・B</span></td><td><span class="on m-b">A・B</span></td><td><span class="on m-b">A・B</span></td><td><span class="on m-b">A・B</span></td><td><span class="on m-b">A・B</span></td><td><span class="on m-b">A・B</span></td><td><span class="on m-b">A・B</span></td><td><span class="on m-b">A・B</span></td><td><span class="on m-b">A・B</span></td><td><span class="on m-b">A・B</span></td></tr>
+      <tr><td class="item">✉️ ごぶさたハガキ<small>C2・D（予定）</small></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td class="item">✉️ 新規用ハガキ<small>E（予定）</small></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+    </tbody>
+  </table>
+  <div class="note">フェアは年4回（3月初め・6月末・9月末・11月末）。招待状はその<b>1ヶ月前から</b>配り始めます。<br>カレンダー・年賀タオルの配布月と、ごぶさた／新規ハガキの出し方は<b>まだ仮</b>です。決まったら直します。</div>
 
   <div class="note">（予定）＝これから始めるもの。</div>
 
