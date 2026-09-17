@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>お金の話｜ヤハタ電機商会</title>
+<style>
+  :root{
+    --bg:#fffaf2; --card:#fff; --ink:#2b2b2b; --soft:#7a7a7a; --line:#eee2d2;
+    --orange:#ff9500; --orange-d:#e07f00; --teal:#00b3a4; --pink:#ff5c7a; --blue:#3d9df6;
+    --volt:#e08900; --kilo:#2e75b6; --mega:#7b3fb5;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --bg:#191614; --card:#241f1c; --ink:#f2ece6; --soft:#a99f95; --line:#3a322c;
+           --volt:#ffb340; --kilo:#7bb4e8; --mega:#bf94e8; }
+  }
+  :root[data-theme="dark"]{
+    --bg:#191614; --card:#241f1c; --ink:#f2ece6; --soft:#a99f95; --line:#3a322c;
+    --volt:#ffb340; --kilo:#7bb4e8; --mega:#bf94e8;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);line-height:1.85;
+    font-family:"Hiragino Maru Gothic ProN","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
+    -webkit-text-size-adjust:100%;
+  }
+  .wrap{max-width:640px;margin:0 auto;padding:0 20px 80px}
+
+  header{
+    background:linear-gradient(135deg,#ff9500,#ffc531);
+    color:#fff;padding:34px 20px 30px;text-align:center;
+    border-radius:0 0 28px 28px;margin-bottom:14px;
+  }
+  header .emo{font-size:40px;line-height:1}
+  header h1{margin:10px 0 6px;font-size:25px;line-height:1.4}
+  header p{margin:0;font-size:13px;opacity:.95}
+
+  .chap{margin:46px 0 14px;text-align:center}
+  .chap .tag{display:inline-block;color:#fff;border-radius:999px;
+    padding:4px 20px;font-size:13px;font-weight:700;letter-spacing:.14em}
+  .chap.why .tag{background:var(--pink)}
+  .chap.how .tag{background:var(--teal)}
+  .chap.what .tag{background:var(--blue)}
+
+  p{margin:0 0 16px;font-size:16px}
+  .lead{font-size:17px;font-weight:700;line-height:1.7}
+  .sub{font-size:14px;color:var(--soft)}
+
+  .box{background:var(--card);border-radius:20px;padding:22px;margin:16px 0;
+       text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+  .box.orange{background:linear-gradient(135deg,#fff1dc,#ffe6c2)}
+  .box.pink{background:#ffe9ee}
+  .box.teal{background:#dff7f4}
+  @media (prefers-color-scheme:dark){
+    .box.orange{background:#3a2b16}.box.pink{background:#3a2028}.box.teal{background:#123230}
+  }
+  .huge{font-size:26px;font-weight:800;line-height:1.45}
+  .huge.orange{color:var(--orange-d)} .huge.pink{color:var(--pink)} .huge.teal{color:var(--teal)}
+  .box .cap{font-size:14px;color:var(--soft);margin-top:10px}
+
+  .steps{margin:18px 0}
+  .steps .s{background:var(--card);border-radius:16px;padding:14px 16px;
+    display:flex;gap:12px;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.05);font-size:15px}
+  .steps .ar{text-align:center;font-size:19px;color:var(--orange);margin:3px 0}
+  .steps .s .ico{font-size:24px;flex:0 0 auto}
+
+  .ranks{display:grid;gap:10px;margin:18px 0}
+  .rank{background:var(--card);border-radius:16px;padding:14px 18px;
+    box-shadow:0 2px 8px rgba(0,0,0,.05);border-left:8px solid var(--line)}
+  .rank.r1{border-left-color:var(--volt)} .rank.r2{border-left-color:var(--kilo)} .rank.r3{border-left-color:var(--mega)}
+  .rank .nm{font-size:19px;font-weight:800;letter-spacing:.04em}
+  .rank.r1 .nm{color:var(--volt)} .rank.r2 .nm{color:var(--kilo)} .rank.r3 .nm{color:var(--mega)}
+  .rank .cond{font-size:13.5px;color:var(--soft);margin-top:2px}
+
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+  .vs div{background:var(--card);border-radius:16px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .vs .t{font-size:14px;font-weight:700;margin-bottom:6px}
+  .vs .x .t{color:var(--soft)}
+  .vs .o .t{color:var(--orange-d)}
+  .vs p{font-size:13.5px;margin:0;color:var(--soft)}
+  @media (max-width:420px){ .vs{grid-template-columns:1fr} }
+
+  .foot{margin-top:50px;text-align:center;font-size:12px;color:var(--soft)}
+
+  @media print{
+    body{background:#fff}
+    header{background:#ff9500!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .chap .tag,.box,.rank{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .box,.steps,.ranks,.vs{page-break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="emo">💰</div>
+  <h1>お金の話を、<br>正直にします。</h1>
+  <p>ヤハタ電機商会</p>
+</header>
+
+<div class="wrap">
+
+<div class="chap why"><span class="tag">WHY</span></div>
+
+<div class="box pink">
+  <div class="huge pink">安心して<br>一生働ける会社に。</div>
+</div>
+
+<p>これが、この会社の目指しているところです。</p>
+
+<p class="lead">お客様の満足より先に、<br>みなさんの安心があります。</p>
+
+<p class="sub">どちらが大事か、という話ではありません。<b>順番</b>の話です。<br>
+安心して働けていない人が、お客様にいい仕事をできるはずがないからです。</p>
+
+<div class="chap how"><span class="tag">HOW</span></div>
+
+<p class="lead">だから、売上のノルマは置きません。</p>
+
+<div class="vs">
+  <div class="x">
+    <p class="t">ノルマがあると…</p>
+    <p>給料のために高いものをすすめたくなる。<br>安い仕事が後まわしになる。<br>お願い営業になる。</p>
+  </div>
+  <div class="o">
+    <p class="t">ノルマがないと</p>
+    <p>電球1個の仕事も、気持ちよく行ける。<br>お客様のためだけで選べる。</p>
+  </div>
+</div>
+
+<div class="box orange">
+  <div class="huge orange">売上をつくるのは<br>会社の仕事です。</div>
+  <div class="cap">キャンペーン・フェア・チラシ。そこは経営者側が用意します。</div>
+</div>
+
+<p class="lead">みなさんにお願いしたいのは、<br>ひとつだけです。</p>
+
+<div class="box teal">
+  <div class="huge teal">気づいたことを<br>残しておく。</div>
+  <div class="cap">見込みが貯まれば、あとはお店の仕組みが売上に変えていきます。</div>
+</div>
+
+<div class="steps">
+  <div class="s"><span class="ico">👀</span><div>点検や配達で、<b>気づく</b></div></div>
+  <div class="ar">↓</div>
+  <div class="s"><span class="ico">📱</span><div>日報に<b>残す</b></div></div>
+  <div class="ar">↓</div>
+  <div class="s"><span class="ico">📮</span><div>会社が<b>フェアやチラシで声をかける</b></div></div>
+  <div class="ar">↓</div>
+  <div class="s"><span class="ico">✨</span><div><b>がんばり続けなくても、売れる状態</b>になる</div></div>
+</div>
+
+<p class="sub">これが、細く長く続くお店の体力です。<br>
+みなさんの安心と、会社が続くことが、同じ方向を向いています。</p>
+
+<div class="chap what"><span class="tag">WHAT</span></div>
+
+<p class="lead">積み上がったら、<br>基本給が上がります。</p>
+
+<div class="ranks">
+  <div class="rank r1"><div class="nm">⚡ VOLT</div>
+    <div class="cond">見込み 40件未満 ／ 売上 4,000千円未満</div></div>
+  <div class="rank r2"><div class="nm">⚡⚡ KILOVOLT</div>
+    <div class="cond">見込み 40件以上 ／ 売上 4,000千円以上</div></div>
+  <div class="rank r3"><div class="nm">⚡⚡⚡ MEGAVOLT</div>
+    <div class="cond">見込み 60件以上 ／ 売上 6,000千円以上</div></div>
+</div>
+
+<p class="sub">ステージが上がると、<b>基本給が上がります。</b><br>
+一時金や手当ではありません。<b>毎月の基本のお給料</b>そのものです。</p>
+
+<div class="box orange">
+  <div class="huge orange">一度上がったら、<br>下がりません。</div>
+</div>
+
+<p>手当だと、翌月にはゼロに戻ります。<br>
+それでは「毎月、追いかけ続ける」ことになって、<br>
+<b>安心して働ける会社</b>とは逆の形になってしまいます。</p>
+
+<p class="lead">積み上げたものは、消えません。</p>
+
+<p class="sub">役割の外でやった仕事も同じです。<br>
+サービスの人が工事を手伝ったら <b>200千円＝見込1件</b>、<br>
+工事の人が見込みを見つけたら <b>1件＝50千円</b>として、自分のものさしに足します。<br>
+手伝いも、気づきも、どちらも仕事だからです。</p>
+
+<div class="box">
+  <b style="font-size:17px">覚えておいてほしいこと</b>
+  <div class="sub" style="font-size:15px;color:var(--ink);margin-top:10px">
+    🚫 ノルマはありません<br>
+    🏢 売上をつくるのは会社の仕事<br>
+    📝 あなたの仕事は、気づいて残すこと<br>
+    📈 積み上がったら、基本給が上がる
+  </div>
+</div>
+
+<p class="lead" style="margin-top:34px">比べるのは、先月の自分です。</p>
+
+<p class="sub">誰かと比べるためのものではありません。<br>
+届かない月があっても大丈夫です。止まっていないことが大事です。</p>
+
+<div class="foot">㈲ヤハタ電機商会</div>
+
+</div>
+</body>
+</html>
