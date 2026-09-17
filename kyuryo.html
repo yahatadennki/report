@@ -80,6 +80,24 @@
   .vs p{font-size:13.5px;margin:0;color:var(--soft)}
   @media (max-width:420px){ .vs{grid-template-columns:1fr} }
 
+
+  .paywrap{overflow-x:auto;margin:16px 0}
+  table.pay{width:100%;border-collapse:collapse;background:var(--card);font-size:13px;min-width:520px;
+    border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  table.pay th,table.pay td{border:1px solid var(--line);padding:8px 10px;text-align:center;white-space:nowrap}
+  table.pay thead th{background:#f3ece2;font-size:12px;color:var(--soft)}
+  @media (prefers-color-scheme:dark){ table.pay thead th{background:#2e2722;color:#cbbfb3} }
+  table.pay td.rk{font-weight:800;font-size:14px;text-align:left}
+  table.pay tr.v td.rk{color:var(--volt)} table.pay tr.k td.rk{color:var(--kilo)} table.pay tr.m td.rk{color:var(--mega)}
+  table.pay td.sum{font-weight:800;font-size:15px}
+  table.pay td.lic{white-space:normal;font-size:12px;text-align:left;min-width:150px}
+  .rules{background:var(--card);border-radius:18px;padding:16px 20px;margin:16px 0;
+    box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .rules b{font-size:15px}
+  .rules ul{margin:10px 0 0;padding-left:20px}
+  .rules li{font-size:13.5px;color:var(--soft);margin:0 0 5px}
+  .rules li b{font-size:13.5px;color:var(--ink)}
+  .paynote{font-size:12.5px;color:var(--soft);margin:-6px 0 16px}
   .foot{margin-top:50px;text-align:center;font-size:12px;color:var(--soft)}
 
   @media print{
@@ -169,6 +187,65 @@
 <p class="sub">ステージが上がると、<b>基本給が上がります。</b><br>
 一時金や手当ではありません。<b>毎月の基本のお給料</b>そのものです。</p>
 
+<p class="lead" style="margin-top:26px">⚙️ 工事スタッフ</p>
+<div class="paywrap">
+<table class="pay">
+  <thead><tr><th>ランク</th><th>工事売上（月）</th><th>必要資格</th><th>基本給</th><th>精勤手当</th><th>通勤手当</th><th>支給合計</th></tr></thead>
+  <tbody>
+    <tr class="v"><td class="rk">⚡ VOLT</td><td>4,000千円未満</td><td class="lic">なし</td>
+      <td>230,000</td><td>10,000</td><td>20,000</td><td class="sum">260,000</td></tr>
+    <tr class="k"><td class="rk">⚡⚡ KILOVOLT</td><td>4,000千円以上</td><td class="lic">第二種電気工事士</td>
+      <td>260,000</td><td>20,000</td><td>20,000</td><td class="sum">300,000</td></tr>
+    <tr class="m"><td class="rk">⚡⚡⚡ MEGAVOLT</td><td>6,000千円以上</td><td class="lic">第二種電気工事士＋家電製品アドバイザー</td>
+      <td>320,000</td><td>30,000</td><td>20,000</td><td class="sum">370,000</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="paynote">売上は担当人数で按分（2人施工は各1/2）／見込み発見 1件＝50千円を売上に加算<br>
+みなし残業10時間分を含む（年間休日135日・月平均所定労働時間153.3時間）</p>
+
+<div class="paywrap">
+<table class="pay">
+  <thead><tr><th>ランク</th><th>基本給</th><th>みなし残業手当（10h）</th><th>小計</th></tr></thead>
+  <tbody>
+    <tr class="v"><td class="rk">⚡ VOLT</td><td>211,900</td><td>18,100</td><td class="sum">230,000</td></tr>
+    <tr class="k"><td class="rk">⚡⚡ KILOVOLT</td><td>238,800</td><td>21,200</td><td class="sum">260,000</td></tr>
+    <tr class="m"><td class="rk">⚡⚡⚡ MEGAVOLT</td><td>293,600</td><td>26,400</td><td class="sum">320,000</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p class="lead" style="margin-top:26px">🔧 サービススタッフ</p>
+<div class="paywrap">
+<table class="pay">
+  <thead><tr><th>ランク</th><th>①見込記録（月）</th><th>②売上（月）</th><th>必要資格</th><th>基本給</th><th>精勤手当</th><th>通勤手当</th><th>支給合計</th></tr></thead>
+  <tbody>
+    <tr class="v"><td class="rk">⚡ VOLT</td><td>40件未満</td><td>4,000千円未満</td><td class="lic">なし</td>
+      <td>230,000</td><td>10,000</td><td>20,000</td><td class="sum">260,000</td></tr>
+    <tr class="k"><td class="rk">⚡⚡ KILOVOLT</td><td>40件以上</td><td>4,000千円以上</td><td class="lic">家電製品アドバイザー</td>
+      <td>260,000</td><td>20,000</td><td>20,000</td><td class="sum">300,000</td></tr>
+    <tr class="m"><td class="rk">⚡⚡⚡ MEGAVOLT</td><td>60件以上</td><td>6,000千円以上</td><td class="lic">家電製品アドバイザー＋第二種電気工事士</td>
+      <td>320,000</td><td>30,000</td><td>20,000</td><td class="sum">370,000</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="paynote">ステップ1・ステップ2の両方で判定し、上位のランクを採用<br>
+40件＝1日2件、60件＝1日3件のペース／工事応援 売上200千円＝見込1件として件数に加算<br>
+みなし残業なし（年間休日120日・月平均所定労働時間163.3時間）</p>
+
+<div class="rules">
+  <b>共通のきまり</b>
+  <ul>
+    <li><b>判定は年2回（4月・10月）。</b>直近12か月の月平均実績で見ます（4月判定＝前年4/1〜当年3/31、10月判定＝前年10/1〜当年9/30）</li>
+    <li><b>資格は判定期間の末日（3/31・9/30）時点で持っていること。</b>KILOVOLT以上は、実績と資格の<b>両方</b>が必要です</li>
+    <li><b>資格を取る費用は会社が出します。</b></li>
+    <li><b>一度到達したランクは引き下げません。</b></li>
+    <li><b>精勤手当</b>は、遅刻・早退・欠勤がなく、片付けや清掃などの共同作業に主体的に取り組んでいる場合に支給します</li>
+    <li>時給スタッフ（ひまわり・事務）には、この制度は適用しません</li>
+  </ul>
+</div>
+
+
 <p>手当だと、翌月にはゼロに戻ります。<br>
 それでは「毎月、追いかけ続ける」ことになって、<br>
 <b>安心して働ける会社</b>とは逆の形になってしまいます。<br>
@@ -185,7 +262,7 @@
     🚫 ノルマはありません<br>
     🏢 売上をつくるのは会社の仕事<br>
     📝 あなたの仕事は、気づいて残すこと<br>
-    📈 積み上がったら、基本給が上がる
+    📈 積み上がったら、基本給が上がる（260,000→300,000→370,000）
   </div>
 </div>
 
