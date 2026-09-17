@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>工事スタッフ 打合せ資料｜ヤハタ電機商会</title>
+<style>
+  :root{
+    --bg:#fffaf2; --card:#fff; --ink:#2b2b2b; --soft:#7a7a7a; --line:#eee2d2;
+    --green:#2e7d32; --green-d:#1b5e20; --orange:#ff9500; --orange-d:#e07f00;
+    --teal:#00b3a4; --pink:#ff5c7a; --blue:#3d9df6;
+    --volt:#e08900; --kilo:#2e75b6; --mega:#7b3fb5;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --bg:#191614; --card:#241f1c; --ink:#f2ece6; --soft:#a99f95; --line:#3a322c;
+           --volt:#ffb340; --kilo:#7bb4e8; --mega:#bf94e8; }
+  }
+  :root[data-theme="dark"]{
+    --bg:#191614; --card:#241f1c; --ink:#f2ece6; --soft:#a99f95; --line:#3a322c;
+    --volt:#ffb340; --kilo:#7bb4e8; --mega:#bf94e8;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);line-height:1.85;
+    font-family:"Hiragino Maru Gothic ProN","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
+    -webkit-text-size-adjust:100%}
+  .wrap{max-width:660px;margin:0 auto;padding:0 20px 80px}
+
+  header{background:linear-gradient(135deg,#2e7d32,#66bb6a);color:#fff;
+    padding:34px 20px 30px;text-align:center;border-radius:0 0 28px 28px;margin-bottom:10px}
+  header .emo{font-size:38px;line-height:1}
+  header h1{margin:10px 0 6px;font-size:25px;line-height:1.4}
+  header p{margin:0;font-size:13px;opacity:.95}
+
+  .chap{margin:48px 0 16px;text-align:center}
+  .chap .tag{display:inline-block;color:#fff;border-radius:999px;padding:4px 20px;
+    font-size:13px;font-weight:700;letter-spacing:.14em}
+  .chap.p1 .tag{background:var(--green)}
+  .chap.p2 .tag{background:var(--blue)}
+  .chap.p3 .tag{background:var(--orange-d)}
+  .chap h2{margin:10px 0 0;font-size:21px}
+
+  p{margin:0 0 16px;font-size:16px}
+  .lead{font-size:17px;font-weight:700;line-height:1.7}
+  .sub{font-size:14px;color:var(--soft)}
+
+  .box{background:var(--card);border-radius:20px;padding:22px;margin:16px 0;text-align:center;
+    box-shadow:0 2px 10px rgba(0,0,0,.05)}
+  .box.green{background:#e6f4e7}
+  .box.orange{background:linear-gradient(135deg,#fff1dc,#ffe6c2)}
+  .box.pink{background:#ffe9ee}
+  .box.teal{background:#dff7f4}
+  @media (prefers-color-scheme:dark){
+    .box.green{background:#16301a}.box.orange{background:#3a2b16}.box.pink{background:#3a2028}.box.teal{background:#123230}
+  }
+  .huge{font-size:25px;font-weight:800;line-height:1.45}
+  .huge.green{color:var(--green)} .huge.orange{color:var(--orange-d)}
+  .huge.pink{color:var(--pink)} .huge.teal{color:var(--teal)}
+  .box .cap{font-size:14px;color:var(--soft);margin-top:10px}
+
+  .item{background:var(--card);border-radius:18px;padding:18px 20px;margin:0 0 12px;
+    display:flex;gap:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .item .no{flex:0 0 auto;width:36px;height:36px;border-radius:50%;background:var(--green);
+    color:#fff;font-weight:700;font-size:17px;display:flex;align-items:center;justify-content:center}
+  .item h3{margin:2px 0 6px;font-size:17px}
+  .item p{margin:0;font-size:14px;color:var(--soft)}
+
+  .root{background:#e6f4e7;border-left:8px solid var(--green);border-radius:18px;padding:20px 22px;margin:16px 0}
+  @media (prefers-color-scheme:dark){ .root{background:#16301a} }
+  .root .lbl{margin:0 0 8px;font-size:12px;letter-spacing:.16em;color:var(--green);font-weight:700}
+  .root .big{margin:0 0 12px;font-size:20px;font-weight:700;line-height:1.6}
+  .root p{margin:0 0 8px;font-size:14px;color:var(--soft)}
+  .root p:last-child{margin:0}
+
+  .steps{margin:18px 0}
+  .steps .s{background:var(--card);border-radius:16px;padding:14px 16px;display:flex;gap:12px;
+    align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.05);font-size:15px}
+  .steps .s .ico{font-size:23px;flex:0 0 auto}
+  .steps .ar{text-align:center;font-size:19px;color:var(--orange);margin:3px 0}
+
+  .themes{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 18px}
+  .themes span{background:var(--card);border-radius:999px;padding:6px 14px;font-size:13px;
+    box-shadow:0 1px 5px rgba(0,0,0,.05)}
+  .themes span b{color:var(--green);margin-right:5px}
+
+  .ranks{display:grid;gap:10px;margin:18px 0}
+  .rank{background:var(--card);border-radius:16px;padding:14px 18px;box-shadow:0 2px 8px rgba(0,0,0,.05);
+    border-left:8px solid var(--line)}
+  .rank.r1{border-left-color:var(--volt)} .rank.r2{border-left-color:var(--kilo)} .rank.r3{border-left-color:var(--mega)}
+  .rank .nm{font-size:19px;font-weight:800;letter-spacing:.04em}
+  .rank.r1 .nm{color:var(--volt)} .rank.r2 .nm{color:var(--kilo)} .rank.r3 .nm{color:var(--mega)}
+  .rank .cond{font-size:14px;margin-top:2px}
+  .rank .msg{font-size:13px;color:var(--soft);margin-top:4px}
+
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+  .vs div{background:var(--card);border-radius:16px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .vs .t{font-size:14px;font-weight:700;margin-bottom:6px}
+  .vs .x .t{color:var(--soft)} .vs .o .t{color:var(--orange-d)}
+  .vs p{font-size:13.5px;margin:0;color:var(--soft)}
+  @media (max-width:430px){ .vs{grid-template-columns:1fr} }
+
+  .today{background:var(--card);border-radius:18px;padding:18px 20px;margin:18px 0;
+    box-shadow:0 2px 8px rgba(0,0,0,.05);border-top:5px solid var(--green)}
+  .today b{font-size:16px}
+  .today ul{margin:10px 0 0;padding-left:22px}
+  .today li{font-size:15px;margin:0 0 6px}
+
+  .foot{margin-top:50px;text-align:center;font-size:12px;color:var(--soft)}
+  .print-btn{position:fixed;right:16px;bottom:16px;z-index:99;font-family:inherit;font-size:15px;
+    font-weight:700;padding:12px 22px;border:none;border-radius:999px;background:var(--green);
+    color:#fff;box-shadow:0 3px 12px rgba(0,0,0,.25);cursor:pointer}
+
+
+  @media print{
+    @page{size:A4 portrait;margin:14mm 13mm}
+    html,body{background:#fff !important;font-size:11pt;line-height:1.7}
+    .wrap{max-width:none;padding:0}
+    .print-btn{display:none !important}
+    header{border-radius:0;margin:0 0 8mm;padding:14mm 8mm 10mm;
+      background:#2e7d32 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    header h1{font-size:20pt} header .emo{font-size:26pt}
+    .chap{margin:10mm 0 5mm}
+    .chap h2{font-size:15pt}
+    .lead{font-size:12pt}
+    p{font-size:11pt;margin-bottom:3mm}
+    .sub{font-size:10pt}
+    .huge{font-size:15pt}
+    .box{padding:5mm;margin:4mm 0;border-radius:4mm}
+    .item{padding:4mm 5mm;margin-bottom:3mm;border-radius:4mm}
+    .item h3{font-size:12pt} .item p{font-size:10pt}
+    .root{padding:5mm;border-radius:4mm} .root .big{font-size:13pt}
+    .rank{padding:4mm 5mm} .rank .nm{font-size:13pt} .rank .cond{font-size:11pt}
+    .steps .s{padding:3mm 4mm;font-size:10.5pt}
+    .themes span{font-size:9.5pt;padding:1mm 3mm}
+    .today{padding:5mm} .today li{font-size:11pt}
+    .box,.item,.rank,.root,.steps,.vs,.today,.ranks,.themes{page-break-inside:avoid}
+    .chap{page-break-before:always;page-break-after:avoid}
+    .chap.p1{page-break-before:auto}
+    .foot{margin-top:8mm}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="emo">⚙️</div>
+  <h1>工事スタッフ<br>打合せ資料</h1>
+  <p>㈲ヤハタ電機商会</p>
+</header>
+
+<div class="wrap">
+
+<p class="lead" style="margin-top:26px">今日は3つの話をします。</p>
+<p class="sub">① どういう人でいてほしいか　② 何を数えるか　③ どう報いるか<br>
+この3つは、ぜんぶつながっています。</p>
+
+<!-- ========== 1 ========== -->
+<div class="chap p1"><span class="tag">その1</span><h2>求めること</h2></div>
+
+<p class="lead">うまい下手の話ではありません。<br>やるか、やらないかだけです。</p>
+<p class="sub">この3つは、入った初日からできることです。</p>
+
+<div class="item">
+  <div class="no">1</div>
+  <div>
+    <h3>道具を大切にして、後片付けができること</h3>
+    <p>道具は毎日いっしょに働く相棒です。雑に扱えば、いつか現場で止まります。後片付けは、次に使う人と、次に入る現場への配慮です。</p>
+  </div>
+</div>
+
+<div class="item">
+  <div class="no">2</div>
+  <div>
+    <h3>報連相が適切にできること</h3>
+    <p>困ったこと、間に合わないこと、分からないことは、早いほど手が打てます。遅れて困るのは自分ではなく、次に動く人とお客様です。</p>
+  </div>
+</div>
+
+<div class="item">
+  <div class="no">3</div>
+  <div>
+    <h3>約束の日時を守ること</h3>
+    <p>お客様は、その日その時間を空けて待っています。守れないと分かった時点で伝えるところまでが「守る」です。</p>
+  </div>
+</div>
+
+<div class="root">
+  <p class="lbl">根っこにあるもの</p>
+  <p class="big">お客様の目を見て、仕事をしてほしい。</p>
+  <p>社長の顔色ではなく、お客様を見る。誰かに評価されるためではなく、目の前の人のために手を動かす。</p>
+  <p>そういう人は、誰も見ていない現場でも同じ仕事をします。</p>
+  <p>道具も、仲間も、お客様も、<b>大切にする対象は同じ</b>です。3つとも、そこから出ています。</p>
+</div>
+
+<p class="lead" style="margin-top:30px">まず身につけてほしいのは、道具と材料。</p>
+<p class="sub">使い方が分かると<b>段取りが読めます</b>。何をどれだけ使うかが見えるから、無理な予定を立てずに済み、<b>約束の日時が守れます</b>。それに、道具を知らない人は道具を壊します。</p>
+
+<div class="steps">
+  <div class="s"><span class="ico">🏷️</span><div><b>名前が言える</b>／「あれ取って」で迷わない</div></div>
+  <div class="ar">↓</div>
+  <div class="s"><span class="ico">📦</span><div><b>置き場所が分かる</b>／使ったら戻せるまで</div></div>
+  <div class="ar">↓</div>
+  <div class="s"><span class="ico">🔧</span><div><b>正しく使える</b>／やってはいけない使い方も言える</div></div>
+  <div class="ar">↓</div>
+  <div class="s"><span class="ico">🚚</span><div><b>ひとりで拾える</b>／そのテーマの材料を指示なしで用意できる</div></div>
+</div>
+
+<p class="sub">1つのテーマに2週間。上から順に、16週で一巡します。</p>
+
+<div class="themes">
+  <span><b>1</b>ビスと電線の種類</span>
+  <span><b>2</b>安全と養生・腰袋</span>
+  <span><b>3</b>エアコンの工具と部材</span>
+  <span><b>4</b>電動工具・のこぎり・測定器</span>
+  <span><b>5</b>電気工事・照明の工具と部材</span>
+  <span><b>6</b>アンテナの部材と配線</span>
+  <span><b>7</b>水道・排水・トイレの部材</span>
+  <span><b>8</b>オール電化・レンジフードの工具と部材</span>
+</div>
+
+<!-- ========== 2 ========== -->
+<div class="chap p2"><span class="tag">その2</span><h2>数えるもの</h2></div>
+
+<div class="box pink">
+  <div class="huge pink">売上は「結果」です。</div>
+  <div class="cap">金額を追うのではなく、仕事を追います。</div>
+</div>
+
+<p class="lead">工事スタッフが数えるのは、工事売上。</p>
+<p class="sub"><b>人数で割ったあとの、1人あたりの金額</b>で見ます。2人で行った工事は半分ずつ。
+金額を狙うのではなく、丁寧な工事と取扱説明を積み重ねた<b>結果</b>として見る数字です。</p>
+
+<div class="ranks">
+  <div class="rank r1">
+    <div class="nm">⚡ VOLT</div>
+    <div class="cond">4,000千円 未満</div>
+    <div class="msg">走り出しの段階。数より、毎日続けること。</div>
+  </div>
+  <div class="rank r2">
+    <div class="nm">⚡⚡ KILOVOLT</div>
+    <div class="cond">4,000千円 以上</div>
+    <div class="msg">一人で回せる段階。ここを毎月続けられたら本物。</div>
+  </div>
+  <div class="rank r3">
+    <div class="nm">⚡⚡⚡ MEGAVOLT</div>
+    <div class="cond">6,000千円 以上</div>
+    <div class="msg">後輩に教えられる段階。お店の柱です。</div>
+  </div>
+</div>
+
+<div class="box teal">
+  <div class="huge teal">役割の外の仕事も、<br>消えません。</div>
+  <div class="cap">見込みを見つけたら <b>1件＝50千円</b> として、自分の数字に足します。<br>
+  （サービスの人が工事を手伝ったときは、工事200千円＝見込1件）</div>
+</div>
+
+<p class="sub">届かない月があっても大丈夫です。下の段にも名前があります。<br>
+<b>止まっていないことが大事です。比べるのは、先月の自分。</b></p>
+
+<!-- ========== 3 ========== -->
+<div class="chap p3"><span class="tag">その3</span><h2>お金の話</h2></div>
+
+<div class="box pink">
+  <div class="huge pink">安心して<br>一生働ける会社に。</div>
+</div>
+
+<p class="lead">お客様の満足より先に、みなさんの安心があります。</p>
+<p class="sub">どちらが大事か、という話ではありません。<b>順番</b>の話です。
+安心して働けていない人が、お客様にいい仕事をできるはずがないからです。</p>
+
+<p class="lead" style="margin-top:28px">だから、売上のノルマは置きません。</p>
+
+<div class="vs">
+  <div class="x">
+    <p class="t">ノルマがあると…</p>
+    <p>給料のために高いものをすすめたくなる。安い仕事が後まわしになる。お願い営業になる。</p>
+  </div>
+  <div class="o">
+    <p class="t">ノルマがないと</p>
+    <p>電球1個の仕事も気持ちよく行ける。お客様のためだけで選べる。</p>
+  </div>
+</div>
+
+<div class="box orange">
+  <div class="huge orange">売上をつくるのは<br>会社の仕事です。</div>
+  <div class="cap">キャンペーン・フェア・チラシ。そこは経営者側が用意します。</div>
+</div>
+
+<p class="lead">みなさんにお願いしたいのは、ひとつだけ。</p>
+
+<div class="box teal">
+  <div class="huge teal">気づいたことを<br>残しておく。</div>
+  <div class="cap">見込みが貯まれば、あとはお店の仕組みが売上に変えていきます。</div>
+</div>
+
+<p class="lead" style="margin-top:28px">積み上がったら、基本給が上がります。</p>
+
+<p class="sub">一時金や手当ではありません。<b>毎月の基本のお給料</b>そのものです。</p>
+
+<div class="box orange">
+  <div class="huge orange">一度上がったら、<br>下がりません。</div>
+</div>
+
+<p>手当だと、翌月にはゼロに戻ります。<br>
+それでは「毎月、追いかけ続ける」ことになって、<br>
+<b>安心して働ける会社</b>とは逆の形になってしまいます。</p>
+
+<p class="lead">積み上げたものは、消えません。</p>
+
+<!-- ========== まとめ ========== -->
+<div class="today">
+  <b>今日のまとめ</b>
+  <ul>
+    <li>求めるのは3つ。<b>道具・報連相・約束の日時</b></li>
+    <li>まず身につけるのは<b>道具と材料</b>（2週ごとに1テーマ）</li>
+    <li>数えるのは<b>工事売上（人数割り後）</b>。見込みも1件50千円で足す</li>
+    <li>ノルマはなし。<b>売上は会社の仕事</b></li>
+    <li>ステージが上がると<b>基本給が上がる。下がらない</b></li>
+  </ul>
+</div>
+
+<div class="box green">
+  <div class="huge green">比べるのは、<br>先月の自分です。</div>
+</div>
+
+<div class="foot">㈲ヤハタ電機商会</div>
+
+</div>
+<button class="print-btn" onclick="window.print()">🖨️ 印刷する</button>
+</body>
+</html>
