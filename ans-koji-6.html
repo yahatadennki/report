@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>テーマ6 アンテナの部材と配線｜回答編</title>
+<style>
+  :root{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;
+    --sun:#f0a500;--sv:#164a7a;--kj:#2e7d32;--acc:var(--sv)}
+  @media (prefers-color-scheme:dark){:root{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}}
+  :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);line-height:1.8;padding:28px 16px 70px;
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP","Meiryo",sans-serif}
+  .wrap{max-width:860px;margin:0 auto}
+  .pt-head{color:#fff;border-radius:10px;padding:24px 26px;margin:0 0 18px}
+  .pt-head .e{font-size:12px;letter-spacing:.14em;opacity:.75;margin:0 0 6px}
+  .pt-head h1{font-size:22px;margin:0 0 6px;line-height:1.4}
+  .pt-head .s{font-size:13px;opacity:.88;margin:0}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--sun);
+    border-radius:10px;padding:14px 18px;margin:0 0 20px;font-size:13.5px;color:var(--ink-soft)}
+  h2.rd{font-size:16px;margin:34px 0 14px;padding:8px 14px;border-radius:8px;background:var(--acc);color:#fff}
+  .qa{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:0 0 12px}
+  .qa .q{font-size:15px;font-weight:700;margin:0 0 10px;display:flex;gap:9px}
+  .qa .q .n{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--acc);color:#fff;
+    font-size:12px;display:flex;align-items:center;justify-content:center}
+  .qa .a{background:rgba(240,165,0,.10);border-left:4px solid var(--sun);border-radius:8px;
+    padding:10px 14px;font-size:14px;margin:0 0 10px}
+  .qa .a b{color:var(--ink)}
+  .qa .d{font-size:13px;color:var(--ink-soft);margin:0;padding-left:2px}
+  .qa .d b{color:var(--ink)}
+  .back{display:inline-block;margin-top:28px;font-size:13px;color:var(--ink-soft);text-decoration:none}
+  #pinGate{position:fixed;inset:0;z-index:9999;background:var(--paper);display:flex;align-items:center;justify-content:center;padding:20px}
+  #pinGate.hidden{display:none}
+  #pinGate .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:30px 28px;text-align:center;max-width:320px;width:100%}
+  #pinGate input{font-size:24px;letter-spacing:.35em;text-align:center;padding:10px 8px;width:170px;
+    border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);font-family:inherit}
+  #pinGate button{font-family:inherit;font-size:15px;font-weight:700;margin-top:12px;padding:10px 28px;
+    border:none;border-radius:8px;background:var(--acc);color:#fff;cursor:pointer}
+  #pinGate .err{color:#c94f4f;font-size:12px;height:16px;margin:6px 0}
+  @media print{@page{size:A4 portrait;margin:12mm 10mm}body{background:#fff;padding:0}
+    #pinGate,.back{display:none !important}.qa{page-break-inside:avoid}
+    .pt-head,h2.rd,.qa .a{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+  :root{--acc:#2e7d32}
+</style>
+</head>
+<body>
+<div id="pinGate"><div class="box">
+  <div style="font-size:32px">🔒</div>
+  <p style="font-weight:700;margin:8px 0 2px">回答編（社内用）</p>
+  <p style="font-size:12.5px;color:var(--ink-soft);margin:0 0 14px">4桁のPINを入力してください</p>
+  <input id="pin" type="tel" inputmode="numeric" maxlength="4" placeholder="••••">
+  <div class="err" id="pinErr"></div>
+  <button type="button" onclick="checkPin()">入る</button>
+</div></div>
+<div class="wrap">
+  <div class="pt-head" style="background:linear-gradient(135deg,#2e7d32 0%,#1b5e20 100%)">
+    <p class="e">回答編（社内用）</p>
+    <h1>テーマ6 アンテナの部材と配線</h1>
+    <p class="s">工事スタッフ／第1回・第2回</p>
+  </div>
+  <div class="note">この解答は打合せ用です。<b>車の積載や店のルールに関わるものは「店で決めること」</b>としています。工法や数値はメーカーの説明書と社内ルールで最終確認してください。</div>
+  <h2 class="rd">第1回（知る）</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>地デジのアンテナとBS/CSのアンテナの違いは。</p>
+    <div class="a"><b>地デジ</b>＝UHFアンテナ（八木式・デザインアンテナ）。<b>BS/CS</b>＝パラボラアンテナ（衛星の方向に向ける）。</div>
+    <p class="d">受ける電波が違うので、アンテナも向きの合わせ方も違います。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>同軸ケーブルの「S-5C-FB」は何を表していますか。</p>
+    <div class="a"><b>S</b>＝衛星放送に対応、<b>5</b>＝太さ、<b>C</b>＝テレビ用（75Ω）、<b>FB</b>＝中の作りの種類。</div>
+    <p class="d">いまは「S-5C-FB」を使っておけば、ほとんどの家で大丈夫です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">3</span>F型接栓とは何ですか。</p>
+    <div class="a">同軸ケーブルの先に付ける<b>ネジ式の差し込み口</b>。</div>
+    <p class="d">締め方が甘いと、映りが悪くなります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">4</span>分配器・分波器・混合器の違いは。</p>
+    <div class="a"><b>分配器</b>＝部屋に分ける。<b>分波器</b>＝地デジとBSに分ける。<b>混合器</b>＝別々の電波を1本にまとめる。</div>
+    <p class="d">分配と分波は名前が似ています。「分配＝部屋に配る」で覚えます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">5</span>ブースターの役割と、電気の取り方は。</p>
+    <div class="a">弱くなった電波を<b>強くする</b>。家の中の<b>電源部</b>から、同軸ケーブルを通して電気を送る。</div>
+    <p class="d">電源部のコンセントが抜かれると映らなくなります。お客様に場所を伝えます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">6</span>「全端子電流通過型」の分配器とは。</p>
+    <div class="a">BSアンテナやブースターに電気を送るとき、<b>どの差し込み口からでも電気が通る</b>分配器。</div>
+    <p class="d">BSが映らない原因が、この分配器の種類だったということがあります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">7</span>アンテナの向きを合わせるときに使う測定器は。</p>
+    <div class="a"><b>レベルチェッカー</b>（受信の強さと品質を測る）。</div>
+    <p class="d">目で見て合わせるのではなく、数字で合わせます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">8</span>アンテナの部材は、車のどこにありますか。</p>
+    <div class="a"><b>店で決めること。</b></div>
+    <p class="d">分配器や接栓は小さいので、まとめて入れる箱を決めておくと便利です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">9</span>屋根の上で作業するときに必要なものは。</p>
+    <div class="a"><b>はしご・安全帯（ハーネス）</b>、<b>ヘルメット</b>、<b>滑りにくい靴</b>。<b>2人で作業</b>。</div>
+    <p class="d">屋根の作業は落ちたら終わりです。一人では上がりません。</p>
+  </div>
+  <h2 class="rd">第2回（使う）</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>部屋を1つ増やしたい、と言われました。要る部材は。</p>
+    <div class="a"><b>分配器</b>（差し込み口の多いものに交換）、<b>同軸ケーブル</b>、<b>F型接栓</b>、<b>端子とプレート</b>。電波が足りなければ<b>ブースター</b>。</div>
+    <p class="d">分けると電波は弱くなります。測ってから決めます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>BSが映らない。何を確かめますか。</p>
+    <div class="a">①<b>アンテナの向き</b> ②<b>電気が送られているか</b>（テレビ・ブースターの設定） ③<b>分配器が電流通過型か</b> ④天気。</div>
+    <p class="d">順番に確かめれば、原因はほぼ見つかります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">3</span>地デジの特定のチャンネルだけ映らない。何を確かめますか。</p>
+    <div class="a"><b>アンテナの向きと受信の強さ</b>、<b>ブースターの調整</b>、まわりの建物。</div>
+    <p class="d">レベルチェッカーでチャンネルごとに測ると、原因が見えます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">4</span>同軸ケーブルの先を処理するときに気をつけることは。</p>
+    <div class="a"><b>外側の編み線が中の芯に触れない</b>ように、<b>芯の長さをそろえる</b>、<b>接栓をしっかり締める</b>。</div>
+    <p class="d">編み線の1本が触れているだけで映らなくなります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">5</span>アンテナ交換の見積の前に確かめることは。</p>
+    <div class="a"><b>いまのアンテナの種類と向き</b>、<b>ブースターの有無</b>、<b>分配の数</b>、<b>取付場所</b>（屋根・壁）、<b>受信の強さ</b>。</div>
+    <p class="d">この5つが分かれば、材料と工事の中身が決まります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">6</span>デザインアンテナ（壁付け）の良いところと、向かない所は。</p>
+    <div class="a"><b>良い所</b>＝屋根に上げない・見た目がすっきり・風に強い。<b>向かない所</b>＝電波が弱い地域。</div>
+    <p class="d">先に電波の強さを測ってから、すすめるかどうか決めます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">7</span>ブースターの電源が入っていないと、どうなりますか。</p>
+    <div class="a"><b>映らない、または映りが悪くなる</b>。電源部の場所をお客様に伝えておく。</div>
+    <p class="d">「コンセントを抜かないでください」の一言で、電話が1本減ります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">8</span>アンテナ工事のあと、お客様に伝えることは。</p>
+    <div class="a"><b>電源部の場所（抜かない）</b>、<b>映らないときに確かめること</b>、<b>連絡先</b>。</div>
+    <p class="d">取扱説明までが工事です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">9</span>アンテナ工事の日に持っていく部材を書き出してください。</p>
+    <div class="a"><b>アンテナ本体・マスト・支線</b>、<b>同軸ケーブル</b>、<b>接栓</b>、<b>分配器・混合器／分波器</b>、<b>ブースター</b>、<b>レベルチェッカー</b>、防水テープ。</div>
+    <p class="d">屋根の上で「ない」は致命的です。出発前に確かめます。</p>
+  </div>
+
+  <a class="back" href="kaito.html">← 回答編ポータルへ戻る</a>
+</div>
+<script>
+(function(){
+  var KEY="yahataKaitoAuth_v1", PIN="7860";
+  function reveal(){var g=document.getElementById("pinGate"); if(g) g.classList.add("hidden");}
+  window.checkPin=function(){
+    var v=(document.getElementById("pin").value||"").trim();
+    if(v===PIN){ try{localStorage.setItem(KEY,"1");}catch(e){} reveal(); }
+    else{ document.getElementById("pinErr").textContent="PINが違います"; }
+  };
+  var ok=false; try{ ok=localStorage.getItem(KEY)==="1"; }catch(e){}
+  if(ok) reveal();
+  else{ var i=document.getElementById("pin");
+    if(i){ i.addEventListener("keydown",function(e){ if(e.key==="Enter") window.checkPin(); });
+      setTimeout(function(){ try{i.focus();}catch(e){} },100); } }
+})();
+</script>
+</body>
+</html>

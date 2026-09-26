@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>テーマ4 電動工具・のこぎり・測定器｜回答編</title>
+<style>
+  :root{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;
+    --sun:#f0a500;--sv:#164a7a;--kj:#2e7d32;--acc:var(--sv)}
+  @media (prefers-color-scheme:dark){:root{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}}
+  :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);line-height:1.8;padding:28px 16px 70px;
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP","Meiryo",sans-serif}
+  .wrap{max-width:860px;margin:0 auto}
+  .pt-head{color:#fff;border-radius:10px;padding:24px 26px;margin:0 0 18px}
+  .pt-head .e{font-size:12px;letter-spacing:.14em;opacity:.75;margin:0 0 6px}
+  .pt-head h1{font-size:22px;margin:0 0 6px;line-height:1.4}
+  .pt-head .s{font-size:13px;opacity:.88;margin:0}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--sun);
+    border-radius:10px;padding:14px 18px;margin:0 0 20px;font-size:13.5px;color:var(--ink-soft)}
+  h2.rd{font-size:16px;margin:34px 0 14px;padding:8px 14px;border-radius:8px;background:var(--acc);color:#fff}
+  .qa{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:0 0 12px}
+  .qa .q{font-size:15px;font-weight:700;margin:0 0 10px;display:flex;gap:9px}
+  .qa .q .n{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--acc);color:#fff;
+    font-size:12px;display:flex;align-items:center;justify-content:center}
+  .qa .a{background:rgba(240,165,0,.10);border-left:4px solid var(--sun);border-radius:8px;
+    padding:10px 14px;font-size:14px;margin:0 0 10px}
+  .qa .a b{color:var(--ink)}
+  .qa .d{font-size:13px;color:var(--ink-soft);margin:0;padding-left:2px}
+  .qa .d b{color:var(--ink)}
+  .back{display:inline-block;margin-top:28px;font-size:13px;color:var(--ink-soft);text-decoration:none}
+  #pinGate{position:fixed;inset:0;z-index:9999;background:var(--paper);display:flex;align-items:center;justify-content:center;padding:20px}
+  #pinGate.hidden{display:none}
+  #pinGate .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:30px 28px;text-align:center;max-width:320px;width:100%}
+  #pinGate input{font-size:24px;letter-spacing:.35em;text-align:center;padding:10px 8px;width:170px;
+    border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);font-family:inherit}
+  #pinGate button{font-family:inherit;font-size:15px;font-weight:700;margin-top:12px;padding:10px 28px;
+    border:none;border-radius:8px;background:var(--acc);color:#fff;cursor:pointer}
+  #pinGate .err{color:#c94f4f;font-size:12px;height:16px;margin:6px 0}
+  @media print{@page{size:A4 portrait;margin:12mm 10mm}body{background:#fff;padding:0}
+    #pinGate,.back{display:none !important}.qa{page-break-inside:avoid}
+    .pt-head,h2.rd,.qa .a{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+  :root{--acc:#2e7d32}
+</style>
+</head>
+<body>
+<div id="pinGate"><div class="box">
+  <div style="font-size:32px">🔒</div>
+  <p style="font-weight:700;margin:8px 0 2px">回答編（社内用）</p>
+  <p style="font-size:12.5px;color:var(--ink-soft);margin:0 0 14px">4桁のPINを入力してください</p>
+  <input id="pin" type="tel" inputmode="numeric" maxlength="4" placeholder="••••">
+  <div class="err" id="pinErr"></div>
+  <button type="button" onclick="checkPin()">入る</button>
+</div></div>
+<div class="wrap">
+  <div class="pt-head" style="background:linear-gradient(135deg,#2e7d32 0%,#1b5e20 100%)">
+    <p class="e">回答編（社内用）</p>
+    <h1>テーマ4 電動工具・のこぎり・測定器</h1>
+    <p class="s">工事スタッフ／第1回・第2回</p>
+  </div>
+  <div class="note">この解答は打合せ用です。<b>車の積載や店のルールに関わるものは「店で決めること」</b>としています。工法や数値はメーカーの説明書と社内ルールで最終確認してください。</div>
+  <h2 class="rd">第1回（知る）</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>よく使う電動工具を3つ挙げて、それぞれ何に使うか書いてください。</p>
+    <div class="a"><b>インパクトドライバー</b>＝ビスを締める、<b>振動ドリル（ハンマードリル）</b>＝コンクリートに穴をあける、<b>丸のこ・レシプロソー</b>＝切る。</div>
+    <p class="d">名前と用途がセットで出てくれば、「あれ取って」で迷いません。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>インパクトドライバーとドリルドライバーの違いは。</p>
+    <div class="a"><b>インパクト</b>＝叩きながら回して<b>強く締める</b>（長いビス向き）。<b>ドリルドライバー</b>＝<b>締めすぎを防ぐ</b>クラッチ付き（細かい作業・穴あけ）。</div>
+    <p class="d">器具の取付でビスを締めすぎて割る失敗は、道具の選び方で防げます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">3</span>のこぎりの種類と使い分けを書いてください。</p>
+    <div class="a"><b>両刃・片刃</b>（木材）、<b>引き回しのこ</b>（板に丸い穴・曲線）、<b>金切りのこ</b>（金属）、<b>石膏ボード用</b>。</div>
+    <p class="d">切る材料で道具が変わります。違う刃で切ると、刃も材料も傷めます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">4</span>検電器の正しい使い方は。</p>
+    <div class="a">電線や器具に<b>触る前に必ず検電</b>。使う前に、<b>電気が来ている所で検電器が反応するか</b>確かめる。</div>
+    <p class="d">検電器が壊れていたら意味がありません。「使う前に確かめる」までが使い方です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">5</span>テスター（マルチメーター）で測れるものを3つ。</p>
+    <div class="a"><b>電圧</b>、<b>抵抗（導通）</b>、<b>電流</b>（クランプメーターで挟んで測る）。</div>
+    <p class="d">コンセントに電気が来ているか、線がつながっているかをその場で確かめられます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">6</span>絶縁抵抗計（メガー）は何を調べる道具ですか。</p>
+    <div class="a">電線や機器の<b>絶縁が保たれているか</b>（電気が漏れていないか）を調べる。</div>
+    <p class="d">工事のあとの確認や、漏電の原因探しに使います。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">7</span>レーザー墨出し器は何に使いますか。</p>
+    <div class="a"><b>水平・垂直の基準の線</b>を出す。器具の取付位置をそろえるときに使う。</div>
+    <p class="d">何台も並べる照明や、まっすぐな配管で仕上がりが変わります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">8</span>電動工具と測定器は、車のどこにありますか。</p>
+    <div class="a"><b>店で決めること。</b>定位置と、使ったら戻す場所を全員で同じにする。</div>
+    <p class="d">探す時間がなくなれば、そのぶん現場で丁寧に仕事ができます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">9</span>電動工具のバッテリーの管理で気をつけることは。</p>
+    <div class="a"><b>前の日に充電</b>、<b>予備を持つ</b>、<b>同じ電圧のものをそろえる</b>、出発前に残量を確認。</div>
+    <p class="d">現場で電池が切れると、作業が止まってお客様を待たせます。</p>
+  </div>
+  <h2 class="rd">第2回（使う）</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>コンクリートの壁に穴をあけます。使う道具と、気をつけることは。</p>
+    <div class="a"><b>振動ドリル・ハンマードリル＋コンクリート用のビット</b>。<b>中の配管・配線・鉄筋を避ける</b>、<b>粉じんの養生</b>。</div>
+    <p class="d">あける前に位置を確かめるのが一番大事です。あけた穴は戻せません。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>石膏ボードに穴をあけて配線を通します。気をつけることは。</p>
+    <div class="a"><b>引き回しのこ・ボードカッター</b>を使う。<b>下地と、中の配線</b>を先に確かめる。穴は必要な大きさだけ。</div>
+    <p class="d">大きくあけすぎると、器具で隠れなくなります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">3</span>電動工具のけがを防ぐために、必ずやることを3つ。</p>
+    <div class="a">①<b>保護メガネ</b> ②<b>刃・ビットがしっかり付いているか確認</b> ③<b>使わないときはバッテリーを外す</b>。回る工具で手袋が巻き込まれないよう注意。</div>
+    <p class="d">慣れたころが一番危ないです。毎回同じ順番で確かめます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">4</span>分電盤のまわりで作業する前に、確かめることは。</p>
+    <div class="a"><b>該当のブレーカーを切る</b>、<b>検電で電気が来ていないことを確認</b>、<b>「作業中」の札</b>をかける。</div>
+    <p class="d">誰かがブレーカーを入れてしまう事故を、札で防ぎます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">5</span>「コンセントに電気が来ていない」とき、どう調べますか。</p>
+    <div class="a"><b>テスターで電圧を測る</b> → <b>ブレーカーを確認</b> → <b>配線のゆるみ</b>を確認。</div>
+    <p class="d">順番に確かめれば、原因は必ず見つかります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">6</span>絶縁抵抗を測ったら数値が低く出ました。どうしますか。</p>
+    <div class="a"><b>漏電の可能性</b>。<b>回路を分けて</b>どこが悪いか絞る。湿気や劣化した所を探す。</div>
+    <p class="d">一人で判断せず、先輩に報告しながら進めます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">7</span>丸のこを使うときの注意は。</p>
+    <div class="a"><b>材料をしっかり固定</b>、<b>キックバック</b>（刃が挟まって跳ね返る）に注意、<b>刃の出は最小に</b>。</div>
+    <p class="d">丸のこの事故は一瞬です。無理な姿勢で切らないこと。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">8</span>エアコン取付が1件。持っていく電動工具・測定器を書き出してください。</p>
+    <div class="a"><b>インパクト</b>、<b>コアドリル（または振動ドリル）</b>、<b>検電器</b>、<b>テスター</b>、<b>水平器</b>。（真空ポンプ・ゲージはテーマ3）</div>
+    <p class="d">積み忘れは、その日の現場を止めます。自分のチェック表を作っておくと確実です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">9</span>工具が壊れた・調子が悪いと気づいたら、どうしますか。</p>
+    <div class="a"><b>その日のうちに報告</b>、<b>使わない印</b>をつける、修理か買い替えかを相談する。</div>
+    <p class="d">黙って戻すと、次の人が現場で困ります。報連相の大事な場面です。</p>
+  </div>
+
+  <a class="back" href="kaito.html">← 回答編ポータルへ戻る</a>
+</div>
+<script>
+(function(){
+  var KEY="yahataKaitoAuth_v1", PIN="7860";
+  function reveal(){var g=document.getElementById("pinGate"); if(g) g.classList.add("hidden");}
+  window.checkPin=function(){
+    var v=(document.getElementById("pin").value||"").trim();
+    if(v===PIN){ try{localStorage.setItem(KEY,"1");}catch(e){} reveal(); }
+    else{ document.getElementById("pinErr").textContent="PINが違います"; }
+  };
+  var ok=false; try{ ok=localStorage.getItem(KEY)==="1"; }catch(e){}
+  if(ok) reveal();
+  else{ var i=document.getElementById("pin");
+    if(i){ i.addEventListener("keydown",function(e){ if(e.key==="Enter") window.checkPin(); });
+      setTimeout(function(){ try{i.focus();}catch(e){} },100); } }
+})();
+</script>
+</body>
+</html>
