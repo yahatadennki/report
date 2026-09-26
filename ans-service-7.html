@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>テーマ7 調理家電｜回答編</title>
+<style>
+  :root{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;
+    --sun:#f0a500;--sv:#164a7a;--kj:#2e7d32;--acc:var(--sv)}
+  @media (prefers-color-scheme:dark){:root{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}}
+  :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);line-height:1.8;padding:28px 16px 70px;
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP","Meiryo",sans-serif}
+  .wrap{max-width:860px;margin:0 auto}
+  .pt-head{color:#fff;border-radius:10px;padding:24px 26px;margin:0 0 18px}
+  .pt-head .e{font-size:12px;letter-spacing:.14em;opacity:.75;margin:0 0 6px}
+  .pt-head h1{font-size:22px;margin:0 0 6px;line-height:1.4}
+  .pt-head .s{font-size:13px;opacity:.88;margin:0}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--sun);
+    border-radius:10px;padding:14px 18px;margin:0 0 20px;font-size:13.5px;color:var(--ink-soft)}
+  h2.rd{font-size:16px;margin:34px 0 14px;padding:8px 14px;border-radius:8px;background:var(--acc);color:#fff}
+  .qa{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:0 0 12px}
+  .qa .q{font-size:15px;font-weight:700;margin:0 0 10px;display:flex;gap:9px}
+  .qa .q .n{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--acc);color:#fff;
+    font-size:12px;display:flex;align-items:center;justify-content:center}
+  .qa .a{background:rgba(240,165,0,.10);border-left:4px solid var(--sun);border-radius:8px;
+    padding:10px 14px;font-size:14px;margin:0 0 10px}
+  .qa .a b{color:var(--ink)}
+  .qa .d{font-size:13px;color:var(--ink-soft);margin:0;padding-left:2px}
+  .qa .d b{color:var(--ink)}
+  .back{display:inline-block;margin-top:28px;font-size:13px;color:var(--ink-soft);text-decoration:none}
+  #pinGate{position:fixed;inset:0;z-index:9999;background:var(--paper);display:flex;align-items:center;justify-content:center;padding:20px}
+  #pinGate.hidden{display:none}
+  #pinGate .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:30px 28px;text-align:center;max-width:320px;width:100%}
+  #pinGate input{font-size:24px;letter-spacing:.35em;text-align:center;padding:10px 8px;width:170px;
+    border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);font-family:inherit}
+  #pinGate button{font-family:inherit;font-size:15px;font-weight:700;margin-top:12px;padding:10px 28px;
+    border:none;border-radius:8px;background:var(--acc);color:#fff;cursor:pointer}
+  #pinGate .err{color:#c94f4f;font-size:12px;height:16px;margin:6px 0}
+  @media print{@page{size:A4 portrait;margin:12mm 10mm}body{background:#fff;padding:0}
+    #pinGate,.back{display:none !important}.qa{page-break-inside:avoid}
+    .pt-head,h2.rd,.qa .a{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+  :root{--acc:#164a7a}
+</style>
+</head>
+<body>
+<div id="pinGate"><div class="box">
+  <div style="font-size:32px">🔒</div>
+  <p style="font-weight:700;margin:8px 0 2px">回答編（社内用）</p>
+  <p style="font-size:12.5px;color:var(--ink-soft);margin:0 0 14px">4桁のPINを入力してください</p>
+  <input id="pin" type="tel" inputmode="numeric" maxlength="4" placeholder="••••">
+  <div class="err" id="pinErr"></div>
+  <button type="button" onclick="checkPin()">入る</button>
+</div></div>
+<div class="wrap">
+  <div class="pt-head" style="background:linear-gradient(135deg,#1a3a5c 0%,#12283f 100%)">
+    <p class="e">回答編（社内用）</p>
+    <h1>テーマ7 調理家電</h1>
+    <p class="s">サービススタッフ／第1回・第2回</p>
+  </div>
+  <div class="note">この解答は打合せ用です。<b>店の商品や置き場所に関わるものは「店で決めること」</b>としています。数字はカタログで最新を確認してください。</div>
+  <h2 class="rd">第1回（知る）</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>いま扱っている調理家電を、よく出る順に5つ書いてください。</p>
+    <div class="a"><b>店で決めること。</b>例：炊飯器・オーブンレンジ／電子レンジ・トースター・ジャーポット・電気圧力鍋。</div>
+    <p class="d">種類が多いテーマなので、まず「よく出る5つ」から覚えます。残りはそのあとで十分です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>炊飯器のシリーズの違いを1つずつ書いてください。何が付いていて、何が付いていないか。</p>
+    <div class="a">上位＝<b>圧力IH・内釜の素材・銘柄の炊き分け</b>、中位＝<b>IH</b>、普及＝<b>マイコン</b>。カタログで最新を確認。</div>
+    <p class="d">炊飯器は「加熱の方式」と「内釜」で値段が決まります。この2つを押さえれば説明できます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">3</span>IH炊飯器とマイコン炊飯器の違いは。</p>
+    <div class="a"><b>IH</b>＝釜全体を加熱するので<b>むらなく炊ける</b>・量が多くてもおいしい。<b>マイコン</b>＝下から加熱・<b>価格が手頃</b>・少量向き。</div>
+    <p class="d">一人暮らしで少ししか炊かないなら、マイコンで十分なこともあります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">4</span>電子レンジとオーブンレンジの違いは。</p>
+    <div class="a"><b>電子レンジ</b>＝温めるだけ。<b>オーブンレンジ</b>＝温める＋<b>焼く（オーブン・グリル）</b>もできる。上位はスチーム付き。</div>
+    <p class="d">「焼く料理をしますか？」で決まります。しないなら単機能で十分です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">5</span>電気圧力鍋（オートクッカー）の売りは。</p>
+    <div class="a">材料を入れて<b>ボタン1つで煮込み</b>ができる。<b>火を使わないので、放っておける</b>。</div>
+    <p class="d">共働きの家、火の消し忘れが心配なご年配の家、どちらにも効く商品です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">6</span>ジャーポットと電気ケトルの違いは。</p>
+    <div class="a"><b>ジャーポット</b>＝沸かして<b>保温</b>し、何度でも使える。<b>ケトル</b>＝<b>必要な分だけすぐ沸かす</b>。</div>
+    <p class="d">一日に何度もお茶を飲む家はポット、ときどきならケトル。使い方で決まります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">7</span>浄水器と整水器の違いは。</p>
+    <div class="a"><b>浄水器</b>＝水をきれいにする。<b>整水器</b>＝アルカリイオン水などを作る（認証を受けた範囲の効果がある）。</div>
+    <p class="d"><b>効能を言いすぎない</b>ことが大事です。「病気が治る」などとは絶対に言いません。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">8</span>炊飯器の容量（合）と家族の人数の目安は。</p>
+    <div class="a"><b>3.5合</b>＝1〜3人、<b>5.5合</b>＝3〜5人、<b>1升</b>＝5人以上やまとめ炊き。</div>
+    <p class="d">人数だけでなく「まとめて炊いて冷凍しますか？」も聞くと外しません。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">9</span>去年のモデルと今年のモデル、何が変わりましたか。</p>
+    <div class="a"><b>店で確認。</b>主力の炊飯器かレンジで1〜2点言えれば十分。</div>
+    <p class="d">全部の商品で覚える必要はありません。よく出るもので1つ。</p>
+  </div>
+  <h2 class="rd">第2回（使う）</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>炊飯器の上位と普及。値段の差は何の差ですか。</p>
+    <div class="a">①<b>加熱の方式（圧力IH・IH・マイコン）</b> ②<b>内釜の素材</b> ③<b>炊き分け・保温の性能</b>。<b>まとめると「ごはんの味・手入れ・保温」。</b></div>
+    <p class="d">毎日食べるものなので、「1日あたりにすると差は数円」という言い方が効きます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>一人暮らしのご年配の方の電子レンジ。何をすすめますか。</p>
+    <div class="a"><b>ボタンが少ない単機能レンジ</b>、<b>あたため自動</b>、扉が開けやすいもの。オーブン機能は使わないなら削る。</div>
+    <p class="d">機能を足すより減らすほうが喜ばれることがあります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">3</span>「電子レンジが温まらない」と言われました。</p>
+    <div class="a"><b>回るのに温まらない</b>＝加熱部品（マグネトロン）の故障の可能性が高い。<b>10年前後なら買い替え</b>を提案。</div>
+    <p class="d">年数を聞くのが先です。古ければ修理より買い替えのほうが安く済むことが多いです。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">4</span>共働きで料理の時間がない家。何をすすめますか。</p>
+    <div class="a"><b>電気圧力鍋</b>（予約・放っておける）、<b>スチームオーブンレンジの自動メニュー</b>。</div>
+    <p class="d">「帰ったらできている」が一番の売りです。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">5</span>「ポットの電気代が気になる」と言われました。</p>
+    <div class="a">保温が長いなら<b>電気ケトル</b>に替える、または<b>省エネ保温・タイマー付きのジャーポット</b>。</div>
+    <p class="d">使い方を聞いてから答えます。一日中お湯を使う家は、ポットのほうが結局便利です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">6</span>10年目の炊飯器、「ごはんがまずくなった」と言われました。</p>
+    <div class="a"><b>内釜のコーティングのはがれ</b>、<b>パッキンの劣化</b>。部品が手に入るか（保有期間）を確認し、<b>買い替えも提案</b>。</div>
+    <p class="d">内釜だけ替えられる場合もあります。まず直す方法を伝えてから、買い替えの話をします。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">7</span>浄水器や整水器をすすめるとき、言ってはいけないことは。</p>
+    <div class="a">「病気が治る」「体質が変わる」など<b>効能を断定する言い方</b>。<b>認証された範囲だけ</b>を伝える。</div>
+    <p class="d">言いすぎは、お客様にも会社にも迷惑がかかります。分からないことは「メーカーの資料では」で答えます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">8</span>調理家電を買ったお客様に、必ず伝えることを3つ。</p>
+    <div class="a">①<b>最初の手入れ</b>（内釜・部品の洗い方） ②<b>よく使うメニューの押し方</b> ③<b>消耗品の交換時期</b>（パッキン・フィルター）。</div>
+    <p class="d">「分からなくなったら電話してください」まで言って完了です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">9</span>調理家電のついでに、ご案内できるものは。</p>
+    <div class="a"><b>IH・レンジフード</b>（テーマ12）、<b>食洗機</b>（テーマ8）、浄水器。台所まわりの年数をあわせて見る。</div>
+    <p class="d">台所に入れてもらえる日は、台所の家電の年数を見られる日です。</p>
+  </div>
+
+  <a class="back" href="kaito.html">← 回答編ポータルへ戻る</a>
+</div>
+<script>
+(function(){
+  var KEY="yahataKaitoAuth_v1", PIN="7860";
+  function reveal(){var g=document.getElementById("pinGate"); if(g) g.classList.add("hidden");}
+  window.checkPin=function(){
+    var v=(document.getElementById("pin").value||"").trim();
+    if(v===PIN){ try{localStorage.setItem(KEY,"1");}catch(e){} reveal(); }
+    else{ document.getElementById("pinErr").textContent="PINが違います"; }
+  };
+  var ok=false; try{ ok=localStorage.getItem(KEY)==="1"; }catch(e){}
+  if(ok) reveal();
+  else{ var i=document.getElementById("pin");
+    if(i){ i.addEventListener("keydown",function(e){ if(e.key==="Enter") window.checkPin(); });
+      setTimeout(function(){ try{i.focus();}catch(e){} },100); } }
+})();
+</script>
+</body>
+</html>

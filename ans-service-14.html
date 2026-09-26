@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>テーマ14 ヘルスケア・オーラルケア｜回答編</title>
+<style>
+  :root{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;
+    --sun:#f0a500;--sv:#164a7a;--kj:#2e7d32;--acc:var(--sv)}
+  @media (prefers-color-scheme:dark){:root{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}}
+  :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);line-height:1.8;padding:28px 16px 70px;
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP","Meiryo",sans-serif}
+  .wrap{max-width:860px;margin:0 auto}
+  .pt-head{color:#fff;border-radius:10px;padding:24px 26px;margin:0 0 18px}
+  .pt-head .e{font-size:12px;letter-spacing:.14em;opacity:.75;margin:0 0 6px}
+  .pt-head h1{font-size:22px;margin:0 0 6px;line-height:1.4}
+  .pt-head .s{font-size:13px;opacity:.88;margin:0}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--sun);
+    border-radius:10px;padding:14px 18px;margin:0 0 20px;font-size:13.5px;color:var(--ink-soft)}
+  h2.rd{font-size:16px;margin:34px 0 14px;padding:8px 14px;border-radius:8px;background:var(--acc);color:#fff}
+  .qa{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:0 0 12px}
+  .qa .q{font-size:15px;font-weight:700;margin:0 0 10px;display:flex;gap:9px}
+  .qa .q .n{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--acc);color:#fff;
+    font-size:12px;display:flex;align-items:center;justify-content:center}
+  .qa .a{background:rgba(240,165,0,.10);border-left:4px solid var(--sun);border-radius:8px;
+    padding:10px 14px;font-size:14px;margin:0 0 10px}
+  .qa .a b{color:var(--ink)}
+  .qa .d{font-size:13px;color:var(--ink-soft);margin:0;padding-left:2px}
+  .qa .d b{color:var(--ink)}
+  .back{display:inline-block;margin-top:28px;font-size:13px;color:var(--ink-soft);text-decoration:none}
+  #pinGate{position:fixed;inset:0;z-index:9999;background:var(--paper);display:flex;align-items:center;justify-content:center;padding:20px}
+  #pinGate.hidden{display:none}
+  #pinGate .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:30px 28px;text-align:center;max-width:320px;width:100%}
+  #pinGate input{font-size:24px;letter-spacing:.35em;text-align:center;padding:10px 8px;width:170px;
+    border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);font-family:inherit}
+  #pinGate button{font-family:inherit;font-size:15px;font-weight:700;margin-top:12px;padding:10px 28px;
+    border:none;border-radius:8px;background:var(--acc);color:#fff;cursor:pointer}
+  #pinGate .err{color:#c94f4f;font-size:12px;height:16px;margin:6px 0}
+  @media print{@page{size:A4 portrait;margin:12mm 10mm}body{background:#fff;padding:0}
+    #pinGate,.back{display:none !important}.qa{page-break-inside:avoid}
+    .pt-head,h2.rd,.qa .a{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+  :root{--acc:#164a7a}
+</style>
+</head>
+<body>
+<div id="pinGate"><div class="box">
+  <div style="font-size:32px">🔒</div>
+  <p style="font-weight:700;margin:8px 0 2px">回答編（社内用）</p>
+  <p style="font-size:12.5px;color:var(--ink-soft);margin:0 0 14px">4桁のPINを入力してください</p>
+  <input id="pin" type="tel" inputmode="numeric" maxlength="4" placeholder="••••">
+  <div class="err" id="pinErr"></div>
+  <button type="button" onclick="checkPin()">入る</button>
+</div></div>
+<div class="wrap">
+  <div class="pt-head" style="background:linear-gradient(135deg,#1a3a5c 0%,#12283f 100%)">
+    <p class="e">回答編（社内用）</p>
+    <h1>テーマ14 ヘルスケア・オーラルケア</h1>
+    <p class="s">サービススタッフ／第1回・第2回</p>
+  </div>
+  <div class="note">この解答は打合せ用です。<b>店の商品や置き場所に関わるものは「店で決めること」</b>としています。数字はカタログで最新を確認してください。</div>
+  <h2 class="rd">第1回（知る）</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>いま扱っているヘルスケア商品を、よく出る順に書いてください。</p>
+    <div class="a"><b>店で決めること。</b>例：電動歯ブラシ・マッサージャー・体組成バランス計・口腔洗浄器。</div>
+    <p class="d">まずよく出るものから覚えます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>電動歯ブラシの売りを、手みがきと比べて説明してください。</p>
+    <div class="a">細かい<b>音波の振動</b>で歯垢を落とす。<b>短い時間でもみがき残しが少ない</b>。</div>
+    <p class="d">「毎日の2分が楽になる」という言い方が伝わります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">3</span>電動歯ブラシのシリーズごとの違いを1つずつ書いてください。</p>
+    <div class="a">上位＝<b>みがき方のモード・押しすぎのセンサー・充電の持ち</b>、普及＝<b>基本の振動</b>。替えブラシの種類もあわせて確認。</div>
+    <p class="d">替えブラシは続けて買うものです。どれが合うかまで言えると喜ばれます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">4</span>口腔洗浄器（ジェットウォッシャー）の売りは。</p>
+    <div class="a"><b>水の勢い</b>で、歯と歯の間や歯ぐきのきわを洗う。</div>
+    <p class="d">歯ブラシと一緒に使うもの、と説明します。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">5</span>マッサージチェアとマッサージャーの違いは。</p>
+    <div class="a"><b>チェア</b>＝全身・置き場所と重さに注意。<b>マッサージャー</b>＝首や肩など部分・手軽で場所をとらない。</div>
+    <p class="d">置き場所があるかどうかで、最初に分かれます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">6</span>体組成バランス計で分かることは。</p>
+    <div class="a">体重のほか、<b>体脂肪率・筋肉量</b>など体の中身の目安。</div>
+    <p class="d">健康の「目安」を知るもので、病気を診断するものではない、と押さえておきます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">7</span>補聴器と集音器の違いは。</p>
+    <div class="a"><b>補聴器</b>＝医療機器。聞こえに合わせて<b>調整</b>する。<b>集音器</b>＝音を大きくするだけ。</div>
+    <p class="d">補聴器は専門の窓口での調整が大事です。店で扱う範囲を確認しておきます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">8</span>健康に関わる商品を扱うとき、気をつけることは。</p>
+    <div class="a"><b>効き目を断定しない</b>。<b>表示されている範囲だけ</b>を説明し、気になることは<b>医師や専門の窓口へ</b>。</div>
+    <p class="d">言いすぎないことが、信用を守ります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">9</span>去年のモデルと今年のモデル、何が変わりましたか。</p>
+    <div class="a"><b>店で確認。</b>1〜2点。</div>
+    <p class="d">1つ言えれば十分です。</p>
+  </div>
+  <h2 class="rd">第2回（使う）</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>電動歯ブラシの上位と普及。値段の差は何の差ですか。</p>
+    <div class="a">①<b>振動の性能とモード</b> ②<b>押しすぎを知らせるセンサー</b> ③<b>充電の持ち</b>。<b>まとめると「みがき上がり・やさしさ・手間」。</b></div>
+    <p class="d">毎日使うものなので、1日あたりの差は小さいです。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>歯ぐきが気になるご年配の方。何をすすめますか。</p>
+    <div class="a"><b>口腔洗浄器</b>、<b>やわらかめのブラシ</b>の電動歯ブラシ。<b>歯医者さんの指導を優先</b>してもらう。</div>
+    <p class="d">「歯医者さんにも聞いてみてください」と添えるのが信用です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">3</span>「テレビの音が大きいと家族に言われる」と相談されました。</p>
+    <div class="a"><b>テレビの手元スピーカー</b>（テーマ1）。聞こえが気になるなら<b>補聴器の専門の窓口</b>を案内。</div>
+    <p class="d">テレビの音の話は、補聴器より先に手元スピーカーで解決できることも多いです。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">4</span>マッサージチェアを置く前に確かめることは。</p>
+    <div class="a">①<b>置き場所</b>（背もたれを倒したときの広さ） ②<b>床の強さ</b> ③<b>搬入経路</b>とコンセント。</div>
+    <p class="d">重くて大きいので、入らなかったら大変です。必ず測ります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">5</span>体重を管理したいご夫婦。何をすすめますか。</p>
+    <div class="a"><b>体組成バランス計</b>（スマホで記録できるもの）。</div>
+    <p class="d">記録が続くことがいちばん大事です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">6</span>「肩こりがひどい」と言われました。</p>
+    <div class="a"><b>首・肩用のマッサージャー</b>、温める機能のあるもの。<b>痛みが強いなら医師へ</b>と添える。</div>
+    <p class="d">無理にすすめず、「気になるなら病院で」まで言うのが正解です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">7</span>替えブラシなど消耗品を、どうご案内しますか。</p>
+    <div class="a"><b>交換の目安（約3か月）</b>に合わせて、<b>ひまわりの訪問でお届け</b>できると伝える。</div>
+    <p class="d">消耗品のお届けは、関係を続ける一番の方法です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">8</span>健康の話をするとき、気をつけることは。</p>
+    <div class="a"><b>病名や治療の話はしない</b>。<b>「気になるなら病院で」</b>まで。</div>
+    <p class="d">私たちは電器屋です。できることとできないことを分けて話します。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">9</span>このテーマから、次につなげられるものは。</p>
+    <div class="a"><b>テレビの手元スピーカー</b>、<b>暖房便座</b>（テーマ13）、<b>バスカン</b>（テーマ11）。</div>
+    <p class="d">体を気にする方には、家の中の安全の話も届きます。</p>
+  </div>
+
+  <a class="back" href="kaito.html">← 回答編ポータルへ戻る</a>
+</div>
+<script>
+(function(){
+  var KEY="yahataKaitoAuth_v1", PIN="7860";
+  function reveal(){var g=document.getElementById("pinGate"); if(g) g.classList.add("hidden");}
+  window.checkPin=function(){
+    var v=(document.getElementById("pin").value||"").trim();
+    if(v===PIN){ try{localStorage.setItem(KEY,"1");}catch(e){} reveal(); }
+    else{ document.getElementById("pinErr").textContent="PINが違います"; }
+  };
+  var ok=false; try{ ok=localStorage.getItem(KEY)==="1"; }catch(e){}
+  if(ok) reveal();
+  else{ var i=document.getElementById("pin");
+    if(i){ i.addEventListener("keydown",function(e){ if(e.key==="Enter") window.checkPin(); });
+      setTimeout(function(){ try{i.focus();}catch(e){} },100); } }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>テーマ12 オール電化｜回答編</title>
+<style>
+  :root{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;
+    --sun:#f0a500;--sv:#164a7a;--kj:#2e7d32;--acc:var(--sv)}
+  @media (prefers-color-scheme:dark){:root{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}}
+  :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);line-height:1.8;padding:28px 16px 70px;
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP","Meiryo",sans-serif}
+  .wrap{max-width:860px;margin:0 auto}
+  .pt-head{color:#fff;border-radius:10px;padding:24px 26px;margin:0 0 18px}
+  .pt-head .e{font-size:12px;letter-spacing:.14em;opacity:.75;margin:0 0 6px}
+  .pt-head h1{font-size:22px;margin:0 0 6px;line-height:1.4}
+  .pt-head .s{font-size:13px;opacity:.88;margin:0}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--sun);
+    border-radius:10px;padding:14px 18px;margin:0 0 20px;font-size:13.5px;color:var(--ink-soft)}
+  h2.rd{font-size:16px;margin:34px 0 14px;padding:8px 14px;border-radius:8px;background:var(--acc);color:#fff}
+  .qa{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:0 0 12px}
+  .qa .q{font-size:15px;font-weight:700;margin:0 0 10px;display:flex;gap:9px}
+  .qa .q .n{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--acc);color:#fff;
+    font-size:12px;display:flex;align-items:center;justify-content:center}
+  .qa .a{background:rgba(240,165,0,.10);border-left:4px solid var(--sun);border-radius:8px;
+    padding:10px 14px;font-size:14px;margin:0 0 10px}
+  .qa .a b{color:var(--ink)}
+  .qa .d{font-size:13px;color:var(--ink-soft);margin:0;padding-left:2px}
+  .qa .d b{color:var(--ink)}
+  .back{display:inline-block;margin-top:28px;font-size:13px;color:var(--ink-soft);text-decoration:none}
+  #pinGate{position:fixed;inset:0;z-index:9999;background:var(--paper);display:flex;align-items:center;justify-content:center;padding:20px}
+  #pinGate.hidden{display:none}
+  #pinGate .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:30px 28px;text-align:center;max-width:320px;width:100%}
+  #pinGate input{font-size:24px;letter-spacing:.35em;text-align:center;padding:10px 8px;width:170px;
+    border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);font-family:inherit}
+  #pinGate button{font-family:inherit;font-size:15px;font-weight:700;margin-top:12px;padding:10px 28px;
+    border:none;border-radius:8px;background:var(--acc);color:#fff;cursor:pointer}
+  #pinGate .err{color:#c94f4f;font-size:12px;height:16px;margin:6px 0}
+  @media print{@page{size:A4 portrait;margin:12mm 10mm}body{background:#fff;padding:0}
+    #pinGate,.back{display:none !important}.qa{page-break-inside:avoid}
+    .pt-head,h2.rd,.qa .a{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+  :root{--acc:#164a7a}
+</style>
+</head>
+<body>
+<div id="pinGate"><div class="box">
+  <div style="font-size:32px">🔒</div>
+  <p style="font-weight:700;margin:8px 0 2px">回答編（社内用）</p>
+  <p style="font-size:12.5px;color:var(--ink-soft);margin:0 0 14px">4桁のPINを入力してください</p>
+  <input id="pin" type="tel" inputmode="numeric" maxlength="4" placeholder="••••">
+  <div class="err" id="pinErr"></div>
+  <button type="button" onclick="checkPin()">入る</button>
+</div></div>
+<div class="wrap">
+  <div class="pt-head" style="background:linear-gradient(135deg,#1a3a5c 0%,#12283f 100%)">
+    <p class="e">回答編（社内用）</p>
+    <h1>テーマ12 オール電化</h1>
+    <p class="s">サービススタッフ／第1回・第2回</p>
+  </div>
+  <div class="note">この解答は打合せ用です。<b>店の商品や置き場所に関わるものは「店で決めること」</b>としています。数字はカタログで最新を確認してください。</div>
+  <h2 class="rd">第1回（知る）</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>オール電化の主な設備を3つ書いてください。</p>
+    <div class="a"><b>IHクッキングヒーター</b>、<b>エコキュート</b>（給湯）、<b>レンジフード</b>。あわせて<b>太陽光発電・蓄電池</b>。</div>
+    <p class="d">「台所・お湯・電気をつくる」の3つで覚えると整理できます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>IHのシリーズごとの違いを1つずつ書いてください。</p>
+    <div class="a">上位＝<b>アルミや銅の鍋も使える（オールメタル）・グリル機能・自動調理</b>、中位、普及＝<b>基本の2口</b>など。カタログで最新を確認。</div>
+    <p class="d">使える鍋の違いが、お客様にいちばん響きます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">3</span>IHで使える鍋・使えない鍋は。</p>
+    <div class="a"><b>使える</b>＝鉄・ステンレス（磁石がつくもの）。<b>使えない</b>＝アルミ・銅・土鍋（オールメタル対応の機種はアルミ・銅も使える）。</div>
+    <p class="d">「いまお使いの鍋、磁石がつきますか？」がいちばん早い確かめ方です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">4</span>エコキュートの仕組みと売りは。</p>
+    <div class="a"><b>空気の熱</b>を使って、電気代の安い<b>夜間にお湯をつくってためる</b>。災害で断水したとき、<b>タンクの水が使える</b>。</div>
+    <p class="d">「空気の熱でお湯を沸かす」だけ覚えれば、説明できます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">5</span>エコキュートのタンク容量の選び方は。</p>
+    <div class="a"><b>370L</b>＝3〜4人、<b>460L</b>＝4〜5人以上が目安。</div>
+    <p class="d">お湯をたくさん使う家（シャワーが長い・お湯はりが多い）は大きめ。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">6</span>レンジフードの売りは。</p>
+    <div class="a"><b>換気と油汚れ</b>を防ぐ。上位は<b>自動お掃除</b>や<b>IHと連動</b>（IHをつけると自動で換気）。</div>
+    <p class="d">掃除の手間の話が、いちばん響きます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">7</span>太陽光発電と蓄電池の関係は。</p>
+    <div class="a">太陽光＝<b>昼に発電</b>して使い、余りは売る。蓄電池＝<b>電気をためて、夜や停電のときに使う</b>。</div>
+    <p class="d">「昼につくって、夜に使う」でまとめると伝わります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">8</span>オール電化の電気料金で気をつけることは。</p>
+    <div class="a"><b>夜が安く昼が高い</b>プランが多い。<b>お湯は夜につくる</b>のが基本。昼の在宅が多い家は割高になることも。<b>いまの料金プランを確認</b>。</div>
+    <p class="d">料金の話は電力会社のプランによるので、断定しません。確認してから話します。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">9</span>去年のモデルと今年のモデル、何が変わりましたか。</p>
+    <div class="a"><b>店で確認。</b>IHかエコキュートで1〜2点。</div>
+    <p class="d">1つ言えれば十分です。</p>
+  </div>
+  <h2 class="rd">第2回（使う）</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>IHの上位と普及。値段の差は何の差ですか。</p>
+    <div class="a">①<b>使える鍋</b> ②<b>火力・グリル・自動調理</b> ③<b>掃除のしやすさ</b>。<b>まとめると「使える鍋・火力・手入れ」。</b></div>
+    <p class="d">いまお使いの鍋がそのまま使えるかどうかが、最初の分かれ道です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>ガスコンロからIHに替えたいご年配。何を伝えますか。</p>
+    <div class="a"><b>火を使わない安心</b>と<b>掃除の楽さ</b>。<b>使える鍋の確認</b>と、<b>200Vの電源工事</b>が要るかを確認。</div>
+    <p class="d">火の消し忘れの心配がなくなる、は家族にとっても大きな安心です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">3</span>「エコキュートのお湯が足りない」と言われました。</p>
+    <div class="a">①<b>タンクの容量</b>が家族に合っているか ②<b>沸き上げの設定</b> ③家族が増えた・使い方が変わった ④故障。</div>
+    <p class="d">まず設定を一緒に確認します。設定で直ることもあります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">4</span>エコキュートが10年以上たっている家。何を伝えますか。</p>
+    <div class="a"><b>交換の目安は10〜15年</b>。部品が手に入らなくなる時期。<b>壊れると数日お湯が出ない</b>ので、早めの点検をすすめる。</div>
+    <p class="d">冬に壊れると本当に困ります。「壊れる前に」がいちばん効く商品です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">5</span>IHを付ける前に確かめることは。</p>
+    <div class="a">①<b>分電盤の容量と200Vの回路</b> ②<b>設置の寸法</b>（幅60cm・75cm） ③いまのコンロの種類。</div>
+    <p class="d">電気の工事が要るかどうかで、見積が大きく変わります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">6</span>停電や災害が心配な家。何をすすめますか。</p>
+    <div class="a"><b>蓄電池</b>（太陽光と組み合わせ）、<b>エコキュートのタンクの水</b>を非常時に使えることを伝える。</div>
+    <p class="d">不安をあおらず、「備えとして」の話にします。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">7</span>「レンジフードがうるさい・吸わない」と言われました。</p>
+    <div class="a">①<b>フィルターの油汚れ</b> ②<b>ファンの劣化</b> ③寿命（約10年）。掃除か、交換を提案（テーマ16の換気扇とも関係）。</div>
+    <p class="d">掃除で直るかどうかを先に確かめます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">8</span>オール電化を考えている家に、最初に聞くことを3つ。</p>
+    <div class="a">①<b>家族の人数とお湯の使い方</b> ②<b>昼の在宅</b>が多いか ③<b>いまの電気料金のプランと分電盤の容量</b>。</div>
+    <p class="d">この3つで、合うかどうかの見当がつきます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">9</span>このテーマから、次につなげられるものは。</p>
+    <div class="a"><b>分電盤の容量アップ</b>（テーマ16）、<b>調理家電</b>、浴室まわり（<b>バスカン</b>）。</div>
+    <p class="d">大きな設備を替える家は、まわりの配線も見直す時期です。</p>
+  </div>
+
+  <a class="back" href="kaito.html">← 回答編ポータルへ戻る</a>
+</div>
+<script>
+(function(){
+  var KEY="yahataKaitoAuth_v1", PIN="7860";
+  function reveal(){var g=document.getElementById("pinGate"); if(g) g.classList.add("hidden");}
+  window.checkPin=function(){
+    var v=(document.getElementById("pin").value||"").trim();
+    if(v===PIN){ try{localStorage.setItem(KEY,"1");}catch(e){} reveal(); }
+    else{ document.getElementById("pinErr").textContent="PINが違います"; }
+  };
+  var ok=false; try{ ok=localStorage.getItem(KEY)==="1"; }catch(e){}
+  if(ok) reveal();
+  else{ var i=document.getElementById("pin");
+    if(i){ i.addEventListener("keydown",function(e){ if(e.key==="Enter") window.checkPin(); });
+      setTimeout(function(){ try{i.focus();}catch(e){} },100); } }
+})();
+</script>
+</body>
+</html>

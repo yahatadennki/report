@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>テーマ13 トイレ｜回答編</title>
+<style>
+  :root{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;
+    --sun:#f0a500;--sv:#164a7a;--kj:#2e7d32;--acc:var(--sv)}
+  @media (prefers-color-scheme:dark){:root{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}}
+  :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);line-height:1.8;padding:28px 16px 70px;
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP","Meiryo",sans-serif}
+  .wrap{max-width:860px;margin:0 auto}
+  .pt-head{color:#fff;border-radius:10px;padding:24px 26px;margin:0 0 18px}
+  .pt-head .e{font-size:12px;letter-spacing:.14em;opacity:.75;margin:0 0 6px}
+  .pt-head h1{font-size:22px;margin:0 0 6px;line-height:1.4}
+  .pt-head .s{font-size:13px;opacity:.88;margin:0}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--sun);
+    border-radius:10px;padding:14px 18px;margin:0 0 20px;font-size:13.5px;color:var(--ink-soft)}
+  h2.rd{font-size:16px;margin:34px 0 14px;padding:8px 14px;border-radius:8px;background:var(--acc);color:#fff}
+  .qa{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:0 0 12px}
+  .qa .q{font-size:15px;font-weight:700;margin:0 0 10px;display:flex;gap:9px}
+  .qa .q .n{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--acc);color:#fff;
+    font-size:12px;display:flex;align-items:center;justify-content:center}
+  .qa .a{background:rgba(240,165,0,.10);border-left:4px solid var(--sun);border-radius:8px;
+    padding:10px 14px;font-size:14px;margin:0 0 10px}
+  .qa .a b{color:var(--ink)}
+  .qa .d{font-size:13px;color:var(--ink-soft);margin:0;padding-left:2px}
+  .qa .d b{color:var(--ink)}
+  .back{display:inline-block;margin-top:28px;font-size:13px;color:var(--ink-soft);text-decoration:none}
+  #pinGate{position:fixed;inset:0;z-index:9999;background:var(--paper);display:flex;align-items:center;justify-content:center;padding:20px}
+  #pinGate.hidden{display:none}
+  #pinGate .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:30px 28px;text-align:center;max-width:320px;width:100%}
+  #pinGate input{font-size:24px;letter-spacing:.35em;text-align:center;padding:10px 8px;width:170px;
+    border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);font-family:inherit}
+  #pinGate button{font-family:inherit;font-size:15px;font-weight:700;margin-top:12px;padding:10px 28px;
+    border:none;border-radius:8px;background:var(--acc);color:#fff;cursor:pointer}
+  #pinGate .err{color:#c94f4f;font-size:12px;height:16px;margin:6px 0}
+  @media print{@page{size:A4 portrait;margin:12mm 10mm}body{background:#fff;padding:0}
+    #pinGate,.back{display:none !important}.qa{page-break-inside:avoid}
+    .pt-head,h2.rd,.qa .a{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+  :root{--acc:#164a7a}
+</style>
+</head>
+<body>
+<div id="pinGate"><div class="box">
+  <div style="font-size:32px">🔒</div>
+  <p style="font-weight:700;margin:8px 0 2px">回答編（社内用）</p>
+  <p style="font-size:12.5px;color:var(--ink-soft);margin:0 0 14px">4桁のPINを入力してください</p>
+  <input id="pin" type="tel" inputmode="numeric" maxlength="4" placeholder="••••">
+  <div class="err" id="pinErr"></div>
+  <button type="button" onclick="checkPin()">入る</button>
+</div></div>
+<div class="wrap">
+  <div class="pt-head" style="background:linear-gradient(135deg,#1a3a5c 0%,#12283f 100%)">
+    <p class="e">回答編（社内用）</p>
+    <h1>テーマ13 トイレ</h1>
+    <p class="s">サービススタッフ／第1回・第2回</p>
+  </div>
+  <div class="note">この解答は打合せ用です。<b>店の商品や置き場所に関わるものは「店で決めること」</b>としています。数字はカタログで最新を確認してください。</div>
+  <h2 class="rd">第1回（知る）</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>いま扱っている温水洗浄便座のシリーズを、上のクラスから順に書いてください。</p>
+    <div class="a"><b>店で決めること。</b>クラス名＋何が付いているか。</div>
+    <p class="d">便座は交換の相談がいちばん多い商品です。主力から覚えます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>貯湯式と瞬間式の違いは。</p>
+    <div class="a"><b>貯湯式</b>＝タンクにお湯をためておく・価格が手頃・長く使うとぬるくなる。<b>瞬間式</b>＝使うときに温める・<b>電気代が安い</b>・お湯切れしない・価格は高め。</div>
+    <p class="d">家族が多い家ほど、瞬間式の「お湯切れしない」が効きます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">3</span>温水洗浄便座のシリーズごとの違いを1つずつ書いてください。</p>
+    <div class="a">上位＝<b>瞬間式・脱臭・自動開閉・ノズルの自動洗浄</b>、普及＝<b>貯湯式の基本</b>。カタログで最新を確認。</div>
+    <p class="d">1シリーズにつき違いは1つで十分です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">4</span>便座交換のときによく出る確かめごとを3つ。</p>
+    <div class="a">①<b>便器の大きさ（大形・普通）</b> ②<b>トイレの中にコンセントがあるか</b> ③<b>止水栓の位置と形</b>。</div>
+    <p class="d">この3つが分かれば、当日付けられないということがなくなります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">5</span>便器の大きさ（大形・普通）はどう確かめますか。</p>
+    <div class="a">便座を付ける穴から便器の先までの長さ。<b>大形は約47cm、普通は約44cm</b>が目安。</div>
+    <p class="d">メジャーで測るだけです。電話で聞く方法も覚えておくと便利です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">6</span>節電の機能を2つ。</p>
+    <div class="a"><b>タイマー節電・学習節電</b>（使わない時間は保温を下げる）、<b>ふたの自動開閉</b>（熱が逃げにくい）。</div>
+    <p class="d">電気代の話は、買い替えのきっかけになります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">7</span>トイレを本体ごと替えると、何が良くなりますか。</p>
+    <div class="a"><b>節水</b>（昔のトイレの半分以下の水で流れるものも）、<b>掃除のしやすさ</b>、見た目。</div>
+    <p class="d">20年以上前のトイレなら、水道代の差ははっきり出ます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">8</span>温水洗浄便座の寿命の目安と、交換のサインは。</p>
+    <div class="a"><b>約10年</b>。水が漏れる・温水が出ない・便座が温まらない、が交換のサイン。</div>
+    <p class="d">水まわりの故障は急に来ます。10年を過ぎたら点検のたびに声をかけます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">9</span>去年のモデルと今年のモデル、何が変わりましたか。</p>
+    <div class="a"><b>店で確認。</b>1〜2点。</div>
+    <p class="d">1つ言えれば十分です。</p>
+  </div>
+  <h2 class="rd">第2回（使う）</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>便座の上位と普及。値段の差は何の差ですか。</p>
+    <div class="a">①<b>お湯の方式（瞬間式か貯湯式か）</b> ②<b>脱臭・自動開閉</b> ③<b>掃除のしやすさ</b>。<b>まとめると「電気代・手間・快適さ」。</b></div>
+    <p class="d">毎日何回も使うものなので、1回あたりに直すと差は小さいです。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>冬のトイレが寒い、とご年配のご夫婦。何をすすめますか。</p>
+    <div class="a"><b>暖房便座</b>、<b>脱臭</b>、<b>自動開閉</b>。トイレ用の小さな暖房機も提案。</div>
+    <p class="d">寒い場所での急な温度差は体に負担がかかります。やさしく伝えます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">3</span>「便座から水が漏れる」と電話。まず何をしてもらい、何を聞きますか。</p>
+    <div class="a">まず<b>止水栓を閉めてもらう</b>。聞くのは①<b>どこから</b>（給水ホース・本体・ノズル） ②<b>いつから</b> ③何年使っているか。</div>
+    <p class="d">水を止めてもらうのが最初です。そのうえで急いで伺います。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">4</span>「ボタンを押しても温水が出ない」と言われました。</p>
+    <div class="a">①<b>止水栓が閉まっていないか・フィルターの詰まり</b> ②<b>停電のあとのリセット</b> ③故障。</div>
+    <p class="d">フィルター掃除で直ることもあります。電話で一緒に確かめます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">5</span>便座交換の見積の前に確かめることは。</p>
+    <div class="a">①<b>便器の大きさ</b> ②<b>コンセント</b>（なければ電気工事） ③<b>止水栓の形</b> ④いまの便座の年数。</div>
+    <p class="d">写真を3枚（便器・コンセント・止水栓）撮れば、見積はほぼ決まります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">6</span>20年以上前のトイレを使っている家。何を伝えますか。</p>
+    <div class="a"><b>本体ごとの交換</b>で<b>節水</b>になり、<b>掃除も楽</b>になる。水道代の差を具体的に伝える。</div>
+    <p class="d">「まだ使える」を否定せず、「替えるとこう変わります」と伝えます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">7</span>車いすや介助が必要なご家族がいる家。何に気をつけますか。</p>
+    <div class="a"><b>便座の高さ・手すり・リモコンの位置</b>。離れた部屋を呼べる<b>ワイヤレスコール</b>（テーマ10）も。</div>
+    <p class="d">ご家族の話をよく聞くことが、いちばんの提案になります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">8</span>交換したあと、お客様に必ず伝えることを3つ。</p>
+    <div class="a">①<b>リモコンの基本操作</b> ②<b>ノズルの掃除のしかた</b> ③<b>節電の設定</b>と保証書の置き場所。</div>
+    <p class="d">ここまでが工事です。アンケートを渡して半券を持ち帰ります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">9</span>このテーマから、次につなげられるものは。</p>
+    <div class="a">トイレの<b>換気扇・照明（人感センサー）</b>、<b>給湯器・水まわり</b>、<b>手すり</b>。</div>
+    <p class="d">トイレに入れてもらった日は、まわりの年数も見られる日です。</p>
+  </div>
+
+  <a class="back" href="kaito.html">← 回答編ポータルへ戻る</a>
+</div>
+<script>
+(function(){
+  var KEY="yahataKaitoAuth_v1", PIN="7860";
+  function reveal(){var g=document.getElementById("pinGate"); if(g) g.classList.add("hidden");}
+  window.checkPin=function(){
+    var v=(document.getElementById("pin").value||"").trim();
+    if(v===PIN){ try{localStorage.setItem(KEY,"1");}catch(e){} reveal(); }
+    else{ document.getElementById("pinErr").textContent="PINが違います"; }
+  };
+  var ok=false; try{ ok=localStorage.getItem(KEY)==="1"; }catch(e){}
+  if(ok) reveal();
+  else{ var i=document.getElementById("pin");
+    if(i){ i.addEventListener("keydown",function(e){ if(e.key==="Enter") window.checkPin(); });
+      setTimeout(function(){ try{i.focus();}catch(e){} },100); } }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>テーマ6 照明（エキスパート）｜回答編</title>
+<style>
+  :root{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;
+    --sun:#f0a500;--sv:#164a7a;--kj:#2e7d32;--acc:var(--sv)}
+  @media (prefers-color-scheme:dark){:root{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}}
+  :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);line-height:1.8;padding:28px 16px 70px;
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP","Meiryo",sans-serif}
+  .wrap{max-width:860px;margin:0 auto}
+  .pt-head{color:#fff;border-radius:10px;padding:24px 26px;margin:0 0 18px}
+  .pt-head .e{font-size:12px;letter-spacing:.14em;opacity:.75;margin:0 0 6px}
+  .pt-head h1{font-size:22px;margin:0 0 6px;line-height:1.4}
+  .pt-head .s{font-size:13px;opacity:.88;margin:0}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--sun);
+    border-radius:10px;padding:14px 18px;margin:0 0 20px;font-size:13.5px;color:var(--ink-soft)}
+  h2.rd{font-size:16px;margin:34px 0 14px;padding:8px 14px;border-radius:8px;background:var(--acc);color:#fff}
+  .qa{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:0 0 12px}
+  .qa .q{font-size:15px;font-weight:700;margin:0 0 10px;display:flex;gap:9px}
+  .qa .q .n{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--acc);color:#fff;
+    font-size:12px;display:flex;align-items:center;justify-content:center}
+  .qa .a{background:rgba(240,165,0,.10);border-left:4px solid var(--sun);border-radius:8px;
+    padding:10px 14px;font-size:14px;margin:0 0 10px}
+  .qa .a b{color:var(--ink)}
+  .qa .d{font-size:13px;color:var(--ink-soft);margin:0;padding-left:2px}
+  .qa .d b{color:var(--ink)}
+  .back{display:inline-block;margin-top:28px;font-size:13px;color:var(--ink-soft);text-decoration:none}
+  #pinGate{position:fixed;inset:0;z-index:9999;background:var(--paper);display:flex;align-items:center;justify-content:center;padding:20px}
+  #pinGate.hidden{display:none}
+  #pinGate .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:30px 28px;text-align:center;max-width:320px;width:100%}
+  #pinGate input{font-size:24px;letter-spacing:.35em;text-align:center;padding:10px 8px;width:170px;
+    border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);font-family:inherit}
+  #pinGate button{font-family:inherit;font-size:15px;font-weight:700;margin-top:12px;padding:10px 28px;
+    border:none;border-radius:8px;background:var(--acc);color:#fff;cursor:pointer}
+  #pinGate .err{color:#c94f4f;font-size:12px;height:16px;margin:6px 0}
+  @media print{@page{size:A4 portrait;margin:12mm 10mm}body{background:#fff;padding:0}
+    #pinGate,.back{display:none !important}.qa{page-break-inside:avoid}
+    .pt-head,h2.rd,.qa .a{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+  :root{--acc:#164a7a}
+</style>
+</head>
+<body>
+<div id="pinGate"><div class="box">
+  <div style="font-size:32px">🔒</div>
+  <p style="font-weight:700;margin:8px 0 2px">回答編（社内用）</p>
+  <p style="font-size:12.5px;color:var(--ink-soft);margin:0 0 14px">4桁のPINを入力してください</p>
+  <input id="pin" type="tel" inputmode="numeric" maxlength="4" placeholder="••••">
+  <div class="err" id="pinErr"></div>
+  <button type="button" onclick="checkPin()">入る</button>
+</div></div>
+<div class="wrap">
+  <div class="pt-head" style="background:linear-gradient(135deg,#1a3a5c 0%,#12283f 100%)">
+    <p class="e">回答編（社内用）</p>
+    <h1>テーマ6 照明（エキスパート）</h1>
+    <p class="s">サービススタッフ／第1回・第2回</p>
+  </div>
+  <div class="note">この解答は打合せ用です。<b>店の商品や置き場所に関わるものは「店で決めること」</b>としています。数字はカタログで最新を確認してください。</div>
+  <h2 class="rd">第1回（知る）</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>エキスパートの照明は、一般の照明（HH-）と何が違いますか。</p>
+    <div class="a">天井に埋め込むダウンライト・壁付けブラケット・屋外灯など、<b>工事を伴う設備の照明</b>。</div>
+    <p class="d">HH-は「お客様が買って付け替える照明」、エキスパートは「家に付ける照明」と覚えると分かりやすいです。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>ダウンライトの種類を3つ書いてください。</p>
+    <div class="a">①<b>一般型</b> ②<b>高気密SB形</b>（断熱材の上にかぶせて施工できる） ③<b>ユニバーサル</b>（向きを変えられる）。</div>
+    <p class="d">交換のときは「いま付いているのが何形か」を合わせるのが基本です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">3</span>「埋込穴径」とは何ですか。なぜ大事ですか。</p>
+    <div class="a">天井にあいている<b>穴の直径</b>（φ100・φ125など）。交換のとき<b>同じ穴径を選ばないと天井の補修が必要</b>になる。</div>
+    <p class="d">穴径を間違えると、器具代より天井直しのほうが高くつきます。現地で必ず測ります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">4</span>屋外灯でよく使う機能を2つ。</p>
+    <div class="a"><b>明るさセンサー</b>（暗くなったら点く）と<b>人感センサー</b>（人が来たら点く）。屋外用は<b>防雨型</b>。</div>
+    <p class="d">両方付いた器具なら「夜は少し明るく、人が来たらパッと明るく」ができます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">5</span>「調光器対応」とはどういう意味ですか。</p>
+    <div class="a">壁の<b>調光スイッチで明るさを変えられる</b>器具のこと。対応していない器具を調光器につなぐと<b>故障の原因</b>。</div>
+    <p class="d">交換のときに壁のスイッチを見て、調光器が付いていないか必ず確かめます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">6</span>ブラケット・ペンダント・スポットの使い分けは。</p>
+    <div class="a"><b>ブラケット</b>＝壁付け（廊下・玄関・階段）、<b>ペンダント</b>＝吊り下げ（ダイニング）、<b>スポット</b>＝照らしたい所に当てる。</div>
+    <p class="d">場所の名前とセットで覚えると、現地ですぐ言えます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">7</span>色温度（K：ケルビン）の数字は何を表していますか。</p>
+    <div class="a">光の色。<b>数字が小さいほどオレンジっぽい（電球色 約2700K）</b>、<b>大きいほど青白い（昼光色 約6500K）</b>。</div>
+    <p class="d">カタログはこの数字で書かれています。「数字が小さいとあたたかい色」だけ覚えれば十分です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">8</span>光源一体型と電球交換型の違いは。</p>
+    <div class="a"><b>一体型</b>＝ランプだけ替えられない。寿命がきたら<b>器具ごと交換</b>。<b>交換型</b>＝LED電球だけ替えられる。</div>
+    <p class="d">お客様は「電球を替えれば直る」と思っていることが多いです。一体型は器具交換になると先に伝えます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">9</span>カタログで器具の明るさを比べるときに見る数字は。</p>
+    <div class="a"><b>全光束（ルーメン）</b>、または「<b>◯形相当</b>」（例：60形相当）。</div>
+    <p class="d">ワット数ではなくルーメンで比べます。LEDはワットが小さくても明るいからです。</p>
+  </div>
+  <h2 class="rd">第2回（使う）</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>「玄関の外灯を、夜になったら自動で点けたい」と言われました。</p>
+    <div class="a"><b>明るさセンサー付き</b>の外灯。来客のときに明るくしたいなら<b>人感センサー付き</b>（明るさセンサーと併用）。</div>
+    <p class="d">「消し忘れがなくなる」「帰りが遅い日も安心」と、暮らしの言葉で説明します。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>「ダウンライトが点かない・ちらつく」と言われました。</p>
+    <div class="a">①<b>寿命</b>（一体型は器具交換） ②<b>調光器との相性</b> ③電源・配線。<b>10年以上なら交換を提案</b>。</div>
+    <p class="d">1か所がちらつき始めたら、同じ時期に付けたほかの器具も同じ時期です。まとめて見る提案ができます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">3</span>古いダウンライトをLEDに替えます。確かめることを3つ。</p>
+    <div class="a">①<b>埋込穴径</b> ②<b>断熱施工かどうか（SB形が必要か）</b> ③<b>調光器の有無</b>。加えて天井裏のスペース。</div>
+    <p class="d">この3つを外すと当日付けられません。現地で見る順番を決めておくと早いです。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">4</span>「リビングを落ち着いた雰囲気にしたい」と言われました。</p>
+    <div class="a"><b>電球色</b>、<b>調光</b>、ダウンライトや間接照明の<b>組み合わせ</b>。</div>
+    <p class="d">1つの明るい照明より、複数の照明で明るさを分けるのが落ち着きのコツです。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">5</span>高齢のご夫婦、夜中の廊下やトイレへの移動が心配。</p>
+    <div class="a"><b>人感センサー付き</b>の照明（自動で点く）、<b>足元灯</b>、常夜灯。</div>
+    <p class="d">スイッチを探さなくていい、が一番の安心です。「転ばないように」は大事な理由になります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">6</span>防犯のために外灯を付けたい、と言われました。</p>
+    <div class="a"><b>人感センサー付き</b>で明るめの器具。<b>防犯カメラ</b>と組み合わせる提案も（テーマ10）。</div>
+    <p class="d">明るくなるだけで、人は近寄りにくくなります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">7</span>工事が必要なのに「自分で替えたい」と言われました。</p>
+    <div class="a">配線器具の交換や器具の直結は<b>電気工事士の資格が必要</b>。安全のため工事で行うと伝える。</div>
+    <p class="d">断るのではなく「安全のためにうちでやらせてください」。法律の話より安全の話で伝えます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">8</span>見積のために現地で必ず見るところは。</p>
+    <div class="a">①<b>天井の材質と埋込穴径</b> ②<b>スイッチの位置・3路かどうか</b> ③<b>天井裏の断熱</b> ④既存器具の品番。</div>
+    <p class="d">写真を撮って帰れば、工事スタッフとの相談も早くなります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">9</span>設備照明の工事をしたお客様に、次にご案内できるものは。</p>
+    <div class="a">ほかの部屋のダウンライト、外灯、<b>スイッチ・コンセントの交換</b>、<b>分電盤の点検</b>。</div>
+    <p class="d">照明を替えた家は、配線まわりも同じ年数です。一緒に見ておくのが「壊れる前に気づく」です。</p>
+  </div>
+
+  <a class="back" href="kaito.html">← 回答編ポータルへ戻る</a>
+</div>
+<script>
+(function(){
+  var KEY="yahataKaitoAuth_v1", PIN="7860";
+  function reveal(){var g=document.getElementById("pinGate"); if(g) g.classList.add("hidden");}
+  window.checkPin=function(){
+    var v=(document.getElementById("pin").value||"").trim();
+    if(v===PIN){ try{localStorage.setItem(KEY,"1");}catch(e){} reveal(); }
+    else{ document.getElementById("pinErr").textContent="PINが違います"; }
+  };
+  var ok=false; try{ ok=localStorage.getItem(KEY)==="1"; }catch(e){}
+  if(ok) reveal();
+  else{ var i=document.getElementById("pin");
+    if(i){ i.addEventListener("keydown",function(e){ if(e.key==="Enter") window.checkPin(); });
+      setTimeout(function(){ try{i.focus();}catch(e){} },100); } }
+})();
+</script>
+</body>
+</html>

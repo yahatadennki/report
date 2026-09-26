@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>テーマ15 理美容｜回答編</title>
+<style>
+  :root{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;
+    --sun:#f0a500;--sv:#164a7a;--kj:#2e7d32;--acc:var(--sv)}
+  @media (prefers-color-scheme:dark){:root{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}}
+  :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);line-height:1.8;padding:28px 16px 70px;
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP","Meiryo",sans-serif}
+  .wrap{max-width:860px;margin:0 auto}
+  .pt-head{color:#fff;border-radius:10px;padding:24px 26px;margin:0 0 18px}
+  .pt-head .e{font-size:12px;letter-spacing:.14em;opacity:.75;margin:0 0 6px}
+  .pt-head h1{font-size:22px;margin:0 0 6px;line-height:1.4}
+  .pt-head .s{font-size:13px;opacity:.88;margin:0}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--sun);
+    border-radius:10px;padding:14px 18px;margin:0 0 20px;font-size:13.5px;color:var(--ink-soft)}
+  h2.rd{font-size:16px;margin:34px 0 14px;padding:8px 14px;border-radius:8px;background:var(--acc);color:#fff}
+  .qa{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:0 0 12px}
+  .qa .q{font-size:15px;font-weight:700;margin:0 0 10px;display:flex;gap:9px}
+  .qa .q .n{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--acc);color:#fff;
+    font-size:12px;display:flex;align-items:center;justify-content:center}
+  .qa .a{background:rgba(240,165,0,.10);border-left:4px solid var(--sun);border-radius:8px;
+    padding:10px 14px;font-size:14px;margin:0 0 10px}
+  .qa .a b{color:var(--ink)}
+  .qa .d{font-size:13px;color:var(--ink-soft);margin:0;padding-left:2px}
+  .qa .d b{color:var(--ink)}
+  .back{display:inline-block;margin-top:28px;font-size:13px;color:var(--ink-soft);text-decoration:none}
+  #pinGate{position:fixed;inset:0;z-index:9999;background:var(--paper);display:flex;align-items:center;justify-content:center;padding:20px}
+  #pinGate.hidden{display:none}
+  #pinGate .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:30px 28px;text-align:center;max-width:320px;width:100%}
+  #pinGate input{font-size:24px;letter-spacing:.35em;text-align:center;padding:10px 8px;width:170px;
+    border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);font-family:inherit}
+  #pinGate button{font-family:inherit;font-size:15px;font-weight:700;margin-top:12px;padding:10px 28px;
+    border:none;border-radius:8px;background:var(--acc);color:#fff;cursor:pointer}
+  #pinGate .err{color:#c94f4f;font-size:12px;height:16px;margin:6px 0}
+  @media print{@page{size:A4 portrait;margin:12mm 10mm}body{background:#fff;padding:0}
+    #pinGate,.back{display:none !important}.qa{page-break-inside:avoid}
+    .pt-head,h2.rd,.qa .a{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+  :root{--acc:#164a7a}
+</style>
+</head>
+<body>
+<div id="pinGate"><div class="box">
+  <div style="font-size:32px">🔒</div>
+  <p style="font-weight:700;margin:8px 0 2px">回答編（社内用）</p>
+  <p style="font-size:12.5px;color:var(--ink-soft);margin:0 0 14px">4桁のPINを入力してください</p>
+  <input id="pin" type="tel" inputmode="numeric" maxlength="4" placeholder="••••">
+  <div class="err" id="pinErr"></div>
+  <button type="button" onclick="checkPin()">入る</button>
+</div></div>
+<div class="wrap">
+  <div class="pt-head" style="background:linear-gradient(135deg,#1a3a5c 0%,#12283f 100%)">
+    <p class="e">回答編（社内用）</p>
+    <h1>テーマ15 理美容</h1>
+    <p class="s">サービススタッフ／第1回・第2回</p>
+  </div>
+  <div class="note">この解答は打合せ用です。<b>店の商品や置き場所に関わるものは「店で決めること」</b>としています。数字はカタログで最新を確認してください。</div>
+  <h2 class="rd">第1回（知る）</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>いま扱っている理美容の商品を、よく出る順に書いてください。</p>
+    <div class="a"><b>店で決めること。</b>例：シェーバー・ドライヤー・バリカン・ヘアアイロン。</div>
+    <p class="d">まずよく出るものから覚えます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>ドライヤーのシリーズごとの違いを1つずつ書いてください。</p>
+    <div class="a">上位＝<b>髪にやさしい機能（まとまり・うるおい）・温度の自動切替</b>、中位、普及＝<b>風の強さの基本</b>。カタログで最新を確認。</div>
+    <p class="d">「乾かす時間」と「髪の仕上がり」で違いを説明します。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">3</span>シェーバーの方式（往復式・回転式）の違いは。</p>
+    <div class="a"><b>往復式</b>＝深く剃れる・速い。<b>回転式</b>＝肌あたりがやさしい。</div>
+    <p class="d">ひげの濃さと肌の強さで選びます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">4</span>シェーバーの刃の交換の目安は。</p>
+    <div class="a"><b>外刃は約1年、内刃は約2年</b>が目安（機種による）。</div>
+    <p class="d">替刃の話は、次にお届けに伺う理由になります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">5</span>バリカン（散髪器具）の売りは。</p>
+    <div class="a"><b>家で散髪</b>できる。<b>長さを変えるアタッチメント</b>、水洗いできるものも。</div>
+    <p class="d">お孫さんの髪を切る、という使い方もあります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">6</span>フェイスケア・ボディケアの主な商品を2つ。</p>
+    <div class="a">例：<b>洗顔ブラシ・美顔器</b>、<b>ボディ用シェーバー</b>など。</div>
+    <p class="d">プレゼントで選ばれることも多い商品です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">7</span>充電式と電源コード式の違いは。</p>
+    <div class="a"><b>充電式</b>＝コードがなく、持ち運べる。<b>コード式</b>＝電池切れがない。</div>
+    <p class="d">旅行に持っていくかどうかで決まります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">8</span>理美容の商品がよく売れる時期は。</p>
+    <div class="a"><b>父の日（6月）</b>、<b>年末</b>、<b>誕生日</b>などのプレゼント。<b>店で決めること</b>（売場の時期）。</div>
+    <p class="d">プレゼントの時期に合わせて、先に声をかけると喜ばれます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">9</span>去年のモデルと今年のモデル、何が変わりましたか。</p>
+    <div class="a"><b>店で確認。</b>1〜2点。</div>
+    <p class="d">1つ言えれば十分です。</p>
+  </div>
+  <h2 class="rd">第2回（使う）</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>ドライヤーの上位と普及。値段の差は何の差ですか。</p>
+    <div class="a">①<b>髪へのやさしさ</b> ②<b>乾く速さ</b> ③<b>重さ・温度の自動調整</b>。<b>まとめると「仕上がり・時間・重さ」。</b></div>
+    <p class="d">毎日使うものなので、実物を持ってもらうと違いが伝わります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>父の日のプレゼントを探しているお客様。どう提案しますか。</p>
+    <div class="a"><b>シェーバー</b>を中心に、<b>予算で3段階</b>を見せて選んでもらう（深剃り・肌へのやさしさ・手入れのしやすさ）。</div>
+    <p class="d">選ぶ楽しみを残すのが、プレゼント提案のコツです。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">3</span>「シェーバーの剃り味が落ちた」と言われました。</p>
+    <div class="a"><b>刃の交換時期</b>（外刃は約1年目安）、<b>洗浄と注油</b>。</div>
+    <p class="d">本体を買い替えなくても、替刃で直ることが多いです。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">4</span>手が不自由なご年配のご主人。何をすすめますか。</p>
+    <div class="a"><b>持ちやすく軽い</b>シェーバー、<b>水洗いできる</b>もの、<b>充電が簡単</b>なもの。</div>
+    <p class="d">使う人の手を見て選ぶ、が一番の提案です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">5</span>家でお孫さんの髪を切りたい、と言われました。</p>
+    <div class="a"><b>バリカン</b>（アタッチメントで長さを変えられる）。</div>
+    <p class="d">家族の話を聞けるきっかけになる商品です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">6</span>「ドライヤーが熱くなって止まる」と言われました。</p>
+    <div class="a"><b>吸い込み口のホコリ詰まり</b>で安全装置が働いている。<b>掃除</b>をすすめ、10年以上なら買い替えも。</div>
+    <p class="d">故障ではなく、掃除で直ることが多いです。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">7</span>理美容の商品を買ったお客様に伝えることは。</p>
+    <div class="a"><b>お手入れのしかた</b>（刃の洗い方・吸い込み口の掃除）、<b>替刃の交換時期</b>、<b>充電のしかた</b>。</div>
+    <p class="d">長く使ってもらうための説明が、次の相談につながります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">8</span>替刃を、どうご案内しますか。</p>
+    <div class="a">交換時期に合わせて<b>ひまわりの訪問でお届け</b>できると伝える。</div>
+    <p class="d">小さな消耗品こそ、訪問のきっかけになります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">9</span>このテーマから、次につなげられるものは。</p>
+    <div class="a"><b>電動歯ブラシ</b>（テーマ14）、洗面所まわりの<b>照明・コンセント</b>。</div>
+    <p class="d">洗面所は、毎日使う家電が集まる場所です。</p>
+  </div>
+
+  <a class="back" href="kaito.html">← 回答編ポータルへ戻る</a>
+</div>
+<script>
+(function(){
+  var KEY="yahataKaitoAuth_v1", PIN="7860";
+  function reveal(){var g=document.getElementById("pinGate"); if(g) g.classList.add("hidden");}
+  window.checkPin=function(){
+    var v=(document.getElementById("pin").value||"").trim();
+    if(v===PIN){ try{localStorage.setItem(KEY,"1");}catch(e){} reveal(); }
+    else{ document.getElementById("pinErr").textContent="PINが違います"; }
+  };
+  var ok=false; try{ ok=localStorage.getItem(KEY)==="1"; }catch(e){}
+  if(ok) reveal();
+  else{ var i=document.getElementById("pin");
+    if(i){ i.addEventListener("keydown",function(e){ if(e.key==="Enter") window.checkPin(); });
+      setTimeout(function(){ try{i.focus();}catch(e){} },100); } }
+})();
+</script>
+</body>
+</html>
