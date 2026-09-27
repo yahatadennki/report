@@ -1,6 +1,9 @@
 /* ★日報のLINE送信を止めておく（2026-09-01）。無料枠を見積の成約に回すため。
    また送りたくなったら true に戻す */
 var NIPPO_LINE_ON = false;
+// 日報まとめをメールで送る（LINEの無料枠を使わないため）
+var NIPPO_MAIL_ON = true;
+var NIPPO_MAIL_TO = "yawata51@gmail.com";
 
 /**
  * 業務日報 受信・記録スクリプト
@@ -1153,6 +1156,13 @@ function sendDailyNippoSummaryCore_(ymd) {
       payload: JSON.stringify({ to: ownerLineId, messages: [{ type: 'text', text: body }] }),
       muteHttpExceptions: true
     });
+  }
+  // メールで送る（LINEの枠を使わない）
+  if (NIPPO_MAIL_ON && NIPPO_MAIL_TO) {
+    try {
+      var subj = "【業務日報まとめ】" + (r ? r.label + "（" + r.count + "件）" : target);
+      MailApp.sendEmail(NIPPO_MAIL_TO, subj, body);
+    } catch (mailErr) {}
   }
   return body;
 }
