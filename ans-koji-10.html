@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>テーマ10 取扱説明②（配達のあと）｜回答編</title>
+<style>
+  :root{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;
+    --sun:#f0a500;--sv:#164a7a;--kj:#2e7d32;--acc:var(--sv)}
+  @media (prefers-color-scheme:dark){:root{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}}
+  :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);line-height:1.8;padding:28px 16px 70px;
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP","Meiryo",sans-serif}
+  .wrap{max-width:860px;margin:0 auto}
+  .pt-head{color:#fff;border-radius:10px;padding:24px 26px;margin:0 0 18px}
+  .pt-head .e{font-size:12px;letter-spacing:.14em;opacity:.75;margin:0 0 6px}
+  .pt-head h1{font-size:22px;margin:0 0 6px;line-height:1.4}
+  .pt-head .s{font-size:13px;opacity:.88;margin:0}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--sun);
+    border-radius:10px;padding:14px 18px;margin:0 0 20px;font-size:13.5px;color:var(--ink-soft)}
+  h2.rd{font-size:16px;margin:34px 0 14px;padding:8px 14px;border-radius:8px;background:var(--acc);color:#fff}
+  .qa{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:0 0 12px}
+  .qa .q{font-size:15px;font-weight:700;margin:0 0 10px;display:flex;gap:9px}
+  .qa .q .n{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--acc);color:#fff;
+    font-size:12px;display:flex;align-items:center;justify-content:center}
+  .qa .a{background:rgba(240,165,0,.10);border-left:4px solid var(--sun);border-radius:8px;
+    padding:10px 14px;font-size:14px;margin:0 0 10px}
+  .qa .a b{color:var(--ink)}
+  .qa .d{font-size:13px;color:var(--ink-soft);margin:0;padding-left:2px}
+  .qa .d b{color:var(--ink)}
+  .back{display:inline-block;margin-top:28px;font-size:13px;color:var(--ink-soft);text-decoration:none}
+  #pinGate{position:fixed;inset:0;z-index:9999;background:var(--paper);display:flex;align-items:center;justify-content:center;padding:20px}
+  #pinGate.hidden{display:none}
+  #pinGate .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:30px 28px;text-align:center;max-width:320px;width:100%}
+  #pinGate input{font-size:24px;letter-spacing:.35em;text-align:center;padding:10px 8px;width:170px;
+    border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);font-family:inherit}
+  #pinGate button{font-family:inherit;font-size:15px;font-weight:700;margin-top:12px;padding:10px 28px;
+    border:none;border-radius:8px;background:var(--acc);color:#fff;cursor:pointer}
+  #pinGate .err{color:#c94f4f;font-size:12px;height:16px;margin:6px 0}
+  @media print{@page{size:A4 portrait;margin:12mm 10mm}body{background:#fff;padding:0}
+    #pinGate,.back{display:none !important}.qa{page-break-inside:avoid}
+    .pt-head,h2.rd,.qa .a{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+  :root{--acc:#2e7d32}
+</style>
+</head>
+<body>
+<div id="pinGate"><div class="box">
+  <div style="font-size:32px">🔒</div>
+  <p style="font-weight:700;margin:8px 0 2px">回答編（社内用）</p>
+  <p style="font-size:12.5px;color:var(--ink-soft);margin:0 0 14px">4桁のPINを入力してください</p>
+  <input id="pin" type="tel" inputmode="numeric" maxlength="4" placeholder="••••">
+  <div class="err" id="pinErr"></div>
+  <button type="button" onclick="checkPin()">入る</button>
+</div></div>
+<div class="wrap">
+  <div class="pt-head" style="background:linear-gradient(135deg,#2e7d32 0%,#1b5e20 100%)">
+    <p class="e">回答編（社内用）</p>
+    <h1>テーマ10 取扱説明②（配達のあと）</h1>
+    <p class="s">工事スタッフ／第1回・第2回</p>
+  </div>
+  <div class="note">この解答は打合せ用です。<b>車の積載や店のルールに関わるものは「店で決めること」</b>としています。工法や数値はメーカーの説明書と社内ルールで最終確認してください。</div>
+  <h2 class="rd">第1回（知る）</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>配達を「置いて終わり」にしないのはなぜですか。</p>
+    <div class="a">置いただけだと<b>「使い方が分からない」</b>で電話が来る。使えるようにして帰れば<b>信用が残り</b>、次もヤハタに頼んでもらえる。</div>
+    <p class="d">配達は、家の中に入れてもらえる大事な日です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>冷蔵庫を配達した日に、説明することを3つ。</p>
+    <div class="a">①<b>冷えるまで数時間</b>かかる（食材はあとで） ②<b>製氷の最初の氷は捨てる</b> ③<b>温度の設定</b>と扉の開き方。</div>
+    <p class="d">「冷えない」という電話の多くは、この説明をしていないだけです。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">3</span>洗濯機を配達した日に、説明することを3つ。</p>
+    <div class="a">①<b>給水・排水を一緒に確認</b>（試運転） ②<b>よく使うコース</b> ③<b>フィルターの掃除と槽洗浄</b>。</div>
+    <p class="d">試運転で水が漏れないか確かめるまでが配達です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">4</span>大型テレビを配達した日に、説明することを3つ。</p>
+    <div class="a">①<b>入力切替</b>（テレビ・レコーダー） ②<b>アンテナや録画機の接続</b>を一緒に確認 ③<b>転倒防止</b>とリモコンの基本。</div>
+    <p class="d">地震で倒れないように止めておくのも、配達の仕事です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">5</span>ブルーレイレコーダーを配達した日に、説明することを3つ。</p>
+    <div class="a">①<b>番組表からの録画予約</b> ②<b>録った番組の見方</b> ③<b>テレビの入力切替</b>との関係。</div>
+    <p class="d">録画予約を一緒に1回やると、それだけで使えるようになります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">6</span>電子レンジ・オーブンレンジを配達した日に、説明することは。</p>
+    <div class="a">①<b>あたための押し方</b> ②<b>使えない容器</b>（金属・アルミ） ③<b>最初の空焼き</b>（オーブン機能がある場合）と置き場所のすき間。</div>
+    <p class="d">最初の空焼きのにおいを故障と思われることがあります。先に伝えます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">7</span>衣類乾燥機（スタンドで設置）を配達した日に、説明することは。</p>
+    <div class="a">①<b>乾燥のコースと時間</b> ②<b>毎回のフィルター掃除</b> ③<b>乾かせない衣類</b>（表示の確認）。</div>
+    <p class="d">フィルターを掃除しないと乾きが悪くなります。毎回、が大事です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">8</span>マッサージチェアを配達した日に、説明することは。</p>
+    <div class="a">①<b>よく使うコースと強さ</b> ②<b>リクライニングのときの後ろのすき間</b> ③<b>使いすぎないこと</b>（1回の目安時間）。</div>
+    <p class="d">後ろの壁や家具にぶつけないように、置き場所を一緒に確かめます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">9</span>古い家電を引き取るときに、説明することは。</p>
+    <div class="a">①<b>リサイクル料金と運搬費</b>（見積どおりか） ②レコーダーなどは<b>録画や個人情報の消去</b> ③<b>リサイクル券の控え</b>をお渡しする。</div>
+    <p class="d">録画したものが消えることを先に伝えないと、あとで困らせてしまいます。</p>
+  </div>
+  <h2 class="rd">第2回（使う）</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>忙しくて説明を聞いてくれないお客様。どうしますか。</p>
+    <div class="a"><b>3つだけ</b>に絞って短く伝える。取扱説明書の<b>大事なページに印</b>をつける。<b>後日ひまわりが伺う</b>ので、そのときに聞けると伝える。</div>
+    <p class="d">無理に全部話さない。あとで聞ける道を残しておけば十分です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>操作が難しそうなご年配のお客様。どうしますか。</p>
+    <div class="a"><b>一緒に押してもらう</b>。よく使うボタンに<b>シールで印</b>をつける。できれば<b>ご家族にも</b>伝える。</div>
+    <p class="d">説明を「聞く」より、自分で「押した」ほうが覚えられます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">3</span>説明を聞く人と、実際に使う人が違う家。どうしますか。</p>
+    <div class="a"><b>使う人に直接説明する</b>。いなければ、<b>3つのことをメモに書いて</b>取扱説明書にはさんでおく。</div>
+    <p class="d">聞いた人が伝えるのは難しいものです。メモ1枚で電話が減ります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">4</span>説明の最後に、必ず言う一言は。</p>
+    <div class="a"><b>「分からなくなったら、いつでも電話してください」</b>。そのあと<b>アンケート</b>をお渡しする。</div>
+    <p class="d">この一言で、次に困ったときにヤハタを思い出してもらえます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">5</span>取扱説明書と保証書は、どう扱いますか。</p>
+    <div class="a"><b>置き場所を決めて一緒にしまう</b>。保証書に<b>日付と販売店</b>が入っているか確認。</div>
+    <p class="d">保証書がないと、修理のときにお客様が困ります。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">6</span>配達のあと、説明の前に自分で確かめることは。</p>
+    <div class="a">①<b>水平に置けているか</b> ②<b>アース・コンセント</b> ③<b>水漏れ・転倒防止</b>（洗濯機・テレビ）。</div>
+    <p class="d">確かめてから説明する。順番を守ると、説明の途中で慌てません。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">7</span>説明していて、分からないことを聞かれました。どうしますか。</p>
+    <div class="a">ごまかさず<b>「確認してお電話します」</b>と伝え、持ち帰って確かめて<b>必ず連絡する</b>。</div>
+    <p class="d">分からないことを正直に言える人のほうが、信用されます。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">8</span>説明が終わったら、何をしますか。</p>
+    <div class="a"><b>アンケートを渡す</b> → 半券に<b>日にち・お客様名・配達の内容・お渡しした方</b>を書き、<b>取扱説明ずみ</b>に✓ → 帰社したら<b>ひまわりBOX</b>へ。</div>
+    <p class="d">半券が、ひまわりの訪問リストになります。ここまでで仕事が完了です。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">9</span>配達の次の日に「使い方が分からない」と電話がありました。どうしますか。</p>
+    <div class="a">まず<b>電話で一緒に操作</b>してみる。それでも難しければ、<b>サービスかひまわりが伺う</b>段取りをする。</div>
+    <p class="d">「すぐ行きます」の一言が、いちばんの安心になります。</p>
+  </div>
+
+  <a class="back" href="kaito.html">← 回答編ポータルへ戻る</a>
+</div>
+<script>
+(function(){
+  var KEY="yahataKaitoAuth_v1", PIN="7860";
+  function reveal(){var g=document.getElementById("pinGate"); if(g) g.classList.add("hidden");}
+  window.checkPin=function(){
+    var v=(document.getElementById("pin").value||"").trim();
+    if(v===PIN){ try{localStorage.setItem(KEY,"1");}catch(e){} reveal(); }
+    else{ document.getElementById("pinErr").textContent="PINが違います"; }
+  };
+  var ok=false; try{ ok=localStorage.getItem(KEY)==="1"; }catch(e){}
+  if(ok) reveal();
+  else{ var i=document.getElementById("pin");
+    if(i){ i.addEventListener("keydown",function(e){ if(e.key==="Enter") window.checkPin(); });
+      setTimeout(function(){ try{i.focus();}catch(e){} },100); } }
+})();
+</script>
+</body>
+</html>
