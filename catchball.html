@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>言葉のキャッチボール｜ヤハタ電機商会</title>
+<style>
+  :root{
+    --bg:#fffaf2; --card:#fff; --ink:#2b2b2b; --soft:#7a7a7a; --line:#eee2d2;
+    --orange:#ff9500; --orange-d:#e07f00; --teal:#00b3a4; --pink:#ff5c7a; --blue:#3d9df6; --green:#2e7d32;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --bg:#191614; --card:#241f1c; --ink:#f2ece6; --soft:#a99f95; --line:#3a322c; }
+  }
+  :root[data-theme="dark"]{ --bg:#191614; --card:#241f1c; --ink:#f2ece6; --soft:#a99f95; --line:#3a322c; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);line-height:1.85;
+    font-family:"Hiragino Maru Gothic ProN","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
+    -webkit-text-size-adjust:100%}
+  .wrap{max-width:660px;margin:0 auto;padding:0 20px 90px}
+
+  header{background:linear-gradient(135deg,#00b3a4,#5fd3c7);color:#fff;padding:34px 20px 30px;
+    text-align:center;border-radius:0 0 28px 28px;margin-bottom:14px}
+  header .emo{font-size:40px;line-height:1}
+  header h1{margin:10px 0 6px;font-size:25px;line-height:1.4}
+  header p{margin:0;font-size:13px;opacity:.95}
+
+  .chap{margin:46px 0 14px;text-align:center}
+  .chap .tag{display:inline-block;color:#fff;border-radius:999px;padding:4px 20px;font-size:13px;font-weight:700;letter-spacing:.14em}
+  .chap.why .tag{background:var(--pink)} .chap.how .tag{background:var(--teal)} .chap.what .tag{background:var(--blue)}
+  .chap h2{margin:10px 0 0;font-size:20px}
+
+  p{margin:0 0 16px;font-size:16px}
+  .lead{font-size:17px;font-weight:700;line-height:1.7}
+  .sub{font-size:14px;color:var(--soft)}
+
+  .box{background:var(--card);border-radius:20px;padding:22px;margin:16px 0;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+  .box.pink{background:#ffe9ee} .box.teal{background:#dff7f4} .box.orange{background:linear-gradient(135deg,#fff1dc,#ffe6c2)}
+  @media (prefers-color-scheme:dark){ .box.pink{background:#3a2028}.box.teal{background:#123230}.box.orange{background:#3a2b16} }
+  .huge{font-size:25px;font-weight:800;line-height:1.45}
+  .huge.pink{color:var(--pink)} .huge.teal{color:var(--teal)} .huge.orange{color:var(--orange-d)}
+  .box .cap{font-size:14px;color:var(--soft);margin-top:10px}
+
+  /* NG / OK */
+  .talk{border-radius:18px;padding:16px 18px;margin:12px 0;box-shadow:0 2px 8px rgba(0,0,0,.05);background:var(--card)}
+  .talk .lbl{display:inline-block;font-size:12px;font-weight:700;color:#fff;border-radius:999px;padding:1px 12px;margin-bottom:8px}
+  .talk.ng .lbl{background:#9e9e9e} .talk.ok .lbl{background:var(--teal)}
+  .talk.ng{border-left:6px solid #bdbdbd} .talk.ok{border-left:6px solid var(--teal)}
+  .line{font-size:14.5px;margin:0 0 7px;display:flex;gap:8px}
+  .line b{flex:0 0 auto;min-width:3.2em}
+  .line .me{color:var(--blue)} .line .you{color:var(--orange-d)}
+  .talk .why{font-size:13px;color:var(--soft);margin:8px 0 0;border-top:1px dashed var(--line);padding-top:8px}
+
+  /* 型 */
+  .steps .s{background:var(--card);border-radius:16px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;
+    box-shadow:0 2px 8px rgba(0,0,0,.05);font-size:15px}
+  .steps .s .ico{font-size:24px;flex:0 0 auto;line-height:1.2}
+  .steps .s small{display:block;color:var(--soft);font-size:13px;margin-top:3px}
+  .steps .ar{text-align:center;font-size:19px;color:var(--orange);margin:3px 0}
+
+  /* 質問リスト */
+  .qlist{background:var(--card);border-radius:18px;padding:16px 20px;margin:14px 0;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .qlist b.t{font-size:15px}
+  .qlist ol{margin:8px 0 0;padding-left:22px}
+  .qlist li{font-size:14.5px;margin:0 0 6px}
+
+  .tips{background:var(--card);border-radius:18px;padding:16px 20px;margin:14px 0;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .tips li{font-size:14.5px;margin:0 0 6px}
+
+  /* ロールプレイ */
+  .roles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+  .roles div{background:var(--card);border-radius:14px;padding:12px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .roles .e{font-size:24px} .roles .n{font-weight:800;font-size:14px;margin:4px 0 2px} .roles .d{font-size:12px;color:var(--soft)}
+  @media (max-width:420px){ .roles{grid-template-columns:1fr} }
+
+  .check{background:var(--card);border-radius:18px;padding:16px 20px;margin:14px 0;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .check .row{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;margin:0 0 8px}
+  .check .bx{flex:0 0 auto;width:18px;height:18px;border:2px solid #999;border-radius:4px;margin-top:4px}
+
+  /* お客様カード */
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+  .ccard{background:var(--card);border:2px dashed #c9b8a0;border-radius:14px;padding:12px 14px}
+  .ccard .no{font-size:12px;font-weight:700;color:#fff;background:var(--orange);border-radius:999px;padding:0 10px;display:inline-block}
+  .ccard .who{font-weight:800;font-size:15px;margin:6px 0 4px}
+  .ccard ul{margin:0;padding-left:18px}
+  .ccard li{font-size:13px;margin:0 0 2px}
+  .ccard .hint{font-size:12px;color:var(--soft);margin-top:6px;border-top:1px dotted var(--line);padding-top:5px}
+  @media (max-width:520px){ .cards{grid-template-columns:1fr} }
+
+  .foot{margin-top:50px;text-align:center;font-size:12px;color:var(--soft)}
+  .print-btn{position:fixed;right:16px;bottom:16px;z-index:99;font-family:inherit;font-size:15px;font-weight:700;
+    padding:12px 22px;border:none;border-radius:999px;background:var(--teal);color:#fff;box-shadow:0 3px 12px rgba(0,0,0,.25);cursor:pointer}
+  @media print{
+    @page{size:A4 portrait;margin:12mm}
+    body{background:#fff}
+    .print-btn{display:none !important}
+    header,.chap .tag,.box,.talk .lbl,.ccard .no{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .box,.talk,.steps,.qlist,.tips,.check,.ccard,.roles{page-break-inside:avoid}
+    .cards-sec{page-break-before:always}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="emo">🗣️</div>
+  <h1>言葉の<br>キャッチボール</h1>
+  <p>一方的に話さない練習　／　月曜の打合せで使う</p>
+</header>
+
+<div class="wrap">
+
+<div class="chap why"><span class="tag">WHY</span></div>
+
+<p class="lead">説明が上手な人ほど、<br>しゃべりすぎてしまいます。</p>
+
+<p>「このエアコン古いですよ。10年たつと修理できないので、買い替えをおすすめしています。こちらのカタログの機種は…」<br>
+正しいことを言っていても、お客様には<b>売り込み</b>に聞こえます。</p>
+
+<div class="box teal">
+  <div class="huge teal">聞かれて答えた人は、<br>自分で気づく</div>
+  <div class="cap">「そういえば毎日使ってるな」と、お客様が自分で思ったとき、話は前に進みます。</div>
+</div>
+
+<div class="box orange">
+  <div class="huge orange">話す3割・聞く7割</div>
+  <div class="cap">商品の話は、最後の一言だけで十分です。</div>
+</div>
+
+<div class="chap how"><span class="tag">HOW</span><h2>4つの型</h2></div>
+
+<div class="steps">
+  <div class="s"><span class="ico">👀</span><div><b>① 見る</b>　見たことを一言だけ言う
+    <small>「フィルター、けっこうホコリがたまってますね」</small></div></div>
+  <div class="ar">↓</div>
+  <div class="s"><span class="ico">❓</span><div><b>② 聞く</b>　答えやすい質問を、1つずつ
+    <small>「このお部屋、いちばんよく使うお部屋ですか？」</small></div></div>
+  <div class="ar">↓</div>
+  <div class="s"><span class="ico">🔁</span><div><b>③ つなぐ</b>　お客様の言葉を、そのまま返す
+    <small>「夏も冬も毎日だと、一年中がんばってくれてますね」</small></div></div>
+  <div class="ar">↓</div>
+  <div class="s"><span class="ico">🎁</span><div><b>④ すすめる</b>　選べる形で、最後に一言
+    <small>「壊れる前に、一度だけ見積を出しておきましょうか？」</small></div></div>
+</div>
+
+<p class="lead" style="margin-top:30px">エアコン点検で比べてみます。</p>
+
+<div class="talk ng">
+  <span class="lbl">いまの話し方</span>
+  <p class="line"><b class="me">スタッフ</b>このエアコン、古いですよ。10年たつと修理できないので、買い替えをおすすめしてます。</p>
+  <p class="line"><b class="me">スタッフ</b>こちらのカタログの機種は、ここが良くて、電気代もこうで…</p>
+  <p class="line"><b class="you">お客様</b>はあ…まだ動いてるから、いいわ。</p>
+  <p class="why">お客様が話したのは最後の一言だけ。<b>「まだ動いてる」</b>と言わせてしまうと、話はそこで終わります。</p>
+</div>
+
+<div class="talk ok">
+  <span class="lbl">キャッチボール</span>
+  <p class="line"><b class="me">スタッフ</b>フィルター、けっこうホコリがたまってますね。このお部屋、いちばんよく使うお部屋ですか？</p>
+  <p class="line"><b class="you">お客様</b>そうね、居間だから一日中いるわ。</p>
+  <p class="line"><b class="me">スタッフ</b>一日中ですか。冬も暖房でお使いですか？</p>
+  <p class="line"><b class="you">お客様</b>使うわよ。冬はこれがないと寒くて。</p>
+  <p class="line"><b class="me">スタッフ</b>夏も冬も一日中だと、一年中がんばってくれてますね。これ、何年目くらいですか？</p>
+  <p class="line"><b class="you">お客様</b>どうだったかしら…もう10年以上かしら。</p>
+  <p class="line"><b class="me">スタッフ</b>毎日使うお部屋のエアコンが真夏や真冬に止まると困りますよね。壊れる前に、一度だけ見積を出しておきましょうか？</p>
+  <p class="why">お客様が<b>自分の口で</b>「一日中」「冬も使う」「10年以上」と言っています。スタッフの提案は、最後の一言だけです。</p>
+</div>
+
+<div class="qlist">
+  <b class="t">エアコン点検で使える質問（答えやすい順）</b>
+  <ol>
+    <li>このお部屋、いちばんよく使うお部屋ですか？</li>
+    <li>一日に何時間くらいつけていますか？</li>
+    <li>冬も暖房で使いますか？</li>
+    <li>最近、効きが悪いとか、音が気になることはありますか？</li>
+    <li>これ、何年目くらいですか？（分からなければ銘板を一緒に見る）</li>
+    <li>電気代、気になったりしますか？</li>
+  </ol>
+</div>
+
+<div class="tips">
+  <b>うまくいくコツ</b>
+  <ul>
+    <li><b>1回に聞くのは1つだけ。</b>答えを聞いてから次へ</li>
+    <li><b>お客様の言葉をそのまま返す</b>（「一日中ですか」）。聞いてもらえている、と伝わります</li>
+    <li><b>商品の名前は最後まで出さない。</b>先に出すと売り込みに聞こえます</li>
+    <li><b>「まだいいわ」と言われたら、そこで止める。</b>日報の見込みに残せば十分です</li>
+  </ul>
+</div>
+
+<div class="chap what"><span class="tag">WHAT</span><h2>月曜のロールプレイ</h2></div>
+
+<p class="lead">3人で10分。毎週1回。</p>
+
+<div class="roles">
+  <div><div class="e">🧑‍🔧</div><div class="n">スタッフ役</div><div class="d">4つの型で話す</div></div>
+  <div><div class="e">👵</div><div class="n">お客様役</div><div class="d">カードの人になりきる</div></div>
+  <div><div class="e">📝</div><div class="n">見る役</div><div class="d">チェック表をつける</div></div>
+</div>
+
+<div class="steps">
+  <div class="s"><span class="ico">🃏</span><div><b>お客様役がカードを1枚引く</b>
+    <small>中身はスタッフ役に見せない。聞かれたことだけ答える（自分からは言わない）</small></div></div>
+  <div class="ar">↓</div>
+  <div class="s"><span class="ico">⏱️</span><div><b>3分間ロールプレイ</b>
+    <small>点検が終わった場面から始める</small></div></div>
+  <div class="ar">↓</div>
+  <div class="s"><span class="ico">✅</span><div><b>見る役がチェック表を読み上げる</b>
+    <small>「よかったところ1つ」と「次にやってみること1つ」だけ</small></div></div>
+  <div class="ar">↓</div>
+  <div class="s"><span class="ico">🔄</span><div><b>役を交代して、3人とも1回ずつ</b></div></div>
+</div>
+
+<div class="check">
+  <b>見る役のチェック表</b>
+  <div class="row" style="margin-top:10px"><span class="bx"></span><span>最初の一言は「見たこと」だったか（いきなり商品の話をしなかったか）</span></div>
+  <div class="row"><span class="bx"></span><span>質問は<b>3つ以上</b>できたか</span></div>
+  <div class="row"><span class="bx"></span><span>1回に1つずつ聞いたか（まとめて聞かなかったか）</span></div>
+  <div class="row"><span class="bx"></span><span>お客様の言葉を<b>そのまま返した</b>か</span></div>
+  <div class="row"><span class="bx"></span><span>すすめたのは<b>最後の一言だけ</b>で、選べる形だったか</span></div>
+  <div class="row"><span class="bx"></span><span>お客様役が話した時間のほうが長かったか</span></div>
+</div>
+
+<div class="box teal">
+  <div class="huge teal">工事・配達のあとも同じ</div>
+  <div class="cap">取扱説明も、一方的に話すと覚えてもらえません。<br>
+  「ふだんはどのボタンをよく使われますか？」「お掃除は誰がされますか？」と聞いてから、その人に合わせて説明します。</div>
+</div>
+
+<div class="cards-sec">
+<p class="lead" style="margin-top:30px">お客様カード（切って使う）</p>
+<p class="sub">カードに書いてあることは、聞かれたときだけ答えます。</p>
+
+<div class="cards">
+  <div class="ccard"><span class="no">カード1</span>
+    <div class="who">70代のご夫婦（居間のエアコン）</div>
+    <ul><li>一日中、居間にいる</li><li>冬も暖房で毎日使う</li><li>14年目くらい</li><li>最近、音が大きい気がする</li></ul>
+    <div class="hint">口ぐせ：「まだ動いてるから」</div></div>
+  <div class="ccard"><span class="no">カード2</span>
+    <div class="who">一人暮らしの女性（寝室のエアコン）</div>
+    <ul><li>夏の夜に少し使うだけ</li><li>冬はこたつ</li><li>8年目</li><li>特に困っていない</li></ul>
+    <div class="hint">すすめなくていいお客様。見込みにも残さなくていい</div></div>
+  <div class="ccard"><span class="no">カード3</span>
+    <div class="who">共働きのご夫婦（リビングのエアコン）</div>
+    <ul><li>平日の昼はいない</li><li>夜と休日はずっと使う</li><li>11年目</li><li>電気代が気になっている</li></ul>
+    <div class="hint">口ぐせ：「忙しいから手短にね」</div></div>
+  <div class="ccard"><span class="no">カード4</span>
+    <div class="who">80代の一人暮らしの男性</div>
+    <ul><li>暑いのを我慢しがち</li><li>リモコンの使い方があやしい</li><li>15年目</li><li>息子さんが近くに住んでいる</li></ul>
+    <div class="hint">口ぐせ：「息子に聞いてみないと」</div></div>
+  <div class="ccard"><span class="no">カード5</span>
+    <div class="who">小さな子どもがいる家（子ども部屋）</div>
+    <ul><li>夏は一日中つける</li><li>においが気になる</li><li>9年目</li><li>フィルター掃除をしたことがない</li></ul>
+    <div class="hint">まずは掃除とクリーニングの話から</div></div>
+  <div class="ccard"><span class="no">カード6</span>
+    <div class="who">他の店で買ったエアコンの家</div>
+    <ul><li>12年目</li><li>冬も使う</li><li>「前の店は来てくれなかった」</li><li>点検は初めて</li></ul>
+    <div class="hint">口ぐせ：「高いんでしょ？」</div></div>
+</div>
+</div>
+
+<div class="foot">㈲ヤハタ電機商会</div>
+
+</div>
+<button class="print-btn" onclick="window.print()">🖨️ 印刷する</button>
+</body>
+</html>
