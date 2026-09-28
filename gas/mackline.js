@@ -519,16 +519,12 @@ function checkMacklineClaude_() {
 var MA80_PAIRS = ['USD/JPY', 'EUR/JPY', 'EUR/USD', 'GBP/USD', 'USD/CAD', 'USD/CHF'];   // 接近を知らせるだけなので6通貨
 var MA80_TOL   = 1.0;   // 接近とみなす幅＝直近20本の平均レンジ×これ
 
-// 6通貨×2つの時間足を毎回まとめて見ると、1回の実行が6分（GASの上限）を超える。
-// 15分足のデータは30分キャッシュなので、通貨を半分ずつ交互に処理しても取得回数は変わらない。
-//   :00/:30 の回 → 前半3通貨　　:15/:45 の回 → 後半3通貨
+// 15分足の通知はユーザー指示で廃止（2026-09-29）。1時間足だけなら6通貨を毎回見ても軽い
 function checkMackline80_() {
   var out = [];
-  var slot = Math.floor(Number(Utilities.formatDate(new Date(), 'Asia/Tokyo', 'm')) / 15) % 2;
-  var half = Math.ceil(MA80_PAIRS.length / 2);
-  var list = slot === 0 ? MA80_PAIRS.slice(0, half) : MA80_PAIRS.slice(half);
+  var list = MA80_PAIRS;
   list.forEach(function(sym) {
-    [['1h', '1時間足', 'day'], ['15min', '15分足', 'h4']].forEach(function(tf) {
+    [['1h', '1時間足', 'day']].forEach(function(tf) {
       try { out.push(JP_NAME[sym] + tf[1] + '：' + check80One_(sym, tf[0], tf[1], tf[2])); }
       catch (e) { out.push(JP_NAME[sym] + tf[1] + '：' + e); }
       Utilities.sleep(300);
