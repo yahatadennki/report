@@ -430,6 +430,13 @@ function doPost(e) {
         .setMimeType(ContentService.MimeType.JSON);
     }
 
+    // 集計メール：宛先は NIPPO_MAIL_TO 固定
+    if (data.action === 'mailme') {
+      MailApp.sendEmail(NIPPO_MAIL_TO, String(data.subject || '集計'), String(data.body || ''));
+      return ContentService.createTextOutput(JSON.stringify({ ok: true }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
     // お礼ハガキ：訪問済の書き戻し
     if (data.action === 'hagakiDone') {
       const ok = markHagakiDone_(data.key, data.memo);
