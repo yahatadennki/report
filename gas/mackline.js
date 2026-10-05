@@ -506,99 +506,160 @@ function checkMacklineClaude_() {
 }
 
 
-// ── 80MAへの接近を知らせる（1時間足・15分足）──
-//   売買サインではなく「そろそろ押し目・戻り目の位置に来た」という見に行くきっかけ。
-//   ①上位足が同じ方向 ②そのTFの80MAも同じ向き ③価格が80MAに接近 → 通知
-//   接近の幅＝直近20本の平均レンジ×1.0（＝そのTFの「ふつうの1本ぶん」）。
-//   一度知らせたら、幅の2倍まで離れるまで再通知しない（貼り付いた時の連投防止）。
+// ── 80MAの押し目・戻り目（1時間足・ドル円とユーロドル）──
+//   通知は2段階
+//   ① 📐 接近：日足20MAと1時間足80MAが同じ向き ＋ 価格が80MAに接近
+//      接近の幅＝直近20本の平均レンジ×1.0。一度知らせたら幅の2倍離れるまで再通知しない
+//   ② 接近のあと、1時間足の「確定した足の終値」で先に起きた方を1通だけ
+//      ✅ 押し目確定：接近した時点の直近の山(A＝確定スイング高値)を終値で上抜け
+//      ⛔ 抜け確定  ：接近後にできた谷(B＝確定スイング安値)を終値で下抜け
+//                     または 80MAを平均レンジ1本分以上、反対側へ抜けて引けた
+//      48時間たってもどちらも起きなければ、何も送らずに終了
+//   （戻り目＝売り目線の時は上下が逆）
 //
-//   ※参考（この位置から実際に入る場合の検証。ドル円・スプレッド0.5込み）
-//     80MAに触れて戻っただけで入る    → 1時間足 -40pips ／ 4時間足環境 -361pips（成立せず）
-//     触れたあと直近の高安値を更新して入る → 1時間足 135件 勝率44% PF1.46 +1,126pips
-//   つまり「近づいた＝買い」ではない。動き出しを見てから入るのが前提。
-var MA80_PAIRS = ['USD/JPY', 'EUR/JPY', 'EUR/USD', 'GBP/USD', 'USD/CAD', 'USD/CHF'];   // 接近を知らせるだけなので6通貨
+//   ※参考（ドル円・スプレッド0.5込み）
+//     80MAに触れてから1時間足の直近高値を更新して入る → 2023/1〜 135件 勝率44% PF1.46 +1,126pips
+//     ただし「近づいた」条件（触れていない）だと 2025/1〜 4通貨で -222pips とトントン以下
+//     15分足の高値更新で入るのは -1,552pips で一番悪かったので使わない
+var MA80_PAIRS = ['USD/JPY', 'EUR/USD'];   // ユーザー指示（2026-10-05）
 var MA80_TOL   = 1.0;   // 接近とみなす幅＝直近20本の平均レンジ×これ
+var MA80_WAIT  = 48;    // 接近してから確定を待つ時間（時間）
 
-// 15分足の通知はユーザー指示で廃止（2026-09-29）。1時間足だけなら6通貨を毎回見ても軽い
 function checkMackline80_() {
   var out = [];
-  var list = MA80_PAIRS;
-  list.forEach(function(sym) {
-    [['1h', '1時間足', 'day']].forEach(function(tf) {
-      try { out.push(JP_NAME[sym] + tf[1] + '：' + check80One_(sym, tf[0], tf[1], tf[2])); }
-      catch (e) { out.push(JP_NAME[sym] + tf[1] + '：' + e); }
-      Utilities.sleep(300);
-    });
+  MA80_PAIRS.forEach(function(sym) {
+    try { out.push(JP_NAME[sym] + '：' + check80One_(sym)); }
+    catch (e) { out.push(JP_NAME[sym] + '：' + e); }
+    Utilities.sleep(300);
   });
   return out.join('　');
 }
 
-function check80One_(sym, interval, tfName, envKind) {
-  var b = fetchTFCached_(sym, interval);
-  var last = b.closes.length - 1, pip = pipSize_(sym), name = JP_NAME[sym] || sym;
-  var p = PropertiesService.getScriptProperties();
-  var key = 'MA80NEAR_' + interval + '_' + sym.replace('/', '');
-
-  // 上位足の方向
-  var dir;
-  if (envKind === 'day') {
-    var dy = fetchDailyCached_(sym);
-    var dma = sma_(dy.closes, 20);
-    dir = dirOf_(slopeAt_(dma, dma.length - 1));
-    if (dir === 'flat') { p.deleteProperty(key); return '上位足の方向なし'; }
-  } else {
-    var h4 = fetchTFCached_(sym, '4h');
-    var q = macd_(h4.closes), L = h4.closes.length - 1;
-    if (q.line[L] == null || q.sig[L] == null) return 'データ不足';
-    dir = q.line[L] > q.sig[L] ? 'up' : 'down';
-  }
-
-  var ma = sma_(b.closes, 80);
-  if (ma[last] == null || ma[last - 3] == null) return '80MAが出せない';
-  var maUp = ma[last] > ma[last - 3];
-  if (dir === 'up' ? !maUp : maUp) { p.deleteProperty(key); return '80MAの向きが不一致'; }
-
-  // 接近の幅＝直近20本の平均レンジ
-  var rng = 0, cnt = 0;
-  for (var k = Math.max(1, last - 19); k <= last; k++) { rng += (b.highs[k] - b.lows[k]); cnt++; }
-  var tol = (cnt ? rng / cnt : 0) * MA80_TOL;
-  if (!(tol > 0)) return 'レンジが出せない';
-
-  var price = b.closes[last];
-  var dist = Math.abs(price - ma[last]);           // 80MAまでの距離
-  var distPips = dist / pip;
-  var tolPips = tol / pip;
-
-  var armed = p.getProperty(key);                  // 'y' なら通知済み
-  if (dist > tol * 2) { if (armed) p.deleteProperty(key); return '離れている(' + distPips.toFixed(1) + 'pips)'; }
-  if (dist > tol) return '接近中(' + distPips.toFixed(1) + 'pips／通知は' + tolPips.toFixed(1) + 'pips以内)';
-  if (armed) return '通知済み(' + distPips.toFixed(1) + 'pips)';
-  p.setProperty(key, 'y');
-
-  // 参考：この先どこを抜けたら動き出しとみなせるか（直近の確定スイング）
-  var SWn = PARAMS.SWING, level = null;
-  for (var j = last - SWn - 1; j >= Math.max(SWn, last - 60); j--) {
-    var isSw = true;
+// 確定スイング（左右SWING本より高い/低い）を、from〜to の範囲で新しい方から探す
+function swing80_(b, kind, from, to) {
+  var SWn = PARAMS.SWING;
+  for (var j = to; j >= Math.max(SWn, from); j--) {
+    if (j + SWn > b.closes.length - 2) continue;   // 右側SWING本が確定足でそろっていない
+    var ok = true;
     for (var z = j - SWn; z <= j + SWn; z++) {
       if (z === j) continue;
-      if (dir === 'up' ? b.highs[z] >= b.highs[j] : b.lows[z] <= b.lows[j]) { isSw = false; break; }
+      if (kind === 'high' ? b.highs[z] >= b.highs[j] : b.lows[z] <= b.lows[j]) { ok = false; break; }
     }
-    if (isSw) { level = dir === 'up' ? b.highs[j] : b.lows[j]; break; }
+    if (ok) return { i: j, price: kind === 'high' ? b.highs[j] : b.lows[j] };
+  }
+  return null;
+}
+
+function check80One_(sym) {
+  var b = fetchTFCached_(sym, '1h');
+  var last = b.closes.length - 1;          // 形成中の足
+  var done = last - 1;                     // 確定した最後の足（判定は終値が確定したこの足で行う）
+  var pip = pipSize_(sym), name = JP_NAME[sym] || sym;
+  var p = PropertiesService.getScriptProperties();
+  var keyNear = 'MA80NEAR_1h_' + sym.replace('/', '');
+  var keyArm  = 'MA80ARM_1h_' + sym.replace('/', '');
+
+  var ma = sma_(b.closes, 80);
+  if (ma[done] == null || ma[done - 3] == null) return '80MAが出せない';
+  var rng = 0, cnt = 0;
+  for (var k = Math.max(1, done - 19); k <= done; k++) { rng += (b.highs[k] - b.lows[k]); cnt++; }
+  var tol = cnt ? rng / cnt * MA80_TOL : 0;
+  if (!(tol > 0)) return 'レンジが出せない';
+
+  // ── ② 接近済みなら、確定を見る ──
+  var raw = p.getProperty(keyArm), arm = null;
+  if (raw) { try { arm = JSON.parse(raw); } catch (e) { arm = null; } }
+  if (arm) {
+    if (Date.now() - arm.at > MA80_WAIT * 3600 * 1000) { p.deleteProperty(keyArm); arm = null; }
+    else if (arm.lastBar !== b.time[done]) {
+      arm.lastBar = b.time[done];
+      var up = arm.dir === 'up';
+      var close = b.closes[done];
+      // 接近の足以降にできた谷(B)
+      var from = 0;
+      for (var s = done; s >= 0; s--) { if (b.time[s] <= arm.barTime) { from = s; break; } }
+      var B = swing80_(b, up ? 'low' : 'high', from, done);
+
+      var ok = arm.a != null && (up ? close > arm.a : close < arm.a);
+      var failB = B && (up ? close < B.price : close > B.price);
+      var fail80 = up ? close < ma[done] - tol : close > ma[done] + tol;
+
+      if (ok) {
+        p.deleteProperty(keyArm);
+        // 損切り＝接近してからの最安値(最高値)の3pips外
+        var ext = up ? Infinity : -Infinity;
+        for (var e2 = from; e2 <= done; e2++) ext = up ? Math.min(ext, b.lows[e2]) : Math.max(ext, b.highs[e2]);
+        var stop = up ? ext - PARAMS.BUFFER * pip : ext + PARAMS.BUFFER * pip;
+        var risk = Math.abs(close - stop) / pip;
+        pushMail_('✅ 80MAの' + (up ? '押し目' : '戻り目') + '確定｜' + name + '　1時間足　' + (up ? '買い' : '売り'),
+          '【80MAまで' + (up ? '押して' : '戻して') + 'から、直近の' + (up ? '山' : '谷') + 'を終値で抜けました】\n' +
+          '接近の通知（' + arm.notified + '）のあと、' + (up ? '押し目' : '戻り目') + 'が確定しました。\n\n' +
+          '■ ' + name + '　1時間足　' + (up ? '買い' : '売り') + '\n' +
+          '　抜けた' + (up ? '山' : '谷') + '（A） ' + fmt_(arm.a, sym) + '\n' +
+          '　確定した足の終値 ' + fmt_(close, sym) + '（' + b.time[done] + '）\n' +
+          '　現在値 ' + fmt_(b.closes[last], sym) + '\n' +
+          '　損切りの目安 ' + fmt_(stop, sym) + '（' + risk.toFixed(1) + 'pips＝' + (up ? '押し目の安値' : '戻り目の高値') + 'の3pips外）\n\n' +
+          '※検証（ドル円・80MAに触れた場合）：勝率44%・PF1.46。「近づいただけ」の場合はトントン程度なので、チャートで確認してから。');
+        return '✅ 押し目確定を通知';
+      }
+      if (failB || fail80) {
+        p.deleteProperty(keyArm);
+        pushMail_('⛔ 80MA' + (up ? '割れ' : '上抜け') + '確定｜' + name + '　1時間足　' + (up ? '押し目' : '戻り目') + '失敗',
+          '【' + (up ? '押し目' : '戻り目') + 'にならず、抜けていきました】\n' +
+          (failB
+            ? '接近のあとにできた' + (up ? '谷' : '山') + '（B） ' + fmt_(B.price, sym) + ' を終値で' + (up ? '下' : '上') + '抜けました。\n'
+            : '80MAを平均レンジ1本分以上' + (up ? '下' : '上') + 'に抜けて引けました。\n') +
+          (up ? '買い' : '売り') + 'は見送り。持っていれば損切りを検討する場面です。\n\n' +
+          '■ ' + name + '　1時間足\n' +
+          '　確定した足の終値 ' + fmt_(close, sym) + '（' + b.time[done] + '）\n' +
+          '　80MA ' + fmt_(ma[done], sym) + '\n' +
+          '　現在値 ' + fmt_(b.closes[last], sym));
+        return '⛔ 抜け確定を通知';
+      }
+      p.setProperty(keyArm, JSON.stringify(arm));
+      return '確定待ち(A=' + fmt_(arm.a, sym) + (B ? ' B=' + fmt_(B.price, sym) : '') + ')';
+    } else {
+      return '確定待ち';
+    }
   }
 
+  // ── ① 接近を見る ──
+  var dy = fetchDailyCached_(sym);
+  var dma = sma_(dy.closes, 20);
+  var dir = dirOf_(slopeAt_(dma, dma.length - 1));
+  if (dir === 'flat') { p.deleteProperty(keyNear); return '日足の方向なし'; }
+  var maUp = ma[done] > ma[done - 3];
+  if (dir === 'up' ? !maUp : maUp) { p.deleteProperty(keyNear); return '80MAの向きが日足と不一致'; }
+
+  var price = b.closes[last];
+  var maNow = ma[last] != null ? ma[last] : ma[done];
+  var dist = Math.abs(price - maNow);
+  var distPips = dist / pip, tolPips = tol / pip;
+  var near = p.getProperty(keyNear);
+  if (dist > tol * 2) { if (near) p.deleteProperty(keyNear); return '離れている(' + distPips.toFixed(1) + 'pips)'; }
+  if (dist > tol) return '接近中(' + distPips.toFixed(1) + 'pips／通知は' + tolPips.toFixed(1) + 'pips以内)';
+  if (near) return '通知済み(' + distPips.toFixed(1) + 'pips)';
+  p.setProperty(keyNear, 'y');
+
+  // 接近した時点の直近の山(A)＝押し目確定の基準
+  var A = swing80_(b, dir === 'up' ? 'high' : 'low', done - 60, done);
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Tokyo', 'M/d HH:mm');
+  p.setProperty(keyArm, JSON.stringify({ dir: dir, a: A ? A.price : null, at: Date.now(),
+    barTime: b.time[done], lastBar: b.time[done], notified: nowStr }));
+
   var side = dir === 'up' ? '押し目' : '戻り目';
-  pushMail_('📐 80MAに接近｜' + name + '　' + tfName + '　' + side + '（' + (dir === 'up' ? '買い' : '売り') + '目線）',
-    '【' + tfName + 'の80MAまで引きつけてきました。チャートを見るきっかけです】\n' +
-    (envKind === 'day' ? '日足20MA' : '4時間足MACD') + 'が' + (dir === 'up' ? '上' : '下') + '向き、' + tfName + 'の80MAも同じ向きです。\n' +
-    '※これは売買サインではありません。検証では「80MAに触れただけ」で入ると成立しませんでした。\n' +
-    '　触れたあと直近の高安値を更新してから入ると 勝率44%・PF1.46（1時間足）です。\n\n' +
-    '■ ' + name + '　' + tfName + '　' + side + '\n' +
-    '　現在値 ' + fmt_(price, sym) + '　80MA ' + fmt_(ma[last], sym) + '\n' +
-    '　80MAまで ' + distPips.toFixed(1) + 'pips（接近の目安 ' + tolPips.toFixed(1) + 'pips以内）\n' +
-    (level != null
-      ? '　動き出しの目安：直近' + (dir === 'up' ? '高値' : '安値') + ' ' + fmt_(level, sym) + ' を抜けたら\n'
-      : '') +
-    '\n次の通知は、いったん ' + (tolPips * 2).toFixed(1) + 'pips 以上離れてから再接近した時です。');
+  pushMail_('📐 80MAに接近｜' + name + '　1時間足　' + side + '（' + (dir === 'up' ? '買い' : '売り') + '目線）',
+    '【1時間足の80MAまで' + (dir === 'up' ? '押して' : '戻して') + 'きました。チャートを見るきっかけです】\n' +
+    '日足20MAが' + (dir === 'up' ? '上' : '下') + '向き、1時間足の80MAも同じ向きです。\n' +
+    '※これは売買サインではありません。このあと確定したらもう1通送ります。\n\n' +
+    '■ ' + name + '　1時間足　' + side + '\n' +
+    '　現在値 ' + fmt_(price, sym) + '　80MA ' + fmt_(maNow, sym) + '\n' +
+    '　80MAまで ' + distPips.toFixed(1) + 'pips（接近の目安 ' + tolPips.toFixed(1) + 'pips以内）\n\n' +
+    '▼ 次に来る通知（1時間足の終値で判定・先に起きた方を1通だけ）\n' +
+    (A ? '　✅ ' + side + '確定：直近の' + (dir === 'up' ? '山' : '谷') + ' ' + fmt_(A.price, sym) + ' を終値で' + (dir === 'up' ? '上' : '下') + '抜け\n'
+       : '　✅ ' + side + '確定：直近の' + (dir === 'up' ? '山' : '谷') + 'を終値で抜けた時\n') +
+    '　⛔ 抜け確定：このあとできる' + (dir === 'up' ? '谷' : '山') + 'を終値で' + (dir === 'up' ? '下' : '上') + '抜け、または80MAを大きく抜けて引けた時\n' +
+    '　' + MA80_WAIT + '時間たってもどちらも起きなければ通知は出ません。');
   return '📐 接近を通知(' + distPips.toFixed(1) + 'pips)';
 }
 
