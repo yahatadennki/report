@@ -154,7 +154,7 @@ function fetchTFCached_(symbol, interval) {
 }
 
 // ===== 判定：日足の方向にMACDがクロスしたか（＝通知の対象）=====
-function checkCross_(symbol) {
+function checkCross_(symbol, counter) {
   var h1 = fetchTFCached_(symbol, '1h');
   Utilities.sleep(400);
   var dy = fetchDailyCached_(symbol);
@@ -167,6 +167,8 @@ function checkCross_(symbol) {
   // 日足の方向
   var dma = sma_(dy.closes, 20);
   var dDir = dirOf_(slopeAt_(dma, dma.length - 1));
+  // 狙う方向。counter=true なら日足に逆らう方向（逆張り版パーフェクトMACD）
+  var tDir = !counter ? dDir : (dDir === 'up' ? 'down' : dDir === 'down' ? 'up' : 'flat');
 
   // 4時間足のMACDの向き（シグナルより上か下か）
   var m4 = macd_(h4.closes), l4 = h4.closes.length - 1;
@@ -207,15 +209,15 @@ function checkCross_(symbol) {
     }
   }
 
-  if (dDir === 'flat' || crossIdx < 0 || crossDir !== dDir) return out;
+  if (tDir === 'flat' || crossIdx < 0 || crossDir !== tDir) return out;
   // ★4時間足のMACDも同じ向きでなければ狙わない（検証で +1,697 → +3,882pips）
-  if (h4Dir !== dDir) { out.armReason = 'h4'; return out; }
+  if (h4Dir !== tDir) { out.armReason = 'h4'; return out; }
   // クロスから離れすぎた（6本超）ものは追いかけない
   var barsAgo = last - crossIdx;
   if (barsAgo > PARAMS.ARM) { out.armReason = 'old'; return out; }
 
   out.armed = true;                 // 構えは成立。あとは高安値の更新待ち
-  out.dir = dDir;
+  out.dir = tDir;
   out.crossTime = h1.time[crossIdx];
   out.barsAgo = barsAgo;
 
@@ -226,24 +228,24 @@ function checkCross_(symbol) {
     var isSw = true;
     for (var j = k - sw; j <= k + sw; j++) {
       if (j === k) continue;
-      if (dDir === 'up' ? h1.highs[j] >= h1.highs[k] : h1.lows[j] <= h1.lows[k]) { isSw = false; break; }
+      if (tDir === 'up' ? h1.highs[j] >= h1.highs[k] : h1.lows[j] <= h1.lows[k]) { isSw = false; break; }
     }
-    if (isSw) { trig = dDir === 'up' ? h1.highs[k] : h1.lows[k]; break; }
+    if (isSw) { trig = tDir === 'up' ? h1.highs[k] : h1.lows[k]; break; }
   }
   if (trig == null) { out.armReason = 'noswing'; return out; }
   out.trigger = trig;
 
   // 損切りの目安＝直近10本の逆側の極値
-  var from = Math.max(0, last - 10), stopBase = dDir === 'up' ? Infinity : -Infinity;
+  var from = Math.max(0, last - 10), stopBase = tDir === 'up' ? Infinity : -Infinity;
   for (var q = from; q <= last; q++) {
-    stopBase = dDir === 'up' ? Math.min(stopBase, h1.lows[q]) : Math.max(stopBase, h1.highs[q]);
+    stopBase = tDir === 'up' ? Math.min(stopBase, h1.lows[q]) : Math.max(stopBase, h1.highs[q]);
   }
-  var line = dDir === 'up' ? stopBase - PARAMS.BUFFER * pip : stopBase + PARAMS.BUFFER * pip;
+  var line = tDir === 'up' ? stopBase - PARAMS.BUFFER * pip : stopBase + PARAMS.BUFFER * pip;
   out.stop = line;
   out.risk = Math.abs(h1.closes[last] - line) / pip;
 
   // 更新したか（終値ベース）
-  out.hit = dDir === 'up' ? (h1.closes[last] > trig) : (h1.closes[last] < trig);
+  out.hit = tDir === 'up' ? (h1.closes[last] > trig) : (h1.closes[last] < trig);
   return out;
 }
 
@@ -400,7 +402,9 @@ function checkMackline() {
   // try { checkMacklineIshin_(); }   catch (e) {}
   // try { checkMacklineReverse_(); } catch (e) {}
   // try { checkMackline80_(); }      catch (e) {}
-  return '【パーフェクトMACD】' + b;
+  var cn = '';
+  try { cn = checkMacklineCounter_(); } catch (e) { cn = '逆張り版エラー ' + e; }
+  return '【パーフェクトMACD】' + b + '　／　【逆張り版】' + cn;
 }
 
 // ── 維新流モード（既定）：準備(SETUP)と確定(ENTRY)で知らせる ──
@@ -443,6 +447,53 @@ function checkMacklineIshin_() {
 }
 
 // ── パーフェクトMACDモード：日足・4時間足・1時間足がそろって高安値更新 ──
+// ── 🔁 逆張り版パーフェクトMACD（ドル円のみ）──
+//   条件はパーフェクトMACDと同じで、方向だけ日足に逆らう：
+//   ①日足20MAの逆 ②4時間足MACDもその向き ③1時間足MACDがその向きへクロス
+//   ④クロスから6本以内に1時間足が直近の高安値を終値で更新
+//   検証(2023/1〜2026/7・スプレッド込み)
+//     ドル円 137件 勝率44% PF1.40 +1,167pips（年 -208/+1,029/+347）
+//     ほかの5通貨はすべて大きくマイナス(-691〜-1,998)なのでドル円だけ
+//   ユーザーが確認なしで逆張りしてしまうクセへの対策（2026-10-05）
+var COUNTER_PAIRS = ['USD/JPY'];
+
+function checkMacklineCounter_() {
+  var p = PropertiesService.getScriptProperties();
+  var hits = [], status = [];
+  COUNTER_PAIRS.forEach(function(sym) {
+    try {
+      var r = checkCross_(sym, true);
+      if (r.hit) {
+        var key = 'CNTR_' + sym.replace('/', '');
+        if (p.getProperty(key) !== r.crossTime) {
+          p.setProperty(key, r.crossTime);
+          hits.push(
+            '■ ' + r.name + '　' + (r.dir === 'up' ? '買い' : '売り') + '（日足に逆らう方向）\n' +
+            '　日足：' + (r.dDir === 'up' ? '上昇' : '下落') + '　4時間足MACD：' + (r.dir === 'up' ? '上' : '下') + '向き\n' +
+            '　1時間足クロス：' + r.crossTime + '（' + r.barsAgo + '本前）\n' +
+            '　直近の' + (r.dir === 'up' ? '高値' : '安値') + ' ' + fmt_(r.trigger, sym) + ' を更新\n' +
+            '　▶ ' + fmt_(r.price, sym) + ' で' + (r.dir === 'up' ? '買い' : '売り') + '\n' +
+            '　　損切り：' + fmt_(r.stop, sym) + '（' + r.risk.toFixed(1) + 'pips）'
+          );
+        }
+      }
+      status.push(r.name + '：' + (r.hit ? '更新でエントリー' : r.armed ? '構え中' : r.armReason === 'h4' ? '4時間足が逆' : '待ち'));
+    } catch (e) {
+      status.push(sym + '：エラー ' + e);
+    }
+  });
+  if (hits.length) {
+    pushMail_('🔁 逆張り版パーフェクトMACD｜' + hits[0].split('\n')[0].replace('■ ', '').replace('（日足に逆らう方向）', '').trim(),
+      '【逆張りしてもいい合図です。下げ(上げ)が止まって動き出したのを3つで確認しました】\n' +
+      '①4時間足MACDもこの向き ②1時間足MACDがクロス ③直近の高安値を終値で更新 ← いまここ\n' +
+      '検証(ドル円・2023/1〜2026/7)：137件 勝率44% PF1.40 +1,167pips。\n' +
+      '※日足には逆らっているので、強いトレンドの年は負けやすい（2024年は-208）。ロットは順張りより控えめに。\n' +
+      '※このメールが来ていない時の逆張りは、検証上は負けやすい「確認なしの逆張り」です。\n\n' +
+      hits.join('\n\n'));
+  }
+  return status.join(' / ');
+}
+
 function checkMacklineClaude_() {
   var p = PropertiesService.getScriptProperties();
   var hits = [], nears = [], status = [];
