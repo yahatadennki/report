@@ -34,7 +34,7 @@ var MACKLINE_MODE = 'ishin';
 //   単体でプラスなのは維新流=ドル円・ユーロ円、パーフェクトMACD=ドル円ほか4通貨だが、
 //   通知過多を避けるため一番成績の良いドル円に絞る。戻す時は下の1行を6通貨に戻すだけ
 var ISHIN_PAIRS  = ['USD/JPY'];
-var CLAUDE_PAIRS = ['USD/JPY'];
+var CLAUDE_PAIRS = ['USD/JPY', 'EUR/JPY', 'EUR/USD', 'GBP/USD', 'USD/CAD', 'USD/CHF'];   // 2026-10-05 パーフェクトMACDだけにした際に6通貨へ戻した
 var PAIRS = ISHIN_PAIRS;   // 旧コードの互換用
 var JP_NAME = { 'USD/JPY': 'ドル円', 'EUR/USD': 'ユーロドル', 'GBP/USD': 'ポンドドル',
                 'USD/CHF': 'ドルスイス', 'USD/CAD': 'ドルカナダ', 'EUR/JPY': 'ユーロ円' };
@@ -392,13 +392,15 @@ function checkMackline() {
     return '市場クローズ中';
   }
 
-  var a = '', b = '', c = '';
-  try { a = checkMacklineIshin_(); }   catch (e) { a = '維新流エラー ' + e; }
-  try { b = checkMacklineClaude_(); }  catch (e) { b = 'パーフェクトMACDエラー ' + e; }
-  try { c = checkMacklineReverse_(); } catch (e) { c = '逆張りエラー ' + e; }
-  var d80 = '';
-  try { d80 = checkMackline80_(); } catch (e) { d80 = '80MAエラー ' + e; }
-  return '【維新流】' + a + '　／　【パーフェクトMACD】' + b + '　／　【逆張り】' + c + '　／　【80MA押し目】' + d80;
+  // ★2026-10-05 ユーザー指示：メールはパーフェクトMACD（ドル円）だけにする。
+  //   維新流・逆張り・80MAの判定コードは残してあるので、戻す時は下の3行のコメントを外すだけ。
+  //   検証：法則だけの簡易版(+191)や4時間足を足した版(+1,622)より、パーフェクトMACD(+3,038)が上だった
+  var b = '';
+  try { b = checkMacklineClaude_(); } catch (e) { b = 'パーフェクトMACDエラー ' + e; }
+  // try { checkMacklineIshin_(); }   catch (e) {}
+  // try { checkMacklineReverse_(); } catch (e) {}
+  // try { checkMackline80_(); }      catch (e) {}
+  return '【パーフェクトMACD】' + b;
 }
 
 // ── 維新流モード（既定）：準備(SETUP)と確定(ENTRY)で知らせる ──
