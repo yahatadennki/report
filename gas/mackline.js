@@ -402,8 +402,9 @@ function checkMackline() {
   // try { checkMacklineIshin_(); }   catch (e) {}
   // try { checkMacklineReverse_(); } catch (e) {}
   // try { checkMackline80_(); }      catch (e) {}
-  // try { checkMacklineCounter_(); } catch (e) {}   // 逆張り版もユーザー指示で停止（2026-10-05）
-  return '【パーフェクトMACD】' + b;
+  var cn = '';
+  try { cn = checkMacklineCounter_(); } catch (e) { cn = '逆張り版エラー ' + e; }   // 逆張り版は残す（ユーザー指示）
+  return '【パーフェクトMACD】' + b + '　／　【逆張り版】' + cn;
 }
 
 // ── 維新流モード（既定）：準備(SETUP)と確定(ENTRY)で知らせる ──
