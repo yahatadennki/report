@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>上期集計 2026年4月〜9月｜ヤハタ電機商会</title>
+<style>
+  :root{--ink:#222;--soft:#777;--line:#ddd;--paper:#f6f4ef;--card:#fff;--accent:#7a1f2b}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo",system-ui,sans-serif;line-height:1.5}
+  .page{max-width:800px;margin:16px auto;background:var(--card);padding:22px 26px 18px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  .hd{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid var(--accent);padding-bottom:6px;margin-bottom:10px}
+  .hd h1{margin:0;font-size:21px}
+  .hd .sub{font-size:11px;color:var(--soft);text-align:right}
+  h2{font-size:13px;margin:12px 0 4px;padding-left:8px;border-left:4px solid var(--accent)}
+  .tw{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;min-width:520px}
+  col.c0{width:22%}
+  th,td{border:1px solid var(--line);padding:3px 6px;text-align:right}
+  tr:first-child th{background:#f1ece4;text-align:center;font-size:11.5px}
+  th:first-child{text-align:left;font-weight:600;background:#faf8f4}
+  .tot{background:#fbf3e6;font-weight:700}
+  tr.sum td,tr.sum th{font-weight:700;border-top:2px solid #bbb}
+  tr.ind th{padding-left:16px;font-weight:400;color:#555}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .two table{min-width:0}
+  .chart{width:100%;height:auto;display:block}
+  .legend{font-size:11px;color:#555;display:flex;gap:12px;justify-content:center;margin-top:-4px}
+  .legend i{display:inline-block;width:10px;height:10px;margin-right:4px;vertical-align:-1px}
+  .legend .u{color:var(--soft)}
+  ul.pt{margin:4px 0 0;padding-left:18px;font-size:12.5px}
+  ul.pt li{margin:0 0 3px}
+  .note{font-size:10.5px;color:var(--soft);margin-top:8px}
+  .print-btn{position:fixed;right:16px;bottom:16px;font-size:15px;font-weight:700;padding:12px 22px;border:none;border-radius:999px;background:var(--accent);color:#fff;box-shadow:0 3px 12px rgba(0,0,0,.25);cursor:pointer;font-family:inherit}
+  @media (max-width:640px){.two{grid-template-columns:1fr}.page{padding:16px}}
+  @media print{
+    @page{size:A4 portrait;margin:8mm}
+    body{background:#fff}
+    .page{box-shadow:none;margin:0;max-width:none;padding:0}
+    .print-btn,#pinGate{display:none!important}
+    table{font-size:10px;min-width:0}
+    th,td{padding:1px 5px}
+    h2{margin:9px 0 3px}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+  #pinGate{position:fixed;inset:0;z-index:9999;background:var(--paper);display:flex;align-items:center;justify-content:center;padding:20px}
+  #pinGate.hidden{display:none}
+  #pinGate .box{background:#fff;border-radius:14px;padding:28px;text-align:center;max-width:300px;width:100%;box-shadow:0 6px 24px rgba(0,0,0,.12)}
+  #pinGate input{font-size:24px;letter-spacing:.35em;text-align:center;padding:10px;width:160px;border:1px solid var(--line);border-radius:10px}
+  #pinGate button{margin-top:10px;font-size:15px;font-weight:700;padding:10px 28px;border:none;border-radius:8px;background:var(--accent);color:#fff}
+  #pinErr{color:#c33;font-size:12px;height:16px;margin-top:6px}
+</style>
+</head>
+<body>
+<div id="pinGate"><div class="box"><div style="font-size:32px">🔒</div><p style="font-weight:700;margin:8px 0 12px">上期集計</p>
+<input id="pinInput" type="tel" inputmode="numeric" maxlength="4" placeholder="••••" autocomplete="off"><div id="pinErr"></div>
+<button type="button" onclick="checkPin()">見る</button></div></div>
+
+<div class="page">
+  <div class="hd"><h1>上期集計　2026年4月〜9月</h1><div class="sub">㈲ヤハタ電機商会<br>業務日報・受注日報・ひまわり日報より</div></div>
+
+  <h2>工事売上（人数割り・千円）</h2>
+  <svg viewBox="0 0 560 145" class="chart" role="img" aria-label="工事売上の月別推移"><line x1="40" x2="550" y1="125" y2="125" stroke="#e5e5e5"/><text x="34" y="129" text-anchor="end" font-size="10" fill="#888">0</text><line x1="40" x2="550" y1="104" y2="104" stroke="#e5e5e5"/><text x="34" y="108" text-anchor="end" font-size="10" fill="#888">1,000</text><line x1="40" x2="550" y1="83" y2="83" stroke="#e5e5e5"/><text x="34" y="87" text-anchor="end" font-size="10" fill="#888">2,000</text><line x1="40" x2="550" y1="62" y2="62" stroke="#e5e5e5"/><text x="34" y="66" text-anchor="end" font-size="10" fill="#888">3,000</text><line x1="40" x2="550" y1="41" y2="41" stroke="#e5e5e5"/><text x="34" y="45" text-anchor="end" font-size="10" fill="#888">4,000</text><line x1="40" x2="550" y1="20" y2="20" stroke="#e5e5e5"/><text x="34" y="24" text-anchor="end" font-size="10" fill="#888">5,000</text><rect x="60" y="67.66999999999999" width="46" height="57.330000000000005" fill="#2a78d6"/><text x="83" y="63.66999999999999" text-anchor="middle" font-size="11" font-weight="700" fill="#333">2,730</text><text x="83" y="139" text-anchor="middle" font-size="11" fill="#555">4月</text><rect x="140" y="95.6" width="46" height="29.400000000000002" fill="#2a78d6"/><text x="163" y="91.6" text-anchor="middle" font-size="11" font-weight="700" fill="#333">1,400</text><text x="163" y="139" text-anchor="middle" font-size="11" fill="#555">5月</text><rect x="220" y="111.644" width="46" height="13.356000000000002" fill="#eda100"/><text x="243" y="107.644" text-anchor="middle" font-size="11" font-weight="700" fill="#333">636</text><text x="243" y="139" text-anchor="middle" font-size="11" fill="#555">6月</text><rect x="300" y="99.548" width="46" height="25.452" fill="#2a78d6"/><rect x="300" y="80.837" width="46" height="18.711" fill="#1baf7a"/><rect x="300" y="41.735" width="46" height="39.102000000000004" fill="#eda100"/><text x="323" y="37.735" text-anchor="middle" font-size="11" font-weight="700" fill="#333">3,965</text><text x="323" y="139" text-anchor="middle" font-size="11" fill="#555">7月</text><rect x="380" y="124.37" width="46" height="0.63" fill="#2a78d6"/><rect x="380" y="87.74600000000001" width="46" height="36.624" fill="#1baf7a"/><rect x="380" y="47.67800000000001" width="46" height="40.068" fill="#eda100"/><text x="403" y="43.67800000000001" text-anchor="middle" font-size="11" font-weight="700" fill="#333">3,682</text><text x="403" y="139" text-anchor="middle" font-size="11" fill="#555">8月</text><rect x="460" y="100.493" width="46" height="24.506999999999998" fill="#1baf7a"/><rect x="460" y="27.055999999999997" width="46" height="73.437" fill="#eda100"/><text x="483" y="23.055999999999997" text-anchor="middle" font-size="11" font-weight="700" fill="#333">4,664</text><text x="483" y="139" text-anchor="middle" font-size="11" fill="#555">9月</text></svg>
+  <div class="legend"><span><i style="background:#2a78d6"></i>高山</span><span><i style="background:#1baf7a"></i>伊藤</span><span><i style="background:#eda100"></i>服部</span><span class="u">単位：千円</span></div>
+  <div class="tw"><table><colgroup><col class="c0"><col><col><col><col><col><col><col></colgroup><tr><th></th><th>4月</th><th>5月</th><th>6月</th><th>7月</th><th>8月</th><th>9月</th><th class="tot">上期計</th></tr><tr><th>高山</th><td>2,730</td><td>1,400</td><td>0</td><td>1,212</td><td>30</td><td>0</td><td class="tot">5,372</td></tr><tr><th>伊藤</th><td>0</td><td>0</td><td>0</td><td>891</td><td>1,744</td><td>1,167</td><td class="tot">3,802</td></tr><tr><th>服部</th><td>0</td><td>0</td><td>636</td><td>1,862</td><td>1,908</td><td>3,497</td><td class="tot">7,903</td></tr><tr class="sum"><th>計</th><td>2,730</td><td>1,400</td><td>636</td><td>3,965</td><td>3,682</td><td>4,664</td><td class="tot">17,077</td></tr></table></div>
+
+  <h2>業務日報</h2>
+  <div class="tw"><table><colgroup><col class="c0"><col><col><col><col><col><col><col></colgroup><tr><th></th><th>4月</th><th>5月</th><th>6月</th><th>7月</th><th>8月</th><th>9月</th><th class="tot">上期計</th></tr><tr><th>日報件数　高山</th><td>166</td><td>66</td><td>0</td><td>37</td><td>1</td><td>0</td><td class="tot">270</td></tr><tr class="ind"><th>伊藤</th><td>68</td><td>99</td><td>56</td><td>82</td><td>85</td><td>57</td><td class="tot">447</td></tr><tr class="ind"><th>服部</th><td>0</td><td>0</td><td>9</td><td>36</td><td>55</td><td>47</td><td class="tot">147</td></tr><tr><th>工事</th><td>46</td><td>33</td><td>11</td><td>43</td><td>43</td><td>40</td><td class="tot">216</td></tr><tr><th>配達</th><td>18</td><td>15</td><td>9</td><td>30</td><td>31</td><td>19</td><td class="tot">122</td></tr><tr><th>点検（訪問）</th><td>82</td><td>66</td><td>17</td><td>30</td><td>38</td><td>16</td><td class="tot">249</td></tr><tr><th>お困りごと対応</th><td>70</td><td>31</td><td>16</td><td>37</td><td>16</td><td>14</td><td class="tot">184</td></tr><tr class="sum"><th>エアコン点検台数</th><td>158</td><td>143</td><td>23</td><td>56</td><td>66</td><td>20</td><td class="tot">466</td></tr></table></div>
+
+  <div class="two">
+    <div><h2>受注日報（経路別）</h2><div class="tw"><table><colgroup><col class="c0"><col><col><col><col><col><col><col></colgroup><tr><th></th><th>4月</th><th>5月</th><th>6月</th><th>7月</th><th>8月</th><th>9月</th><th class="tot">計</th></tr><tr><th>電話</th><td>105</td><td>130</td><td>139</td><td>173</td><td>132</td><td>152</td><td class="tot">831</td></tr><tr><th>訪問</th><td>100</td><td>28</td><td>49</td><td>62</td><td>34</td><td>28</td><td class="tot">301</td></tr><tr><th>来店</th><td>4</td><td>2</td><td>4</td><td>4</td><td>5</td><td>2</td><td class="tot">21</td></tr><tr><th>LINE</th><td>1</td><td>1</td><td>3</td><td>2</td><td>1</td><td>3</td><td class="tot">11</td></tr><tr class="sum"><th>計</th><td>210</td><td>161</td><td>195</td><td>241</td><td>172</td><td>185</td><td class="tot">1,164</td></tr></table></div></div>
+    <div><h2>ひまわり日報</h2><div class="tw"><table><colgroup><col class="c0"><col><col><col><col><col><col><col></colgroup><tr><th></th><th>4月</th><th>5月</th><th>6月</th><th>7月</th><th>8月</th><th>9月</th><th class="tot">計</th></tr><tr><th>面談</th><td>385</td><td>196</td><td>439</td><td>232</td><td>205</td><td>237</td><td class="tot">1,694</td></tr><tr><th>TEL</th><td>91</td><td>20</td><td>0</td><td>4</td><td>8</td><td>4</td><td class="tot">127</td></tr><tr><th>ポスティング</th><td>304</td><td>213</td><td>462</td><td>145</td><td>95</td><td>149</td><td class="tot">1,368</td></tr></table></div>
+      <h2>日報未提出の可能性</h2><div class="tw"><table><colgroup><col class="c0"><col><col><col><col><col><col><col></colgroup><tr><th></th><th>4月</th><th>5月</th><th>6月</th><th>7月</th><th>8月</th><th>9月</th><th class="tot">計</th></tr><tr><th>伊藤</th><td>19</td><td>5</td><td>40</td><td>8</td><td>12</td><td>7</td><td class="tot">91</td></tr><tr><th>服部</th><td>0</td><td>0</td><td>18</td><td>20</td><td>6</td><td>7</td><td class="tot">51</td></tr></table></div></div>
+  </div>
+
+  <h2>上期のポイント</h2>
+  <ul class="pt"><li>工事売上は <b>4〜6月 4,766千円 → 7〜9月 12,311千円</b>。服部が6月下旬から加わり、7月以降は毎月3,600千円を超えた。</li><li>受注は上期で <b>1,164件</b>。うち電話が <b>831件（71%）</b>。LINEは11件。</li><li>エアコン点検は <b>4月 158台</b>がピーク。夏の点検は7月 56台・8月 66台、9月は20台。</li><li>ひまわりの面談は上期で <b>1,694件</b>（月平均282件）。</li><li>高山の日報は8月以降ほぼ0件。高山の工事・点検はこの表に入っていない。</li></ul>
+
+  <p class="note">工事売上＝業務日報の「一人あたり売上」（2人で行った工事は半分ずつ）。集金・見積の行は除く。高山には渡辺の分を含む。日報未提出＝カレンダーに訪問予定があり日報が無いもの（リサイクル・練習・招待状配りなど社内の予定は除く）。</p>
+</div>
+<button class="print-btn" onclick="window.print()">🖨️ 印刷する</button>
+<script>
+(function(){var KEY='yahataKeieiAuth_v1',PIN='7860';
+function reveal(){document.getElementById('pinGate').classList.add('hidden');}
+window.checkPin=function(){var v=(document.getElementById('pinInput').value||'').trim();
+ if(v===PIN){try{localStorage.setItem(KEY,'1')}catch(e){}reveal();}else document.getElementById('pinErr').textContent='PINが違います';};
+var ok=false;try{ok=localStorage.getItem(KEY)==='1'}catch(e){}
+if(ok)reveal();else document.getElementById('pinInput').addEventListener('keydown',function(e){if(e.key==='Enter')checkPin();});})();
+</script>
+</body>
+</html>
