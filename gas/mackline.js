@@ -387,6 +387,41 @@ function marketOpen_() {
 
 // ===== メイン：15分ごとに実行。日足方向のクロスが出たら知らせる =====
 // ★両モードを毎回チェックする（維新流／パーフェクトMACD とも6通貨）
+
+// ── トレンド一覧（表示専用ページ fx-trend.html 用）──
+//   4通貨×4つの時間足の向きだけを、15分ごとの実行のついでに計算して保存する
+//   向きの決め方（どの時間足も同じ）：
+//     上昇＝終値が20MAより上 かつ 20MAが3本前より上向き
+//     下降＝終値が20MAより下 かつ 20MAが3本前より下向き
+//     それ以外＝もみ合い
+//   15分足は30分キャッシュ（API節約）、1時間足・4時間足・日足は通知と同じキャッシュを使う
+var TREND_PAIRS = ['USD/JPY', 'EUR/USD', 'USD/CHF', 'USD/CAD'];
+
+function trendDir_(closes) {
+  var ma = sma_(closes, 20), L = closes.length - 1;
+  if (ma[L] == null || ma[L - 3] == null) return 'flat';
+  if (closes[L] > ma[L] && ma[L] > ma[L - 3]) return 'up';
+  if (closes[L] < ma[L] && ma[L] < ma[L - 3]) return 'down';
+  return 'flat';
+}
+
+function trendSnapshot_() {
+  var rows = [];
+  TREND_PAIRS.forEach(function(sym) {
+    var row = { sym: sym, name: JP_NAME[sym] || sym, tf: {} };
+    [['m15', '15min'], ['h1', '1h'], ['h4', '4h']].forEach(function(t) {
+      try { var b = fetchTFCached_(sym, t[1]); row.tf[t[0]] = trendDir_(b.closes); if (t[0] === 'm15') row.price = b.closes[b.closes.length - 1]; }
+      catch (e) { row.tf[t[0]] = 'err'; }
+    });
+    try { row.tf.d1 = trendDir_(fetchDailyCached_(sym).closes); } catch (e) { row.tf.d1 = 'err'; }
+    if (row.price != null) row.priceText = fmt_(row.price, sym);
+    rows.push(row);
+  });
+  var snap = { at: Utilities.formatDate(new Date(), 'Asia/Tokyo', 'M/d HH:mm'), pairs: rows };
+  PropertiesService.getScriptProperties().setProperty('TREND_SNAP', JSON.stringify(snap));
+  return 'トレンド一覧を更新';
+}
+
 function checkMackline() {
   // 相場が閉まっている間は判定もメール送信もしない（土日に通知が飛ぶのを防ぐ）
   if (!marketOpen_()) {
@@ -404,6 +439,7 @@ function checkMackline() {
   // try { checkMackline80_(); }      catch (e) {}
   var cn = '';
   try { cn = checkMacklineCounter_(); } catch (e) { cn = '逆張り版エラー ' + e; }   // 逆張り版は残す（ユーザー指示）
+  try { trendSnapshot_(); } catch (e) {}   // 表示用のトレンド一覧
   return '【パーフェクトMACD】' + b + '　／　【逆張り版】' + cn;
 }
 

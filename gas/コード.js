@@ -310,6 +310,11 @@ function getProductMaster_() {
     マックライン初期設定();
     return ContentService.createTextOutput(テスト送信());
   }
+  // FXトレンド一覧（fx-trend.html から読む。計算は15分ごとのトリガーで済ませてある）
+  if (e && e.parameter && e.parameter.action === 'trend') {
+    var _t = PropertiesService.getScriptProperties().getProperty('TREND_SNAP') || '{}';
+    return ContentService.createTextOutput(_t).setMimeType(ContentService.MimeType.JSON);
+  }
   if (e && e.parameter && e.parameter.action === 'mackline_check') {
     return ContentService.createTextOutput(checkMackline());
   }

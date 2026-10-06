@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache">
+<title>FXトレンド</title>
+<style>
+  :root{
+    --bg:#fff8f0; --card:#ffffff; --ink:#2b2b3a; --sub:#8a8a9a; --line:#f0e6da;
+    --up:#ff5a5f; --upbg:#ffe8e8; --dn:#3b82f6; --dnbg:#e3eeff; --fl:#9ca3af; --flbg:#f1f2f4;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#1b1b24; --card:#262633; --ink:#f2f2f7; --sub:#a0a0b2; --line:#33334a;
+           --upbg:#4a2328; --dnbg:#1f2f4d; --flbg:#33343d; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font-family:"Hiragino Maru Gothic ProN","Rounded Mplus 1c","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+       padding:max(16px,env(safe-area-inset-top)) 16px max(24px,env(safe-area-inset-bottom));}
+  .wrap{max-width:520px;margin:0 auto}
+  header{display:flex;align-items:center;justify-content:space-between;margin:4px 2px 14px}
+  h1{font-size:22px;margin:0;letter-spacing:.02em}
+  h1 span{display:inline-block;transform:rotate(-8deg)}
+  .meta{font-size:12px;color:var(--sub);text-align:right;line-height:1.5}
+  button{border:0;border-radius:999px;background:var(--ink);color:var(--bg);font:inherit;font-size:12px;
+         padding:6px 12px;cursor:pointer}
+  .card{background:var(--card);border-radius:20px;padding:14px 14px 12px;margin-bottom:12px;
+        box-shadow:0 4px 0 var(--line)}
+  .top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
+  .name{font-size:18px;font-weight:700}
+  .price{font-size:13px;color:var(--sub);font-variant-numeric:tabular-nums}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .cell{border-radius:14px;padding:8px 4px 6px;text-align:center}
+  .cell .tf{font-size:11px;color:var(--sub)}
+  .cell .ar{font-size:28px;line-height:1.1;font-weight:800}
+  .cell .w{font-size:11px;font-weight:700}
+  .up{background:var(--upbg);color:var(--up)}
+  .down{background:var(--dnbg);color:var(--dn)}
+  .flat,.err{background:var(--flbg);color:var(--fl)}
+  .badge{margin-top:10px;font-size:13px;font-weight:700;border-radius:12px;padding:6px 10px;text-align:center}
+  .badge.up{animation:pop .5s ease}
+  .badge.down{animation:pop .5s ease}
+  @keyframes pop{0%{transform:scale(.9)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+  .legend{font-size:12px;color:var(--sub);text-align:center;margin-top:16px;line-height:1.7}
+  .msg{text-align:center;color:var(--sub);padding:40px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1><span>📊</span> FXトレンド</h1>
+    <div class="meta"><div id="at">読み込み中…</div><button id="reload">更新</button></div>
+  </header>
+  <div id="list"><div class="msg">データを取りに行っています…</div></div>
+  <div class="legend">
+    向き＝ローソク足が20MAより上で20MAも上向きなら <b style="color:var(--up)">↑上昇</b>、<br>
+    下で下向きなら <b style="color:var(--dn)">↓下降</b>、それ以外は <b style="color:var(--fl)">→もみ合い</b><br>
+    15分ごとに自動で計算しています（15分足は30分ごと）
+  </div>
+</div>
+<script>
+  var URL_ = 'https://script.google.com/macros/s/AKfycbwDhQVpdoB_Dt92NXiCXHFHREWf8O1EVU8jY_YyHtPH8wg7pB4INrcf7bTnN0QN-TAL/exec?action=trend';
+  var TF = [['m15','15分'],['h1','1時間'],['h4','4時間'],['d1','日足']];
+  var AR = { up:'↑', down:'↓', flat:'→', err:'？' };
+  var WD = { up:'上昇', down:'下降', flat:'もみ合い', err:'取得失敗' };
+
+  function render(d){
+    if(!d || !d.pairs){ document.getElementById('list').innerHTML = '<div class="msg">まだデータがありません。15分ほど待ってから更新してください。</div>'; return; }
+    document.getElementById('at').textContent = d.at + ' 時点';
+    var h = '';
+    d.pairs.forEach(function(p){
+      var dirs = TF.map(function(t){ return p.tf[t[0]] || 'err'; });
+      h += '<div class="card"><div class="top"><div class="name">' + p.name + '</div><div class="price">' + (p.priceText || '') + '</div></div><div class="grid">';
+      TF.forEach(function(t, i){
+        var v = dirs[i];
+        h += '<div class="cell ' + v + '"><div class="tf">' + t[1] + '</div><div class="ar">' + AR[v] + '</div><div class="w">' + WD[v] + '</div></div>';
+      });
+      h += '</div>';
+      var allUp = dirs.every(function(v){ return v === 'up'; }), allDn = dirs.every(function(v){ return v === 'down'; });
+      if (allUp) h += '<div class="badge up">🔥 4つ全部そろって上昇！</div>';
+      else if (allDn) h += '<div class="badge down">🧊 4つ全部そろって下降！</div>';
+      h += '</div>';
+    });
+    document.getElementById('list').innerHTML = h;
+  }
+
+  function load(){
+    document.getElementById('at').textContent = '読み込み中…';
+    fetch(URL_ + '&t=' + Date.now())
+      .then(function(r){ return r.json(); })
+      .then(render)
+      .catch(function(){ document.getElementById('at').textContent = '読み込みに失敗しました'; });
+  }
+  document.getElementById('reload').onclick = load;
+  load();
+  setInterval(load, 5 * 60 * 1000);   // 開きっぱなしでも5分ごとに更新
+</script>
+</body>
+</html>
