@@ -455,7 +455,7 @@ function checkMackline() {
   //   維新流・逆張り・80MAの判定コードは残してあるので、戻す時は下の3行のコメントを外すだけ。
   //   検証：法則だけの簡易版(+191)や4時間足を足した版(+1,622)より、パーフェクトMACD(+3,038)が上だった
   var b = '';
-  try { b = checkMacklineClaude_(); } catch (e) { b = 'パーフェクトMACDエラー ' + e; }
+  try { b = checkMacklinePerfect_(); } catch (e) { b = 'パーフェクトMACDエラー ' + e; }   // 逆指値版
   // try { checkMacklineIshin_(); }   catch (e) {}
   // try { checkMacklineReverse_(); } catch (e) {}
   // try { checkMackline80_(); }      catch (e) {}
@@ -552,6 +552,112 @@ function checkMacklineCounter_() {
   return status.join(' / ');
 }
 
+
+// ── 📈 パーフェクトMACD（逆指値版・2026-10-07〜）──
+//   山を「終値で抜けた後」に知らせるのをやめ、1時間足MACDがクロスした時点で
+//   「この値段に逆指値を置いて」と知らせる。山に触れた瞬間に入れるので、待つぶん高く買わずに済む。
+//   ①日足20MAの向き ②4時間足MACDも同じ向き ③確定した1時間足でMACDがその向きへクロス
+//   → 直近の確定スイング高値(安値)に逆指値。6時間で届かなければ取り消し
+//   → クロスした足の終値ですでに抜けていれば「今すぐ」
+//   検証(2023/1〜2026/7・6通貨・スプレッド込み。値が飛んだ時は飛んだ先で約定として計算)
+//     終値で判定（旧） 924件 勝率42% +3,038pips → 逆指値 999件 勝率41% +4,126pips
+//     6通貨中5通貨で改善（ユーロ円のみ +978→+643）。15分足で測った1年半でも +1,743→+2,862
+var ORDER_HOURS = 6;   // 逆指値の有効時間
+
+function perfectOrder_(symbol) {
+  var h1 = fetchTFCached_(symbol, '1h');
+  var dy = fetchDailyCached_(symbol);
+  var h4 = fetchTFCached_(symbol, '4h');
+  var last = h1.closes.length - 1, done = last - 1, pip = pipSize_(symbol);
+  var dma = sma_(dy.closes, 20);
+  var dDir = dirOf_(slopeAt_(dma, dma.length - 1));
+  var out = { symbol: symbol, name: JP_NAME[symbol] || symbol, dDir: dDir, price: h1.closes[last], state: 'wait' };
+  if (dDir === 'flat') { out.state = 'flat'; return out; }
+
+  var m4 = macd_(h4.closes), l4 = h4.closes.length - 1;
+  var h4Dir = (m4.line[l4] == null || m4.sig[l4] == null) ? 'flat' : (m4.line[l4] > m4.sig[l4] ? 'up' : 'down');
+
+  // 確定した最後の1時間足でクロスしたか（形成中の足は使わない＝クロスが消えることがない）
+  var m = macd_(h1.closes), a = m.line, g = m.sig, c = null;
+  if (a[done - 1] != null && g[done - 1] != null) {
+    if (a[done - 1] <= g[done - 1] && a[done] > g[done]) c = 'up';
+    if (a[done - 1] >= g[done - 1] && a[done] < g[done]) c = 'down';
+  }
+  if (!c) return out;
+  if (c !== dDir) { out.state = 'against'; return out; }
+  if (h4Dir !== dDir) { out.state = 'h4'; return out; }
+
+  // 逆指値の値段＝クロスした足の時点で確定している直近の山(谷)
+  var SWn = PARAMS.SWING, L = null;
+  for (var k = done - SWn - 1; k >= Math.max(SWn, done - 60); k--) {
+    var ok = true;
+    for (var j = k - SWn; j <= k + SWn; j++) {
+      if (j === k) continue;
+      if (dDir === 'up' ? h1.highs[j] >= h1.highs[k] : h1.lows[j] <= h1.lows[k]) { ok = false; break; }
+    }
+    if (ok) { L = dDir === 'up' ? h1.highs[k] : h1.lows[k]; break; }
+  }
+  if (L == null) { out.state = 'noswing'; return out; }
+
+  // 損切り＝直近10本の逆側の極値の3pips外
+  var ext = dDir === 'up' ? Infinity : -Infinity;
+  for (var q = Math.max(0, done - 9); q <= done; q++) ext = dDir === 'up' ? Math.min(ext, h1.lows[q]) : Math.max(ext, h1.highs[q]);
+  var stop = dDir === 'up' ? ext - PARAMS.BUFFER * pip : ext + PARAMS.BUFFER * pip;
+
+  var closeD = h1.closes[done];
+  out.dir = dDir; out.crossTime = h1.time[done]; out.level = L; out.stop = stop;
+  out.now = dDir === 'up' ? closeD > L : closeD < L;          // クロスした足ですでに抜けている
+  out.entry = out.now ? h1.closes[last] : L;
+  out.risk = Math.abs(out.entry - stop) / pip;
+  out.state = 'signal';
+  return out;
+}
+
+function checkMacklinePerfect_() {
+  var p = PropertiesService.getScriptProperties();
+  var status = [];
+  var until = Utilities.formatDate(new Date(Date.now() + ORDER_HOURS * 3600 * 1000), 'Asia/Tokyo', 'HH:mm');
+  var LINE = '━━━━━━━━━━━━━━';
+  CLAUDE_PAIRS.forEach(function(sym) {
+    try {
+      var r = perfectOrder_(sym);
+      if (r.state === 'signal') {
+        var key = 'PORDER_' + sym.replace('/', '');
+        if (p.getProperty(key) !== r.crossTime) {
+          p.setProperty(key, r.crossTime);
+          var bs = r.dir === 'up' ? '買い' : '売り';
+          var why = '（理由：日足' + (r.dir === 'up' ? '↑' : '↓') + '　4時間足MACD' + (r.dir === 'up' ? '↑' : '↓') + '　1時間足MACDが' + (r.dir === 'up' ? '上' : '下') + 'にクロス）';
+          // 1通貨ごとに1通。最初に「やること」だけを番号で書く
+          if (r.now) {
+            pushMail_('📈 ' + r.name + '　今すぐ' + bs,
+              LINE + '\n' +
+              'やること\n' +
+              '　① 今の値段（' + fmt_(r.entry, sym) + '）で' + bs + '\n' +
+              '　② 損切りは ' + fmt_(r.stop, sym) + '（−' + r.risk.toFixed(0) + 'pips）\n' +
+              LINE + '\n\n' +
+              '※ もう山を抜けているので、逆指値ではなく今すぐです。\n' + why);
+          } else {
+            pushMail_('📈 ' + r.name + '　' + bs + '｜' + fmt_(r.level, sym) + ' に逆指値',
+              LINE + '\n' +
+              'やること\n' +
+              '　① ' + fmt_(r.level, sym) + ' に「' + bs + 'の逆指値」を置く\n' +
+              '　② 損切りは ' + fmt_(r.stop, sym) + '（−' + r.risk.toFixed(0) + 'pips）\n' +
+              '　③ ' + until + ' までに届かなければ注文を消す\n' +
+              LINE + '\n\n' +
+              '今の値段：' + fmt_(r.price, sym) + '\n' + why);
+          }
+        }
+      }
+      status.push(r.name + '：' + ({ signal: r.now ? '今すぐ' : '逆指値', flat: '日足方向なし', h4: '4時間足が逆', against: '逆向きのクロス', noswing: '山が見つからない' }[r.state] || '待ち'));
+      Utilities.sleep(500);
+    } catch (e) {
+      status.push(sym + '：エラー ' + e);
+    }
+  });
+  return status.join(' / ');
+}
+
+// 旧：山を終値で抜けてから知らせる版（2026-10-07 に逆指値版へ切り替え。コードは残す）
 function checkMacklineClaude_() {
   var p = PropertiesService.getScriptProperties();
   var hits = [], nears = [], status = [];
