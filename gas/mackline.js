@@ -385,7 +385,7 @@ var MAIL_TAG = '[src:himawari-gas/mackline.js 2026-08-25 パーフェクトMACD�
 function pushMail_(subject, text) {
   MailApp.sendEmail({
     to: MACKLINE_MAIL_TO,
-    subject: subject,
+    subject: '【FX】' + subject,   // Gmailのフィルタで振り分けるための共通マーク（FXのメールはすべてここを通る）
     body: text + '\n\n▼アプリで確認\nhttps://yahatadennki.github.io/report/mackline/\n\n' + MAIL_TAG + '\n'
   });
   return true;
