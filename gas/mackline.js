@@ -154,6 +154,26 @@ function fetchTFCached_(symbol, interval) {
 }
 
 // ===== 判定：日足の方向にMACDがクロスしたか（＝通知の対象）=====
+// ── 一目均衡表の雲（1時間足・9/26/52）に対して、終値が上か下か中か ──
+//   雲＝26本前の時点で計算した 先行スパンA((転換線+基準線)/2) と 先行スパンB(52本の高安の中値)
+//   パーフェクトMACDは「雲の外」でだけ出す（2026-10-07 追加）
+//     検証(2023/1〜2026/7・6通貨)：+3,038 → +3,799pips。取引は924→883回(-4%)、6通貨中5通貨で改善
+//     消えた41回は合計-761pips（1回あたり約-19pips）＝雲の中で出たサインはほぼ負けていた
+function ichiMid_(b, i, p) {
+  if (i < p - 1) return null;
+  var H = -Infinity, L = Infinity;
+  for (var k = i - p + 1; k <= i; k++) { H = Math.max(H, b.highs[k]); L = Math.min(L, b.lows[k]); }
+  return (H + L) / 2;
+}
+function cloudPos_(b, i) {
+  var j = i - 26;
+  if (j < 52) return 'none';
+  var ten = ichiMid_(b, j, 9), kij = ichiMid_(b, j, 26), sB = ichiMid_(b, j, 52);
+  if (ten == null || kij == null || sB == null) return 'none';
+  var sA = (ten + kij) / 2, top = Math.max(sA, sB), bot = Math.min(sA, sB);
+  return b.closes[i] > top ? 'up' : b.closes[i] < bot ? 'down' : 'in';
+}
+
 function checkCross_(symbol, counter) {
   var h1 = fetchTFCached_(symbol, '1h');
   Utilities.sleep(400);
@@ -246,6 +266,8 @@ function checkCross_(symbol, counter) {
 
   // 更新したか（終値ベース）
   out.hit = tDir === 'up' ? (h1.closes[last] > trig) : (h1.closes[last] < trig);
+  out.cloud = cloudPos_(h1, last);
+  if (out.hit && !counter && out.cloud !== tDir) { out.hit = false; out.armReason = 'cloud'; }   // 雲の中・逆側では出さない
   return out;
 }
 
@@ -568,7 +590,7 @@ function checkMacklineClaude_() {
         }
       }
       status.push(r.name + '：' + (r.hit ? '更新でエントリー' : r.armed ? '構え中（更新待ち）'
-        : (r.dDir === 'flat' ? '日足方向なし' : r.armReason === 'h4' ? '4時間足が逆' : '待ち')));
+        : (r.dDir === 'flat' ? '日足方向なし' : r.armReason === 'h4' ? '4時間足が逆' : r.armReason === 'cloud' ? '更新したが雲の中' : '待ち')));
       Utilities.sleep(500);    // 待ちは fetchCandles_ 側で入れているのでここは短く
     } catch (e) {
       status.push(sym + '：エラー ' + e);
@@ -582,8 +604,8 @@ function checkMacklineClaude_() {
     pushMail_('📈 パーフェクトMACD｜' + head,
       '【日足・4時間足・1時間足がそろい、高安値を更新＝エントリーの合図】\n' +
       '①日足の向き ②4時間足MACDも同じ向き ③1時間足MACDがその向きへクロス\n' +
-      '④クロスから6本以内に1時間足が直近の高安値を更新 ← いまここ\n' +
-      '検証(2023/1〜2026/7・6通貨)：924件 +3,038pips 勝率42%。\n' +
+      '④クロスから6本以内に1時間足が直近の高安値を更新 ⑤1時間足の一目の雲の外 ← いまここ\n' +
+      '検証(2023/1〜2026/7・6通貨)：883件 +3,799pips 勝率43%。\n' +
       'クロスした足で即入る旧ルールは同じ期間で −1,539pips でした。\n\n' +
       hits.join('\n\n'));
   }
