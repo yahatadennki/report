@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>振り返り① ロールプレイ｜ヤハタ電機商会</title>
+<style>
+  :root{
+    --bg:#fffaf2; --card:#fff; --ink:#2b2b2b; --soft:#7a7a7a; --line:#eee2d2;
+    --orange:#ff9500; --orange-d:#e07f00; --teal:#00b3a4; --pink:#ff5c7a; --blue:#3d9df6; --green:#2e7d32;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --bg:#191614; --card:#241f1c; --ink:#f2ece6; --soft:#a99f95; --line:#3a322c; }
+  }
+  :root[data-theme="dark"]{ --bg:#191614; --card:#241f1c; --ink:#f2ece6; --soft:#a99f95; --line:#3a322c; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);line-height:1.85;
+    font-family:"Hiragino Maru Gothic ProN","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
+    -webkit-text-size-adjust:100%}
+  .wrap{max-width:660px;margin:0 auto;padding:0 20px 90px}
+
+  header{background:linear-gradient(135deg,#00b3a4,#5fd3c7);color:#fff;padding:34px 20px 30px;
+    text-align:center;border-radius:0 0 28px 28px;margin-bottom:14px}
+  header .emo{font-size:40px;line-height:1}
+  header h1{margin:10px 0 6px;font-size:25px;line-height:1.4}
+  header p{margin:0;font-size:13px;opacity:.95}
+
+  .chap{margin:46px 0 14px;text-align:center}
+  .chap .tag{display:inline-block;color:#fff;border-radius:999px;padding:4px 20px;font-size:13px;font-weight:700;letter-spacing:.14em}
+  .chap.why .tag{background:var(--pink)} .chap.how .tag{background:var(--teal)} .chap.what .tag{background:var(--blue)}
+  .chap h2{margin:10px 0 0;font-size:20px}
+
+  p{margin:0 0 16px;font-size:16px}
+  .lead{font-size:17px;font-weight:700;line-height:1.7}
+  .sub{font-size:14px;color:var(--soft)}
+
+  .box{background:var(--card);border-radius:20px;padding:22px;margin:16px 0;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+  .box.pink{background:#ffe9ee} .box.teal{background:#dff7f4} .box.orange{background:linear-gradient(135deg,#fff1dc,#ffe6c2)}
+  @media (prefers-color-scheme:dark){ .box.pink{background:#3a2028}.box.teal{background:#123230}.box.orange{background:#3a2b16} }
+  .huge{font-size:25px;font-weight:800;line-height:1.45}
+  .huge.pink{color:var(--pink)} .huge.teal{color:var(--teal)} .huge.orange{color:var(--orange-d)}
+  .box .cap{font-size:14px;color:var(--soft);margin-top:10px}
+
+  /* NG / OK */
+  .talk{border-radius:18px;padding:16px 18px;margin:12px 0;box-shadow:0 2px 8px rgba(0,0,0,.05);background:var(--card)}
+  .talk .lbl{display:inline-block;font-size:12px;font-weight:700;color:#fff;border-radius:999px;padding:1px 12px;margin-bottom:8px}
+  .talk.ng .lbl{background:#9e9e9e} .talk.ok .lbl{background:var(--teal)}
+  .talk.ng{border-left:6px solid #bdbdbd} .talk.ok{border-left:6px solid var(--teal)}
+  .line{font-size:14.5px;margin:0 0 7px;display:flex;gap:8px}
+  .line b{flex:0 0 auto;min-width:3.2em}
+  .line .me{color:var(--blue)} .line .you{color:var(--orange-d)}
+  .talk .why{font-size:13px;color:var(--soft);margin:8px 0 0;border-top:1px dashed var(--line);padding-top:8px}
+
+  /* 型 */
+  .steps .s{background:var(--card);border-radius:16px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;
+    box-shadow:0 2px 8px rgba(0,0,0,.05);font-size:15px}
+  .steps .s .ico{font-size:24px;flex:0 0 auto;line-height:1.2}
+  .steps .s small{display:block;color:var(--soft);font-size:13px;margin-top:3px}
+  .steps .ar{text-align:center;font-size:19px;color:var(--orange);margin:3px 0}
+
+  /* 質問リスト */
+  .qlist{background:var(--card);border-radius:18px;padding:16px 20px;margin:14px 0;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .qlist b.t{font-size:15px}
+  .qlist ol{margin:8px 0 0;padding-left:22px}
+  .qlist li{font-size:14.5px;margin:0 0 6px}
+
+  .tips{background:var(--card);border-radius:18px;padding:16px 20px;margin:14px 0;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .tips li{font-size:14.5px;margin:0 0 6px}
+
+  /* ロールプレイ */
+  .roles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+  .roles div{background:var(--card);border-radius:14px;padding:12px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .roles .e{font-size:24px} .roles .n{font-weight:800;font-size:14px;margin:4px 0 2px} .roles .d{font-size:12px;color:var(--soft)}
+  @media (max-width:420px){ .roles{grid-template-columns:1fr} }
+
+  .check{background:var(--card);border-radius:18px;padding:16px 20px;margin:14px 0;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .check .row{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;margin:0 0 8px}
+  .check .bx{flex:0 0 auto;width:18px;height:18px;border:2px solid #999;border-radius:4px;margin-top:4px}
+
+  /* お客様カード */
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+  .ccard{background:var(--card);border:2px dashed #c9b8a0;border-radius:14px;padding:12px 14px}
+  .ccard .no{font-size:12px;font-weight:700;color:#fff;background:var(--orange);border-radius:999px;padding:0 10px;display:inline-block}
+  .ccard .who{font-weight:800;font-size:15px;margin:6px 0 4px}
+  .ccard ul{margin:0;padding-left:18px}
+  .ccard li{font-size:13px;margin:0 0 2px}
+  .ccard .hint{font-size:12px;color:var(--soft);margin-top:6px;border-top:1px dotted var(--line);padding-top:5px}
+  @media (max-width:520px){ .cards{grid-template-columns:1fr} }
+
+  .foot{margin-top:50px;text-align:center;font-size:12px;color:var(--soft)}
+  .print-btn{position:fixed;right:16px;bottom:16px;z-index:99;font-family:inherit;font-size:15px;font-weight:700;
+    padding:12px 22px;border:none;border-radius:999px;background:var(--teal);color:#fff;box-shadow:0 3px 12px rgba(0,0,0,.25);cursor:pointer}
+  @media print{
+    @page{size:A4 portrait;margin:12mm}
+    body{background:#fff}
+    .print-btn{display:none !important}
+    header,.chap .tag,.box,.talk .lbl,.ccard .no{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .box,.talk,.steps,.qlist,.tips,.check,.ccard,.roles{page-break-inside:avoid}
+    .cards-sec{page-break-before:always}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="emo">🎭</div>
+  <h1>振り返り①<br>ロールプレイ</h1>
+  <p>テーマ1〜3　／　月曜の打合せで使う</p>
+</header>
+
+<div class="wrap">
+
+<div class="chap why"><span class="tag">WHY</span></div>
+
+<p class="lead">覚えたことは、<br>お客様の前で言えて、はじめて使えます。</p>
+<p>クイズで書けたことを、声に出して言ってみる回です。うまく言えなかったところが、次に覚えるところです。</p>
+
+<div class="box teal">
+  <div class="huge teal">書ける → 言える</div>
+  <div class="cap">点数はつけません。言いよどんだところを、3人で直します。</div>
+</div>
+
+<div class="chap how"><span class="tag">HOW</span><h2>進め方（30分）</h2></div>
+
+<div class="steps">
+  <div class="s"><span class="ico">📝</span><div><b>① クイズの答え合わせ（10分）</b>
+    <small>振り返りクイズの①を見て、書けなかったところだけ確かめる</small></div></div>
+  <div class="ar">↓</div>
+  <div class="s"><span class="ico">🎭</span><div><b>② ロールプレイ（15分）</b>
+    <small>下の場面を1人1つずつ。3分話して、見る役がチェック表を読み上げる</small></div></div>
+  <div class="ar">↓</div>
+  <div class="s"><span class="ico">🎯</span><div><b>③ 次の6週で覚えること（5分）</b>
+    <small>クイズの③「答えられなかったこと」と、ロールプレイで詰まったところを1つずつ決める</small></div></div>
+</div>
+
+<div class="roles">
+  <div><div class="e">🧑‍🔧</div><div class="n">スタッフ役</div><div class="d">場面のとおりに話す</div></div>
+  <div><div class="e">👵</div><div class="n">お客様役</div><div class="d">カードの人になりきる</div></div>
+  <div><div class="e">📝</div><div class="n">見る役</div><div class="d">チェック表をつける</div></div>
+</div>
+
+<div class="chap what"><span class="tag">WHAT</span><h2>場面</h2></div>
+
+<p class="lead">🔧 サービス（伊藤）</p>
+
+<div class="talk ok">
+  <span class="lbl">場面1　点検から、ほかの商品へ</span>
+  <p class="line"><b class="me">はじまり</b>エアコン点検が終わったところ。フィルターが汚れていて、居間の照明は蛍光灯。</p>
+  <p class="line"><b class="me">ゴール</b>質問を3つして、エアコンか照明のどちらかで「次に伺う約束」をもらう。</p>
+  <p class="why">使う型：見る → 聞く → つなぐ → すすめる（言葉のキャッチボール）</p>
+</div>
+
+<div class="talk ok">
+  <span class="lbl">場面2　「テレビが映らないことがある」の電話</span>
+  <p class="line"><b class="me">はじまり</b>お客様から電話がかかってきたところ。</p>
+  <p class="line"><b class="me">ゴール</b>伺う前に確かめることを3つ聞いて、伺う日を決める。</p>
+  <p class="why">テーマ1の問題。分配器・ブースター・配線のどこが怪しいか、電話で当たりをつける。</p>
+</div>
+
+<div class="talk ok">
+  <span class="lbl">場面3　「照明のリモコンが難しい」</span>
+  <p class="line"><b class="me">はじまり</b>照明を替えたお客様の家。70代の奥さまに言われたところ。</p>
+  <p class="line"><b class="me">ゴール</b>壁スイッチの使い方と、よく使うボタン3つだけを説明する。</p>
+  <p class="why">全部説明しない。お客様に実際に押してもらう。</p>
+</div>
+
+<p class="lead" style="margin-top:28px">⚙️ 工事（服部）</p>
+
+<div class="talk ok">
+  <span class="lbl">場面4　エアコン取付のあとの取扱説明</span>
+  <p class="line"><b class="me">はじまり</b>6畳の寝室にエアコンを付け終わったところ。お客様は70代のご夫婦。</p>
+  <p class="line"><b class="me">ゴール</b>リモコン・フィルター掃除・室外機のまわり、の3つを説明して、アンケートを手渡す。</p>
+  <p class="why">お客様役は途中で「暖房はどれ？」「フィルターってどこ？」と聞く。</p>
+</div>
+
+<div class="talk ok">
+  <span class="lbl">場面5　養生の前のひと声</span>
+  <p class="line"><b class="me">はじまり</b>玄関に着いたところ。室内機をリビングまで運ぶ。廊下に棚、リビングにソファ。</p>
+  <p class="line"><b class="me">ゴール</b>通り道と動かしたい家具を、お客様に確かめてから養生を始める。</p>
+  <p class="why">「棚を少し動かしてもいいですか？」「ぶつけないように、先に床と角を養生します」</p>
+</div>
+
+<div class="talk ok">
+  <span class="lbl">場面6　「ついでに、これも見てくれない？」</span>
+  <p class="line"><b class="me">はじまり</b>工事が終わったところで、「冷蔵庫の音がうるさいの」と相談された。</p>
+  <p class="line"><b class="me">ゴール</b>その場で直そうとせず、写真と型番を残して「お店からご連絡します」と伝える。</p>
+  <p class="why">修理と連絡はサービスの仕事。工事は気づいて、つなぐところまで。</p>
+</div>
+
+<div class="cards-sec">
+<p class="lead" style="margin-top:30px">お客様カード（お客様役だけが見る）</p>
+<p class="sub">聞かれたことだけ答えます。自分からは言いません。</p>
+
+<div class="cards">
+  <div class="ccard"><span class="no">場面1</span>
+    <div class="who">70代の奥さま（居間）</div>
+    <ul><li>居間に一日中いる</li><li>冬も暖房を毎日使う</li><li>エアコンは12年目</li><li>照明がチカチカすることがある</li></ul>
+    <div class="hint">口ぐせ：「まだ動いてるから」</div></div>
+  <div class="ccard"><span class="no">場面2</span>
+    <div class="who">60代のご主人（電話）</div>
+    <ul><li>夕方になると映らないことがある</li><li>2階の部屋だけ</li><li>先月、部屋のテレビを1台増やした</li><li>アンテナは15年前</li></ul>
+    <div class="hint">口ぐせ：「今日来られる？」</div></div>
+  <div class="ccard"><span class="no">場面3</span>
+    <div class="who">70代の奥さま</div>
+    <ul><li>リモコンのボタンが多くて分からない</li><li>使うのは点け消しと、夜の小さい明かり</li><li>ご主人は目が悪い</li></ul>
+    <div class="hint">口ぐせ：「昔の紐のが良かった」</div></div>
+  <div class="ccard"><span class="no">場面4</span>
+    <div class="who">70代のご夫婦（寝室）</div>
+    <ul><li>エアコンは初めて買い替えた</li><li>前のは暖房を使っていなかった</li><li>フィルター掃除をしたことがない</li></ul>
+    <div class="hint">途中で「暖房はどれ？」と聞く</div></div>
+  <div class="ccard"><span class="no">場面5</span>
+    <div class="who">40代の奥さま</div>
+    <ul><li>廊下の棚は動かしてもいい</li><li>ソファは重くて動かしたくない</li><li>床は張り替えたばかり</li></ul>
+    <div class="hint">口ぐせ：「床だけは気をつけてね」</div></div>
+  <div class="ccard"><span class="no">場面6</span>
+    <div class="who">70代のご主人</div>
+    <ul><li>冷蔵庫は11年目</li><li>夜、ブーンという音がする</li><li>冷えは問題ない</li></ul>
+    <div class="hint">口ぐせ：「ちょっと見てくれるだけでいいから」</div></div>
+</div>
+</div>
+
+<div class="check">
+  <b>見る役のチェック表</b>
+  <div class="row" style="margin-top:10px"><span class="bx"></span><span>ゴールまで行けたか</span></div>
+  <div class="row"><span class="bx"></span><span>クイズで覚えたこと（商品の違い・部材・手順）を言えたか</span></div>
+  <div class="row"><span class="bx"></span><span>質問してから話したか（いきなり説明しなかったか）</span></div>
+  <div class="row"><span class="bx"></span><span>専門用語を使わず、お客様の言葉で言えたか</span></div>
+  <div class="row"><span class="bx"></span><span>自分の仕事の範囲を守ったか（できないことは、つなぐ）</span></div>
+</div>
+
+<div class="box orange">
+  <div class="huge orange">よかったところ1つ<br>次にやってみること1つ</div>
+  <div class="cap">見る役が伝えるのは、この2つだけです。</div>
+</div>
+
+<div class="foot">㈲ヤハタ電機商会</div>
+
+</div>
+<button class="print-btn" onclick="window.print()">🖨️ 印刷する</button>
+</body>
+</html>

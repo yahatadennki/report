@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>振り返り①（テーマ1〜3）｜回答編</title>
+<style>
+  :root{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;
+    --sun:#f0a500;--sv:#164a7a;--kj:#2e7d32;--acc:var(--sv)}
+  @media (prefers-color-scheme:dark){:root{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}}
+  :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);line-height:1.8;padding:28px 16px 70px;
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP","Meiryo",sans-serif}
+  .wrap{max-width:860px;margin:0 auto}
+  .pt-head{color:#fff;border-radius:10px;padding:24px 26px;margin:0 0 18px}
+  .pt-head .e{font-size:12px;letter-spacing:.14em;opacity:.75;margin:0 0 6px}
+  .pt-head h1{font-size:22px;margin:0 0 6px;line-height:1.4}
+  .pt-head .s{font-size:13px;opacity:.88;margin:0}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--sun);
+    border-radius:10px;padding:14px 18px;margin:0 0 20px;font-size:13.5px;color:var(--ink-soft)}
+  h2.rd{font-size:16px;margin:34px 0 14px;padding:8px 14px;border-radius:8px;background:var(--acc);color:#fff}
+  .qa{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:0 0 12px}
+  .qa .q{font-size:15px;font-weight:700;margin:0 0 10px;display:flex;gap:9px}
+  .qa .q .n{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--acc);color:#fff;
+    font-size:12px;display:flex;align-items:center;justify-content:center}
+  .qa .a{background:rgba(240,165,0,.10);border-left:4px solid var(--sun);border-radius:8px;
+    padding:10px 14px;font-size:14px;margin:0 0 10px}
+  .qa .a b{color:var(--ink)}
+  .qa .d{font-size:13px;color:var(--ink-soft);margin:0;padding-left:2px}
+  .qa .d b{color:var(--ink)}
+  .back{display:inline-block;margin-top:28px;font-size:13px;color:var(--ink-soft);text-decoration:none}
+  #pinGate{position:fixed;inset:0;z-index:9999;background:var(--paper);display:flex;align-items:center;justify-content:center;padding:20px}
+  #pinGate.hidden{display:none}
+  #pinGate .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:30px 28px;text-align:center;max-width:320px;width:100%}
+  #pinGate input{font-size:24px;letter-spacing:.35em;text-align:center;padding:10px 8px;width:170px;
+    border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);font-family:inherit}
+  #pinGate button{font-family:inherit;font-size:15px;font-weight:700;margin-top:12px;padding:10px 28px;
+    border:none;border-radius:8px;background:var(--acc);color:#fff;cursor:pointer}
+  #pinGate .err{color:#c94f4f;font-size:12px;height:16px;margin:6px 0}
+  @media print{@page{size:A4 portrait;margin:12mm 10mm}body{background:#fff;padding:0}
+    #pinGate,.back{display:none !important}.qa{page-break-inside:avoid}
+    .pt-head,h2.rd,.qa .a{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+  :root{--acc:#2e7d32}
+</style>
+</head>
+<body>
+<div id="pinGate"><div class="box">
+  <div style="font-size:32px">🔒</div>
+  <p style="font-weight:700;margin:8px 0 2px">回答編（社内用）</p>
+  <p style="font-size:12.5px;color:var(--ink-soft);margin:0 0 14px">4桁のPINを入力してください</p>
+  <input id="pin" type="tel" inputmode="numeric" maxlength="4" placeholder="••••">
+  <div class="err" id="pinErr"></div>
+  <button type="button" onclick="checkPin()">入る</button>
+</div></div>
+<div class="wrap">
+  <div class="pt-head" style="background:linear-gradient(135deg,#2e7d32 0%,#1b5e20 100%)">
+    <p class="e">回答編（社内用）</p>
+    <h1>振り返り①（テーマ1〜3）</h1>
+    <p class="s">工事スタッフ／服部正文</p>
+  </div>
+  <div class="note">①は本人が前に書けなかった・答えがずれていた問題です。数字や工法はメーカーの説明書と最新カタログで最終確認してください。</div>
+  <h2 class="rd">① もう一度（前に書けなかった問題）</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>3芯のケーブル（VVF 2.0-3C など）は、どんなときに使いますか。2つ。</p>
+    <div class="a">①<b>3路スイッチ</b>（階段や廊下の2か所から点け消し）の配線<br>②<b>アース付きの回路</b>（エアコン・食洗機など、緑をアースに使う）／100Vと200Vを両方取る分電盤まわり</div>
+    <p class="d">エアコンの200Vは2芯（黒・白）でも取れる。3芯＝「線がもう1本要るとき」と覚える。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>玄関からリビングまで室内機を運びます。どこを養生しますか。（前回は「玄関、リビング」でした。もっと細かく）</p>
+    <div class="a">①<b>通る床すべて</b>（玄関の上がり框〜廊下〜リビング）<br>②<b>曲がり角の壁の角・ドア枠</b>（一番ぶつけやすい）<br>③<b>室内機を置く場所の床</b>と、取付する壁の下の家具</div>
+    <p class="d">運ぶ前に一度、空手で通り道を歩いてみる。ぶつけそうな所が分かる。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">3</span>2階のベランダに室外機を置きます。安全のために用意するものと、気をつけることを書いてください。</p>
+    <div class="a">用意：<b>ヘルメット・安全帯（ハーネス）・吊り上げ用のロープ／ベルト</b>、手すりの養生<br>気をつけること：<b>2人作業</b>、手すりから身を乗り出さない、下に人を入れない、ベランダの排水口をふさがない</div>
+    <p class="d">重い物を持って階段を上がるより、ロープで吊るほうが安全なことが多い。どちらにするかは現場で決める。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">4</span>脚立やはしごの上で作業します。腰袋を軽くしたいとき、何を残しますか。理由も。</p>
+    <div class="a">残す：<b>ドライバー・ペンチ・カッター・テスター</b>（その作業に要るものだけ）<br>理由：重いと<b>バランスを崩しやすく</b>、落とすと下の人や床が危ない。使わない工具は脚立の下に置く</div>
+    <p class="d">「何を持って上がるか」を上がる前に決めるクセをつける。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">5</span>真空引きは何分くらい行い、何を見て終わりと判断しますか。</p>
+    <div class="a">目安は<b>15分以上</b>（配管が長い・隠ぺい配管はもっと長く）。ゲージが<b>−0.1MPa（−76cmHg）</b>まで下がったら止めて、<b>数分おいて針が戻らない</b>ことを確かめる。</div>
+    <p class="d">時間は目安。<b>ゲージの数字で判断</b>する。メーカーの工事説明書の時間が優先。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">6</span>室外機の置き方（置き台・壁掛け・二段置き）は、どう選びますか。</p>
+    <div class="a">①<b>置き台</b>：地面やベランダに置ける場所があるとき（ふつうはこれ）<br>②<b>壁掛け</b>：地面に置く場所がない／通路をふさぐとき。壁の強さ（下地）を確かめる<br>③<b>二段置き</b>：すでに1台あり、横に並べる場所がないとき</div>
+    <p class="d">壁掛け・二段置きは<b>追加費用</b>がかかる。現調で決めて、見積に入れておく。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">7</span>エアコンの取付が終わったあと、お客様に必ず説明することを3つ。（前回は1つでした）</p>
+    <div class="a">①<b>リモコン</b>：運転／停止、冷房・暖房の切り替え、温度<br>②<b>フィルター掃除</b>の仕方と目安（2週間に1回）<br>③<b>室外機のまわりに物を置かない</b>／ドレンから水が出るのは正常</div>
+    <p class="d">実際に一度、お客様にリモコンを押してもらう。説明が終わったら工事後アンケートを手渡す。</p>
+  </div>
+  <h2 class="rd">② テーマをまたいで</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>2階の寝室にエアコンを新設します。専用コンセントなし、室外機は1階。持っていく電線・部材・養生材・安全具を書き出してください。</p>
+    <div class="a">電線：<b>VVF 2.0-2C</b>（専用回路）、ブレーカー、コンセント<br>部材：ペアコイル（延長分）、ドレンホース、化粧カバー、スリーブ、パテ、置き台、テープ、ビス・ステップル<br>養生：マット、毛布、エコフル、ブルーシート<br>安全：ヘルメット、脚立、（2階外壁なら）はしご・安全帯</div>
+    <p class="d">テーマ1〜3の全部が1件に入る。「専用回路」と「2階→1階の配管」で材料が増える。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>雨の日に、エアコンの入れ替え工事。晴れの日と比べて、増えるもの・変えることを書いてください。</p>
+    <div class="a">増えるもの：雨合羽、ブルーシート、布巾、<b>玄関の濡れ対策</b>（マット追加）、長靴<br>変えること：<b>電気の作業は濡らさない</b>（コンセント・ブレーカーまわり）、はしごは滑るので無理をしない、出入りのたびに靴と床を拭く</div>
+    <p class="d">安全とお客様の床。どちらも雨の日に失敗が出やすい。</p>
+  </div>
+  <h2 class="rd">③ 現場で使えたこと</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>この6週間で、クイズで覚えたことが現場で役に立った場面を1つ書いてください。</p>
+    <div class="a">（自分の言葉で書く。打合せで発表する）</div>
+    <p class="d">役に立った話をみんなで共有する。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>現場で分からなくて困ったことを1つ書いてください。</p>
+    <div class="a">（自分の言葉で書く）</div>
+    <p class="d">これが次に覚えること。打合せで答えを確かめる。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">3</span>テーマ1〜3、それぞれひとりでできますか。◎（自信あり）○（だいたい）△（まだ）で書いてください。</p>
+    <div class="a">例）ビスと電線 ◎／養生 ○／エアコンの部材 △</div>
+    <p class="d">△のテーマは、次の振り返りでもう一度出す。</p>
+  </div>
+
+  <a class="back" href="kaito.html">← 回答編ポータルへ戻る</a>
+</div>
+<script>
+(function(){
+  var KEY="yahataKaitoAuth_v1", PIN="7860";
+  function reveal(){var g=document.getElementById("pinGate"); if(g) g.classList.add("hidden");}
+  window.checkPin=function(){
+    var v=(document.getElementById("pin").value||"").trim();
+    if(v===PIN){ try{localStorage.setItem(KEY,"1");}catch(e){} reveal(); }
+    else{ document.getElementById("pinErr").textContent="PINが違います"; }
+  };
+  var ok=false; try{ ok=localStorage.getItem(KEY)==="1"; }catch(e){}
+  if(ok) reveal();
+  else{ var i=document.getElementById("pin");
+    if(i){ i.addEventListener("keydown",function(e){ if(e.key==="Enter") window.checkPin(); });
+      setTimeout(function(){ try{i.focus();}catch(e){} },100); } }
+})();
+</script>
+</body>
+</html>

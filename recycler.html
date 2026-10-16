@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>リサイクラーキャンペーン｜ヤハタ電機商会</title>
+<style>
+  :root{
+    --bg:#fffaf2; --card:#fff; --ink:#2b2b2b; --soft:#7a7a7a; --line:#eee2d2;
+    --orange:#ff9500; --orange-d:#e07f00; --teal:#00b3a4; --pink:#ff5c7a; --blue:#3d9df6; --green:#2e7d32;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --bg:#191614; --card:#241f1c; --ink:#f2ece6; --soft:#a99f95; --line:#3a322c; }
+  }
+  :root[data-theme="dark"]{ --bg:#191614; --card:#241f1c; --ink:#f2ece6; --soft:#a99f95; --line:#3a322c; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);line-height:1.85;
+    font-family:"Hiragino Maru Gothic ProN","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
+    -webkit-text-size-adjust:100%}
+  .wrap{max-width:660px;margin:0 auto;padding:0 20px 90px}
+
+  header{background:linear-gradient(135deg,#00b3a4,#5fd3c7);color:#fff;padding:34px 20px 30px;
+    text-align:center;border-radius:0 0 28px 28px;margin-bottom:14px}
+  header .emo{font-size:40px;line-height:1}
+  header h1{margin:10px 0 6px;font-size:25px;line-height:1.4}
+  header p{margin:0;font-size:13px;opacity:.95}
+
+  .chap{margin:46px 0 14px;text-align:center}
+  .chap .tag{display:inline-block;color:#fff;border-radius:999px;padding:4px 20px;font-size:13px;font-weight:700;letter-spacing:.14em}
+  .chap.why .tag{background:var(--pink)} .chap.how .tag{background:var(--teal)} .chap.what .tag{background:var(--blue)}
+  .chap h2{margin:10px 0 0;font-size:20px}
+
+  p{margin:0 0 16px;font-size:16px}
+  .lead{font-size:17px;font-weight:700;line-height:1.7}
+  .sub{font-size:14px;color:var(--soft)}
+
+  .box{background:var(--card);border-radius:20px;padding:22px;margin:16px 0;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+  .box.pink{background:#ffe9ee} .box.teal{background:#dff7f4} .box.orange{background:linear-gradient(135deg,#fff1dc,#ffe6c2)}
+  @media (prefers-color-scheme:dark){ .box.pink{background:#3a2028}.box.teal{background:#123230}.box.orange{background:#3a2b16} }
+  .huge{font-size:25px;font-weight:800;line-height:1.45}
+  .huge.pink{color:var(--pink)} .huge.teal{color:var(--teal)} .huge.orange{color:var(--orange-d)}
+  .box .cap{font-size:14px;color:var(--soft);margin-top:10px}
+
+  /* NG / OK */
+  .talk{border-radius:18px;padding:16px 18px;margin:12px 0;box-shadow:0 2px 8px rgba(0,0,0,.05);background:var(--card)}
+  .talk .lbl{display:inline-block;font-size:12px;font-weight:700;color:#fff;border-radius:999px;padding:1px 12px;margin-bottom:8px}
+  .talk.ng .lbl{background:#9e9e9e} .talk.ok .lbl{background:var(--teal)}
+  .talk.ng{border-left:6px solid #bdbdbd} .talk.ok{border-left:6px solid var(--teal)}
+  .line{font-size:14.5px;margin:0 0 7px;display:flex;gap:8px}
+  .line b{flex:0 0 auto;min-width:3.2em}
+  .line .me{color:var(--blue)} .line .you{color:var(--orange-d)}
+  .talk .why{font-size:13px;color:var(--soft);margin:8px 0 0;border-top:1px dashed var(--line);padding-top:8px}
+
+  /* 型 */
+  .steps .s{background:var(--card);border-radius:16px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;
+    box-shadow:0 2px 8px rgba(0,0,0,.05);font-size:15px}
+  .steps .s .ico{font-size:24px;flex:0 0 auto;line-height:1.2}
+  .steps .s small{display:block;color:var(--soft);font-size:13px;margin-top:3px}
+  .steps .ar{text-align:center;font-size:19px;color:var(--orange);margin:3px 0}
+
+  /* 質問リスト */
+  .qlist{background:var(--card);border-radius:18px;padding:16px 20px;margin:14px 0;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .qlist b.t{font-size:15px}
+  .qlist ol{margin:8px 0 0;padding-left:22px}
+  .qlist li{font-size:14.5px;margin:0 0 6px}
+
+  .tips{background:var(--card);border-radius:18px;padding:16px 20px;margin:14px 0;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .tips li{font-size:14.5px;margin:0 0 6px}
+
+  /* ロールプレイ */
+  .roles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+  .roles div{background:var(--card);border-radius:14px;padding:12px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .roles .e{font-size:24px} .roles .n{font-weight:800;font-size:14px;margin:4px 0 2px} .roles .d{font-size:12px;color:var(--soft)}
+  @media (max-width:420px){ .roles{grid-template-columns:1fr} }
+
+  .check{background:var(--card);border-radius:18px;padding:16px 20px;margin:14px 0;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .check .row{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;margin:0 0 8px}
+  .check .bx{flex:0 0 auto;width:18px;height:18px;border:2px solid #999;border-radius:4px;margin-top:4px}
+
+  /* お客様カード */
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+  .ccard{background:var(--card);border:2px dashed #c9b8a0;border-radius:14px;padding:12px 14px}
+  .ccard .no{font-size:12px;font-weight:700;color:#fff;background:var(--orange);border-radius:999px;padding:0 10px;display:inline-block}
+  .ccard .who{font-weight:800;font-size:15px;margin:6px 0 4px}
+  .ccard ul{margin:0;padding-left:18px}
+  .ccard li{font-size:13px;margin:0 0 2px}
+  .ccard .hint{font-size:12px;color:var(--soft);margin-top:6px;border-top:1px dotted var(--line);padding-top:5px}
+  @media (max-width:520px){ .cards{grid-template-columns:1fr} }
+
+  .foot{margin-top:50px;text-align:center;font-size:12px;color:var(--soft)}
+  .print-btn{position:fixed;right:16px;bottom:16px;z-index:99;font-family:inherit;font-size:15px;font-weight:700;
+    padding:12px 22px;border:none;border-radius:999px;background:var(--teal);color:#fff;box-shadow:0 3px 12px rgba(0,0,0,.25);cursor:pointer}
+  @media print{
+    @page{size:A4 portrait;margin:12mm}
+    body{background:#fff}
+    .print-btn{display:none !important}
+    header,.chap .tag,.box,.talk .lbl,.ccard .no{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .box,.talk,.steps,.qlist,.tips,.check,.ccard,.roles{page-break-inside:avoid}
+    .cards-sec{page-break-before:always}
+  }
+</style>
+</head>
+<body>
+
+<style>
+  header{background:linear-gradient(135deg,#f0a500,#ffcf5c)}
+  .vs{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px;background:var(--card)}
+  .vs th,.vs td{border:1.5px solid #d9c9b0;padding:10px 6px;text-align:center}
+  .vs th{background:#fff1dc;color:#7a4d10}
+  .vs td.big{height:46px}
+  @media (prefers-color-scheme:dark){ .vs th{background:#3a2b16;color:#ffd89a} }
+  .time{display:grid;grid-template-columns:4.5em 1fr;gap:8px 12px;background:var(--card);border-radius:18px;padding:16px 18px;margin:14px 0;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .time .t{font-weight:800;color:var(--orange-d);font-size:15px}
+  .time .w{font-size:14.5px}
+  .time .w small{display:block;color:var(--soft);font-size:12.5px}
+  .prep .row .wr{flex:1;border-bottom:1.5px solid #999;min-height:22px}
+</style>
+
+<header>
+  <div class="emo">🍃</div>
+  <h1>リサイクラー<br>キャンペーン</h1>
+  <p>ひまわりスタッフ　販売会議と、毎日の準備</p>
+</header>
+
+<div class="wrap">
+
+<div class="chap why"><span class="tag">WHY</span></div>
+
+<p class="lead">生ごみの困りごとは、<br>聞かないと出てきません。</p>
+<p>においや虫で困っていても、お客様は電器屋さんに相談しようとは思いません。毎日お客様の玄関で話せるのは、ひまわりスタッフだけです。</p>
+
+<div class="box orange">
+  <div class="huge orange">高山 VS チーム</div>
+  <div class="cap">今月と来月の2か月。<b>販売台数</b>で勝負します。<br>チーム＝ひまわり3人＋伊藤＋服部＋宇留野</div>
+</div>
+
+<div class="box teal">
+  <div class="huge teal">朝は、掃除が終わったら<br>すぐ出発</div>
+  <div class="cap">どこへ行くかは、前の日の夕方に決めておきます。<br>朝の1時間が、そのまま訪問の1時間になります。</div>
+</div>
+
+<div class="chap how"><span class="tag">HOW</span><h2>1日の流れ</h2></div>
+
+<div class="time">
+  <div class="t">朝</div><div class="w"><b>掃除 → そのまま出発</b><small>行き先・持ち物は前の日にそろっている。朝は相談しない</small></div>
+  <div class="t">訪問</div><div class="w"><b>アンケート用紙を持って回る</b><small>「生ごみ、困っていませんか？」と聞いて、正の字をつけていく</small></div>
+  <div class="t">帰ったら</div><div class="w"><b>日報 → 翌日の準備 → おわり</b><small>準備が終わったら、その日の仕事はおしまい</small></div>
+</div>
+
+<div class="check prep">
+  <b>翌日の準備チェック（帰ったらこれをやって帰る）</b>
+  <div class="row" style="margin-top:10px"><span class="bx"></span><span>明日の区域：</span><span class="wr"></span></div>
+  <div class="row"><span class="bx"></span><span>まわる順番を地図に書いた（午前／午後）</span></div>
+  <div class="row"><span class="bx"></span><span>訪問リストを印刷して、クリップにはさんだ</span></div>
+  <div class="row"><span class="bx"></span><span>チラシ（リサイクラー＆エアコン在庫一掃セール）　＿＿＿枚</span></div>
+  <div class="row"><span class="bx"></span><span>生ごみアンケート用紙　＿＿＿枚</span></div>
+  <div class="row"><span class="bx"></span><span>1週間後アンケート（お届けする家の分）　＿＿＿枚</span></div>
+  <div class="row"><span class="bx"></span><span>ペン・名刺・申込書</span></div>
+  <div class="row"><span class="bx"></span><span>カバンを玄関の棚に置いた</span></div>
+</div>
+
+<p class="lead" style="margin-top:30px">玄関でのひと言</p>
+
+<div class="steps">
+  <div class="s"><span class="ico">❓</span><div><b>① 聞く</b>
+    <small>「いま、このあたりの皆さんに生ごみのことを聞いて回っているんです。においや虫で困ったりしていませんか？」</small></div></div>
+  <div class="ar">↓</div>
+  <div class="s"><span class="ico">✏️</span><div><b>② 正の字をつける</b>
+    <small>困っている・困っていない、どちらでも用紙に1本。ここで終わってもいい</small></div></div>
+  <div class="ar">↓</div>
+  <div class="s"><span class="ico">🤝</span><div><b>③ 困っている方には、共感する</b>
+    <small>「そうなんですよね。今日も◯人の方が同じことをおっしゃってました」</small></div></div>
+  <div class="ar">↓</div>
+  <div class="s"><span class="ico">🍃</span><div><b>④ チラシを見せる</b>
+    <small>「生ごみを乾かして小さくする機械があるんです。においも虫も出なくなります。いまキャンペーン中なんです」</small></div></div>
+  <div class="ar">↓</div>
+  <div class="s"><span class="ico">📅</span><div><b>⑤ 決める</b>
+    <small>「いいわね」→ その場で申込書。「考える」→「◯日にもう一度伺っていいですか？」と次の日を決める</small></div></div>
+</div>
+
+<div class="tips">
+  <b>うまくいくコツ</b>
+  <ul>
+    <li><b>言うことは3つだけ。</b>においが出ない・虫が来ない・ごみが小さくなる</li>
+    <li><b>自分で使ってみる。</b>「使ってみたら本当ににおわなかったです」が一番伝わります</li>
+    <li><b>値段はチラシのとおりに。</b>困りごとに「そうなのよ」と言ってもらってから見せる</li>
+    <li><b>「考えます」は断りではない。</b>次に伺う日を決めて、日報に残す</li>
+    <li><b>困っていない方には、エアコンの在庫一掃セール。</b>チラシのエアコンのところを見せて「エアコンが10年たっていたら、今がお得です」</li>
+    <li><b>断られても、正の字が1本増えたら成功。</b>明るく「ありがとうございました」</li>
+  </ul>
+</div>
+
+<div class="chap what"><span class="tag">WHAT</span><h2>販売会議（30分）</h2></div>
+
+<div class="steps">
+  <div class="s"><span class="ico">🍃</span><div><b>① 実物をさわる（10分）</b>
+    <small>ふたを開ける・生ごみを入れる・できあがりを見る。全員が一度やってみる</small></div></div>
+  <div class="ar">↓</div>
+  <div class="s"><span class="ico">🗣️</span><div><b>② 玄関のひと言を練習（10分）</b>
+    <small>2人1組で、お客様役とスタッフ役を交代。上の①〜⑤を声に出す</small></div></div>
+  <div class="ar">↓</div>
+  <div class="s"><span class="ico">🗺️</span><div><b>③ 区域と準備を決める（10分）</b>
+    <small>2か月でまわる区域を分ける。今日から「帰ったら翌日の準備」を始める</small></div></div>
+</div>
+
+<p class="lead" style="margin-top:30px">勝負の表（店に貼る）</p>
+<table class="vs">
+  <tr><th></th><th>10月<br>前半</th><th>10月<br>後半</th><th>11月<br>前半</th><th>11月<br>後半</th><th>合計</th></tr>
+  <tr><th>高山</th><td class="big"></td><td></td><td></td><td></td><td></td></tr>
+  <tr><th>チーム</th><td class="big"></td><td></td><td></td><td></td><td></td></tr>
+</table>
+<p class="sub">チームの中で最初の1台を売った人は、みんなでほめます。</p>
+
+<div class="foot">㈲ヤハタ電機商会</div>
+
+</div>
+<button class="print-btn" onclick="window.print()">🖨️ 印刷する</button>
+</body>
+</html>

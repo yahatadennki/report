@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>購入1週間後アンケート｜ヤハタ電機商会</title>
+<style>
+  :root{
+    --paper:#f4f7fa; --card:#ffffff; --ink:#1c2530; --ink-soft:#4a5a6a; --line:#d7e0e8;
+    --sun:#f0a500; --green:#1f5f4a; --blue:#2e75b6;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --paper:#10161d; --card:#1a2028; --ink:#e8edf2; --ink-soft:#a9b6c2; --line:#2c3844; }
+  }
+  :root[data-theme="dark"]{
+    --paper:#10161d; --card:#1a2028; --ink:#e8edf2; --ink-soft:#a9b6c2; --line:#2c3844;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP","Meiryo",sans-serif;
+    line-height:1.75; padding:28px 16px 70px;
+  }
+  .wrap{max-width:900px;margin:0 auto}
+
+  .pt-head{background:linear-gradient(135deg,#1f5f4a 0%,#123d31 100%);color:#fff;border-radius:10px;
+    padding:26px 30px 24px;margin:0 0 20px}
+  .pt-head .e{font-size:12px;letter-spacing:.14em;color:rgba(255,255,255,.72);margin:0 0 6px}
+  .pt-head h1{font-size:23px;font-weight:700;margin:0 0 6px;line-height:1.4}
+  .pt-head .s{font-size:13px;color:rgba(255,255,255,.82);margin:0}
+
+  .strip-title{font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--ink-soft);
+    margin:30px 0 12px;padding-left:11px;border-left:3px solid var(--sun)}
+
+  .flow{display:grid;gap:10px;margin:0 0 8px}
+  .fl{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 16px;
+      display:flex;gap:12px;align-items:flex-start}
+  .fl .n{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--green);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;margin-top:2px}
+  .fl.h .n{background:var(--sun)}
+  .fl b{font-size:15px}
+  .fl p{margin:2px 0 0;font-size:13px;color:var(--ink-soft)}
+  .arrow{text-align:center;color:var(--ink-soft);font-size:15px;margin:-4px 0}
+
+  .note{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--sun);
+    border-radius:10px;padding:14px 18px;margin:16px 0 0}
+  .note p{margin:0 0 6px;font-size:13.5px}
+  .note p:last-child{margin:0}
+  .note b{color:var(--ink)}
+
+  .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 0}
+  .btn{font-family:inherit;font-size:15px;font-weight:700;padding:12px 24px;border:none;border-radius:9px;
+    background:var(--green);color:#fff;cursor:pointer}
+  .btn.sub{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+  .btn:hover{opacity:.9}
+
+  /* ============ 印刷する用紙 ============ */
+  .sheet{
+    background:#fff;color:#222;max-width:210mm;margin:26px auto 0;padding:14mm 13mm;
+    border:1px solid var(--line);border-radius:6px;box-shadow:0 2px 14px rgba(0,0,0,.08);
+  }
+  .sheet .hd{display:flex;justify-content:space-between;align-items:flex-end;
+    border-bottom:3px solid #f0a500;padding-bottom:8px;margin-bottom:14px}
+  .sheet .hd h2{margin:0;font-size:21px;line-height:1.4;color:#1c2530}
+  .sheet .hd .co{font-size:12px;color:#555;text-align:right;line-height:1.6}
+  .sheet .greet{font-size:17px;font-weight:700;color:#1c2530;margin:0 0 10px;display:flex;align-items:flex-end;gap:8px}
+  .sheet .greet .nm{flex:0 0 auto;min-width:180px;border-bottom:1.6px solid #444;height:26px}
+  .sheet .intro{font-size:13.5px;color:#333;margin:0 0 14px}
+  .sheet .intro b{background:linear-gradient(transparent 62%, #ffe9b0 62%)}
+
+  .q{border:1px solid #ddd;border-radius:8px;padding:11px 14px;margin:0 0 10px}
+  .q .qt{font-size:15px;font-weight:700;margin:0 0 7px;color:#1c2530}
+  .q .qt .num{display:inline-block;background:#1f5f4a;color:#fff;border-radius:4px;
+    font-size:12px;padding:0 7px;margin-right:8px;vertical-align:2px}
+  .opts{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:14.5px}
+  .opt{display:flex;align-items:center;gap:7px}
+  .bx{display:inline-block;width:15px;height:15px;border:1.6px solid #666;border-radius:3px;flex:0 0 auto}
+  .bx.big{width:17px;height:17px}
+  .lines{margin-top:8px}
+  .ln{border-bottom:1px dotted #aaa;height:23px}
+  .fill{display:inline-block;border-bottom:1px solid #888;min-width:150px}
+
+  .cut{display:flex;align-items:center;gap:10px;margin:16px 0 12px;color:#888;font-size:12px}
+  .cut::before,.cut::after{content:"";flex:1;border-top:2px dashed #999}
+
+  .stub{border:1.6px solid #1f5f4a;border-radius:8px;padding:12px 14px;background:#f7fbf9}
+  .stub .sh{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 9px}
+  .stub .sh b{font-size:16px;color:#1f5f4a}
+  .stub .sh span{font-size:11.5px;color:#1f5f4a;border:1px solid #1f5f4a;border-radius:999px;padding:1px 10px}
+  .fld{font-size:15px;display:flex;align-items:flex-end;gap:8px;margin:0 0 10px}
+  .fld .lb{flex:0 0 auto;color:#1f5f4a;font-weight:700}
+  .fld .in{flex:1;border-bottom:1.6px solid #444;height:28px}
+  .stub .foot{margin-top:12px;font-size:12px;color:#1f5f4a;background:#e7f2ed;border-radius:6px;padding:7px 10px}
+
+  @media print{
+    @page{size:A4 portrait;margin:10mm}
+    body{background:#fff;padding:0}
+    .screen-only{display:none !important}
+    .sheet{max-width:none;margin:0;padding:0;border:none;border-radius:0;box-shadow:none}
+    .q,.stub{page-break-inside:avoid}
+    .stub{background:#f7fbf9 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .sheet .hd{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .q .qt .num,.stub .foot{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+<style>
+  .tally{width:100%;border-collapse:collapse;font-size:15px;margin:4px 0 6px}
+  .tally th,.tally td{border:1.4px solid #bbb;padding:6px 8px}
+  .tally th{background:#f3f7f5;text-align:left;width:31%;color:#1c2530}
+  .tally td.tl{height:44px}
+  .tally td.sm{width:15%;text-align:right;color:#888;font-size:12px;vertical-align:bottom}
+  .tally tr.main th{font-size:16px;background:#fff6dc}
+  .list{width:100%;border-collapse:collapse;font-size:13px}
+  .list th,.list td{border:1.2px solid #bbb;padding:4px 6px;height:30px}
+  .list th{background:#f3f7f5;height:auto;font-weight:700}
+  .sum{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;border:1.6px solid #1f5f4a;border-radius:8px;padding:10px 14px;background:#f7fbf9}
+  .sum span b{display:inline-block;min-width:44px;border-bottom:1.4px solid #444;margin:0 3px}
+  .say{font-size:12.5px;background:#fff8e6;border-left:4px solid #f0a500;border-radius:6px;padding:7px 12px;margin:8px 0 10px;color:#4a3a10}
+  .sheet.compact .q{padding:8px 12px;margin:0 0 7px}
+  .sheet.compact .q .qt{font-size:14.5px;margin:0 0 5px}
+  .inner{border:1.4px dashed #999;border-radius:8px;padding:8px 12px;margin-top:10px;font-size:13px}
+  .inner .fld{font-size:13px;margin:0 0 4px}
+  .inner .fld .in{height:22px}
+  @media print{ .tally th,.tally tr.main th,.list th,.sum,.say{-webkit-print-color-adjust:exact;print-color-adjust:exact} }
+</style>
+</head>
+<body>
+
+<div class="wrap screen-only">
+  <div class="pt-head">
+    <p class="e">ご購入から1週間</p>
+    <h1>購入1週間後アンケート</h1>
+    <p class="s">工事・配達から1週間たったお客様に、ひまわりスタッフがお届けしてその場で書いていただく用紙です。</p>
+  </div>
+  <div class="flow">
+    <div class="fl"><span class="n">1</span><div><b>「その後、お使いいただいていかがですか？」</b><p>まず様子を聞く。困りごとがあれば、その場でメモ。</p></div></div>
+    <div class="arrow">↓</div>
+    <div class="fl"><span class="n">2</span><div><b>アンケートを書いていただく</b><p>「よりよくするために、工事や説明のことを教えてください」。書くのは2〜3分。</p></div></div>
+    <div class="arrow">↓</div>
+    <div class="fl h"><span class="n">3</span><div><b>持ち帰って、日報と一緒に提出</b><p>「足りなかった」「気になる」に印があったら、その日のうちに高山へ。使い方の困りごとはサービス（伊藤）へつなぐ。</p></div></div>
+  </div>
+  <div class="btnrow">
+    <button class="btn" onclick="window.print()">🖨️ この用紙を印刷する</button>
+  </div>
+</div>
+
+<div class="sheet compact">
+  <div class="hd">
+    <h2>ご購入から1週間<br>お客様アンケート</h2>
+    <div class="co">㈲ヤハタ電機商会<br>TEL 043-259-0463</div>
+  </div>
+
+  <p class="greet"><span class="nm">&nbsp;</span> 様　先日はありがとうございました。</p>
+  <p class="intro">お使いになって1週間、いかがでしょうか。<b>工事や説明が十分だったか</b>、率直に教えてください。今後のために役立てます。</p>
+
+  <div class="q">
+    <p class="qt"><span class="num">1</span>お約束の日時どおりに伺いましたか？</p>
+    <div class="opts"><span class="opt"><span class="bx big"></span>はい</span><span class="opt"><span class="bx big"></span>少し遅れた</span><span class="opt"><span class="bx big"></span>連絡なく遅れた</span></div>
+  </div>
+  <div class="q">
+    <p class="qt"><span class="num">2</span>工事・設置の仕上がりはいかがですか？</p>
+    <div class="opts"><span class="opt"><span class="bx big"></span>満足</span><span class="opt"><span class="bx big"></span>ふつう</span><span class="opt"><span class="bx big"></span>気になるところがある</span></div>
+  </div>
+  <div class="q">
+    <p class="qt"><span class="num">3</span>作業のあと、掃除・片付けはきちんとしていましたか？</p>
+    <div class="opts"><span class="opt"><span class="bx big"></span>きれいだった</span><span class="opt"><span class="bx big"></span>ふつう</span><span class="opt"><span class="bx big"></span>汚れやごみが残っていた</span></div>
+  </div>
+  <div class="q">
+    <p class="qt"><span class="num">4</span>使い方の説明は、ていねいでしたか？</p>
+    <div class="opts"><span class="opt"><span class="bx big"></span>ていねいだった</span><span class="opt"><span class="bx big"></span>ふつう</span><span class="opt"><span class="bx big"></span>足りなかった</span></div>
+  </div>
+  <div class="q">
+    <p class="qt"><span class="num">5</span>1週間使ってみて、使い方で困っていることはありますか？</p>
+    <div class="opts"><span class="opt"><span class="bx big"></span>ない</span><span class="opt"><span class="bx big"></span>ある →</span></div>
+    <div class="lines"><div class="ln"></div></div>
+  </div>
+  <div class="q">
+    <p class="qt"><span class="num">6</span>スタッフのあいさつ・言葉づかいはいかがでしたか？</p>
+    <div class="opts"><span class="opt"><span class="bx big"></span>よかった</span><span class="opt"><span class="bx big"></span>ふつう</span><span class="opt"><span class="bx big"></span>気になった</span></div>
+  </div>
+
+  <div class="q">
+    <p class="qt"><span class="num">7</span>担当したスタッフへ、ひと言お願いします</p>
+    <div class="lines"><div class="ln"></div><div class="ln"></div></div>
+  </div>
+
+  <div class="q">
+    <p class="qt"><span class="num">8</span>いま気になっている家電・お困りごとはありますか？</p>
+    <div class="opts"><span class="opt"><span class="bx big"></span>エアコン</span><span class="opt"><span class="bx big"></span>冷蔵庫</span><span class="opt"><span class="bx big"></span>洗濯機</span><span class="opt"><span class="bx big"></span>テレビ</span><span class="opt"><span class="bx big"></span>照明</span><span class="opt"><span class="bx big"></span>給湯器</span><span class="opt"><span class="bx big"></span>水まわり</span><span class="opt"><span class="bx big"></span>生ごみ</span><span class="opt"><span class="bx big"></span>その他</span></div>
+  </div>
+
+  <div class="inner">
+    <b style="color:#1f5f4a">社内記入欄</b>
+    <div class="fld" style="margin-top:4px"><span class="lb">伺った日</span><span class="in" style="max-width:120px"></span><span class="lb">ひまわり</span><span class="in" style="max-width:120px"></span><span class="lb">商品</span><span class="in"></span></div>
+    <div class="fld"><span class="lb">工事・配達の担当</span><span class="opt"><span class="bx"></span>服部</span><span class="opt"><span class="bx"></span>伊藤</span><span class="opt"><span class="bx"></span>高山</span><span class="in"></span></div>
+  </div>
+</div>
+</body>
+</html>

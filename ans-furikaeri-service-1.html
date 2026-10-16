@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>振り返り①（テーマ1〜3）｜回答編</title>
+<style>
+  :root{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;
+    --sun:#f0a500;--sv:#164a7a;--kj:#2e7d32;--acc:var(--sv)}
+  @media (prefers-color-scheme:dark){:root{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}}
+  :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);line-height:1.8;padding:28px 16px 70px;
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP","Meiryo",sans-serif}
+  .wrap{max-width:860px;margin:0 auto}
+  .pt-head{color:#fff;border-radius:10px;padding:24px 26px;margin:0 0 18px}
+  .pt-head .e{font-size:12px;letter-spacing:.14em;opacity:.75;margin:0 0 6px}
+  .pt-head h1{font-size:22px;margin:0 0 6px;line-height:1.4}
+  .pt-head .s{font-size:13px;opacity:.88;margin:0}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--sun);
+    border-radius:10px;padding:14px 18px;margin:0 0 20px;font-size:13.5px;color:var(--ink-soft)}
+  h2.rd{font-size:16px;margin:34px 0 14px;padding:8px 14px;border-radius:8px;background:var(--acc);color:#fff}
+  .qa{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:0 0 12px}
+  .qa .q{font-size:15px;font-weight:700;margin:0 0 10px;display:flex;gap:9px}
+  .qa .q .n{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--acc);color:#fff;
+    font-size:12px;display:flex;align-items:center;justify-content:center}
+  .qa .a{background:rgba(240,165,0,.10);border-left:4px solid var(--sun);border-radius:8px;
+    padding:10px 14px;font-size:14px;margin:0 0 10px}
+  .qa .a b{color:var(--ink)}
+  .qa .d{font-size:13px;color:var(--ink-soft);margin:0;padding-left:2px}
+  .qa .d b{color:var(--ink)}
+  .back{display:inline-block;margin-top:28px;font-size:13px;color:var(--ink-soft);text-decoration:none}
+  #pinGate{position:fixed;inset:0;z-index:9999;background:var(--paper);display:flex;align-items:center;justify-content:center;padding:20px}
+  #pinGate.hidden{display:none}
+  #pinGate .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:30px 28px;text-align:center;max-width:320px;width:100%}
+  #pinGate input{font-size:24px;letter-spacing:.35em;text-align:center;padding:10px 8px;width:170px;
+    border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);font-family:inherit}
+  #pinGate button{font-family:inherit;font-size:15px;font-weight:700;margin-top:12px;padding:10px 28px;
+    border:none;border-radius:8px;background:var(--acc);color:#fff;cursor:pointer}
+  #pinGate .err{color:#c94f4f;font-size:12px;height:16px;margin:6px 0}
+  @media print{@page{size:A4 portrait;margin:12mm 10mm}body{background:#fff;padding:0}
+    #pinGate,.back{display:none !important}.qa{page-break-inside:avoid}
+    .pt-head,h2.rd,.qa .a{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+  :root{--acc:#164a7a}
+</style>
+</head>
+<body>
+<div id="pinGate"><div class="box">
+  <div style="font-size:32px">🔒</div>
+  <p style="font-weight:700;margin:8px 0 2px">回答編（社内用）</p>
+  <p style="font-size:12.5px;color:var(--ink-soft);margin:0 0 14px">4桁のPINを入力してください</p>
+  <input id="pin" type="tel" inputmode="numeric" maxlength="4" placeholder="••••">
+  <div class="err" id="pinErr"></div>
+  <button type="button" onclick="checkPin()">入る</button>
+</div></div>
+<div class="wrap">
+  <div class="pt-head" style="background:linear-gradient(135deg,#1a3a5c 0%,#12283f 100%)">
+    <p class="e">回答編（社内用）</p>
+    <h1>振り返り①（テーマ1〜3）</h1>
+    <p class="s">サービススタッフ／伊藤圭</p>
+  </div>
+  <div class="note">①は本人が前に書けなかった・答えがずれていた問題です。数字や工法はメーカーの説明書と最新カタログで最終確認してください。</div>
+  <h2 class="rd">① もう一度（前に書けなかった問題）</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>テレビの設置に伺う前に、お客様に電話で確かめておくことを3つ。</p>
+    <div class="a">①置く場所と台の幅・奥行き（新しいテレビが載るか）<br>②アンテナ端子の位置と、録画機・ネットをつなぐかどうか<br>③古いテレビの引き取り（リサイクル）が要るか／搬入の通路（階段・ドア幅）</div>
+    <p class="d">伺ってから「台に載らない」「線が届かない」が一番の手戻り。電話で聞いておけば、部材も一度で持っていける。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>エアコンの電気代の目安は、カタログのどこを見れば分かりますか。</p>
+    <div class="a">仕様表の<b>「期間消費電力量（kWh）」</b>と、そこから計算した<b>「年間の電気代の目安」</b>。比べるときは<b>APF（通年エネルギー消費効率）</b>の数字が大きいほど省エネ。</div>
+    <p class="d">お客様には「1年でだいたい◯円、いまのエアコンより◯円くらい安くなります」と金額で言うと伝わる。数字は最新カタログで確認。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">3</span>エアコンの上のクラスと普及クラス。値段の差は何の差ですか。（前回は「換気」だけでした。ほかに3つ）</p>
+    <div class="a">①省エネ性能（APFが高い＝電気代が安い）<br>②暖房の強さ（寒い日・霜取り中も止まりにくい）<br>③お掃除ロボット・ナノイーX・センサー（人や日差しを見て自動で調整）<br>※換気・加湿は最上位だけ</div>
+    <p class="d">「値段の差＝毎日の快適さと電気代の差」と言えると、上のクラスをすすめやすい。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">4</span>エアコン工事で、追加費用が出やすいのはどんな家・どんな場所ですか。3つ。</p>
+    <div class="a">①室内機と室外機が離れていて<b>配管の延長</b>が要る家<br>②室外機が<b>2階ベランダ・屋根置き・壁掛け・二段置き</b><br>③<b>専用コンセントがない／電圧の切り替え</b>が要る、コンクリート壁の穴あけ、隠ぺい配管</div>
+    <p class="d">見積の前に「室外機はどこに置けますか？」「コンセントはエアコン専用ですか？」の2つを聞けば、あとから追加費用でもめない。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">5</span>点検で、フィルターがかなり汚れていました。エアコンの話につなげるために、お客様に聞く質問を2つ書いてください。</p>
+    <div class="a">例）「このお部屋、いちばんよく使うお部屋ですか？」<br>「冬も暖房で使われますか？」<br>（ほかに「一日何時間くらいつけますか？」「何年目くらいですか？」）</div>
+    <p class="d">商品の話より先に<b>質問</b>。「一日中」「冬も使う」とお客様が自分で言うと、買い替えの話が自然になる（言葉のキャッチボール）。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">6</span>点検のついでに「エアコンの使い方が分からない」と言われました。最初に説明することを3つ。</p>
+    <div class="a">①<b>運転／停止と、冷房・暖房の切り替え</b>（自動運転でいい）<br>②<b>温度と風量</b>（風量は「自動」のままでいい）<br>③<b>フィルター掃除</b>の仕方と目安（2週間に1回）</div>
+    <p class="d">全部説明しない。よく使うボタンだけ。リモコンに付せんで印をつけてあげると喜ばれる。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">7</span>照明の取付が終わったあと、お客様に必ず伝えることを3つ。（前回は「良いところ」になっていました。使い方を書いてください）</p>
+    <div class="a">①<b>壁のスイッチは入れたまま</b>、リモコンで点け消しする<br>②リモコンの<b>明るさ・色・常夜灯</b>のボタン<br>③リモコンの<b>電池</b>と、壁にかけておく場所／器具のお手入れ（乾いた布で）</div>
+    <p class="d">「壁スイッチを切ってしまってリモコンが効かない」が一番多い電話。最初にこれを伝える。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">8</span>70代のご夫婦に「照明のリモコンが難しい」と言われました。どうしますか。</p>
+    <div class="a">①<b>壁のスイッチだけでも使える</b>ことを伝える（入れ直すと明るさが切り替わる機種もある）<br>②よく使うボタンだけに<b>印</b>をつける<br>③ボタンの大きい<b>シンプルなリモコン</b>を案内する</div>
+    <p class="d">「紐付き」に替えるのは最後の手。まずは今の器具で困らないようにする。</p>
+  </div>
+  <h2 class="rd">② テーマをまたいで</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>70代のご夫婦。「冬、居間が寒い」「電気代が気になる」。居間のエアコンは12年目、照明は蛍光灯。何から、どう話しますか。</p>
+    <div class="a">①<b>エアコンから</b>：12年目＋冬も使う＋寒い＝暖房の強いシリーズへの買い替え（電気代も下がる）<br>②次に<b>照明</b>：蛍光灯は2027年末で製造終了。LEDにすると電気代も下がる<br>③一度に全部ではなく、<b>困りごとが大きい方</b>から</div>
+    <p class="d">2つとも「電気代」でつながる。「寒い」の困りごとが大きいのでエアコンが先。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>「最近、なんでも電気代が上がって」と言われました。テーマ1〜3の商品で、お客様に聞く質問を2つと、すすめるものを書いてください。</p>
+    <div class="a">質問例）「いちばん長くつけているのは、エアコン・テレビ・照明のどれですか？」「何年くらい使っていますか？」<br>すすめる）長く使っている・古いものから：10年以上のエアコン→省エネ機、蛍光灯→LED</div>
+    <p class="d">すすめる前に「どれを一番使うか」を聞く。古い×よく使う、が一番電気代が下がる。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">3</span>テレビを配達・設置した家で、エアコン10年目・照明が蛍光灯でした。帰る前の一言を書いてください。</p>
+    <div class="a">例）「今度の点検のときに、エアコンも見ておきましょうか。10年たつと部品がなくなってくるので」<br>「蛍光灯、2027年で作られなくなるので、替えるときは声をかけてください」</div>
+    <p class="d">売り込まない。<b>次に伺う理由</b>を作るだけでいい。</p>
+  </div>
+  <h2 class="rd">③ 現場で使えたこと</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>この6週間で、実際にお客様に話した商品と、そのときのお客様の反応を1つ書いてください。</p>
+    <div class="a">（自分の言葉で書く。打合せで発表する）</div>
+    <p class="d">うまくいかなかった話でいい。「どう聞けばよかったか」を3人で考える。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>お客様に聞かれて、答えられなかったことを1つ書いてください。</p>
+    <div class="a">（自分の言葉で書く）</div>
+    <p class="d">これが次に覚えること。打合せで答えを確かめる。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">3</span>テーマ1〜3、それぞれお客様に説明できますか。◎（自信あり）○（だいたい）△（まだ）で書いてください。</p>
+    <div class="a">例）テレビ ○／エアコン ◎／照明 △</div>
+    <p class="d">△のテーマは、次の振り返りでもう一度出す。</p>
+  </div>
+
+  <a class="back" href="kaito.html">← 回答編ポータルへ戻る</a>
+</div>
+<script>
+(function(){
+  var KEY="yahataKaitoAuth_v1", PIN="7860";
+  function reveal(){var g=document.getElementById("pinGate"); if(g) g.classList.add("hidden");}
+  window.checkPin=function(){
+    var v=(document.getElementById("pin").value||"").trim();
+    if(v===PIN){ try{localStorage.setItem(KEY,"1");}catch(e){} reveal(); }
+    else{ document.getElementById("pinErr").textContent="PINが違います"; }
+  };
+  var ok=false; try{ ok=localStorage.getItem(KEY)==="1"; }catch(e){}
+  if(ok) reveal();
+  else{ var i=document.getElementById("pin");
+    if(i){ i.addEventListener("keydown",function(e){ if(e.key==="Enter") window.checkPin(); });
+      setTimeout(function(){ try{i.focus();}catch(e){} },100); } }
+})();
+</script>
+</body>
+</html>
