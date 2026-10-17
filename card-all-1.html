@@ -39,6 +39,16 @@
   .memo b{font-size:5mm;color:var(--leaf)}
   .memo p{margin:1.5mm 0 0;font-size:4.2mm}
   .gt{font-size:4.2mm;font-weight:700;margin:0 0 1.5mm}
+  .chips{display:flex;gap:4mm;flex-wrap:wrap;justify-content:center}
+  .chips span{background:#fff;border:.6mm solid var(--tint);border-radius:999px;padding:2mm 6mm;font-size:4.6mm;font-weight:700;color:var(--brown);box-shadow:0 1mm 0 var(--tint)}
+  .roles{display:flex;flex-direction:column;gap:3mm}
+  .role{display:flex;gap:4mm;align-items:center;border-radius:4mm;padding:3mm 4mm;background:var(--rc)}
+  .role .e{font-size:9mm;line-height:1;flex:0 0 auto}
+  .role .n{font-size:4.8mm;font-weight:800;color:var(--rk)}
+  .role .x{font-size:4.1mm;line-height:1.5;color:#3a2a10}
+  .role-ar{text-align:center;font-size:3.8mm;font-weight:700;color:var(--accent);margin:-1mm 0}
+  .vals{list-style:none;padding:0;margin:0}
+  .vals li{font-size:4.4mm;margin:0 0 3mm;padding:2.4mm 4mm;background:var(--softbg);border-radius:3.5mm}
   .print-btn{position:fixed;right:16px;bottom:16px;z-index:99;font-family:inherit;font-size:15px;font-weight:700;padding:12px 22px;border:none;border-radius:999px;background:var(--accent);color:#fff;box-shadow:0 3px 12px rgba(0,0,0,.25);cursor:pointer}
   .hint{text-align:center;font-size:13px;color:var(--soft);margin:10px 0 0}
   .hint a{color:var(--brown)}
@@ -67,7 +77,8 @@
     <h1><em>リサイクラー　5人で届ける</em></h1>
     <p class="msg">生ごみで困っている人に、<b>全員で</b>届ける。</p>
     <div class="vs"><div class="ng">😥 においも虫も、がまんしている</div><div class="ar">→</div><div class="ok">😊「もっと早く知りたかった」</div></div>
-    <p class="one">ひまわり3人・サービス・工事。5人で1つのチームです。</p>
+    <div class="chips"><span>🍃 においが気にならない</span><span>🐛 虫が来ない</span><span>🗑️ ごみ出しがラク</span></div>
+    <p class="one">ひまわり3人・サービス・工事。5人で1つのチームです！</p>
   </div>
 </div>
 
@@ -82,11 +93,13 @@
   <div class="back">
     <div class="box">
       <h2>それぞれの場所で</h2>
-      <ul><li>🌻 <b>ひまわり</b>：訪問で情報を集めて、サービスへ渡す</li><li>🔧 <b>サービス</b>：点検などで伺ったときに、聞く・提案する</li><li>⚙️ <b>工事</b>：工事が終わったときに、聞く・提案する</li></ul>
+      <div class="roles"><div class="role" style="--rc:#fff1c2;--rk:#7a4d10"><span class="e">🌻</span><div><div class="n">ひまわり</div><div class="x">訪問で「困った」を集めて、サービスへバトンタッチ</div></div></div><div class="role-ar">↓ つなぐ</div><div class="role" style="--rc:#d9ebfa;--rk:#164a7a"><span class="e">🔧</span><div><div class="n">サービス</div><div class="x">点検などで伺ったときに、聞く・提案する</div></div></div><div class="role" style="--rc:#dcefd2;--rk:#2b5a1e"><span class="e">⚙️</span><div><div class="n">工事</div><div class="x">工事が終わったときに、聞く・提案する</div></div></div></div>
+
     </div>
     <div class="box">
       <h2>全員で取り組む</h2>
-      <div class="memo"><b>🤝 やり方は、5人で決める</b><p>決めたことを、月曜の打合せで話す。</p></div>
+      <div class="memo"><b>🤝 やり方は、5人で決める！</b><p>決めたことを、月曜の打合せで話す。</p></div>
+      <ul class="vals"><li>💬 聞いた「困った」は、すぐチームへ</li><li>🙌 だれかの1台は、チームの1台</li><li>🎉 届けられたら、みんなで喜ぶ</li></ul>
 
     </div>
   </div>

@@ -48,6 +48,16 @@ const css=w=>`
   .memo b{font-size:5mm;color:var(--leaf)}
   .memo p{margin:1.5mm 0 0;font-size:4.2mm}
   .gt{font-size:4.2mm;font-weight:700;margin:0 0 1.5mm}
+  .chips{display:flex;gap:4mm;flex-wrap:wrap;justify-content:center}
+  .chips span{background:#fff;border:.6mm solid var(--tint);border-radius:999px;padding:2mm 6mm;font-size:4.6mm;font-weight:700;color:var(--brown);box-shadow:0 1mm 0 var(--tint)}
+  .roles{display:flex;flex-direction:column;gap:3mm}
+  .role{display:flex;gap:4mm;align-items:center;border-radius:4mm;padding:3mm 4mm;background:var(--rc)}
+  .role .e{font-size:9mm;line-height:1;flex:0 0 auto}
+  .role .n{font-size:4.8mm;font-weight:800;color:var(--rk)}
+  .role .x{font-size:4.1mm;line-height:1.5;color:#3a2a10}
+  .role-ar{text-align:center;font-size:3.8mm;font-weight:700;color:var(--accent);margin:-1mm 0}
+  .vals{list-style:none;padding:0;margin:0}
+  .vals li{font-size:4.4mm;margin:0 0 3mm;padding:2.4mm 4mm;background:var(--softbg);border-radius:3.5mm}
   .print-btn{position:fixed;right:16px;bottom:16px;z-index:99;font-family:inherit;font-size:15px;font-weight:700;padding:12px 22px;border:none;border-radius:999px;background:var(--accent);color:#fff;box-shadow:0 3px 12px rgba(0,0,0,.25);cursor:pointer}
   .hint{text-align:center;font-size:13px;color:var(--soft);margin:10px 0 0}
   .hint a{color:var(--brown)}
@@ -81,7 +91,8 @@ ${frame(w)}
   <div class="front">
     <h1><em>${c.title}</em></h1>
     <p class="msg">${c.why.msg}</p>
-${c.why.ng?`    <div class="vs"><div class="ng">${c.why.ng}</div><div class="ar">${c.why.ar||"→"}</div><div class="ok">${c.why.ok}</div></div>\n`:''}    <p class="one">${c.why.one}</p>
+${c.why.ng?`    <div class="vs"><div class="ng">${c.why.ng}</div><div class="ar">${c.why.ar||"→"}</div><div class="ok">${c.why.ok}</div></div>\n`:''}${c.why.chips?`    <div class="chips">${c.why.chips.map(x=>"<span>"+x+"</span>").join("")}</div>
+`:""}    <p class="one">${c.why.one}</p>
   </div>
 </div>
 
@@ -91,11 +102,12 @@ ${frame(w)}
   <div class="back">
     <div class="box">
       <h2>${c.how.h}</h2>
-${c.how.talk?`      <div class="talk">${c.how.talk.join('<br>')}</div>\n`:''}      <ul>${c.how.list.map(x=>'<li>'+x+'</li>').join('')}</ul>
+${c.how.talk?`      <div class="talk">${c.how.talk.join('<br>')}</div>\n`:''}${c.how.roles?`      <div class="roles">${c.how.roles.map(r=>(r.ar?"<div class=\"role-ar\">"+r.ar+"</div>":"")+"<div class=\"role\" style=\"--rc:"+r.bg+";--rk:"+r.k+"\"><span class=\"e\">"+r.ic+"</span><div><div class=\"n\">"+r.n+"</div><div class=\"x\">"+r.t+"</div></div></div>").join("")}</div>
+`:""}${c.how.list?"      <ul>"+c.how.list.map(x=>"<li>"+x+"</li>").join("")+"</ul>":""}
     </div>
     <div class="box">
       <h2>${c.what.h}</h2>
-${c.what.memo?`      <div class="memo"><b>${c.what.memo[0]}</b><p>${c.what.memo[1]||''}</p></div>\n`:''}${(c.what.groups||[]).map(g=>'      <p class="gt" style="color:'+col(g.c)+'">'+g.t+'</p>\n      <ul>'+g.items.map(x=>'<li>'+x+'</li>').join('')+'</ul>').join('\n')}
+${c.what.memo?`      <div class="memo"><b>${c.what.memo[0]}</b><p>${c.what.memo[1]||''}</p></div>\n`:''}${c.what.vals?'      <ul class="vals">'+c.what.vals.map(x=>'<li>'+x+'</li>').join('')+'</ul>\n':''}${(c.what.groups||[]).map(g=>'      <p class="gt" style="color:'+col(g.c)+'">'+g.t+'</p>\n      <ul>'+g.items.map(x=>'<li>'+x+'</li>').join('')+'</ul>').join('\n')}
     </div>
   </div>
 </div>
