@@ -56,6 +56,20 @@ const css=w=>`
   .role .n{font-size:4.8mm;font-weight:800;color:var(--rk)}
   .role .x{font-size:4.1mm;line-height:1.5;color:#3a2a10}
   .role-ar{text-align:center;font-size:3.8mm;font-weight:700;color:var(--accent);margin:-1mm 0}
+  .ag{flex:1;margin-top:5mm;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr 1fr;gap:5mm 7mm}
+  .ag-h{grid-column:1/-1;margin:0;font-size:6.4mm;color:var(--brown)}
+  .ag-it{background:#fff;border:.6mm solid var(--tint);border-radius:5mm;padding:4mm 6mm;display:flex;flex-direction:column}
+  .ag-t{font-size:5.4mm;font-weight:800;color:var(--brown);display:flex;align-items:center;gap:3mm;margin:0 0 2mm}
+  .ag-no{flex:0 0 auto;width:7.5mm;height:7.5mm;border-radius:50%;background:var(--accent);color:#fff;font-size:4.2mm;display:flex;align-items:center;justify-content:center}
+  .ag-ln{border-bottom:.4mm dashed #c9b49a;flex:1;min-height:9mm}
+  .ag-total{font-size:4.6mm;font-weight:700;margin:0 0 2mm}
+  .ag-blank{display:inline-block;width:28mm;border-bottom:.5mm solid #888;margin:0 2mm}
+  .ag-ku{display:grid;grid-template-columns:repeat(5,1fr);gap:2mm}
+  .ag-ku div{border:.4mm solid #ddd;border-radius:2mm;padding:1mm 2mm;display:flex;flex-direction:column;align-items:center}
+  .ag-ku b{font-size:3.6mm;color:var(--brown)} .ag-ku span{display:block;height:6.5mm}
+  .ag-two{display:flex;flex-direction:column;gap:3mm;flex:1;justify-content:space-around}
+  .ag-two div{font-size:5mm;font-weight:700;display:flex;align-items:flex-end;gap:2mm}
+  .ag-two span{flex:1;border-bottom:.5mm solid #888;height:8mm}
   .vals{list-style:none;padding:0;margin:0}
   .vals li{font-size:4.4mm;margin:0 0 3mm;padding:2.4mm 4mm;background:var(--softbg);border-radius:3.5mm}
   .print-btn{position:fixed;right:16px;bottom:16px;z-index:99;font-family:inherit;font-size:15px;font-weight:700;padding:12px 22px;border:none;border-radius:999px;background:var(--accent);color:#fff;box-shadow:0 3px 12px rgba(0,0,0,.25);cursor:pointer}
@@ -70,6 +84,21 @@ const css=w=>`
     *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   }`;
 const col=c=>c==='leaf'?'var(--leaf)':c;
+// 裏面を「打合せで決めること」（書き込み式）にする場合：agenda:{h, items:[{t, type:'lines'|'ku'|'two', n}]}
+function agenda(c){
+  const ln=n=>Array(n||1).fill('<div class="ag-ln"></div>').join('');
+  const it=c.agenda.items.map((x,i)=>{
+    let body='';
+    if(x.type==='ku'){
+      body='<div class="ag-total">合計<span class="ag-blank"></span>枚</div><div class="ag-ku">'
+        +Array.from({length:x.n||9},(_,k)=>'<div><b>'+(k+1)+'区</b><span></span></div>').join('')+'</div>';
+    }else if(x.type==='two'){
+      body='<div class="ag-two"><div>①<span></span></div><div>②<span></span></div></div>';
+    }else body=ln(x.n||2);
+    return '<div class="ag-it"><div class="ag-t"><span class="ag-no">'+(i+1)+'</span>'+x.t+'</div>'+body+'</div>';
+  }).join('\n');
+  return '  <div class="ag"><h2 class="ag-h">'+c.agenda.h+'</h2>\n'+it+'\n  </div>';
+}
 function card(c){
   const w=WHO[c.who];
   const label='打合せカード　'+w.label+' No.'+c.no;
@@ -99,7 +128,7 @@ ${c.why.ng?`    <div class="vs"><div class="ng">${c.why.ng}</div><div class="ar"
 <div class="page">
 ${frame(w)}
   <div class="top"><span class="no">${label}　${c.title}</span><span></span></div>
-  <div class="back">
+${c.agenda?agenda(c):`  <div class="back">
     <div class="box">
       <h2>${c.how.h}</h2>
 ${c.how.talk?`      <div class="talk">${c.how.talk.join('<br>')}</div>\n`:''}${c.how.roles?`      <div class="roles">${c.how.roles.map(r=>(r.ar?"<div class=\"role-ar\">"+r.ar+"</div>":"")+"<div class=\"role\" style=\"--rc:"+r.bg+";--rk:"+r.k+"\"><span class=\"e\">"+r.ic+"</span><div><div class=\"n\">"+r.n+"</div><div class=\"x\">"+r.t+"</div></div></div>").join("")}</div>
@@ -109,7 +138,7 @@ ${c.how.talk?`      <div class="talk">${c.how.talk.join('<br>')}</div>\n`:''}${c
       <h2>${c.what.h}</h2>
 ${c.what.memo?`      <div class="memo"><b>${c.what.memo[0]}</b><p>${c.what.memo[1]||''}</p></div>\n`:''}${c.what.vals?'      <ul class="vals">'+c.what.vals.map(x=>'<li>'+x+'</li>').join('')+'</ul>\n':''}${(c.what.groups||[]).map(g=>'      <p class="gt" style="color:'+col(g.c)+'">'+g.t+'</p>\n      <ul>'+g.items.map(x=>'<li>'+x+'</li>').join('')+'</ul>').join('\n')}
     </div>
-  </div>
+  </div>`}
 </div>
 
 <button class="print-btn" onclick="window.print()">🖨️ 印刷する（B5よこ・両面）</button>

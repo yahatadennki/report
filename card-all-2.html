@@ -47,6 +47,20 @@
   .role .n{font-size:4.8mm;font-weight:800;color:var(--rk)}
   .role .x{font-size:4.1mm;line-height:1.5;color:#3a2a10}
   .role-ar{text-align:center;font-size:3.8mm;font-weight:700;color:var(--accent);margin:-1mm 0}
+  .ag{flex:1;margin-top:5mm;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr 1fr;gap:5mm 7mm}
+  .ag-h{grid-column:1/-1;margin:0;font-size:6.4mm;color:var(--brown)}
+  .ag-it{background:#fff;border:.6mm solid var(--tint);border-radius:5mm;padding:4mm 6mm;display:flex;flex-direction:column}
+  .ag-t{font-size:5.4mm;font-weight:800;color:var(--brown);display:flex;align-items:center;gap:3mm;margin:0 0 2mm}
+  .ag-no{flex:0 0 auto;width:7.5mm;height:7.5mm;border-radius:50%;background:var(--accent);color:#fff;font-size:4.2mm;display:flex;align-items:center;justify-content:center}
+  .ag-ln{border-bottom:.4mm dashed #c9b49a;flex:1;min-height:9mm}
+  .ag-total{font-size:4.6mm;font-weight:700;margin:0 0 2mm}
+  .ag-blank{display:inline-block;width:28mm;border-bottom:.5mm solid #888;margin:0 2mm}
+  .ag-ku{display:grid;grid-template-columns:repeat(5,1fr);gap:2mm}
+  .ag-ku div{border:.4mm solid #ddd;border-radius:2mm;padding:1mm 2mm;display:flex;flex-direction:column;align-items:center}
+  .ag-ku b{font-size:3.6mm;color:var(--brown)} .ag-ku span{display:block;height:6.5mm}
+  .ag-two{display:flex;flex-direction:column;gap:3mm;flex:1;justify-content:space-around}
+  .ag-two div{font-size:5mm;font-weight:700;display:flex;align-items:flex-end;gap:2mm}
+  .ag-two span{flex:1;border-bottom:.5mm solid #888;height:8mm}
   .vals{list-style:none;padding:0;margin:0}
   .vals li{font-size:4.4mm;margin:0 0 3mm;padding:2.4mm 4mm;background:var(--softbg);border-radius:3.5mm}
   .print-btn{position:fixed;right:16px;bottom:16px;z-index:99;font-family:inherit;font-size:15px;font-weight:700;padding:12px 22px;border:none;border-radius:999px;background:var(--accent);color:#fff;box-shadow:0 3px 12px rgba(0,0,0,.25);cursor:pointer}
@@ -90,18 +104,11 @@
   <div class="col-f r"><span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span></div>
 
   <div class="top"><span class="no">打合せカード　共通 No.2　フェア　おもてなしの日</span><span></span></div>
-  <div class="back">
-    <div class="box">
-      <h2>それぞれの場所で</h2>
-      <div class="roles"><div class="role" style="--rc:#fff1c2;--rk:#7a4d10"><span class="e">🌻</span><div><div class="n">ひまわり</div><div class="x">招待状を手渡しして、お礼をひと言</div></div></div><div class="role" style="--rc:#d9ebfa;--rk:#164a7a"><span class="e">🔧</span><div><div class="n">サービス</div><div class="x">点検や修理で伺った家に、ご招待のひと声</div></div></div><div class="role" style="--rc:#dcefd2;--rk:#2b5a1e"><span class="e">⚙️</span><div><div class="n">工事</div><div class="x">工事のあとに、お礼と招待状を</div></div></div><div class="role" style="--rc:#e8dcf7;--rk:#4a2a78"><span class="e">📎</span><div><div class="n">事務</div><div class="x">電話や来店のお客様に、ご案内</div></div></div></div>
-
-    </div>
-    <div class="box">
-      <h2>全員で取り組む</h2>
-      <div class="memo"><b>🤝 準備も当日の役割も、みんなで決める！</b><p>決めたことを、月曜の打合せで話す。</p></div>
-      <ul class="vals"><li>📅 逆算して、早めに動く</li><li>🍵 来てくれた方を、全員でおもてなし</li><li>💬 聞いたお客様の声は、すぐチームへ</li></ul>
-
-    </div>
+  <div class="ag"><h2 class="ag-h">📝 打合せで決めること</h2>
+<div class="ag-it"><div class="ag-t"><span class="ag-no">1</span>🎁 記念品</div><div class="ag-ln"></div><div class="ag-ln"></div><div class="ag-ln"></div></div>
+<div class="ag-it"><div class="ag-t"><span class="ag-no">2</span>💌 招待状の配布数</div><div class="ag-total">合計<span class="ag-blank"></span>枚</div><div class="ag-ku"><div><b>1区</b><span></span></div><div><b>2区</b><span></span></div><div><b>3区</b><span></span></div><div><b>4区</b><span></span></div><div><b>5区</b><span></span></div><div><b>6区</b><span></span></div><div><b>7区</b><span></span></div><div><b>8区</b><span></span></div><div><b>9区</b><span></span></div></div></div>
+<div class="ag-it"><div class="ag-t"><span class="ag-no">3</span>🎯 ゲーム（2種類）</div><div class="ag-two"><div>①<span></span></div><div>②<span></span></div></div></div>
+<div class="ag-it"><div class="ag-t"><span class="ag-no">4</span>🍜 焼きそば＆ポップコーン 🍿</div><div class="ag-ln"></div><div class="ag-ln"></div><div class="ag-ln"></div></div>
   </div>
 </div>
 
