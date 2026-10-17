@@ -50,13 +50,6 @@ const css=w=>`
   .print-btn{position:fixed;right:16px;bottom:16px;z-index:99;font-family:inherit;font-size:15px;font-weight:700;padding:12px 22px;border:none;border-radius:999px;background:var(--accent);color:#fff;box-shadow:0 3px 12px rgba(0,0,0,.25);cursor:pointer}
   .hint{text-align:center;font-size:13px;color:var(--soft);margin:10px 0 0}
   .hint a{color:var(--brown)}
-  @media screen and (max-width:1000px){
-    .page{width:auto;height:auto;margin:10px 12px 20px;padding:12mm 8mm}
-    .back{grid-template-columns:1fr}
-    .front{padding:8mm 0}
-    .front h1{font-size:8mm} .front .msg{font-size:5.5mm}
-    .vs{flex-direction:column;gap:2mm}
-  }
   @media print{
     @page{size:257mm 182mm;margin:0}
     body{background:#fff}
@@ -73,7 +66,7 @@ function card(c){
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=1010">
 <title>打合せカード${c.no} ${c.title}｜ヤハタ電機商会</title>
 <style>${css(w)}
 </style>
@@ -83,7 +76,7 @@ function card(c){
 
 <div class="page">
 ${frame(w)}
-  <div class="top"><span class="no">${label}</span><span class="side why">WHY</span></div>
+  <div class="top"><span class="no">${label}</span><span></span></div>
   <div class="front">
     <h1><em>${c.title}</em></h1>
     <p class="msg">${c.why.msg}</p>
@@ -96,12 +89,10 @@ ${frame(w)}
   <div class="top"><span class="no">${label}　${c.title}</span><span></span></div>
   <div class="back">
     <div class="box">
-      <div><span class="side how">HOW</span></div>
       <h2>${c.how.h}</h2>
 ${c.how.talk?`      <div class="talk">${c.how.talk.join('<br>')}</div>\n`:''}      <ul>${c.how.list.map(x=>'<li>'+x+'</li>').join('')}</ul>
     </div>
     <div class="box">
-      <div><span class="side what">WHAT</span></div>
       <h2>${c.what.h}</h2>
 ${c.what.memo?`      <div class="memo"><b>${c.what.memo[0]}</b><p>${c.what.memo[1]||''}</p></div>\n`:''}${(c.what.groups||[]).map(g=>'      <p class="gt" style="color:'+col(g.c)+'">'+g.t+'</p>\n      <ul>'+g.items.map(x=>'<li>'+x+'</li>').join('')+'</ul>').join('\n')}
     </div>
@@ -141,7 +132,7 @@ fs.writeFileSync(D+'cards.html',`<!DOCTYPE html>
 </head>
 <body>
 <div class="wrap">
-  <div class="pt-head"><h1>打合せカード</h1><p>1枚1テーマ。表がWHY、裏がHOWとWHAT。B5よこ・両面で印刷して、打合せで使う。</p></div>
+  <div class="pt-head"><h1>打合せカード</h1><p>1枚1テーマ。B5よこ・両面で印刷して、打合せで使う。</p></div>
 ${list}
 </div>
 </body>
