@@ -119,7 +119,7 @@ function card(c){
 ${frame(w)}
   <div class="top"><span class="no">${label}</span><span></span></div>
   <div class="front">
-    <h1><em>${c.title}</em></h1>
+    <h1${c.title.length>17?" style=\"font-size:9mm\"":""}><em>${c.title}</em></h1>
     <p class="msg">${c.why.msg}</p>
 ${c.why.ng?`    <div class="vs"><div class="ng">${c.why.ng}</div><div class="ar">${c.why.ar||"→"}</div><div class="ok">${c.why.ok}</div></div>\n`:''}${c.why.chips?`    <div class="chips">${c.why.chips.map(x=>"<span>"+x+"</span>").join("")}</div>
 `:""}    <p class="one">${c.why.one}</p>
