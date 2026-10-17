@@ -341,6 +341,11 @@ function getProductMaster_() {
     return ContentService.createTextOutput(o.join('\n'));
   }
   // 一時：カレンダー照合テスト（date=2026-07-23 または dates=2026-07-23,2026-07-24,…）
+  // 高山専用の簡易日報：その日の下書き
+  if (e && e.parameter && e.parameter.action === 'tkdraft') {
+    return ContentService.createTextOutput(JSON.stringify(tkDraft_(String(e.parameter.date || ''))))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
   if (e && e.parameter && e.parameter.action === 'calcheck') {
     var ds = (e.parameter.dates || e.parameter.date || '').split(',').map(function(s) { return s.trim(); }).filter(String);
     if (!ds.length) return ContentService.createTextOutput('dates を指定してください');
@@ -432,6 +437,12 @@ function doPost(e) {
     if (data.action === 'quiz') {
       var qres = saveQuizAnswer_(data);
       return ContentService.createTextOutput(JSON.stringify({ ok: qres }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // 高山専用の簡易日報：✓で日報シートへ
+    if (data.action === 'tknippo') {
+      return ContentService.createTextOutput(JSON.stringify({ ok: true, n: tkSave_(data) }))
         .setMimeType(ContentService.MimeType.JSON);
     }
 

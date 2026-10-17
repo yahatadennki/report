@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高山の日報｜ヤハタ電機商会</title>
+<style>
+  :root{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--soft:#5a6a7a;--line:#d7e0e8;--acc:#7a1f2b;--ok:#1f7a4a}
+  @media (prefers-color-scheme:dark){:root{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--soft:#a9b6c2;--line:#2c3844}}
+  :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--soft:#a9b6c2;--line:#2c3844}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN",sans-serif;line-height:1.6;padding:16px 14px 90px}
+  .wrap{max-width:620px;margin:0 auto}
+  .hd{background:linear-gradient(135deg,#7a1f2b,#4e1219);color:#fff;border-radius:12px;padding:16px 18px;margin:0 0 12px}
+  .hd h1{margin:0;font-size:20px}
+  .hd p{margin:4px 0 0;font-size:12.5px;opacity:.85}
+  .day{display:flex;gap:8px;align-items:center;margin:0 0 12px}
+  .day input{flex:1;font:inherit;font-size:16px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
+  .day button{font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
+  .msg{font-size:13px;color:var(--soft);margin:8px 2px}
+  .c{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--acc);border-radius:12px;padding:12px 14px;margin:0 0 10px}
+  .c.done{border-left-color:var(--ok);opacity:.65}
+  .c .t{font-size:12px;color:var(--soft);margin:0 0 6px}
+  .c .t b{color:var(--ink)}
+  .row{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 8px}
+  .row label{font-size:11.5px;color:var(--soft);display:flex;flex-direction:column;gap:2px}
+  .row input,.row select{font:inherit;font-size:16px;padding:7px 8px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+  .nm{flex:1 1 100%} .nm input{width:100%}
+  .kd select{width:9.5em} .am input{width:6.5em} .pp select{width:4.8em} .ac input{width:4.5em}
+  .hint{font-size:12px;color:#9a5a00;background:#fff4dc;border-radius:6px;padding:4px 8px;margin:0 0 8px}
+  .with{font-size:12px;color:var(--ok);margin:0 0 6px}
+  .btns{display:flex;gap:8px}
+  .btns button{font:inherit;font-weight:700;font-size:15px;border:none;border-radius:9px;padding:10px 0;cursor:pointer}
+  .ok{flex:1;background:var(--ok);color:#fff}
+  .skip{width:5.5em;background:var(--paper);color:var(--soft);border:1px solid var(--line)!important}
+  .donebar{font-size:13px;font-weight:700;color:var(--ok)}
+  .add{width:100%;font:inherit;font-size:15px;padding:12px;border:2px dashed var(--line);border-radius:12px;background:none;color:var(--soft);cursor:pointer;margin-top:4px}
+  .skipped{font-size:12px;color:var(--soft);margin-top:14px}
+  .skipped button{font:inherit;font-size:12px;border:none;background:none;color:var(--acc);text-decoration:underline;cursor:pointer}
+  #pinGate{position:fixed;inset:0;z-index:9999;background:var(--paper);display:flex;align-items:center;justify-content:center;padding:20px}
+  #pinGate.hidden{display:none}
+  #pinGate .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px;text-align:center;max-width:300px;width:100%}
+  #pinGate input{font-size:24px;letter-spacing:.35em;text-align:center;padding:10px;width:160px;border:1px solid var(--line);border-radius:10px}
+  #pinGate button{margin-top:10px;font-size:15px;font-weight:700;padding:10px 28px;border:none;border-radius:8px;background:var(--acc);color:#fff}
+  #pinErr{color:#c33;font-size:12px;height:16px;margin-top:6px}
+</style>
+</head>
+<body>
+<div id="pinGate"><div class="box"><div style="font-size:32px">🔒</div><p style="font-weight:700;margin:8px 0 12px">高山の日報</p>
+<input id="pinInput" type="tel" inputmode="numeric" maxlength="4" placeholder="••••" autocomplete="off"><div id="pinErr"></div>
+<button type="button" onclick="checkPin()">入る</button></div></div>
+
+<div class="wrap">
+  <div class="hd"><h1>高山の日報</h1><p>カレンダーと見積から下書きを作っています。合っていれば ✓ を押すだけ。</p></div>
+  <div class="day">
+    <button type="button" onclick="move(-1)">◀</button>
+    <input type="date" id="d">
+    <button type="button" onclick="move(1)">▶</button>
+  </div>
+  <div id="list"></div>
+  <button class="add" type="button" onclick="addBlank()">＋ 予定にない分を足す</button>
+  <div class="skipped" id="skipped"></div>
+</div>
+
+<script>
+var GAS = "https://script.google.com/macros/s/AKfycbwDhQVpdoB_Dt92NXiCXHFHREWf8O1EVU8jY_YyHtPH8wg7pB4INrcf7bTnN0QN-TAL/exec";
+var KINDS = ["工事","配達","点検","修理","現調","お困りごと対応","商談","集金","その他"];
+var items = [], blanks = 0;
+
+(function(){var KEY='yahataKeieiAuth_v1',PIN='7860';
+function reveal(){document.getElementById('pinGate').classList.add('hidden');}
+window.checkPin=function(){var v=(document.getElementById('pinInput').value||'').trim();
+ if(v===PIN){try{localStorage.setItem(KEY,'1')}catch(e){}reveal();}else document.getElementById('pinErr').textContent='PINが違います';};
+var ok=false;try{ok=localStorage.getItem(KEY)==='1'}catch(e){}
+if(ok)reveal();else document.getElementById('pinInput').addEventListener('keydown',function(e){if(e.key==='Enter')checkPin();});})();
+
+function ymd(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function skipKey(){return 'tkSkip_'+document.getElementById('d').value;}
+function getSkip(){try{return JSON.parse(localStorage.getItem(skipKey())||'{}')}catch(e){return {}}}
+function setSkip(o){try{localStorage.setItem(skipKey(),JSON.stringify(o))}catch(e){}}
+
+function move(n){var el=document.getElementById('d');var d=new Date(el.value+'T00:00:00');d.setDate(d.getDate()+n);el.value=ymd(d);load();}
+
+function load(){
+  var date=document.getElementById('d').value;
+  var L=document.getElementById('list');
+  L.innerHTML='<p class="msg">読み込み中…</p>'; items=[]; blanks=0;
+  fetch(GAS+'?action=tkdraft&date='+date).then(function(r){return r.json();}).then(function(res){
+    items=res.items||[]; render();
+    if(res.err) L.insertAdjacentHTML('afterbegin','<p class="msg">⚠ '+esc(res.err)+'</p>');
+  }).catch(function(e){L.innerHTML='<p class="msg">読み込めませんでした。電波のよい所でもう一度開いてください。</p>';});
+}
+
+function card(it){
+  var opts=KINDS.map(function(k){return '<option'+(k===it.kind?' selected':'')+'>'+k+'</option>';}).join('');
+  var pp=[1,2,3,4].map(function(n){return '<option value="'+n+'"'+(n==it.people?' selected':'')+'>'+n+'人</option>';}).join('');
+  if(it.done) return '<div class="c done"><p class="t">'+esc(it.time)+' '+esc(it.title)+'</p><div class="donebar">✓ 入力済み　'+esc(it.cust)+'</div></div>';
+  return '<div class="c" id="c_'+it.key+'">'
+   +'<p class="t">'+(it.time?'<b>'+esc(it.time)+'</b> ':'')+esc(it.title||'予定にない分')+'</p>'
+   +(it.with&&it.with.length?'<div class="with">👥 一緒：'+esc(it.with.join('・'))+'</div>':'')
+   +(it.hint?'<div class="hint">'+esc(it.hint)+'</div>':'')
+   +'<div class="row"><label class="nm">現場名<input data-f="visitName" value="'+esc(it.cust)+'"></label></div>'
+   +'<div class="row">'
+   +'<label class="kd">種類<select data-f="workType" onchange="toggleAc(\''+it.key+'\')">'+opts+'</select></label>'
+   +'<label class="am">金額（千円）<input data-f="workAmount" type="number" inputmode="numeric" value="'+esc(it.amount)+'"></label>'
+   +'<label class="pp">人数<select data-f="people">'+pp+'</select></label>'
+   +'<label class="ac" style="'+(it.kind==='点検'?'':'display:none')+'">ｴｱｺﾝ点検<input data-f="aircon" type="number" inputmode="numeric" value="0"></label>'
+   +'</div>'
+   +'<div class="btns"><button class="ok" type="button" onclick="save(\''+it.key+'\')">✓ 入れる</button>'
+   +'<button class="skip" type="button" onclick="skip(\''+it.key+'\')">外す</button></div>'
+   +'</div>';
+}
+
+function render(){
+  var sk=getSkip();
+  var L=document.getElementById('list');
+  var shown=items.filter(function(it){return !sk[it.key];});
+  L.innerHTML=shown.length?shown.map(card).join(''):'<p class="msg">この日の予定はありません。</p>';
+  var hidden=items.filter(function(it){return sk[it.key];});
+  document.getElementById('skipped').innerHTML=hidden.length?('外した予定 '+hidden.length+'件　<button type="button" onclick="unskip()">もとに戻す</button>'):'';
+}
+
+function toggleAc(key){
+  var c=document.getElementById('c_'+key);if(!c)return;
+  var k=c.querySelector('[data-f=workType]').value;
+  c.querySelector('.ac').style.display=(k==='点検')?'':'none';
+}
+
+function addBlank(){
+  blanks++;
+  var it={key:'nb'+blanks,time:'',title:'',cust:'',kind:'工事',amount:'',people:1,with:[],hint:''};
+  items.push(it);
+  document.getElementById('list').insertAdjacentHTML('beforeend',card(it));
+}
+
+function skip(key){var o=getSkip();o[key]=1;setSkip(o);render();}
+function unskip(){setSkip({});render();}
+
+function save(key){
+  var c=document.getElementById('c_'+key);if(!c)return;
+  var row={date:document.getElementById('d').value};
+  [].forEach.call(c.querySelectorAll('[data-f]'),function(el){row[el.getAttribute('data-f')]=el.value;});
+  if(!row.visitName.trim()){alertMsg(c,'現場名を入れてください');return;}
+  if(row.workType!=='点検')row.aircon=0;
+  var b=c.querySelector('.ok');b.disabled=true;b.textContent='送信中…';
+  fetch(GAS,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'tknippo',rows:[row]})})
+   .then(function(r){return r.json();})
+   .then(function(res){
+     if(res&&res.ok&&res.n){
+       var it=items.filter(function(x){return x.key===key;})[0];
+       if(it){it.done=true;it.cust=row.visitName;it.title=it.title||row.workType;}
+       c.outerHTML=card(it||{done:true,cust:row.visitName,time:'',title:row.workType});
+     }else{b.disabled=false;b.textContent='✓ 入れる';alertMsg(c,'入りませんでした。もう一度押してください');}
+   })
+   .catch(function(){b.disabled=false;b.textContent='✓ 入れる';alertMsg(c,'送れませんでした。電波を確かめてもう一度');});
+}
+function alertMsg(c,t){var p=c.querySelector('.err');if(!p){p=document.createElement('p');p.className='msg err';p.style.color='#c33';c.appendChild(p);}p.textContent=t;}
+
+document.getElementById('d').value=ymd(new Date());
+document.getElementById('d').addEventListener('change',load);
+load();
+</script>
+</body>
+</html>
