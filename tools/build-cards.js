@@ -9,7 +9,7 @@ const WHO={
   service: {label:'サービススタッフ',ic:'🔧',frame:'#3d8fd6',paper:'#f7fbff',bg:'#e3f0fb',accent:'#2a6fb0',ink:'#164a7a',tint:'#d9ebfa',soft:'#eaf4fd'},
   koji:    {label:'工事スタッフ',ic:'⚙️',frame:'#4f9a3a',paper:'#f8fcf5',bg:'#e5f3dc',accent:'#3b7d2b',ink:'#2b5a1e',tint:'#dcefd2',soft:'#ecf7e6'},
   jimu:    {label:'事務スタッフ',ic:'📎',frame:'#8a5cc2',paper:'#fbf8ff',bg:'#efe6fa',accent:'#7446ad',ink:'#4a2a78',tint:'#e8dcf7',soft:'#f3ecfb'},
-  all:     {label:'共通',ic:'💡',icons:['💡','🔌'],frame:'#e0782c',paper:'#fffaf5',bg:'#fde9d9',accent:'#c9601a',ink:'#7a3a0e',tint:'#fde2cc',soft:'#fff1e6'}
+  all:     {label:'共通',ic:'💡',icons:['💡','🔌','📺'],frame:'#e0782c',paper:'#fffaf5',bg:'#fde9d9',accent:'#c9601a',ink:'#7a3a0e',tint:'#fde2cc',soft:'#fff1e6'}
 };
 const rep=(n,ic)=>Array.from({length:n},(_,i)=>'<span>'+(Array.isArray(ic)?ic[i%ic.length]:ic)+'</span>').join('');
 function frame(w0){const w={ic:w0.icons||w0.ic};return '  <div class="frame"></div>\n  <div class="row-f t">'+rep(14,w.ic)+'</div>\n  <div class="row-f b">'+rep(14,w.ic)+'</div>\n  <div class="col-f l">'+rep(5,w.ic)+'</div>\n  <div class="col-f r">'+rep(5,w.ic)+'</div>\n';}
