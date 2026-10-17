@@ -36,7 +36,7 @@ const css=w=>`
   .vs div{border-radius:5mm;padding:4mm 9mm;font-size:5mm;line-height:1.4}
   .vs .ng{background:#f0f0f0;color:#777} .vs .ok{background:var(--tint);color:var(--brown);font-weight:800}
   .vs .ar{font-size:7mm;color:var(--accent);padding:0;background:none}
-  .front .one{font-size:4.6mm;color:var(--soft);margin:0}
+  .front .one{font-size:4.6mm;color:var(--soft);margin:0;line-height:1.75;max-width:200mm}
   .back{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:7mm;margin-top:5mm}
   .box{background:#fff;border:.5mm solid var(--tint);border-radius:5mm;padding:6mm 7mm;display:flex;flex-direction:column}
   .box h2{margin:2.5mm 0 4mm;font-size:6.2mm;line-height:1.35;color:var(--brown)}
