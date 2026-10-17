@@ -9,6 +9,7 @@ const WHO={
   service: {label:'サービススタッフ',ic:'🔧',frame:'#3d8fd6',paper:'#f7fbff',bg:'#e3f0fb',accent:'#2a6fb0',ink:'#164a7a',tint:'#d9ebfa',soft:'#eaf4fd'},
   koji:    {label:'工事スタッフ',ic:'⚙️',frame:'#4f9a3a',paper:'#f8fcf5',bg:'#e5f3dc',accent:'#3b7d2b',ink:'#2b5a1e',tint:'#dcefd2',soft:'#ecf7e6'},
   jimu:    {label:'事務スタッフ',ic:'📎',frame:'#8a5cc2',paper:'#fbf8ff',bg:'#efe6fa',accent:'#7446ad',ink:'#4a2a78',tint:'#e8dcf7',soft:'#f3ecfb'},
+  enq:     {label:'アンケート',ic:'📝',icons:['📝','💬','✏️','📋'],frame:'#17a2a2',paper:'#f6fdfd',bg:'#dcf4f4',accent:'#128585',ink:'#0d5757',tint:'#cdeeee',soft:'#e8f8f8'},
   all:     {label:'共通',ic:'💡',icons:['💡','🔌','📺','❄️','🧺','🍳','📡','☎️','🔋','⚡','🌀','🛁','🚽','📻','🔦','🖥️','📱','⏰','🔊','🎮'],frame:'#e0782c',paper:'#fffaf5',bg:'#fde9d9',accent:'#c9601a',ink:'#7a3a0e',tint:'#fde2cc',soft:'#fff1e6'}
 };
 const rep=(n,ic,o)=>Array.from({length:n},(_,i)=>'<span>'+(Array.isArray(ic)?ic[(i+(o||0))%ic.length]:ic)+'</span>').join('');
@@ -150,9 +151,9 @@ ${c.what.memo?`      <div class="memo"><b>${c.what.memo[0]}</b><p>${c.what.memo[
 CARDS.forEach(card);
 
 // 目次（職種ごと）
-const ORDER=['all','himawari','service','koji','jimu'];
+const ORDER=['all','enq','himawari','service','koji','jimu'];
 const fname=c=>'card-'+c.who+'-'+c.no+'.html';
-const sec=ORDER.filter(k=>k!=='all'||CARDS.some(c=>c.who==='all')).map(k=>{
+const sec=ORDER.filter(k=>(k!=='all'&&k!=='enq')||CARDS.some(c=>c.who===k)).map(k=>{
   const w=WHO[k];const cs=CARDS.filter(c=>c.who===k).sort((a,b)=>a.no-b.no);
   const rows=cs.length?cs.map(c=>`      <a class="ci" href="${fname(c)}"><span class="n">No.${c.no}</span><span class="t">${c.title}</span></a>`).join('\n')
     :'      <p class="none">—</p>';
@@ -162,7 +163,7 @@ const sec=ORDER.filter(k=>k!=='all'||CARDS.some(c=>c.who==='all')).map(k=>{
 ${rows}
     </div>
   </section>`;}).join('\n');
-const nav=ORDER.filter(k=>k!=='all'||CARDS.some(c=>c.who==='all')).map(k=>`<a href="#${k}" style="background:${WHO[k].frame}">${WHO[k].ic} ${WHO[k].label.replace('スタッフ','')}</a>`).join('');
+const nav=ORDER.filter(k=>(k!=='all'&&k!=='enq')||CARDS.some(c=>c.who===k)).map(k=>`<a href="#${k}" style="background:${WHO[k].frame}">${WHO[k].ic} ${WHO[k].label.replace('スタッフ','')}</a>`).join('');
 fs.writeFileSync(D+'cards.html',`<!DOCTYPE html>
 <html lang="ja">
 <head>
