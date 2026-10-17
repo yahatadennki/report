@@ -9,7 +9,7 @@ const WHO={
   service: {label:'サービススタッフ',ic:'🔧',frame:'#3d8fd6',paper:'#f7fbff',bg:'#e3f0fb',accent:'#2a6fb0',ink:'#164a7a',tint:'#d9ebfa',soft:'#eaf4fd'},
   koji:    {label:'工事スタッフ',ic:'⚙️',frame:'#4f9a3a',paper:'#f8fcf5',bg:'#e5f3dc',accent:'#3b7d2b',ink:'#2b5a1e',tint:'#dcefd2',soft:'#ecf7e6'},
   jimu:    {label:'事務スタッフ',ic:'📎',frame:'#8a5cc2',paper:'#fbf8ff',bg:'#efe6fa',accent:'#7446ad',ink:'#4a2a78',tint:'#e8dcf7',soft:'#f3ecfb'},
-  all:     {label:'全員',ic:'⭐',frame:'#e0782c',paper:'#fffaf5',bg:'#fde9d9',accent:'#c9601a',ink:'#7a3a0e',tint:'#fde2cc',soft:'#fff1e6'}
+  all:     {label:'共通',ic:'⭐',frame:'#e0782c',paper:'#fffaf5',bg:'#fde9d9',accent:'#c9601a',ink:'#7a3a0e',tint:'#fde2cc',soft:'#fff1e6'}
 };
 const rep=(n,ic)=>Array(n).fill('<span>'+ic+'</span>').join('');
 function frame(w){return '  <div class="frame"></div>\n  <div class="row-f t">'+rep(14,w.ic)+'</div>\n  <div class="row-f b">'+rep(14,w.ic)+'</div>\n  <div class="col-f l">'+rep(5,w.ic)+'</div>\n  <div class="col-f r">'+rep(5,w.ic)+'</div>\n';}
@@ -81,7 +81,7 @@ ${frame(w)}
   <div class="front">
     <h1><em>${c.title}</em></h1>
     <p class="msg">${c.why.msg}</p>
-${c.why.ng?`    <div class="vs"><div class="ng">${c.why.ng}</div><div class="ar">→</div><div class="ok">${c.why.ok}</div></div>\n`:''}    <p class="one">${c.why.one}</p>
+${c.why.ng?`    <div class="vs"><div class="ng">${c.why.ng}</div><div class="ar">${c.why.ar||"→"}</div><div class="ok">${c.why.ok}</div></div>\n`:''}    <p class="one">${c.why.one}</p>
   </div>
 </div>
 
@@ -109,7 +109,7 @@ ${c.what.memo?`      <div class="memo"><b>${c.what.memo[0]}</b><p>${c.what.memo[
 CARDS.forEach(card);
 
 // 目次（職種ごと）
-const ORDER=['himawari','service','koji','jimu','all'];
+const ORDER=['all','himawari','service','koji','jimu'];
 const fname=c=>'card-'+c.who+'-'+c.no+'.html';
 const sec=ORDER.filter(k=>k!=='all'||CARDS.some(c=>c.who==='all')).map(k=>{
   const w=WHO[k];const cs=CARDS.filter(c=>c.who===k).sort((a,b)=>a.no-b.no);
