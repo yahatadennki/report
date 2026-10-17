@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>友達のように何度でも｜ひまわりスタッフ</title>
+<style>
+  :root{--ink:#3a2a10;--soft:#7a6440;--sun:#f6b800;--sun-d:#d99400;--leaf:#4f8a2b;--brown:#7a4d10;--paper:#fffdf5;--bg:#fff6d8}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Hiragino Maru Gothic ProN","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;line-height:1.55}
+  .page{width:257mm;height:181mm;margin:14px auto;position:relative;background:var(--paper);
+    border-radius:6mm;box-shadow:0 3px 16px rgba(0,0,0,.12);padding:13mm 15mm 11mm;overflow:hidden}
+  /* ひまわりの枠 */
+  .frame{position:absolute;inset:0;pointer-events:none;border:2.2mm solid var(--sun);border-radius:6mm}
+  .row-f{position:absolute;left:0;right:0;display:flex;justify-content:space-around;font-size:7.5mm;line-height:1}
+  .row-f.t{top:-1.2mm} .row-f.b{bottom:-1.4mm}
+  .col-f{position:absolute;top:9mm;bottom:9mm;display:flex;flex-direction:column;justify-content:space-around;font-size:7mm;line-height:1}
+  .col-f.l{left:-1.4mm} .col-f.r{right:-1.4mm}
+
+  .hd{text-align:center;margin:0 0 3mm}
+  .hd .tag{display:inline-block;background:var(--leaf);color:#fff;border-radius:999px;font-size:3mm;font-weight:700;padding:.4mm 4mm;letter-spacing:.1em}
+  .hd h1{margin:1.5mm 0 0;font-size:8.2mm;line-height:1.25;color:var(--brown)}
+  .hd h1 em{font-style:normal;background:linear-gradient(transparent 58%,#ffe27a 58%)}
+
+  .grid{display:grid;grid-template-columns:1fr 1.25fr 1fr;gap:4mm;height:calc(100% - 22mm)}
+  .col{background:#fff;border:.5mm solid #f1dc9a;border-radius:4mm;padding:3.2mm 3.8mm;display:flex;flex-direction:column}
+  .col h2{margin:0 0 2mm;font-size:4.2mm;display:flex;align-items:center;gap:2mm;color:var(--brown)}
+  .col h2 .w{font-size:2.8mm;color:#fff;border-radius:999px;padding:.3mm 2.6mm;letter-spacing:.08em}
+  .why .w{background:#ff7a59} .how .w{background:var(--sun-d)} .what .w{background:var(--leaf)}
+  p{margin:0 0 2mm;font-size:3.3mm}
+  .big{font-size:4.6mm;font-weight:800;line-height:1.4;color:var(--brown);margin:1mm 0 2.5mm}
+  .big b{color:#e05a2a}
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:2mm;margin:1mm 0 2.5mm}
+  .vs div{border-radius:3mm;padding:2mm;text-align:center;font-size:3.1mm}
+  .vs .ng{background:#f2f2f2;color:#666} .vs .ok{background:#fff1c2;color:var(--brown);font-weight:700}
+  .vs b{display:block;font-size:4.4mm}
+  .talk{background:#fff8dc;border-radius:3mm;padding:2mm 3mm;margin:0 0 2.2mm;font-size:3.2mm}
+  .talk .q{font-weight:700;color:var(--brown)}
+  ol{margin:0;padding-left:5mm}
+  ol li{font-size:3.15mm;margin:0 0 1.5mm}
+  ol li b{color:var(--brown)}
+  ul.ng{margin:0 0 2mm;padding-left:4.5mm}
+  ul.ng li{font-size:3.1mm;margin:0 0 1mm}
+  .memo{margin-top:auto;border:.6mm dashed var(--leaf);border-radius:3mm;padding:2.2mm 3mm;background:#f3faea}
+  .memo b{color:var(--leaf);font-size:3.5mm}
+  .memo p{font-size:3.05mm;margin:1mm 0 0}
+  .memo .ln{border-bottom:.3mm solid #9bbf7c;height:5mm;font-size:2.8mm;color:#8aa772;padding-top:1mm}
+
+  .print-btn{position:fixed;right:16px;bottom:16px;z-index:99;font-family:inherit;font-size:15px;font-weight:700;
+    padding:12px 22px;border:none;border-radius:999px;background:var(--sun-d);color:#fff;box-shadow:0 3px 12px rgba(0,0,0,.25);cursor:pointer}
+  @media screen and (max-width:1000px){
+    .page{width:auto;height:auto;margin:10px 12px 80px;padding:12mm 9mm}
+    .grid{grid-template-columns:1fr;height:auto}
+    .hd h1{font-size:7mm}
+  }
+  @media print{
+    @page{size:257mm 182mm;margin:0}
+    body{background:#fff}
+    .page{margin:0;box-shadow:none;border-radius:0}
+    .print-btn{display:none}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="frame"></div>
+  <div class="row-f t"><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span></div>
+  <div class="row-f b"><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span></div>
+  <div class="col-f l"><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span></div>
+  <div class="col-f r"><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span></div>
+
+  <div class="hd">
+    <span class="tag">ひまわりスタッフ</span>
+    <h1><em>友達のように、何度でも行ける人</em>になろう</h1>
+  </div>
+
+  <div class="grid">
+    <div class="col why">
+      <h2><span class="w">WHY</span>なぜ友達？</h2>
+      <p class="big">売り込みは<b>1回</b>で終わる。<br>友達は<b>何度でも</b>行ける。</p>
+      <div class="vs">
+        <div class="ng"><b>😥</b>「また来た」<br>（売りに来る人）</div>
+        <div class="ok"><b>😊</b>「待ってたわ」<br>（話しに来る人）</div>
+      </div>
+      <p>何度も行けるから、困ったときに思い出してもらえます。「そういえば、エアコンがね」は、友達にしか言いません。</p>
+      <p><b>商品の話は10回に1回でいい。</b>お客様から言ってくれるのを待ちます。</p>
+    </div>
+
+    <div class="col how">
+      <h2><span class="w">HOW</span>前回の続きから話す</h2>
+      <div class="talk"><span class="q">「お孫さん、運動会どうでした？」</span><br><span class="q">「この前のお花、咲きました？」</span><br><span class="q">「腰の具合、その後いかがですか？」</span></div>
+      <p style="font-size:3.2mm">「覚えててくれたの？」と言われたら、もう友達の入口です。</p>
+      <ol>
+        <li><b>名前で呼ぶ。</b>「◯◯さん」。自分も「ひまわりの◯◯です」と名乗る</li>
+        <li><b>目に入ったものをほめる。</b>玄関の花・庭・ペット・手作りのもの</li>
+        <li><b>教えてもらう。</b>「この辺でおいしいお店ありますか？」教えた相手を、人は好きになる</li>
+        <li><b>自分のことも少し話す。</b>「うちの子も同じくらいで」質問ばかりだと取り調べになる</li>
+        <li><b>次に来る理由を残して帰る。</b>「今度、咲いたら見せてくださいね」</li>
+      </ol>
+    </div>
+
+    <div class="col what">
+      <h2><span class="w">WHAT</span>毎日やること</h2>
+      <p style="font-weight:700;color:#b33">しないこと</p>
+      <ul class="ng">
+        <li>時計を見る・急いで帰る</li>
+        <li>前に聞いた話を、もう一度聞く</li>
+        <li>ご近所のうわさ話にのる</li>
+        <li>毎回、商品の話をする</li>
+      </ul>
+      <p style="font-weight:700;color:var(--leaf)">こんな時は</p>
+      <ul class="ng">
+        <li><b>留守</b>…ひと言メモをポストへ。「◯◯さんへ　ひまわりの◯◯です。また来ますね」</li>
+        <li><b>「今忙しいの」</b>…「じゃあ、また来ますね」とすぐ帰る。次に来やすくなる</li>
+      </ul>
+      <div class="memo">
+        <b>✏️ 日報に「次に話すこと」1行</b>
+        <p>帰ったら書く。行く前に読む。<br>誰が伺っても、続きから話せます。</p>
+        <div class="ln">例）お孫さんの運動会 10/25</div>
+        <div class="ln">例）庭のバラ、咲いたら見せてもらう</div>
+      </div>
+    </div>
+  </div>
+</div>
+<button class="print-btn" onclick="window.print()">🖨️ 印刷する（B5よこ）</button>
+</body>
+</html>
