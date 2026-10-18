@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>教え合い① テーマ1〜3｜ヤハタ電機商会</title>
+<style>
+  :root{
+    --bg:#fffaf2; --card:#fff; --ink:#2b2b2b; --soft:#7a7a7a; --line:#eee2d2;
+    --orange:#ff9500; --orange-d:#e07f00; --teal:#00b3a4; --pink:#ff5c7a; --blue:#3d9df6; --green:#2e7d32;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --bg:#191614; --card:#241f1c; --ink:#f2ece6; --soft:#a99f95; --line:#3a322c; }
+  }
+  :root[data-theme="dark"]{ --bg:#191614; --card:#241f1c; --ink:#f2ece6; --soft:#a99f95; --line:#3a322c; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);line-height:1.85;
+    font-family:"Hiragino Maru Gothic ProN","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
+    -webkit-text-size-adjust:100%}
+  .wrap{max-width:660px;margin:0 auto;padding:0 20px 90px}
+
+  header{background:linear-gradient(135deg,#00b3a4,#5fd3c7);color:#fff;padding:34px 20px 30px;
+    text-align:center;border-radius:0 0 28px 28px;margin-bottom:14px}
+  header .emo{font-size:40px;line-height:1}
+  header h1{margin:10px 0 6px;font-size:25px;line-height:1.4}
+  header p{margin:0;font-size:13px;opacity:.95}
+
+  .chap{margin:46px 0 14px;text-align:center}
+  .chap .tag{display:inline-block;color:#fff;border-radius:999px;padding:4px 20px;font-size:13px;font-weight:700;letter-spacing:.14em}
+  .chap.why .tag{background:var(--pink)} .chap.how .tag{background:var(--teal)} .chap.what .tag{background:var(--blue)}
+  .chap h2{margin:10px 0 0;font-size:20px}
+
+  p{margin:0 0 16px;font-size:16px}
+  .lead{font-size:17px;font-weight:700;line-height:1.7}
+  .sub{font-size:14px;color:var(--soft)}
+
+  .box{background:var(--card);border-radius:20px;padding:22px;margin:16px 0;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+  .box.pink{background:#ffe9ee} .box.teal{background:#dff7f4} .box.orange{background:linear-gradient(135deg,#fff1dc,#ffe6c2)}
+  @media (prefers-color-scheme:dark){ .box.pink{background:#3a2028}.box.teal{background:#123230}.box.orange{background:#3a2b16} }
+  .huge{font-size:25px;font-weight:800;line-height:1.45}
+  .huge.pink{color:var(--pink)} .huge.teal{color:var(--teal)} .huge.orange{color:var(--orange-d)}
+  .box .cap{font-size:14px;color:var(--soft);margin-top:10px}
+
+  /* NG / OK */
+  .talk{border-radius:18px;padding:16px 18px;margin:12px 0;box-shadow:0 2px 8px rgba(0,0,0,.05);background:var(--card)}
+  .talk .lbl{display:inline-block;font-size:12px;font-weight:700;color:#fff;border-radius:999px;padding:1px 12px;margin-bottom:8px}
+  .talk.ng .lbl{background:#9e9e9e} .talk.ok .lbl{background:var(--teal)}
+  .talk.ng{border-left:6px solid #bdbdbd} .talk.ok{border-left:6px solid var(--teal)}
+  .line{font-size:14.5px;margin:0 0 7px;display:flex;gap:8px}
+  .line b{flex:0 0 auto;min-width:3.2em}
+  .line .me{color:var(--blue)} .line .you{color:var(--orange-d)}
+  .talk .why{font-size:13px;color:var(--soft);margin:8px 0 0;border-top:1px dashed var(--line);padding-top:8px}
+
+  /* 型 */
+  .steps .s{background:var(--card);border-radius:16px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;
+    box-shadow:0 2px 8px rgba(0,0,0,.05);font-size:15px}
+  .steps .s .ico{font-size:24px;flex:0 0 auto;line-height:1.2}
+  .steps .s small{display:block;color:var(--soft);font-size:13px;margin-top:3px}
+  .steps .ar{text-align:center;font-size:19px;color:var(--orange);margin:3px 0}
+
+  /* 質問リスト */
+  .qlist{background:var(--card);border-radius:18px;padding:16px 20px;margin:14px 0;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .qlist b.t{font-size:15px}
+  .qlist ol{margin:8px 0 0;padding-left:22px}
+  .qlist li{font-size:14.5px;margin:0 0 6px}
+
+  .tips{background:var(--card);border-radius:18px;padding:16px 20px;margin:14px 0;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .tips li{font-size:14.5px;margin:0 0 6px}
+
+  /* ロールプレイ */
+  .roles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+  .roles div{background:var(--card);border-radius:14px;padding:12px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .roles .e{font-size:24px} .roles .n{font-weight:800;font-size:14px;margin:4px 0 2px} .roles .d{font-size:12px;color:var(--soft)}
+  @media (max-width:420px){ .roles{grid-template-columns:1fr} }
+
+  .check{background:var(--card);border-radius:18px;padding:16px 20px;margin:14px 0;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .check .row{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;margin:0 0 8px}
+  .check .bx{flex:0 0 auto;width:18px;height:18px;border:2px solid #999;border-radius:4px;margin-top:4px}
+
+  /* お客様カード */
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+  .ccard{background:var(--card);border:2px dashed #c9b8a0;border-radius:14px;padding:12px 14px}
+  .ccard .no{font-size:12px;font-weight:700;color:#fff;background:var(--orange);border-radius:999px;padding:0 10px;display:inline-block}
+  .ccard .who{font-weight:800;font-size:15px;margin:6px 0 4px}
+  .ccard ul{margin:0;padding-left:18px}
+  .ccard li{font-size:13px;margin:0 0 2px}
+  .ccard .hint{font-size:12px;color:var(--soft);margin-top:6px;border-top:1px dotted var(--line);padding-top:5px}
+  @media (max-width:520px){ .cards{grid-template-columns:1fr} }
+
+  .foot{margin-top:50px;text-align:center;font-size:12px;color:var(--soft)}
+  .print-btn{position:fixed;right:16px;bottom:16px;z-index:99;font-family:inherit;font-size:15px;font-weight:700;
+    padding:12px 22px;border:none;border-radius:999px;background:var(--teal);color:#fff;box-shadow:0 3px 12px rgba(0,0,0,.25);cursor:pointer}
+  @media print{
+    @page{size:A4 portrait;margin:12mm}
+    body{background:#fff}
+    .print-btn{display:none !important}
+    header,.chap .tag,.box,.talk .lbl,.ccard .no{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .box,.talk,.steps,.qlist,.tips,.check,.ccard,.roles{page-break-inside:avoid}
+    .cards-sec{page-break-before:always}
+  }
+</style>
+</head>
+<body>
+
+<style>
+  header{background:linear-gradient(135deg,#2a78d6,#5fb0f0)}
+  .pick{background:var(--card);border-radius:18px;padding:16px 18px;margin:14px 0;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .pick h3{margin:0 0 4px;font-size:17px;display:flex;align-items:center;gap:8px}
+  .pick .sub2{font-size:13px;color:var(--soft);margin:0 0 10px}
+  .pick.kj{border-top:6px solid #4f9a3a} .pick.sv{border-top:6px solid #3d8fd6}
+  .opt{display:flex;gap:10px;align-items:flex-start;padding:8px 4px;border-bottom:1px dotted #e3d6c4;font-size:15px}
+  .opt:last-child{border-bottom:none}
+  .opt .bx{flex:0 0 auto;width:20px;height:20px;border:2px solid #999;border-radius:5px;margin-top:3px}
+  .opt small{display:block;color:var(--soft);font-size:12.5px}
+  .write{background:var(--card);border-radius:18px;padding:16px 18px;margin:14px 0;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .write .ln{border-bottom:1.5px dashed #c9b8a0;height:30px}
+  @media print{ .pick,.write{page-break-inside:avoid} .pick{-webkit-print-color-adjust:exact;print-color-adjust:exact} }
+</style>
+
+<header>
+  <div class="emo">🤝</div>
+  <h1>教え合い①<br>テーマ1〜3</h1>
+  <p>服部さん → 伊藤さん　／　伊藤さん → 服部さん</p>
+</header>
+
+<div class="wrap">
+
+<div class="chap why"><span class="tag">WHY</span></div>
+
+<p class="lead">人に教えられたら、<br>本当に覚えたということ。</p>
+<p>クイズで覚えたことを、今度は相手に教えます。教えようとすると、自分が分かっていないところにも気づきます。</p>
+
+<div class="box teal">
+  <div class="huge teal">工事は、サービスに<br>サービスは、工事に</div>
+  <div class="cap">相手の仕事が分かると、現場でのつなぎがうまくなります。</div>
+</div>
+
+<div class="chap how"><span class="tag">HOW</span><h2>進め方</h2></div>
+
+<div class="steps">
+  <div class="s"><span class="ico">✅</span><div><b>① 教えることを2つ選ぶ</b>
+    <small>下の中から、相手の仕事に役立ちそうなものを選ぶ</small></div></div>
+  <div class="ar">↓</div>
+  <div class="s"><span class="ico">💬</span><div><b>② 1つ5分で教える</b>
+    <small>言葉で教えても、紙に書いて教えてもOK。実物やカタログがあれば見せながら</small></div></div>
+  <div class="ar">↓</div>
+  <div class="s"><span class="ico">🔁</span><div><b>③ 教わった人が、自分の言葉で言い直す</b>
+    <small>言い直せたら、合格。つまったところは、もう一度</small></div></div>
+</div>
+
+<div class="chap what"><span class="tag">WHAT</span><h2>教えることを選ぶ</h2></div>
+
+<div class="pick kj">
+  <h3>⚙️ 服部さん → 伊藤さんへ</h3>
+  <p class="sub2">工事テーマ1〜3（ビスと電線／安全と養生・腰袋／エアコンの工具と部材）から2つ</p>
+  <div class="opt"><span class="bx"></span><div>よく使うビス3つと、それぞれ何に打つか</div></div>
+  <div class="opt"><span class="bx"></span><div>電線の色（黒・白・赤・緑）が表すもの</div></div>
+  <div class="opt"><span class="bx"></span><div>VVF 1.6と2.0の使い分け<small>照明・コンセントとエアコンの違い</small></div></div>
+  <div class="opt"><span class="bx"></span><div>石膏ボードに付けるとき、アンカーを使う理由</div></div>
+  <div class="opt"><span class="bx"></span><div>脚立を安全に使うコツと、やってはいけないこと</div></div>
+  <div class="opt"><span class="bx"></span><div>お客様の家での養生の順番</div></div>
+  <div class="opt"><span class="bx"></span><div>エアコン1台分の部材</div></div>
+  <div class="opt"><span class="bx"></span><div>真空引きと、ガス漏れの確かめ方</div></div>
+  <div class="opt"><span class="bx"></span><div>ドレンホースに勾配をつける理由</div></div>
+  <div class="opt"><span class="bx"></span><div>室外機の置き方（置き台・壁掛け・二段置き）の選び方</div></div>
+</div>
+
+<div class="pick sv">
+  <h3>🔧 伊藤さん → 服部さんへ</h3>
+  <p class="sub2">サービステーマ1〜3（テレビ・ブルーレイ・アンテナ／エアコン／照明）から2つ</p>
+  <div class="opt"><span class="bx"></span><div>いま扱っているテレビのシリーズと、その違い</div></div>
+  <div class="opt"><span class="bx"></span><div>分配器・混合器・ブースターの役割</div></div>
+  <div class="opt"><span class="bx"></span><div>ブルーレイレコーダーの選び方<small>毎日録画する人には、どこを見るか</small></div></div>
+  <div class="opt"><span class="bx"></span><div>エアコンのシリーズの違い（上のクラスと普及クラス）</div></div>
+  <div class="opt"><span class="bx"></span><div>お掃除機能が、してくれること・してくれないこと</div></div>
+  <div class="opt"><span class="bx"></span><div>ナノイーXと換気を、お客様に一言で</div></div>
+  <div class="opt"><span class="bx"></span><div>エアコンの使い方で、最初に説明する3つ</div></div>
+  <div class="opt"><span class="bx"></span><div>照明（HH-）のシリーズの違い</div></div>
+  <div class="opt"><span class="bx"></span><div>調光と調色の違い</div></div>
+  <div class="opt"><span class="bx"></span><div>照明を付けたあとに、お客様に伝える3つ</div></div>
+</div>
+
+<div class="write">
+  <b>✏️ 紙で教える人は、ここに書く</b>
+  <div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div>
+</div>
+
+<div class="box orange">
+  <div class="huge orange">教えた人も、教わった人も<br>「ありがとう」で終わる</div>
+</div>
+
+<div class="foot">㈲ヤハタ電機商会</div>
+
+</div>
+<button class="print-btn" onclick="window.print()">🖨️ 印刷する</button>
+</body>
+</html>
