@@ -194,6 +194,7 @@ fs.writeFileSync(D+'cards.html',`<!DOCTYPE html>
 </head>
 <body>
 <div class="wrap">
+  <p style="margin:0 0 10px;font-size:13px"><a href="sodateru.html" style="color:var(--soft)">← 育成ポータルへ</a></p>
   <div class="pt-head"><h1>打合せカード 目次</h1><p>1枚1テーマ。B5よこ・両面で印刷して、打合せで使う。</p></div>
   <div class="nav">${nav}</div>
 ${sec.replace(/<section style=/g,(m,i)=>m)}
