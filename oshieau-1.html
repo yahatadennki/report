@@ -31,14 +31,17 @@
   ol li small{color:var(--soft);font-size:12px}
   .write{margin-top:10px;border:1.5px dashed #bbb;border-radius:8px;padding:6px 10px}
   .write b{font-size:13px}
-  .write .ln{border-bottom:1px dashed #c8c8c8;height:26px}
+  .write{display:flex;flex-direction:column}
+  .write .lines{flex:1;min-height:180px;background:repeating-linear-gradient(transparent 0 25px,#c8c8c8 25px 26px)}
+  .sheet{display:flex;flex-direction:column;min-height:270mm}
+  .write{flex:1}
   .foot{margin-top:8px;font-size:12px;color:var(--soft);text-align:center}
   .kj{--c:#3b7d2b;--t:#e8f4e1} .sv{--c:#1f6fb8;--t:#e2effb}
   .print-btn{position:fixed;right:16px;bottom:16px;font:inherit;font-size:15px;font-weight:700;padding:12px 22px;border:none;border-radius:999px;background:#1f6fb8;color:#fff;box-shadow:0 3px 12px rgba(0,0,0,.25);cursor:pointer}
   @media print{
     @page{size:A4 portrait;margin:9mm}
     body{background:#fff;padding:0}
-    .sheet{box-shadow:none;border-radius:0;margin:0;padding:0;max-width:none;page-break-after:always}
+    .sheet{box-shadow:none;border-radius:0;margin:0;padding:0;max-width:none;page-break-after:always;height:278mm;min-height:0;overflow:hidden}
     .sheet:last-of-type{page-break-after:auto}
     .print-btn{display:none}
     *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -81,7 +84,7 @@
     <li><span class="bx t"></span><span class="bx k"></span>コアドリルで穴を開ける前に確かめること</li>
   </ol>
   <div class="write"><b>✏️ 紙で教えるときは、ここに書く</b>
-    <div class="ln"></div><div class="ln"></div><div class="ln"></div>
+    <div class="lines"></div>
   </div>
 </div>
 
@@ -119,7 +122,7 @@
     <li><span class="bx t"></span><span class="bx k"></span>蛍光灯からLEDに替えると、何が変わるか</li>
   </ol>
   <div class="write"><b>✏️ 紙で教えるときは、ここに書く</b>
-    <div class="ln"></div><div class="ln"></div><div class="ln"></div>
+    <div class="lines"></div>
   </div>
 </div>
 
