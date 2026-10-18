@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>工事・配達後アンケート（半券つき）｜ヤハタ電機商会</title>
+<title>工事・配達後アンケート｜ヤハタ電機商会</title>
 <style>
   :root{
     --paper:#f4f7fa; --card:#ffffff; --ink:#1c2530; --ink-soft:#4a5a6a; --line:#d7e0e8;
@@ -103,132 +103,96 @@
     .q .qt .num,.stub .foot{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   }
 </style>
+<style>
+  .tally{width:100%;border-collapse:collapse;font-size:15px;margin:4px 0 6px}
+  .tally th,.tally td{border:1.4px solid #bbb;padding:6px 8px}
+  .tally th{background:#f3f7f5;text-align:left;width:31%;color:#1c2530}
+  .tally td.tl{height:44px}
+  .tally td.sm{width:15%;text-align:right;color:#888;font-size:12px;vertical-align:bottom}
+  .tally tr.main th{font-size:16px;background:#fff6dc}
+  .list{width:100%;border-collapse:collapse;font-size:13px}
+  .list th,.list td{border:1.2px solid #bbb;padding:4px 6px;height:30px}
+  .list th{background:#f3f7f5;height:auto;font-weight:700}
+  .sum{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;border:1.6px solid #1f5f4a;border-radius:8px;padding:10px 14px;background:#f7fbf9}
+  .sum span b{display:inline-block;min-width:44px;border-bottom:1.4px solid #444;margin:0 3px}
+  .say{font-size:12.5px;background:#fff8e6;border-left:4px solid #f0a500;border-radius:6px;padding:7px 12px;margin:8px 0 10px;color:#4a3a10}
+  .sheet.compact .q{padding:8px 12px;margin:0 0 7px}
+  .sheet.compact .q .qt{font-size:14.5px;margin:0 0 5px}
+  .inner{border:1.4px dashed #999;border-radius:8px;padding:8px 12px;margin-top:10px;font-size:13px}
+  .inner .fld{font-size:13px;margin:0 0 4px}
+  .inner .fld .in{height:22px}
+  @media print{ .tally th,.tally tr.main th,.list th,.sum,.say{-webkit-print-color-adjust:exact;print-color-adjust:exact} }
+</style>
 </head>
 <body>
-
 <div class="wrap screen-only">
-
   <div class="pt-head">
-    <p class="e">工事・配達のあとに</p>
-    <h1>アンケート＆半券のしくみ</h1>
-    <p class="s">説明して、渡して、半券を持ち帰る。回収はひまわりスタッフが行きます。</p>
+    <p class="e">ひまわりスタッフが、巡回で会ったときに</p>
+    <h1>工事・配達後アンケート</h1>
+    <p class="s">工事・配達のあと、ひまわりスタッフが巡回でお会いしたときにお渡しして、その場で書いていただき、回収します。</p>
   </div>
-
-  <p class="strip-title">流れ</p>
   <div class="flow">
-    <div class="fl"><span class="n">1</span><div><b>取扱説明をする</b><p>工事・配達が終わったら、その場で使い方を説明する。ここまでが作業です。</p></div></div>
+    <div class="fl"><span class="n">1</span><div><b>巡回で会ったときに渡す</b><p>「先日の工事、いかがでしたか？よかったら教えてください」</p></div></div>
     <div class="arrow">↓</div>
-    <div class="fl"><span class="n">2</span><div><b>アンケートを手渡す</b><p>「後日ひまわりの者がお預かりに伺います」と一言添えてお渡しする。</p></div></div>
+    <div class="fl"><span class="n">2</span><div><b>その場で書いてもらう</b><p>2〜3分。書きにくい方には、聞いて代わりに書く。書いてもらいながら、使い心地も聞く。</p></div></div>
     <div class="arrow">↓</div>
-    <div class="fl"><span class="n">3</span><div><b>半券を切り取って持ち帰る</b><p>日にち・お客様名・工事／配達の内容。書くのはこの3つだけ。</p></div></div>
-    <div class="arrow">↓</div>
-    <div class="fl h"><span class="n">4</span><div><b>帰社したら、ひまわりBOXへ入れる</b><p>渡すのを忘れない。入れた時点で自分の仕事は完了。</p></div></div>
-    <div class="arrow">↓</div>
-    <div class="fl h"><span class="n">5</span><div><b>ひまわりスタッフが回収に伺う</b><p>1週間以内が目安。回収のついでに、様子を伺って会話する。</p></div></div>
-    <div class="arrow">↓</div>
-    <div class="fl h"><span class="n">6</span><div><b>お困りごとは、その日のうちに日報へ</b><p>気になる家電・ご要望があれば受注日報に記録し、担当につなぐ。</p></div></div>
+    <div class="fl h"><span class="n">3</span><div><b>その場で回収して、その日のうちに提出</b><p>「気になる」「足りなかった」に印があれば、すぐ高山へ。使い方の困りごとはサービスへつなぐ。</p></div></div>
   </div>
-
-  <div class="note">
-    <p><b>半券が、そのまま訪問リストです。</b>渡したかどうかを思い出す仕組みは続きません。回収は「行く口実」。回収率より、行った回数のほうが大事です。</p>
-  </div>
-
-  <p class="strip-title">用紙</p>
-  <p style="font-size:13px;color:var(--ink-soft);margin:0">下が印刷イメージです。A4たて1枚。印刷設定で「背景のグラフィック」にチェックを入れてください。</p>
-
   <div class="btnrow">
     <button class="btn" onclick="window.print()">🖨️ この用紙を印刷する</button>
-    <button class="btn sub" onclick="location.href='manual.html'">← 現場サポートへ戻る</button>
   </div>
-
 </div>
 
-<!-- ============ 印刷される用紙ここから ============ -->
-<div class="sheet">
-
+<div class="sheet compact">
   <div class="hd">
-    <h2>工事・配達を終えて<br>お客様アンケート</h2>
+    <h2>工事・配達のあとに<br>お客様アンケート</h2>
     <div class="co">㈲ヤハタ電機商会<br>TEL 043-259-0463</div>
   </div>
 
-  <p class="greet">
-    <span class="nm">&nbsp;</span> 様　本日はありがとうございました。
-  </p>
-
-  <p class="intro">
-    これからも末長くお使いいただくために、率直なお声を聞かせてください。<br>
-    <b>ご記入いただいた用紙は、後日ひまわりスタッフがお伺いしてお預かりします。</b>切手も、送っていただく手間もいりません。
-  </p>
+  <p class="greet"><span class="nm">&nbsp;</span> 様　先日はありがとうございました。</p>
+  <p class="intro">工事・配達のときの様子を、率直に教えてください。<b>今後のサービスに役立てます。</b></p>
 
   <div class="q">
-    <p class="qt"><span class="num">1</span>本日の作業はいかがでしたか？</p>
-    <div class="opts">
-      <span class="opt"><span class="bx big"></span>よかった</span>
-      <span class="opt"><span class="bx big"></span>ふつう</span>
-      <span class="opt"><span class="bx big"></span>気になるところがあった</span>
-    </div>
+    <p class="qt"><span class="num">1</span>お約束の日時どおりに伺いましたか？</p>
+    <div class="opts"><span class="opt"><span class="bx big"></span>はい</span><span class="opt"><span class="bx big"></span>少し遅れた</span><span class="opt"><span class="bx big"></span>連絡なく遅れた</span></div>
   </div>
-
   <div class="q">
-    <p class="qt"><span class="num">2</span>使い方の説明は、わかりやすかったですか？</p>
-    <div class="opts">
-      <span class="opt"><span class="bx big"></span>よくわかった</span>
-      <span class="opt"><span class="bx big"></span>だいたいわかった</span>
-      <span class="opt"><span class="bx big"></span>もう一度聞きたい</span>
-    </div>
+    <p class="qt"><span class="num">2</span>工事・設置の仕上がりはいかがですか？</p>
+    <div class="opts"><span class="opt"><span class="bx big"></span>満足</span><span class="opt"><span class="bx big"></span>ふつう</span><span class="opt"><span class="bx big"></span>気になるところがある</span></div>
+  </div>
+  <div class="q">
+    <p class="qt"><span class="num">3</span>作業のあと、掃除・片付けはきちんとしていましたか？</p>
+    <div class="opts"><span class="opt"><span class="bx big"></span>きれいだった</span><span class="opt"><span class="bx big"></span>ふつう</span><span class="opt"><span class="bx big"></span>汚れやごみが残っていた</span></div>
+  </div>
+  <div class="q">
+    <p class="qt"><span class="num">4</span>使い方の説明は、ていねいでしたか？</p>
+    <div class="opts"><span class="opt"><span class="bx big"></span>ていねいだった</span><span class="opt"><span class="bx big"></span>ふつう</span><span class="opt"><span class="bx big"></span>足りなかった</span></div>
+  </div>
+  <div class="q">
+    <p class="qt"><span class="num">5</span>いま、使い方で困っていることはありますか？</p>
+    <div class="opts"><span class="opt"><span class="bx big"></span>ない</span><span class="opt"><span class="bx big"></span>ある →</span></div>
     <div class="lines"><div class="ln"></div></div>
   </div>
-
   <div class="q">
-    <p class="qt"><span class="num">3</span>いま気になっている家電・お困りごとはありますか？</p>
-    <div class="opts">
-      <span class="opt"><span class="bx"></span>エアコン</span>
-      <span class="opt"><span class="bx"></span>冷蔵庫</span>
-      <span class="opt"><span class="bx"></span>洗濯機</span>
-      <span class="opt"><span class="bx"></span>テレビ</span>
-      <span class="opt"><span class="bx"></span>照明</span>
-      <span class="opt"><span class="bx"></span>給湯器</span>
-      <span class="opt"><span class="bx"></span>水まわり</span>
-      <span class="opt"><span class="bx"></span>その他</span>
-    </div>
-    <div class="lines"><div class="ln"></div></div>
+    <p class="qt"><span class="num">6</span>スタッフのあいさつ・言葉づかいはいかがでしたか？</p>
+    <div class="opts"><span class="opt"><span class="bx big"></span>よかった</span><span class="opt"><span class="bx big"></span>ふつう</span><span class="opt"><span class="bx big"></span>気になった</span></div>
   </div>
 
   <div class="q">
-    <p class="qt"><span class="num">4</span>ご意見・ご要望をお聞かせください</p>
+    <p class="qt"><span class="num">7</span>担当したスタッフへ、ひと言お願いします</p>
     <div class="lines"><div class="ln"></div><div class="ln"></div></div>
   </div>
 
-  <div class="cut">✂ ここから下は、スタッフが切り取って持ち帰ります</div>
-
-  <div class="stub">
-    <div class="sh">
-      <b>半券（社内控え）</b>
-      <span>ひまわりスタッフへ</span>
-    </div>
-
-    <div class="fld"><span class="lb">日にち</span><span class="in" style="max-width:180px"></span></div>
-    <div class="fld"><span class="lb">お客様名</span><span class="in"></span><span class="lb" style="font-weight:400;color:#444">様</span></div>
-    <div class="fld"><span class="lb">工事・配達の内容</span><span class="in"></span></div>
-
-    <div class="fld">
-      <span class="lb">お渡しした方</span>
-      <span class="opt"><span class="bx"></span>奥さま</span>
-      <span class="opt"><span class="bx"></span>ご主人</span>
-      <span class="opt"><span class="bx"></span>その他</span>
-      <span class="in"></span>
-    </div>
-
-    <div class="opts" style="gap:8px 22px;margin:2px 0 0">
-      <span class="opt"><span class="bx big"></span>取扱説明ずみ</span>
-      <span class="opt"><span class="bx big"></span>アンケートを手渡した</span>
-    </div>
-
-    <div class="foot">帰社したら、この半券を<b>ひまわりBOX</b>へ。ひまわりスタッフが1週間以内に回収へ伺います。</div>
+  <div class="q">
+    <p class="qt"><span class="num">8</span>いま気になっている家電・お困りごとはありますか？</p>
+    <div class="opts"><span class="opt"><span class="bx big"></span>エアコン</span><span class="opt"><span class="bx big"></span>冷蔵庫</span><span class="opt"><span class="bx big"></span>洗濯機</span><span class="opt"><span class="bx big"></span>テレビ</span><span class="opt"><span class="bx big"></span>照明</span><span class="opt"><span class="bx big"></span>給湯器</span><span class="opt"><span class="bx big"></span>水まわり</span><span class="opt"><span class="bx big"></span>その他</span></div>
   </div>
 
+  <div class="inner">
+    <b style="color:#1f5f4a">社内記入欄</b>
+    <div class="fld" style="margin-top:4px"><span class="lb">回収した日</span><span class="in" style="max-width:110px"></span><span class="lb">ひまわり</span><span class="in" style="max-width:110px"></span><span class="lb">工事・配達の日</span><span class="in" style="max-width:110px"></span></div>
+    <div class="fld"><span class="lb">内容</span><span class="in"></span><span class="lb">担当</span><span class="opt"><span class="bx"></span>服部</span><span class="opt"><span class="bx"></span>伊藤</span><span class="opt"><span class="bx"></span>高山</span></div>
+  </div>
 </div>
-<!-- ============ 印刷される用紙ここまで ============ -->
-
 </body>
 </html>
