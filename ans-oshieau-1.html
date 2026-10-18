@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>教え合い① テーマ1〜3｜回答編</title>
+<style>
+  :root{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;
+    --sun:#f0a500;--sv:#164a7a;--kj:#2e7d32;--acc:var(--sv)}
+  @media (prefers-color-scheme:dark){:root{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}}
+  :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);line-height:1.8;padding:28px 16px 70px;
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP","Meiryo",sans-serif}
+  .wrap{max-width:860px;margin:0 auto}
+  .pt-head{color:#fff;border-radius:10px;padding:24px 26px;margin:0 0 18px}
+  .pt-head .e{font-size:12px;letter-spacing:.14em;opacity:.75;margin:0 0 6px}
+  .pt-head h1{font-size:22px;margin:0 0 6px;line-height:1.4}
+  .pt-head .s{font-size:13px;opacity:.88;margin:0}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--sun);
+    border-radius:10px;padding:14px 18px;margin:0 0 20px;font-size:13.5px;color:var(--ink-soft)}
+  h2.rd{font-size:16px;margin:34px 0 14px;padding:8px 14px;border-radius:8px;background:var(--acc);color:#fff}
+  .qa{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:0 0 12px}
+  .qa .q{font-size:15px;font-weight:700;margin:0 0 10px;display:flex;gap:9px}
+  .qa .q .n{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--acc);color:#fff;
+    font-size:12px;display:flex;align-items:center;justify-content:center}
+  .qa .a{background:rgba(240,165,0,.10);border-left:4px solid var(--sun);border-radius:8px;
+    padding:10px 14px;font-size:14px;margin:0 0 10px}
+  .qa .a b{color:var(--ink)}
+  .qa .d{font-size:13px;color:var(--ink-soft);margin:0;padding-left:2px}
+  .qa .d b{color:var(--ink)}
+  .back{display:inline-block;margin-top:28px;font-size:13px;color:var(--ink-soft);text-decoration:none}
+  #pinGate{position:fixed;inset:0;z-index:9999;background:var(--paper);display:flex;align-items:center;justify-content:center;padding:20px}
+  #pinGate.hidden{display:none}
+  #pinGate .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:30px 28px;text-align:center;max-width:320px;width:100%}
+  #pinGate input{font-size:24px;letter-spacing:.35em;text-align:center;padding:10px 8px;width:170px;
+    border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);font-family:inherit}
+  #pinGate button{font-family:inherit;font-size:15px;font-weight:700;margin-top:12px;padding:10px 28px;
+    border:none;border-radius:8px;background:var(--acc);color:#fff;cursor:pointer}
+  #pinGate .err{color:#c94f4f;font-size:12px;height:16px;margin:6px 0}
+  @media print{@page{size:A4 portrait;margin:12mm 10mm}body{background:#fff;padding:0}
+    #pinGate,.back{display:none !important}.qa{page-break-inside:avoid}
+    .pt-head,h2.rd,.qa .a{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+  :root{--acc:#164a7a}
+</style>
+</head>
+<body>
+<div id="pinGate"><div class="box">
+  <div style="font-size:32px">🔒</div>
+  <p style="font-weight:700;margin:8px 0 2px">回答編（社内用）</p>
+  <p style="font-size:12.5px;color:var(--ink-soft);margin:0 0 14px">4桁のPINを入力してください</p>
+  <input id="pin" type="tel" inputmode="numeric" maxlength="4" placeholder="••••">
+  <div class="err" id="pinErr"></div>
+  <button type="button" onclick="checkPin()">入る</button>
+</div></div>
+<div class="wrap">
+  <div class="pt-head" style="background:linear-gradient(135deg,#1a3a5c 0%,#12283f 100%)">
+    <p class="e">回答編（社内用）</p>
+    <h1>教え合い① テーマ1〜3</h1>
+    <p class="s">工事・サービス／教える内容の答え</p>
+  </div>
+  <div class="note">教えるときの「答え」です。<b>店で決めること</b>と金額・数値は、最新のカタログ・見積システム・メーカーの説明書で確認してください。</div>
+  <h2 class="rd">⚙️ 工事スタッフが教える20</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>よく使うビス3つと、それぞれ何に打つか</p>
+    <div class="a">木ネジ＝木材。タッピングビス＝薄い鉄板や樹脂（ねじ山を切りながら入る）。コーススレッド＝木材（ねじ山が粗く効きが強い）。ほかにドリルビス、ボードアンカー。</div>
+    <p class="d">使う場所と材料がセットで言えれば合格。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>電線の色（黒・白・赤・緑）が表すもの</p>
+    <div class="a">黒＝電圧側／白＝接地側（ニュートラル）／赤＝もう一方の電圧側、または3路などの渡り／緑＝アース。</div>
+    <p class="d"><b>白だから触って大丈夫、ではない。</b>必ず検電してから。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">3</span>VVF 1.6と2.0の使い分け</p>
+    <div class="a">15Aの回路（照明・一般コンセント）は1.6、20Aの回路（エアコン専用など）は2.0が基本。距離が長いときは太いほうを選ぶ。</div>
+    <p class="d">「エアコンは2.0」と覚えておけばよい。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">4</span>「VVF 1.6-2C」の読み方</p>
+    <div class="a">VVF＝ビニル絶縁ビニルシースケーブル平形（Fケーブル）／1.6＝導体の太さ1.6mm／2C＝線が2本（2芯）。</div>
+    <p class="d">3Cなら3芯。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">5</span>石膏ボードに付けるとき、アンカーを使う理由</p>
+    <div class="a">ボードはもろく、ビスだけだと重さで穴が広がって抜ける。下地（木・軽天）があればそこへ。なければボードアンカー。重いものは必ず下地へ。</div>
+    <p class="d">「下地を探す→なければアンカー」の順で。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">6</span>ステップルとサドルの違い</p>
+    <div class="a">ステップル＝ケーブルを木部に留めるコの字の釘。サドル＝PF管・VE管やケーブルをビスで固定する留め具（片サドル・両サドル）。</div>
+    <p class="d"></p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">7</span>リングスリーブの大きさの選び方</p>
+    <div class="a">電線の太さと本数の組合せで小・中・大を選ぶ。リングスリーブ用の圧着ペンチ（黄色の柄）で、刻印（○・小・中）が合う所で圧着する。</div>
+    <p class="d">裸圧着端子用（赤の柄）とは別物。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">8</span>VVFの被覆を、芯線を傷つけずにむくコツ</p>
+    <div class="a">ケーブルストリッパーの刃をサイズに合わせる。ナイフなら浅く回して入れ、折って切る。芯線に傷が入ったら切り直す。</div>
+    <p class="d">傷のある芯線は、あとで折れたり発熱したりする。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">9</span>腰袋に入れている工具と、その使い方</p>
+    <div class="a">例：ドライバー（＋−）・ペンチ・ニッパー・ケーブルストリッパー・圧着ペンチ・検電器・メジャー・カッター。検電器＝電気が来ているか触る前に確認。</div>
+    <p class="d">中身は人それぞれ。理由まで言えれば合格。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">10</span>脚立を安全に使うコツと、やってはいけないこと</p>
+    <div class="a">コツ＝床が平らか、開き止めがかかっているか、頭上と周囲を確かめる。やってはいけない＝天板に乗る・またぐ／開き止めをかけない／身を乗り出す。</div>
+    <p class="d"></p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">11</span>お客様の家での養生の順番</p>
+    <div class="a">玄関 → 通路（廊下・階段）→ 作業する部屋 → 壁や家具の角。運び込む道を先に守ってから、作業場所を守る。</div>
+    <p class="d">始める前に「床と角を、先に養生しますね」とひと声。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">12</span>エアコン1台分の部材</p>
+    <div class="a">配管セット（2分3分・4mなど）、ドレンホース、据付板とビス、貫通スリーブ、パテ、化粧テープ、結束バンド、室外機の置台と防振ゴム、渡り線、コーキング。必要なら化粧カバー・専用回路の材料。</div>
+    <p class="d"></p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">13</span>真空引きと、ガス漏れの確かめ方</p>
+    <div class="a">真空引き＝配管の空気と水分を抜く。目安15分以上。ゲージが規定の真空まで下がり、止めても戻らなければOK（戻る＝漏れ）。ガス漏れ＝フレア接続部を検知器か石けん水で確かめる。</div>
+    <p class="d">時間ではなく、ゲージの数字で判断する。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">14</span>ドレンホースに勾配をつける理由</p>
+    <div class="a">水は自然に流れるだけなので、下がり勾配がないと逆流して室内に水が漏れる。途中で持ち上げない、たるませない。</div>
+    <p class="d"></p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">15</span>室外機の置き方（置き台・壁掛け・二段置き）の選び方</p>
+    <div class="a">地面に置ければ置台が基本。スペースがなければ壁掛けや二段置き（壁の下地を確認）。吹き出しの前をふさがない、隣の家に風と音が向かないように。</div>
+    <p class="d">壁掛け・二段置きは追加費用。見積に入れておく。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">16</span>電線を止める間隔</p>
+    <div class="a">目安はおおむね1m以内で、造営材に沿って支持する。曲がりの前後と器具の近くは必ず留める。</div>
+    <p class="d"></p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">17</span>天井裏や壁の中に電線を通すときに気をつけること</p>
+    <div class="a">①今ある配線・配管・断熱材を傷つけない ②踏み抜かない（天井裏は野縁の上を歩く）③通したあと支持して、被覆がこすれないようにする。</div>
+    <p class="d"></p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">18</span>雨の日の現場で増える持ち物</p>
+    <div class="a">玄関用の大きめマットとタオル、ウエス、材料の雨よけのブルーシート、靴カバー。室外機まわりは感電と滑りに注意。</div>
+    <p class="d"></p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">19</span>フレアツールとトルクレンチの役割</p>
+    <div class="a">フレアツール＝銅管の先をラッパ状に広げて、つなげる形にする。トルクレンチ＝決められた強さでフレアナットを締める（締めすぎ・ゆるみを防ぐ）。</div>
+    <p class="d"></p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">20</span>コアドリルで穴を開ける前に確かめること</p>
+    <div class="a">①壁の中に柱・筋交い・配線・配管がないか ②反対側に何があるか（家具・人）③外側が下がる勾配と高さ。あわせて壁の材質と粉じんの養生。</div>
+    <p class="d"></p>
+  </div>
+  <h2 class="rd">🔧 サービススタッフが教える20</h2>
+  <div class="qa">
+    <p class="q"><span class="n">1</span>いま扱っているテレビのシリーズと、その違い</p>
+    <div class="a">店で決めること。主力のシリーズを上から順に。上位＝有機ELや上位パネル・音の作り込み、普及＝基本性能。</div>
+    <p class="d">1シリーズにつき違いを1つ言えれば十分。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">2</span>4Kと2Kの違いを、お客様に一言で</p>
+    <div class="a">「画素の数が4倍で、近くで見ても粗が出ません。同じ部屋でも大きい画面が置けます」</div>
+    <p class="d"></p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">3</span>ブルーレイレコーダーの選び方</p>
+    <div class="a">①同時に録れる番組数（1／2／3番組）②ハードディスクの容量（録画できる時間）。毎日録画する人には、同時録画数と容量（1TB以上）を見る。</div>
+    <p class="d"></p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">4</span>分配器・混合器・ブースターの役割</p>
+    <div class="a">分配器＝1本の電波を部屋ごとに分ける（分けた分だけ弱くなる）。混合器＝地デジとBS/CSを1本にまとめる。ブースター＝弱くなった電波を強くする。</div>
+    <p class="d"></p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">5</span>古いテレビを引き取るときの説明</p>
+    <div class="a">家電リサイクル法の対象。リサイクル料金＋収集運搬費がかかる。金額は見積システムの最新の設定で確かめて伝える。</div>
+    <p class="d">先に金額を伝えておくと、あとでもめない。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">6</span>エアコンのシリーズの違い（上のクラスと普及クラス）</p>
+    <div class="a">上位＝お掃除・換気・ナノイーX・センサー、省エネ性能が高い。普及＝基本性能。値段の差は「電気代・手入れ・快適さ」の差。</div>
+    <p class="d">クラス名は最新カタログで確認。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">7</span>お掃除機能が、してくれること・してくれないこと</p>
+    <div class="a">してくれる＝フィルターの自動掃除。してくれない＝熱交換器・送風ファン・ドレンパンの汚れ。だからクリーニングは必要。</div>
+    <p class="d"></p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">8</span>ナノイーXと換気を、お客様に一言で</p>
+    <div class="a">ナノイーX＝ニオイや菌をおさえて、中を乾かしてカビを防ぐ。換気＝窓を開けずに外の空気を取り込める（対応機種だけ）。</div>
+    <p class="d"></p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">9</span>100Vと200Vの選び方</p>
+    <div class="a">14畳クラス以上は200Vが中心。今のコンセントが100Vなら、分電盤・配線・コンセントの電源工事が要る（専用回路かも確認）。</div>
+    <p class="d">工事の前に、コンセントの形を写真で撮っておく。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">10</span>エアコンの能力（kW）と畳数の選び方</p>
+    <div class="a">カタログの畳数は「木造〜鉄筋」の幅で書かれている。木造・南向き・最上階・天井が高い・窓が大きい家は足りなくなるので、迷ったら1ランク上。</div>
+    <p class="d"></p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">11</span>エアコンの使い方で、最初に説明する3つ</p>
+    <div class="a">①運転の切替（冷房・暖房・除湿）と温度 ②フィルター掃除の場所と目安 ③タイマー・おやすみ。</div>
+    <p class="d">全部説明しない。よく使うボタンだけ。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">12</span>照明（HH-）のシリーズの違い</p>
+    <div class="a">上位＝デザインパネル・スピーカー・明るさセンサーなど、中位＝調光・調色、普及＝調光のみ。</div>
+    <p class="d">最新カタログで確認。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">13</span>調光と調色の違い</p>
+    <div class="a">調光＝明るさを変える。調色＝光の色（白っぽい〜オレンジっぽい）を変える。</div>
+    <p class="d"></p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">14</span>昼光色・昼白色・電球色の使い分け</p>
+    <div class="a">昼光色＝青白くはっきり（勉強・作業）、昼白色＝自然な白（リビング）、電球色＝あたたかい色（寝室・くつろぎ）。</div>
+    <p class="d"></p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">15</span>照明を付けたあとに、お客様に伝える3つ</p>
+    <div class="a">①リモコンの基本（点灯・明るさ・常夜灯）②壁スイッチは入れたまま（切るとリモコンが効かない）③保証書と取扱説明書の置き場所。</div>
+    <p class="d">いちばん多い電話は「リモコンが効かない」＝壁スイッチが切れている。</p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">16</span>「テレビが映らない」と電話があったとき、確かめること</p>
+    <div class="a">①全部のチャンネルか、一部だけか ②家中か、その部屋だけか ③いつからか・天気の悪い日に多いか。画面のエラー番号（E202など）も聞く。</div>
+    <p class="d"></p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">17</span>リビング用と寝室用、テレビの選び方の違い</p>
+    <div class="a">①明るさ（リビングは明るいので液晶が有利、寝室は暗いので有機ELも合う）②サイズと距離（寝室は近いので小さめ）。</div>
+    <p class="d"></p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">18</span>「冷えが悪い」と電話があったとき、聞くこと</p>
+    <div class="a">①室外機は回っているか ②フィルターは汚れていないか ③いつからか。あわせて設定（冷房になっているか）とエラー表示。</div>
+    <p class="d"></p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">19</span>引掛シーリングとは何か</p>
+    <div class="a">天井に付いている照明用の配線器具。これがあれば工事なしで照明器具を付け替えられる。ないときは電気工事（資格が必要）。</div>
+    <p class="d"></p>
+  </div>
+  <div class="qa">
+    <p class="q"><span class="n">20</span>蛍光灯からLEDに替えると、何が変わるか</p>
+    <div class="a">①電気代が下がる ②蛍光管の交換がいらない ③軽くて薄い・虫が入りにくい。蛍光灯は製造が終わっていくので、早めの交換を。</div>
+    <p class="d"></p>
+  </div>
+
+  <a class="back" href="kaito.html">← 回答編ポータルへ戻る</a>
+</div>
+<script>
+(function(){
+  var KEY="yahataKaitoAuth_v1", PIN="7860";
+  function reveal(){var g=document.getElementById("pinGate"); if(g) g.classList.add("hidden");}
+  window.checkPin=function(){
+    var v=(document.getElementById("pin").value||"").trim();
+    if(v===PIN){ try{localStorage.setItem(KEY,"1");}catch(e){} reveal(); }
+    else{ document.getElementById("pinErr").textContent="PINが違います"; }
+  };
+  var ok=false; try{ ok=localStorage.getItem(KEY)==="1"; }catch(e){}
+  if(ok) reveal();
+  else{ var i=document.getElementById("pin");
+    if(i){ i.addEventListener("keydown",function(e){ if(e.key==="Enter") window.checkPin(); });
+      setTimeout(function(){ try{i.focus();}catch(e){} },100); } }
+})();
+</script>
+</body>
+</html>
