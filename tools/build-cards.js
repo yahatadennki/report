@@ -158,7 +158,7 @@ ${c.what.memo?`      <div class="memo"><b>${c.what.memo[0]}</b><p>${c.what.memo[
 CARDS.forEach(card);
 
 // 目次（職種ごと）
-const ORDER=['all','koji','service','nohin','mente','jimu','himawari','enq'];
+const ORDER=['all','koji','service','jimu','himawari','nohin','mente','enq'];
 const fname=c=>'card-'+c.who+'-'+c.no+'.html';
 const sec=ORDER.filter(k=>(k!=='all'&&k!=='enq'&&k!=='nohin'&&k!=='mente')||CARDS.some(c=>c.who===k)).map(k=>{
   const w=WHO[k];const cs=CARDS.filter(c=>c.who===k).sort((a,b)=>a.no-b.no);
