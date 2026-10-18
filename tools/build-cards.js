@@ -10,7 +10,7 @@ const WHO={
   koji:    {label:'工事スタッフ',ic:'⚙️',frame:'#4f9a3a',paper:'#f8fcf5',bg:'#e5f3dc',accent:'#3b7d2b',ink:'#2b5a1e',tint:'#dcefd2',soft:'#ecf7e6'},
   jimu:    {label:'事務スタッフ',ic:'📎',frame:'#8a5cc2',paper:'#fbf8ff',bg:'#efe6fa',accent:'#7446ad',ink:'#4a2a78',tint:'#e8dcf7',soft:'#f3ecfb'},
   nohin:   {label:'納品＆取扱説明',ic:'📦',icons:['📦','📕','🔌','✅'],frame:'#c27c0e',paper:'#fffbf3',bg:'#fbefd9',accent:'#a5680a',ink:'#6b4306',tint:'#f7e3bd',soft:'#fdf3e2'},
-  mente:   {label:'メンテナンス',ic:'🧽',icons:['🧽','🧹','💧','🔧'],frame:'#d4547a',paper:'#fff7f9',bg:'#fbe3ea',accent:'#b33b60',ink:'#7a2140',tint:'#f7d3de',soft:'#fdeef2'},
+  mente:   {label:'点検＆お手入れ',ic:'🧽',icons:['🧽','🧹','💧','🔧'],frame:'#d4547a',paper:'#fff7f9',bg:'#fbe3ea',accent:'#b33b60',ink:'#7a2140',tint:'#f7d3de',soft:'#fdeef2'},
   enq:     {label:'アンケート',ic:'📝',icons:['📝','💬','✏️','📋'],frame:'#17a2a2',paper:'#f6fdfd',bg:'#dcf4f4',accent:'#128585',ink:'#0d5757',tint:'#cdeeee',soft:'#e8f8f8'},
   all:     {label:'共通',ic:'💡',icons:['💡','🔌','📺','❄️','🧺','🍳','📡','☎️','🔋','⚡','🌀','🛁','🚽','📻','🔦','🖥️','📱','⏰','🔊','🎮'],frame:'#e0782c',paper:'#fffaf5',bg:'#fde9d9',accent:'#c9601a',ink:'#7a3a0e',tint:'#fde2cc',soft:'#fff1e6'}
 };
