@@ -56,6 +56,11 @@ const css=w=>`
   .role .e{font-size:9mm;line-height:1;flex:0 0 auto}
   .role .n{font-size:4.8mm;font-weight:800;color:var(--rk)}
   .role .x{font-size:4.1mm;line-height:1.5;color:#3a2a10}
+  .roles.sm{gap:2mm}
+  .roles.sm .role{padding:1.8mm 4mm;gap:3mm}
+  .roles.sm .e{font-size:6.5mm}
+  .roles.sm .n{font-size:4.2mm}
+  .roles.sm .x{font-size:3.7mm;line-height:1.35}
   .role-ar{text-align:center;font-size:3.8mm;font-weight:700;color:var(--accent);margin:-1mm 0}
   .ag{flex:1;margin-top:5mm;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr 1fr;gap:5mm 7mm}
   .ag-h{grid-column:1/-1;margin:0;font-size:6.4mm;color:var(--brown)}
@@ -132,7 +137,7 @@ ${frame(w)}
 ${c.agenda?agenda(c):`  <div class="back">
     <div class="box">
       <h2>${c.how.h}</h2>
-${c.how.talk?`      <div class="talk">${c.how.talk.join('<br>')}</div>\n`:''}${c.how.roles?`      <div class="roles">${c.how.roles.map(r=>(r.ar?"<div class=\"role-ar\">"+r.ar+"</div>":"")+"<div class=\"role\" style=\"--rc:"+r.bg+";--rk:"+r.k+"\"><span class=\"e\">"+r.ic+"</span><div><div class=\"n\">"+r.n+"</div><div class=\"x\">"+r.t+"</div></div></div>").join("")}</div>
+${c.how.talk?`      <div class="talk">${c.how.talk.join('<br>')}</div>\n`:''}${c.how.roles?`      <div class="roles${c.how.roles.length>4?" sm":""}">${c.how.roles.map(r=>(r.ar?"<div class=\"role-ar\">"+r.ar+"</div>":"")+"<div class=\"role\" style=\"--rc:"+r.bg+";--rk:"+r.k+"\"><span class=\"e\">"+r.ic+"</span><div><div class=\"n\">"+r.n+"</div><div class=\"x\">"+r.t+"</div></div></div>").join("")}</div>
 `:""}${c.how.list?"      <ul>"+c.how.list.map(x=>"<li>"+x+"</li>").join("")+"</ul>":""}
     </div>
     <div class="box">
