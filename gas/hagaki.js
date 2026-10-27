@@ -19,6 +19,7 @@ function hagakiNormName_(s) {
   return String(s || '')
     .replace(/☎】|【|】|✨/g, '')
     .replace(/[①④⑤⑥⑦⑧⑨②③]/g, '')
+    .replace(/\d+区[\s　]+/g, '')
     .replace(/\s|　/g, '')
     .replace(/様$/, '')
     .trim();

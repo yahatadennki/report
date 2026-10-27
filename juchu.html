@@ -200,7 +200,7 @@ function showApp() {
 let orders = [];
 let currentDate = new Date().toISOString().slice(0, 10);
 let scriptUrl = 'https://script.google.com/macros/s/AKfycbybHVTvastbYdcePLc-WxDZtChBKtpcEPF7IYqMX4UPVs1TbfKnIhvnhlIJGtIfK8Y/exec';
-let selectedKuMark = '';      // 選んだ顧客の区（「① 」など）。カレンダー予定名に付ける
+let selectedKuMark = '';      // 選んだ顧客の区（「1区 」など）。カレンダー予定名に付ける
 let selectedService = '';
 let selectedProduct = '';
 
@@ -445,13 +445,12 @@ function onSearchInput() {
   }).join('');
 }
 
-// 顧客マスタI列「1区 角井」などから区番号を取り出して丸数字にする（①〜⑨の後ろに半角スペース）
-const KU_MARKS = { 1: '①', 2: '②', 3: '③', 4: '④', 5: '⑤', 6: '⑥', 7: '⑦', 8: '⑧', 9: '⑨' };
+// 顧客マスタI列「1区 角井」などから区番号を取り出して「1区 」にする（後ろに半角スペース）
 function kuMark(c) {
   if (!c) return '';
   const m = String(c.ku || '').match(/(\d+)\s*区/);
   if (!m) return '';
-  return KU_MARKS[Number(m[1])] ? KU_MARKS[Number(m[1])] + ' ' : '';
+  return m[1] + '区 ';
 }
 // 顧客名に丸数字を付ける（既に付いていれば足さない）
 function withKuMark(name, c) {

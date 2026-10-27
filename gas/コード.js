@@ -840,6 +840,7 @@ var CAL_SKIP_WORDS = [
 function calNorm_(s) {
   return String(s || '')
     .replace(/[☎✨★☆●○◆■▲]/g, '')
+    .replace(/\d+区[\s　]+/g, '')                         // 区マーク「1区 」
     .replace(/^[^぀-ヿ一-龯\w]*/, '')   // 先頭の記号列
     .replace(/[（(].*?[）)]/g, '')                        // 括弧内
     .replace(/(サ|工|配|修|現|見)\s*[】\]]/g, '')          // サ】など先頭タグ
