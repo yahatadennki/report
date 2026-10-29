@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1010">
+<title>打合せカード5 トワレ取付｜ヤハタ電機商会</title>
+<style>
+  :root{--ink:#3a2a10;--soft:#6f6658;--frame:#4f9a3a;--accent:#3b7d2b;--leaf:#4f8a2b;--brown:#2b5a1e;--paper:#f8fcf5;--bg:#e5f3dc;--tint:#dcefd2;--softbg:#ecf7e6}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Maru Gothic ProN","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;line-height:1.55}
+  .page{width:257mm;height:181mm;margin:14px auto;position:relative;background:var(--paper);border-radius:6mm;box-shadow:0 3px 16px rgba(0,0,0,.12);padding:14mm 18mm 12mm;overflow:hidden;display:flex;flex-direction:column}
+  .frame{position:absolute;inset:0;pointer-events:none;border:2.2mm solid var(--frame);border-radius:6mm}
+  .row-f{position:absolute;left:0;right:0;display:flex;justify-content:space-around;font-size:7.5mm;line-height:1}
+  .row-f.t{top:-1.2mm} .row-f.b{bottom:-1.4mm}
+  .col-f{position:absolute;top:9mm;bottom:9mm;display:flex;flex-direction:column;justify-content:space-around;font-size:7mm;line-height:1}
+  .col-f.l{left:-1.4mm} .col-f.r{right:-1.4mm}
+  .top{display:flex;justify-content:space-between;align-items:center;font-size:3.4mm}
+  .top .no{background:var(--brown);color:#fff;border-radius:999px;padding:.5mm 4mm;font-weight:700;letter-spacing:.06em}
+  .side{display:inline-block;color:#fff;border-radius:999px;font-weight:800;letter-spacing:.12em;padding:.6mm 5mm;font-size:3.6mm}
+  .side.why{background:#ff7a59} .side.how{background:var(--accent)} .side.what{background:var(--leaf)}
+  .front{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6mm}
+  .front h1{margin:0;font-size:11mm;line-height:1.3;color:var(--brown)}
+  .front h1 em{font-style:normal;background:linear-gradient(transparent 60%,var(--tint) 60%)}
+  .front .msg{font-size:7mm;font-weight:800;line-height:1.5;color:var(--brown);margin:0}
+  .front .msg b{color:#e05a2a}
+  .vs{display:flex;gap:8mm;align-items:center}
+  .vs div{border-radius:5mm;padding:4mm 9mm;font-size:5mm;line-height:1.4}
+  .vs .ng{background:#f0f0f0;color:#777} .vs .ok{background:var(--tint);color:var(--brown);font-weight:800}
+  .vs .ar{font-size:7mm;color:var(--accent);padding:0;background:none}
+  .front .one{font-size:4.6mm;color:var(--soft);margin:0;line-height:1.75;max-width:200mm}
+  .back{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:7mm;margin-top:5mm}
+  .box{background:#fff;border:.5mm solid var(--tint);border-radius:5mm;padding:6mm 7mm;display:flex;flex-direction:column}
+  .box h2{margin:2.5mm 0 4mm;font-size:6.2mm;line-height:1.35;color:var(--brown)}
+  .talk{background:var(--softbg);border-radius:3.5mm;padding:3mm 4.5mm;font-size:4.4mm;font-weight:700;color:var(--brown);line-height:1.7;margin:0 0 4mm}
+  ul{margin:0 0 2mm;padding-left:5.5mm}
+  li{font-size:4.4mm;margin:0 0 2.2mm}
+  li b{color:var(--brown)}
+  .memo{border:.7mm dashed var(--leaf);border-radius:4mm;padding:4mm 5mm;background:#f3faea;margin:0 0 4.5mm}
+  .memo b{font-size:5mm;color:var(--leaf)}
+  .memo p{margin:1.5mm 0 0;font-size:4.2mm}
+  .gt{font-size:4.2mm;font-weight:700;margin:0 0 1.5mm}
+  .chips{display:flex;gap:4mm;flex-wrap:wrap;justify-content:center}
+  .chips span{background:#fff;border:.6mm solid var(--tint);border-radius:999px;padding:2mm 6mm;font-size:4.6mm;font-weight:700;color:var(--brown);box-shadow:0 1mm 0 var(--tint)}
+  .roles{display:flex;flex-direction:column;gap:3mm}
+  .role{display:flex;gap:4mm;align-items:center;border-radius:4mm;padding:3mm 4mm;background:var(--rc)}
+  .role .e{font-size:9mm;line-height:1;flex:0 0 auto}
+  .role .n{font-size:4.8mm;font-weight:800;color:var(--rk)}
+  .role .x{font-size:4.1mm;line-height:1.5;color:#3a2a10}
+  .roles.sm{gap:2mm}
+  .roles.sm .role{padding:1.8mm 4mm;gap:3mm}
+  .roles.sm .e{font-size:6.5mm}
+  .roles.sm .n{font-size:4.2mm}
+  .roles.sm .x{font-size:3.7mm;line-height:1.35}
+  .role-ar{text-align:center;font-size:3.8mm;font-weight:700;color:var(--accent);margin:-1mm 0}
+  .ag{flex:1;margin-top:5mm;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr 1fr;gap:5mm 7mm}
+  .ag-h{grid-column:1/-1;margin:0;font-size:6.4mm;color:var(--brown)}
+  .ag-it{background:#fff;border:.6mm solid var(--tint);border-radius:5mm;padding:4mm 6mm;display:flex;flex-direction:column}
+  .ag-t{font-size:5.4mm;font-weight:800;color:var(--brown);display:flex;align-items:center;gap:3mm;margin:0 0 2mm}
+  .ag-no{flex:0 0 auto;width:7.5mm;height:7.5mm;border-radius:50%;background:var(--accent);color:#fff;font-size:4.2mm;display:flex;align-items:center;justify-content:center}
+  .ag-ln{border-bottom:.4mm dashed #c9b49a;flex:1;min-height:9mm}
+  .ag-total{font-size:4.6mm;font-weight:700;margin:0 0 2mm}
+  .ag-blank{display:inline-block;width:28mm;border-bottom:.5mm solid #888;margin:0 2mm}
+  .ag-ku{display:grid;grid-template-columns:repeat(5,1fr);gap:2mm}
+  .ag-ku div{border:.4mm solid #ddd;border-radius:2mm;padding:1mm 2mm;display:flex;flex-direction:column;align-items:center}
+  .ag-ku b{font-size:3.6mm;color:var(--brown)} .ag-ku span{display:block;height:6.5mm}
+  .ag-two{display:flex;flex-direction:column;gap:3mm;flex:1;justify-content:space-around}
+  .ag-two div{font-size:5mm;font-weight:700;display:flex;align-items:flex-end;gap:2mm}
+  .ag-two span{flex:1;border-bottom:.5mm solid #888;height:8mm}
+  .vals{list-style:none;padding:0;margin:0}
+  .vals li{font-size:4.4mm;margin:0 0 3mm;padding:2.4mm 4mm;background:var(--softbg);border-radius:3.5mm}
+  .print-btn{position:fixed;right:16px;bottom:16px;z-index:99;font-family:inherit;font-size:15px;font-weight:700;padding:12px 22px;border:none;border-radius:999px;background:var(--accent);color:#fff;box-shadow:0 3px 12px rgba(0,0,0,.25);cursor:pointer}
+  .hint{text-align:center;font-size:13px;color:var(--soft);margin:10px 0 0}
+  .hint a{color:var(--brown)}
+  @media print{
+    @page{size:257mm 182mm;margin:0}
+    body{background:#fff}
+    .page{margin:0;box-shadow:none;border-radius:0;page-break-after:always}
+    .page:last-of-type{page-break-after:auto}
+    .print-btn,.hint{display:none}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+<p class="hint">B5よこ・両面印刷（短辺とじ）。1枚目が表、2枚目が裏です。　<a href="cards.html">目次へ</a></p>
+
+<div class="page">
+  <div class="frame"></div>
+  <div class="row-f t"><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span></div>
+  <div class="row-f b"><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span></div>
+  <div class="col-f l"><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span></div>
+  <div class="col-f r"><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span></div>
+
+  <div class="top"><span class="no">打合せカード　工事スタッフ No.5</span><span></span></div>
+  <div class="front">
+    <h1><em>トワレ取付</em></h1>
+    <p class="msg">トイレは、<b>きれいにしてから</b>付ける。</p>
+    <div class="vs"><div class="ng">😥 古い汚れの上に、新しい便座</div><div class="ar">→</div><div class="ok">😊「トイレまできれいになった！」</div></div>
+    <div class="chips"><span>🧤 ゴム手袋</span><span>🧴 マジックリン</span><span>💧 水もれ確認</span></div>
+    <p class="one">便座を外したところは、ふだん掃除できない場所です。<br>付ける前にきれいにすると、仕上がりも、お客様の気持ちも変わります。</p>
+  </div>
+</div>
+
+<div class="page">
+  <div class="frame"></div>
+  <div class="row-f t"><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span></div>
+  <div class="row-f b"><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span></div>
+  <div class="col-f l"><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span></div>
+  <div class="col-f r"><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span><span>⚙️</span></div>
+
+  <div class="top"><span class="no">打合せカード　工事スタッフ No.5　トワレ取付</span><span></span></div>
+  <div class="back">
+    <div class="box">
+      <h2>取付の流れ</h2>
+      <div class="roles sm"><div class="role" style="--rc:#d9ebfa;--rk:#164a7a"><span class="e">🚰</span><div><div class="n">止水栓を閉める</div><div class="x">電源を抜いて、水を抜く</div></div></div><div class="role" style="--rc:#fff1c2;--rk:#7a4d10"><span class="e">🔧</span><div><div class="n">古い便座を外す</div><div class="x">給水ホースと本体</div></div></div><div class="role" style="--rc:#dcefd2;--rk:#2b5a1e"><span class="e">🧴</span><div><div class="n">掃除</div><div class="x">マジックリンとトイレットペーパーで、ふちと取付面</div></div></div><div class="role" style="--rc:#e8dcf7;--rk:#4a2a78"><span class="e">🔩</span><div><div class="n">取付</div><div class="x">ベースプレート・本体・給水</div></div></div><div class="role" style="--rc:#d9ebfa;--rk:#164a7a"><span class="e">💧</span><div><div class="n">水もれ確認</div><div class="x">止水栓を開けて、つなぎ目を目と手で</div></div></div><div class="role" style="--rc:#fde2cc;--rk:#7a3a0e"><span class="e">✅</span><div><div class="n">試運転</div><div class="x">おしり・ビデ・便座の温かさ</div></div></div></div>
+
+    </div>
+    <div class="box">
+      <h2>毎回やること</h2>
+      <div class="memo"><b>🧤 ゴム手袋は必ず</b><p>トイレの作業は、手を守ってから。</p></div>
+      <ul class="vals"><li>💧 水もれは、時間をおいてもう一度</li><li>📕 リモコンとノズル掃除を伝える</li><li>🗑️ 古い便座の引き取りを確かめる</li></ul>
+
+    </div>
+  </div>
+</div>
+
+<button class="print-btn" onclick="window.print()">🖨️ 印刷する（B5よこ・両面）</button>
+</body>
+</html>
