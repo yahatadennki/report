@@ -12,6 +12,7 @@ const WHO={
   nohin:   {label:'納品＆取扱説明',ic:'📦',icons:['📦','📕','🔌','✅'],frame:'#c27c0e',paper:'#fffbf3',bg:'#fbefd9',accent:'#a5680a',ink:'#6b4306',tint:'#f7e3bd',soft:'#fdf3e2'},
   mente:   {label:'点検＆お手入れ',ic:'🧽',icons:['🧽','🧹','💧','🔧'],frame:'#d4547a',paper:'#fff7f9',bg:'#fbe3ea',accent:'#b33b60',ink:'#7a2140',tint:'#f7d3de',soft:'#fdeef2'},
   fair:    {label:'フェア',ic:'🎪',icons:['🎪','🎈','🎁','🍿'],frame:'#e0484f',paper:'#fff8f8',bg:'#fde3e4',accent:'#c0323a',ink:'#7d1c22',tint:'#fad1d3',soft:'#fdeced'},
+  trouble: {label:'お困りごと',ic:'🆘',icons:['🆘','📞','🔧','💡'],frame:'#4f63d6',paper:'#f7f8ff',bg:'#e2e6fb',accent:'#3a4cb8',ink:'#1f2a78',tint:'#d3d9f8',soft:'#eceffd'},
   enq:     {label:'アンケート',ic:'📝',icons:['📝','💬','✏️','📋'],frame:'#17a2a2',paper:'#f6fdfd',bg:'#dcf4f4',accent:'#128585',ink:'#0d5757',tint:'#cdeeee',soft:'#e8f8f8'},
   all:     {label:'共通',ic:'💡',icons:['💡','🔌','📺','❄️','🧺','🍳','📡','☎️','🔋','⚡','🌀','🛁','🚽','📻','🔦','🖥️','📱','⏰','🔊','🎮'],frame:'#e0782c',paper:'#fffaf5',bg:'#fde9d9',accent:'#c9601a',ink:'#7a3a0e',tint:'#fde2cc',soft:'#fff1e6'}
 };
@@ -168,9 +169,9 @@ ${c.what.memo?`      <div class="memo"><b>${c.what.memo[0]}</b><p>${c.what.memo[
 CARDS.forEach(card);
 
 // 目次（職種ごと）
-const ORDER=['all','fair','koji','service','jimu','himawari','nohin','mente','enq'];
+const ORDER=['all','fair','koji','service','jimu','himawari','nohin','mente','trouble','enq'];
 const fname=c=>'card-'+c.who+'-'+c.no+'.html';
-const sec=ORDER.filter(k=>(k!=='all'&&k!=='enq'&&k!=='nohin'&&k!=='mente'&&k!=='fair')||CARDS.some(c=>c.who===k)).map(k=>{
+const sec=ORDER.filter(k=>(k!=='all'&&k!=='enq'&&k!=='nohin'&&k!=='mente'&&k!=='fair'&&k!=='trouble')||CARDS.some(c=>c.who===k)).map(k=>{
   const w=WHO[k];const cs=CARDS.filter(c=>c.who===k).sort((a,b)=>a.no-b.no);
   const rows=cs.length?cs.map(c=>`      <a class="ci" href="${fname(c)}"><span class="n">No.${c.no}</span><span class="t">${c.title}</span></a>`).join('\n')
     :'      <p class="none">—</p>';
@@ -180,7 +181,7 @@ const sec=ORDER.filter(k=>(k!=='all'&&k!=='enq'&&k!=='nohin'&&k!=='mente'&&k!=='
 ${rows}
     </div>
   </section>`;}).join('\n');
-const nav=ORDER.filter(k=>(k!=='all'&&k!=='enq'&&k!=='nohin'&&k!=='mente'&&k!=='fair')||CARDS.some(c=>c.who===k)).map(k=>`<a href="#${k}" style="background:${WHO[k].frame}">${WHO[k].ic} ${WHO[k].label.replace('スタッフ','')}</a>`).join('');
+const nav=ORDER.filter(k=>(k!=='all'&&k!=='enq'&&k!=='nohin'&&k!=='mente'&&k!=='fair'&&k!=='trouble')||CARDS.some(c=>c.who===k)).map(k=>`<a href="#${k}" style="background:${WHO[k].frame}">${WHO[k].ic} ${WHO[k].label.replace('スタッフ','')}</a>`).join('');
 fs.writeFileSync(D+'cards.html',`<!DOCTYPE html>
 <html lang="ja">
 <head>
