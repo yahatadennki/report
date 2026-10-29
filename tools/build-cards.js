@@ -118,6 +118,12 @@ function card(c){
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1010">
 <title>打合せカード${c.no} ${c.title}｜ヤハタ電機商会</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="${w.label}カード　${c.title}">
+<meta property="og:description" content="${String(c.why.msg).replace(/<[^>]+>/g,'')}">
+<meta property="og:image" content="https://yahatadennki.github.io/report/img/card-${c.who}-${c.no}.png">
+<meta property="og:url" content="https://yahatadennki.github.io/report/card-${c.who}-${c.no}.html">
+<meta name="twitter:card" content="summary_large_image">
 <style>${css(w)}
 </style>
 </head>
@@ -152,6 +158,8 @@ ${c.what.memo?`      <div class="memo"><b>${c.what.memo[0]}</b><p>${c.what.memo[
 </div>
 
 <button class="print-btn" onclick="window.print()">🖨️ 印刷する（B5よこ・両面）</button>
+<script>/* og-shot：プレビュー画像を撮るときは表だけ */if(/[?&]og/.test(location.search)){document.documentElement.classList.add("og");}</script>
+<style>.og body{background:#fff}.og .hint,.og .print-btn{display:none}.og .page{margin:0;box-shadow:none}.og .page+.page{display:none}</style>
 </body>
 </html>
 `;
@@ -179,6 +187,10 @@ fs.writeFileSync(D+'cards.html',`<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>打合せカード 目次｜ヤハタ電機商会</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="打合せカード 目次">
+<meta property="og:description" content="1枚1テーマ。B5よこ・両面で印刷して、打合せで使う。">
+<meta property="og:image" content="https://yahatadennki.github.io/report/img/card-all-1.png">
 <style>
   :root{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--soft:#5a6a7a;--line:#d7e0e8}
   @media (prefers-color-scheme:dark){:root{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--soft:#a9b6c2;--line:#2c3844}}
