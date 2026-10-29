@@ -80,6 +80,7 @@ const css=w=>`
   .ag-two div{font-size:5mm;font-weight:700;display:flex;align-items:flex-end;gap:2mm}
   .ag-two span{flex:1;border-bottom:.5mm solid #888;height:8mm}
   .vals{list-style:none;padding:0;margin:0}
+  .vals.sm li{font-size:3.9mm;margin:0 0 1.6mm;padding:1.5mm 3.5mm}
   .vals li{font-size:4.4mm;margin:0 0 3mm;padding:2.4mm 4mm;background:var(--softbg);border-radius:3.5mm}
   .print-btn{position:fixed;right:16px;bottom:16px;z-index:99;font-family:inherit;font-size:15px;font-weight:700;padding:12px 22px;border:none;border-radius:999px;background:var(--accent);color:#fff;box-shadow:0 3px 12px rgba(0,0,0,.25);cursor:pointer}
   .hint{text-align:center;font-size:13px;color:var(--soft);margin:10px 0 0}
@@ -145,7 +146,7 @@ ${c.how.talk?`      <div class="talk">${c.how.talk.join('<br>')}</div>\n`:''}${c
     </div>
     <div class="box">
       <h2>${c.what.h}</h2>
-${c.what.memo?`      <div class="memo"><b>${c.what.memo[0]}</b><p>${c.what.memo[1]||''}</p></div>\n`:''}${c.what.vals?'      <ul class="vals">'+c.what.vals.map(x=>'<li>'+x+'</li>').join('')+'</ul>\n':''}${(c.what.groups||[]).map(g=>'      <p class="gt" style="color:'+col(g.c)+'">'+g.t+'</p>\n      <ul>'+g.items.map(x=>'<li>'+x+'</li>').join('')+'</ul>').join('\n')}
+${c.what.memo?`      <div class="memo"><b>${c.what.memo[0]}</b><p>${c.what.memo[1]||''}</p></div>\n`:''}${c.what.vals?'      <ul class="vals'+(c.what.vals.length>4?' sm':'')+'">'+c.what.vals.map(x=>'<li>'+x+'</li>').join('')+'</ul>\n':''}${(c.what.groups||[]).map(g=>'      <p class="gt" style="color:'+col(g.c)+'">'+g.t+'</p>\n      <ul>'+g.items.map(x=>'<li>'+x+'</li>').join('')+'</ul>').join('\n')}
     </div>
   </div>`}
 </div>
