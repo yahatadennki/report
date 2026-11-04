@@ -3,7 +3,7 @@
  *
  * 日報と見込シートから、その月の成績をスタッフごとに集めてランクを付ける。
  *   工事スタッフ     … 工事売上（人数割り後の1人あたり）  4,000 / 6,000 千円
- *   サービス ステップ1 … 見込みの記録件数                  40 / 60 件
+ *   サービス ステップ1 … 見込みの記録件数  20件（VOLTのみ。KILOVOLT以上はステップ2の売上で）
  *   ひまわりスタッフ  … 点検 10件・アンケート 20件（1人あたり。ランクなし）
  *
  * ランクは「同じ単位が1,000倍ずつ上がる」形
@@ -19,7 +19,7 @@ var MK_RANKS = [
 /* 目標の数値。ここを直せば全部そろって変わる */
 var MK_GOAL = {
   kouji:   { step: 4000, top: 6000, unit: '千円' },   // 工事売上（1人あたり）
-  mikomi:  { step: 40,   top: 60,   unit: '件'   },   // 見込みの記録
+  mikomi:  { step: 20,   top: 20,   unit: '件', voltOnly: true },   // 見込みの記録（ステップ1はVOLTだけ）
   himawari:{ tenken: 10, enquete: 20 }                // ひまわり（1人あたり）
 };
 
@@ -49,6 +49,7 @@ var MK_ROLE = {
 
 /* 数値からランクを決める */
 function mkRank_(val, goal) {
+  if (goal.voltOnly) return MK_RANKS[0];
   if (val >= goal.top)  return MK_RANKS[2];
   if (val >= goal.step) return MK_RANKS[1];
   return MK_RANKS[0];
@@ -56,6 +57,7 @@ function mkRank_(val, goal) {
 
 /* 次の段まであといくら */
 function mkNext_(val, goal) {
+  if (goal.voltOnly) return val >= goal.step ? { target: null, rest: 0 } : { target: goal.step, rest: goal.step - val };
   if (val >= goal.top)  return { target: null, rest: 0 };
   if (val >= goal.step) return { target: goal.top,  rest: goal.top  - val };
   return                       { target: goal.step, rest: goal.step - val };
@@ -151,6 +153,7 @@ function 目標の達成状況(ym) {
       rank: rk.name,
       mark: rk.mark,
       color: rk.color,
+      voltOnly: !!goal.voltOnly,
       nextTarget: nx.target,
       nextRest: nx.rest,
       pct: Math.min(100, Math.round(val / goal.top * 100))
