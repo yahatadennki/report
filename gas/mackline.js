@@ -451,19 +451,16 @@ function checkMackline() {
     return '市場クローズ中';
   }
 
-  // ★2026-10-05 ユーザー指示：メールはパーフェクトMACD（ドル円）だけにする。
-  //   維新流・逆張り・80MAの判定コードは残してあるので、戻す時は下の3行のコメントを外すだけ。
-  //   検証：法則だけの簡易版(+191)や4時間足を足した版(+1,622)より、パーフェクトMACD(+3,038)が上だった
-  var b = '';
-  try { b = checkMacklinePerfect_(); } catch (e) { b = 'パーフェクトMACDエラー ' + e; }   // 逆指値版
+  // ★2026-11-10 ユーザー指示：FXのメールは全部停止。チャートも円メーターに要る分（ドル円1時間足＝現在値）だけ見に行く。
+  //   判定コードは残してあるので、戻す時は下のコメントを外す。
+  // try { checkMacklinePerfect_(); } catch (e) {}   // 📈 パーフェクトMACD（6通貨）
+  // try { checkMacklineCounter_(); } catch (e) {}   // 🔁 逆張り版（ドル円）
   // try { checkMacklineIshin_(); }   catch (e) {}
   // try { checkMacklineReverse_(); } catch (e) {}
   // try { checkMackline80_(); }      catch (e) {}
-  var cn = '';
-  try { cn = checkMacklineCounter_(); } catch (e) { cn = '逆張り版エラー ' + e; }   // 逆張り版は残す（ユーザー指示）
-  try { trendSnapshot_(); } catch (e) {}   // 表示用のトレンド一覧
-  try { fundaJson_(); } catch (e) {}       // 円メーターの金利・経済指標を温めておく（fundamentals.js）
-  return '【パーフェクトMACD】' + b + '　／　【逆張り版】' + cn;
+  // try { trendSnapshot_(); } catch (e) {}          // fx-trend.html 用のトレンド一覧
+  try { fundaJson_(); } catch (e) { return '円メーター エラー ' + e; }   // 円メーターの金利とドル円を温めておく（fundamentals.js）
+  return 'メール停止中。円メーターのデータのみ更新';
 }
 
 // ── 維新流モード（既定）：準備(SETUP)と確定(ENTRY)で知らせる ──
