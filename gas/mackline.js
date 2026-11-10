@@ -459,8 +459,10 @@ function checkMackline() {
   // try { checkMacklineReverse_(); } catch (e) {}
   // try { checkMackline80_(); }      catch (e) {}
   // try { trendSnapshot_(); } catch (e) {}          // fx-trend.html 用のトレンド一覧
+  var ai = '';
+  try { ai = fundaAiTick_(); } catch (e) { ai = 'AIの読みエラー ' + e; }   // 1日2回だけニュースを読む（funda_ai.js）
   try { fundaJson_(); } catch (e) { return '円メーター エラー ' + e; }   // 円メーターの金利とドル円を温めておく（fundamentals.js）
-  return 'メール停止中。円メーターのデータのみ更新';
+  return 'メール停止中。円メーターのデータのみ更新　／　' + ai;
 }
 
 // ── 維新流モード（既定）：準備(SETUP)と確定(ENTRY)で知らせる ──

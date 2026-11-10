@@ -26,6 +26,7 @@ function fundaJson_() {
     var h1 = fetchTFCached_('USD/JPY', '1h');
     out.price = h1.closes[h1.closes.length - 1];
   } catch (e) {}
+  try { var ai = fundaAiForApp_(); if (ai) out.ai = ai; } catch (e) {}   // AIの読み（お試し期間中だけ。funda_ai.js）
   return JSON.stringify(out);
 }
 

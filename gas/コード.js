@@ -314,6 +314,12 @@ function getProductMaster_() {
   if (e && e.parameter && e.parameter.action === 'funda') {
     return ContentService.createTextOutput(fundaJson_()).setMimeType(ContentService.MimeType.JSON);
   }
+  if (e && e.parameter && e.parameter.action === 'funda_ai_diag') {
+    return ContentService.createTextOutput(fundaAiDiag_());
+  }
+  if (e && e.parameter && e.parameter.action === 'funda_ai_run') {
+    return ContentService.createTextOutput(fundaAiRun_());   // 手動で1回読む（間隔と回数の上限つき）
+  }
   if (e && e.parameter && e.parameter.action === 'funda_diag') {
     return ContentService.createTextOutput(fundaDiag_());
   }
