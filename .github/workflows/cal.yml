@@ -4,6 +4,8 @@ on:
   schedule:
     - cron: '7 */6 * * *'
   workflow_dispatch:
+  push:
+    paths: ['tools/cal.mjs', '.github/workflows/cal.yml']
 permissions:
   contents: write
 concurrency:
