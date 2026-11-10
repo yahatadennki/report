@@ -1,4 +1,4 @@
-// 今週の経済指標（米・日）を取ってきて mackline/cal.json に書く。
+// 今週の経済指標（米・日・欧・英）を取ってきて mackline/cal.json に書く。
 //   使い方：node tools/cal.mjs            … 配信元から取る
 //           node tools/cal.mjs 手元.json  … 手元のファイルから作る
 //   取れなかった時は何も書かずに終わる（前回の cal.json がそのまま残る）。
@@ -23,7 +23,7 @@ try {
 }
 
 const list = raw
-  .filter(e => e.country === 'USD' || e.country === 'JPY')
+  .filter(e => ['USD', 'JPY', 'EUR', 'GBP'].includes(e.country))
   .map(e => ({ d: new Date(e.date), e }))
   .filter(x => !isNaN(x.d))
   .map(({ d, e }) => ({ t: d.toISOString().slice(0, 16) + 'Z', c: e.country, i: IMP[e.impact] || 0, n: e.title, f: e.forecast || '', p: e.previous || '' }))

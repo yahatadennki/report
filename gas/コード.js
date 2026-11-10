@@ -314,6 +314,9 @@ function getProductMaster_() {
   if (e && e.parameter && e.parameter.action === 'funda') {
     return ContentService.createTextOutput(fundaJson_()).setMimeType(ContentService.MimeType.JSON);
   }
+  if (e && e.parameter && e.parameter.action === 'funda_pairs_diag') {
+    return ContentService.createTextOutput(fundaPairsDiag_());
+  }
   if (e && e.parameter && e.parameter.action === 'funda_ai_diag') {
     return ContentService.createTextOutput(fundaAiDiag_());
   }

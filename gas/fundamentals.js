@@ -26,6 +26,14 @@ function fundaJson_() {
     var h1 = fetchTFCached_('USD/JPY', '1h');
     out.price = h1.closes[h1.closes.length - 1];
   } catch (e) {}
+  // ほかの通貨ペア（funda_pairs.js）。現在値は表示用
+  try {
+    out.pairs = fundaCached_('FUNDA_PAIRS_V1', 3 * 3600, fundaPairs_);
+    [['EURJPY', 'EUR/JPY'], ['EURUSD', 'EUR/USD'], ['GBPUSD', 'GBP/USD']].forEach(function(x) {
+      if (!out.pairs[x[0]]) return;
+      try { var c = fetchTFCached_(x[1], '1h'); out.pairs[x[0]].price = c.closes[c.closes.length - 1]; } catch (e) {}
+    });
+  } catch (e) {}
   try { var ai = fundaAiForApp_(); if (ai) out.ai = ai; } catch (e) {}   // AIの読み（お試し期間中だけ。funda_ai.js）
   return JSON.stringify(out);
 }
@@ -99,7 +107,7 @@ function fundaUstYear_(year, into) {
     '/all?type=daily_treasury_yield_curve&field_tdr_date_value=' + year + '&page&_format=csv';
   var t = fundaGet_(url).getContentText().split(/\r?\n/);
   var h = t[0].split(',').map(function(s) { return s.replace(/"/g, ''); });
-  var i2 = h.indexOf('2 Yr'), i10 = h.indexOf('10 Yr');
+  var i2 = h.indexOf('2 Yr'), i10 = h.indexOf('10 Yr'), i5 = h.indexOf('5 Yr');
   if (i2 < 0 || i10 < 0) throw new Error('米金利の列が見つかりません');
   var cnt = 0;
   t.slice(1).forEach(function(ln) {
@@ -108,7 +116,7 @@ function fundaUstYear_(year, into) {
     if (!m) return;
     var y2 = Number(c[i2]), y10 = Number(c[i10]);
     if (!isFinite(y2) || !isFinite(y10) || !c[i2] || !c[i10]) return;
-    into[m[3] + '-' + m[1] + '-' + m[2]] = [y2, y10]; cnt++;
+    into[m[3] + '-' + m[1] + '-' + m[2]] = [y2, y10, i5 >= 0 && c[i5] ? Number(c[i5]) : y2]; cnt++;   // [2年, 10年, 5年]
   });
   return cnt;
 }
