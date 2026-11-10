@@ -21,7 +21,7 @@ var FUNDA_URL = {
 function fundaJson_() {
   var out = { at: new Date().toISOString() };
   out.rates = fundaCached_('FUNDA_RATES_V1', 3 * 3600, fundaRates_);
-  out.cal = fundaCached_('FUNDA_CAL_V1', 6 * 3600, fundaCalendar_, 20 * 60);   // 週1回取れれば足りる。相手先に負担をかけない
+  // 経済指標はここでは取らない（GASからだと配信元に断られる）。アプリは mackline/cal.json を読む＝tools/cal.mjs が6時間ごとに作る
   try {
     var h1 = fetchTFCached_('USD/JPY', '1h');
     out.price = h1.closes[h1.closes.length - 1];
