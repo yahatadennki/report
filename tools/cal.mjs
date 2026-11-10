@@ -18,7 +18,7 @@ try {
   }
   if (!Array.isArray(raw) || !raw.length) throw new Error('中身が空');
 } catch (e) {
-  console.log('取得できませんでした（前回のまま）：' + e.message);
+  console.log('::warning::取得できませんでした（前回のまま）：' + e.message);
   process.exit(0);
 }
 
@@ -32,6 +32,6 @@ const list = raw
 // 中身が同じなら書き直さない（無駄なコミットを作らない）
 let old = null;
 try { old = JSON.parse(fs.readFileSync(OUT, 'utf8')); } catch { /* 初回 */ }
-if (old && JSON.stringify(old.list) === JSON.stringify(list)) { console.log('変更なし ' + list.length + '件'); process.exit(0); }
+if (old && JSON.stringify(old.list) === JSON.stringify(list)) { console.log('::notice::取得できました。変更なし ' + list.length + '件'); process.exit(0); }
 fs.writeFileSync(OUT, JSON.stringify({ list, got: new Date().toISOString().slice(0, 16) + 'Z' }));
-console.log('書きました ' + list.length + '件');
+console.log('::notice::書きました ' + list.length + '件');
