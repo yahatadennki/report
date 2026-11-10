@@ -462,6 +462,7 @@ function checkMackline() {
   var cn = '';
   try { cn = checkMacklineCounter_(); } catch (e) { cn = '逆張り版エラー ' + e; }   // 逆張り版は残す（ユーザー指示）
   try { trendSnapshot_(); } catch (e) {}   // 表示用のトレンド一覧
+  try { fundaJson_(); } catch (e) {}       // 円メーターの金利・経済指標を温めておく（fundamentals.js）
   return '【パーフェクトMACD】' + b + '　／　【逆張り版】' + cn;
 }
 

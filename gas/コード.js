@@ -310,6 +310,13 @@ function getProductMaster_() {
     マックライン初期設定();
     return ContentService.createTextOutput(テスト送信());
   }
+  // 円メーター（mackline/ のアプリから読む。金利と今週の経済指標）
+  if (e && e.parameter && e.parameter.action === 'funda') {
+    return ContentService.createTextOutput(fundaJson_()).setMimeType(ContentService.MimeType.JSON);
+  }
+  if (e && e.parameter && e.parameter.action === 'funda_diag') {
+    return ContentService.createTextOutput(fundaDiag_());
+  }
   // FXトレンド一覧（fx-trend.html から読む。計算は15分ごとのトリガーで済ませてある）
   if (e && e.parameter && e.parameter.action === 'trend') {
     var _t = PropertiesService.getScriptProperties().getProperty('TREND_SNAP') || '{}';
