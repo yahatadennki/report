@@ -86,6 +86,12 @@
   .soon-badge { margin-left: auto; font-size: 11px; font-weight: 700; padding: 0 8px;
                 border-radius: 999px; background: var(--card); color: var(--ink-soft); }
 
+  .multi .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+  .multi .chips a { font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 999px;
+                    text-decoration: none; background: var(--paper); color: var(--ink); border: 1px solid var(--line); }
+  .multi .chips a:hover { border-color: var(--ink-soft); }
+  .soon-line { font-size: 12px; color: var(--ink-soft); margin: 26px 0 0; padding-left: 14px; }
+
   .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
   .tag { font-size: 11px; padding: 1px 9px; border-radius: 999px;
          background: var(--sheet-bg); color: var(--sheet-fg); }
@@ -149,15 +155,6 @@
 
   <p class="strip-title">数字を見る</p>
   <div class="card-grid">
-
-    <div class="card soon">
-      <div class="card__head"><span class="ic">📈</span>月次<span class="soon-badge">これから</span></div>
-      <div class="card__body">
-        <p class="card__title">会議資料（月次実績まとめ）</p>
-        <p class="card__desc">売上・点検・受注経路・ひまわり活動を1枚に／いまはPCのデスクトップに保存</p>
-      </div>
-    </div>
-
     <a class="card c-kazu" href="tk-nippo.html">
       <div class="card__head"><span class="ic">✅</span>毎日</div>
       <div class="card__body">
@@ -165,7 +162,6 @@
         <p class="card__desc">カレンダーと見積から下書き。✓を押すだけ</p>
       </div>
     </a>
-
     <a class="card c-kazu" href="hanki.html">
       <div class="card__head"><span class="ic">📊</span>半期</div>
       <div class="card__body">
@@ -173,52 +169,13 @@
         <p class="card__desc">工事売上・業務日報・受注経路・ひまわり・日報未提出を1枚に</p>
       </div>
     </a>
-
     <a class="card c-kazu" href="mokuhyou.html">
       <div class="card__head"><span class="ic">🎯</span>1か月</div>
       <div class="card__body">
         <p class="card__title">スタッフ目標</p>
-        <p class="card__desc">職種ごとの目標件数・金額と、3つのステージ（VOLT／KILOVOLT／MEGAVOLT）</p>
+        <p class="card__desc">職種ごとの目標と、3つのステージ（VOLT／KILOVOLT／MEGAVOLT）</p>
       </div>
     </a>
-
-    <a class="card c-kazu" href="jinzai.html">
-      <div class="card__head"><span class="ic">🤝</span>いつでも</div>
-      <div class="card__body">
-        <p class="card__title">工事スタッフに求めること</p>
-        <p class="card__desc">道具・報連相・約束の3つと、その根っこにある「お客様の目を見て仕事する」</p>
-      </div>
-    </a>
-
-    <a class="card c-kazu" href="jinzai-service.html">
-      <div class="card__head"><span class="ic">🎧</span>いつでも</div>
-      <div class="card__body">
-        <p class="card__title">サービススタッフに求めること</p>
-        <p class="card__desc">笑顔・報連相・聞き上手の3つと、根っこの「壊れる前に気づける人になる」</p>
-      </div>
-    </a>
-
-    <a class="card c-kazu" href="jinzai-himawari.html">
-      <div class="card__head"><span class="ic">🌻</span>いつでも</div>
-      <div class="card__body">
-        <p class="card__title">ひまわりスタッフに求めること</p>
-        <p class="card__desc">笑顔・おしゃべり・気軽なお届けの3つと、根っこの「心配だから、会いに行く」</p>
-      </div>
-    </a>
-
-    <div class="card soon">
-      <div class="card__head"><span class="ic">🧭</span>いつでも<span class="soon-badge">これから</span></div>
-      <div class="card__body">
-        <p class="card__title">実績ダッシュボード</p>
-        <p class="card__desc">今月の売上・点検台数・受注件数を開いたらすぐ見られる場所</p>
-      </div>
-    </div>
-
-  </div>
-
-  <p class="strip-title">先を決める</p>
-  <div class="card-grid">
-
     <a class="card c-kimeru" href="rfm.html">
       <div class="card__head"><span class="ic">🎯</span>誰に何を</div>
       <div class="card__body">
@@ -226,45 +183,25 @@
         <p class="card__desc">A〜Eの配布物と、年間スケジュール（いつ・誰に）</p>
       </div>
     </a>
-
-    <a class="card c-kimeru" href="roadmap.html">
-      <div class="card__head"><span class="ic">🗓️</span>一年の流れ</div>
-      <div class="card__body">
-        <p class="card__title">年間販促スケジュール</p>
-        <p class="card__desc">フェア・招待状・かわら版・お店誌／次にやることの逆算</p>
-      </div>
-    </a>
-
-    <div class="card soon">
-      <div class="card__head"><span class="ic">📌</span>今月<span class="soon-badge">これから</span></div>
-      <div class="card__body">
-        <p class="card__title">今月の予定・会議スケジュール</p>
-        <p class="card__desc">店舗会議・勉強会・フェア準備の締切を1か所に</p>
-      </div>
-    </div>
-
   </div>
 
-  <p class="strip-title">みんなに伝える</p>
-  <p class="strip-note">スタッフが見るものは「現場サポート」に置き、ここは作る・直す側の入口です。</p>
+  <p class="strip-title">育てる・伝える</p>
   <div class="card-grid">
-
-    <a class="card c-kazu" href="kaito.html">
-      <div class="card__head"><span class="ic">🗝️</span>社内用</div>
+    <div class="card c-hito multi">
+      <div class="card__head"><span class="ic">🤝</span>いつでも</div>
       <div class="card__body">
-        <p class="card__title">クイズ回答編</p>
-        <p class="card__desc">模範解答と解説（PIN 7860）／打合せの答え合わせ用</p>
+        <p class="card__title">スタッフに求めること</p>
+        <p class="card__desc">職種ごとの3つと、その根っこ</p>
+        <div class="chips"><a href="jinzai.html">⚙️ 工事</a><a href="jinzai-service.html">🔧 サービス</a><a href="jinzai-himawari.html">🌻 ひまわり</a></div>
+      </div>
+    </div>
+    <a class="card c-hito" href="service-stepup.html">
+      <div class="card__head"><span class="ic">🌱</span>育てる</div>
+      <div class="card__body">
+        <p class="card__title">サービススタッフ ステップ1</p>
+        <p class="card__desc">点検で気づく。配達で伝える</p>
       </div>
     </a>
-
-    <a class="card c-hito" href="sodateru.html">
-      <div class="card__head"><span class="ic">🎓</span>ポータル</div>
-      <div class="card__body">
-        <p class="card__title">育成ポータル</p>
-        <p class="card__desc">求めること3つ・身につけるテーマ・確認テストの入口</p>
-      </div>
-    </a>
-
     <a class="card c-tsutaeru" href="uchiawase-koji.html">
       <div class="card__head"><span class="ic">⚙️</span>打合せ</div>
       <div class="card__body">
@@ -272,23 +209,24 @@
         <p class="card__desc">求めること・数えるもの・お金の話を1枚に（A4印刷用）</p>
       </div>
     </a>
-
     <a class="card c-tsutaeru" href="kyuryo.html">
       <div class="card__head"><span class="ic">💰</span>社員向け</div>
       <div class="card__body">
         <p class="card__title">お金の話</p>
-        <p class="card__desc">ノルマは置かない／売上は会社の仕事／積み上がったら基本給が上がる</p>
+        <p class="card__desc">個人のノルマは置かない／積み上がったら基本給が上がる</p>
       </div>
     </a>
-
-    <a class="card c-tsutaeru" href="manual.html">
-      <div class="card__head"><span class="ic">📗</span>ポータル</div>
+    <a class="card c-kazu" href="kaito.html">
+      <div class="card__head"><span class="ic">🗝️</span>社内用</div>
       <div class="card__body">
-        <p class="card__title">現場サポート（みんなのマニュアル）</p>
-        <p class="card__desc">職種別ガイド・訪問トーク・工事手順書のまとめ</p>
+        <p class="card__title">クイズ回答編</p>
+        <p class="card__desc">模範解答と解説／打合せの答え合わせ用</p>
       </div>
     </a>
+  </div>
 
+  <p class="strip-title">現場の資料</p>
+  <div class="card-grid">
     <a class="card c-tsutaeru" href="nippo-manual.html">
       <div class="card__head"><span class="ic">📝</span>使い方</div>
       <div class="card__body">
@@ -296,85 +234,42 @@
         <p class="card__desc">何を・どこまで書くか／新しく入った人に最初に渡す</p>
       </div>
     </a>
-
-    <a class="card c-tsutaeru" href="aircon-manual.html">
-      <div class="card__head"><span class="ic">❄️</span>手順書</div>
+    <div class="card c-tsutaeru multi">
+      <div class="card__head"><span class="ic">🛠️</span>手順書</div>
       <div class="card__body">
-        <p class="card__title">エアコン取付工事</p>
+        <p class="card__title">工事の手順書</p>
         <p class="card__desc">段取り・注意点・お客様への一言</p>
+        <div class="chips"><a href="aircon-manual.html">❄️ エアコン取付</a><a href="toilet-manual.html">🚽 トイレ工事</a></div>
       </div>
-    </a>
-
-    <a class="card c-tsutaeru" href="toilet-manual.html">
-      <div class="card__head"><span class="ic">🚽</span>手順書</div>
-      <div class="card__body">
-        <p class="card__title">トイレ工事</p>
-        <p class="card__desc">段取り・注意点・お客様への一言</p>
-      </div>
-    </a>
-
+    </div>
     <a class="card c-tsutaeru" href="enquete.html">
       <div class="card__head"><span class="ic">✂️</span>しくみ</div>
       <div class="card__body">
-        <p class="card__title">工事・配達後アンケート（半券つき）</p>
-        <p class="card__desc">説明→手渡し→半券を持ち帰る→ひまわりが回収／用紙の印刷もここから</p>
+        <p class="card__title">工事・配達後アンケート</p>
+        <p class="card__desc">ひまわりが巡回で渡して、その場で回収／用紙の印刷もここから</p>
       </div>
     </a>
-
-    <a class="card c-hito" href="service-stepup.html">
-      <div class="card__head"><span class="ic">🌱</span>育てる</div>
-      <div class="card__body">
-        <p class="card__title">サービススタッフ ステップ1</p>
-        <p class="card__desc">点検で気づく。配達で伝える（取扱説明は3つだけ）</p>
-      </div>
-    </a>
-
-    <div class="card soon">
-      <div class="card__head"><span class="ic">📖</span>これから<span class="soon-badge">これから</span></div>
-      <div class="card__body">
-        <p class="card__title">経営のマニュアル</p>
-        <p class="card__desc">月初・月末にやること、フェアの回し方、採用・教育の型</p>
-      </div>
-    </div>
-
   </div>
 
   <p class="strip-title">面接</p>
-  <p class="strip-note">アンケートで条件を書いてもらい、面接では人柄と受け答えを見ます。ガイドとアンケートは応募の方に渡せます（A4・1枚）。</p>
+  <p class="strip-note">アンケートで条件を書いてもらい、面接では人柄と受け答えを見ます。</p>
   <div class="card-grid">
-
-    <a class="card c-hito" href="mensetsu-enquete-koji.html">
+    <div class="card c-hito multi">
       <div class="card__head"><span class="ic">📝</span>面接の前に</div>
       <div class="card__body">
-        <p class="card__title">面接アンケート（工事）</p>
-        <p class="card__desc">資格・工具・高所や天井裏・運転できる車</p>
+        <p class="card__title">面接アンケート</p>
+        <p class="card__desc">応募の方に書いてもらう。条件はここで確認</p>
+        <div class="chips"><a href="mensetsu-enquete-koji.html">⚙️ 工事</a><a href="mensetsu-enquete-service.html">🔧 サービス</a><a href="mensetsu-enquete-himawari.html">🌻 ひまわり</a><a href="mensetsu-enquete-jimu.html">📎 事務</a></div>
       </div>
-    </a>
-
-    <a class="card c-hito" href="mensetsu-enquete-service.html">
-      <div class="card__head"><span class="ic">📝</span>面接の前に</div>
+    </div>
+    <div class="card c-hito multi">
+      <div class="card__head"><span class="ic">📄</span>渡す</div>
       <div class="card__body">
-        <p class="card__title">面接アンケート（サービス）</p>
-        <p class="card__desc">資格・くわしい家電・接客や訪問の経験</p>
+        <p class="card__title">スタッフのしごと（ガイド）</p>
+        <p class="card__desc">職種の仕事を1枚で。応募の方に渡す</p>
+        <div class="chips"><a href="mensetsu-koji.html">⚙️ 工事</a><a href="mensetsu-service.html">🔧 サービス</a><a href="mensetsu-himawari.html">🌻 ひまわり</a><a href="mensetsu-jimu.html">📎 事務</a></div>
       </div>
-    </a>
-
-    <a class="card c-hito" href="mensetsu-enquete-himawari.html">
-      <div class="card__head"><span class="ic">📝</span>面接の前に</div>
-      <div class="card__body">
-        <p class="card__title">面接アンケート（ひまわり）</p>
-        <p class="card__desc">乗り物・道のくわしさ・人と話すのが好きか</p>
-      </div>
-    </a>
-
-    <a class="card c-hito" href="mensetsu-enquete-jimu.html">
-      <div class="card__head"><span class="ic">📝</span>面接の前に</div>
-      <div class="card__body">
-        <p class="card__title">面接アンケート（事務）</p>
-        <p class="card__desc">パソコン・電話や伝票の経験・資格</p>
-      </div>
-    </a>
-
+    </div>
     <a class="card c-hito" href="mensetsu-kiku.html">
       <div class="card__head"><span class="ic">🗣️</span>面接のとき</div>
       <div class="card__body">
@@ -382,77 +277,21 @@
         <p class="card__desc">見るところ4つ・全員に聞く6問・職種ごとに1問・聞かないこと</p>
       </div>
     </a>
-
-    <a class="card c-hito" href="mensetsu-koji.html">
-      <div class="card__head"><span class="ic">⚙️</span>渡す</div>
-      <div class="card__body">
-        <p class="card__title">工事スタッフのしごと</p>
-        <p class="card__desc">お客様の目を見て、仕事を。2ステップとお約束</p>
-      </div>
-    </a>
-
-    <a class="card c-hito" href="mensetsu-service.html">
-      <div class="card__head"><span class="ic">🔧</span>渡す</div>
-      <div class="card__body">
-        <p class="card__title">サービススタッフのしごと</p>
-        <p class="card__desc">壊れる前に、気づける人に。2ステップとお約束</p>
-      </div>
-    </a>
-
-    <a class="card c-hito" href="mensetsu-himawari.html">
-      <div class="card__head"><span class="ic">🌻</span>渡す</div>
-      <div class="card__body">
-        <p class="card__title">ひまわりスタッフのしごと</p>
-        <p class="card__desc">心配だから、会いに行く。おもな仕事とお約束</p>
-      </div>
-    </a>
-
-    <a class="card c-hito" href="mensetsu-jimu.html">
-      <div class="card__head"><span class="ic">📎</span>渡す</div>
-      <div class="card__body">
-        <p class="card__title">事務スタッフのしごと</p>
-        <p class="card__desc">お店の「司令塔」。おもな仕事とお約束</p>
-      </div>
-    </a>
-
   </div>
 
   <p class="strip-title">元データ</p>
   <div class="card-grid">
-
-    <a class="card c-sheet" href="https://docs.google.com/spreadsheets/d/1L57wd6u7MaX0Nw4SdpPtbCgVEbtLJkx6Pa1dvJpeZqg/edit" target="_blank">
+    <div class="card c-sheet multi">
       <div class="card__head"><span class="ic">📊</span>スプレッドシート</div>
       <div class="card__body">
-        <p class="card__title">業務日報</p>
-        <div class="tags"><span class="tag">売上</span><span class="tag">工事・配達</span><span class="tag">点検台数</span></div>
+        <p class="card__title">元データ</p>
+        <p class="card__desc">開くと新しいタブで開きます</p>
+        <div class="chips"><a href="https://docs.google.com/spreadsheets/d/1L57wd6u7MaX0Nw4SdpPtbCgVEbtLJkx6Pa1dvJpeZqg/edit" target="_blank">業務日報</a><a href="https://docs.google.com/spreadsheets/d/1Cg5FACS_HqpAlchsU6O4ansNHc7GO_FOWAYhpX_72_w/edit" target="_blank">受注日報</a><a href="https://docs.google.com/spreadsheets/d/1WMsviRURr3Lwfi4zy4-dvH7DHO3uq4WXb4NBScwLqi4/edit" target="_blank">ひまわり日報</a><a href="https://docs.google.com/spreadsheets/d/1Pqb_DY3utvxKhTCIb4PJ0yNGra3hi1aSyFOHrydmuY0/edit" target="_blank">見積・マスタ</a></div>
       </div>
-    </a>
-
-    <a class="card c-sheet" href="https://docs.google.com/spreadsheets/d/1Cg5FACS_HqpAlchsU6O4ansNHc7GO_FOWAYhpX_72_w/edit" target="_blank">
-      <div class="card__head"><span class="ic">📊</span>スプレッドシート</div>
-      <div class="card__body">
-        <p class="card__title">受注日報</p>
-        <div class="tags"><span class="tag">受注</span><span class="tag">経路</span></div>
-      </div>
-    </a>
-
-    <a class="card c-sheet" href="https://docs.google.com/spreadsheets/d/1WMsviRURr3Lwfi4zy4-dvH7DHO3uq4WXb4NBScwLqi4/edit" target="_blank">
-      <div class="card__head"><span class="ic">📊</span>スプレッドシート</div>
-      <div class="card__body">
-        <p class="card__title">ひまわりスタッフ日報</p>
-        <div class="tags"><span class="tag">面談</span><span class="tag">TEL</span><span class="tag">ポスティング</span></div>
-      </div>
-    </a>
-
-    <a class="card c-sheet" href="https://docs.google.com/spreadsheets/d/1Pqb_DY3utvxKhTCIb4PJ0yNGra3hi1aSyFOHrydmuY0/edit" target="_blank">
-      <div class="card__head"><span class="ic">📊</span>スプレッドシート</div>
-      <div class="card__body">
-        <p class="card__title">見積・マスタ</p>
-        <div class="tags"><span class="tag">見積書</span><span class="tag">商品マスタ</span><span class="tag">顧客マスタ</span></div>
-      </div>
-    </a>
-
+    </div>
   </div>
+
+  <p class="soon-line">🔜 これから：会議資料（月次実績まとめ）／実績ダッシュボード／今月の予定・会議スケジュール／経営のマニュアル</p>
 
   <div class="portal-links">
     <p>ほかのポータル</p>
