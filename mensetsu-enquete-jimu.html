@@ -29,6 +29,11 @@ body{font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Not
 .lines div{border-bottom:1px solid var(--line);height:26px}
 .days span{display:inline-block;width:26px;height:26px;line-height:24px;text-align:center;border:1.5px solid var(--line);border-radius:50%;margin-right:4px;font-size:13px}
 .thanks{margin:10px 0 0;text-align:center;font-size:13px;color:var(--accent);font-weight:700}
+.pg{break-before:page;margin-top:22px;padding-top:12px;border-top:2px dashed var(--line);font-size:13px;color:var(--soft);text-align:center}
+.pg b{color:var(--accent);font-size:15px}
+.lines.l3 div{height:30px}
+.hint{font-size:11.5px;color:var(--soft);padding-left:28px;margin:2px 0 0}
+@media print{.pg{border-top:0;margin-top:0;padding-top:0}}
 .head .job{display:inline-block;background:var(--accent);color:#fff;font-size:13px;padding:1px 12px;border-radius:20px;margin-left:8px;vertical-align:4px}
 .pbtn{display:block;margin:14px auto;padding:9px 22px;border:0;border-radius:24px;background:var(--accent);color:#fff;font-size:14px;cursor:pointer}
 @media (max-width:560px){.sheet{padding:16px 14px}.name{grid-template-columns:1fr}}
@@ -69,8 +74,26 @@ body{font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Not
   <div class="q"><p class="t"><i>8</i>ヤハタデンキのことは</p>
     <div class="row"><label><span class="box"></span>お店の前を通って</label><label><span class="box"></span>チラシ</label><label><span class="box"></span>知り合いから</label><label><span class="box"></span>求人を見て</label><label><span class="box"></span>はじめて知った</label></div>
   </div>
-  <div class="q"><p class="t"><i>9</i>聞いておきたいこと・気になること</p>
-    <div class="lines"><div></div><div></div></div>
+  <div class="pg"><b>✍️ ここからは、ご自分の言葉で</b><br>うまく書こうとしなくて大丈夫です。思ったことをそのまま書いてください。</div>
+  <div class="q"><p class="t"><i>9</i>体のこと</p>
+    <div class="row">お仕事に差しつかえること（腰痛・持病など）　<label><span class="box"></span>ない</label><label><span class="box"></span>ある</label><label>→<span class="fill" style="min-width:220px"></span></label></div>
+    <div class="row" style="margin-top:4px">いま通院していること　<label><span class="box"></span>ない</label><label><span class="box"></span>ある</label><label>→ 月<span class="fill" style="min-width:40px"></span>回くらい（<span class="fill" style="min-width:120px"></span>）</label></div>
+    <p class="hint">無理のないお仕事の割り振りのためだけに使います。言える範囲で大丈夫です。</p>
+  </div>
+  <div class="q"><p class="t"><i>10</i>働くうえで、大切にしたいこと</p>
+    <div class="lines l3"><div></div><div></div><div></div></div>
+  </div>
+  <div class="q"><p class="t"><i>11</i>これまでの仕事や暮らしで、整理や段取りを工夫したこと</p>
+    <div class="lines l3"><div></div><div></div><div></div></div>
+  </div>
+  <div class="q"><p class="t"><i>12</i>苦手なこと・不安なこと</p>
+    <div class="lines l3"><div></div><div></div><div></div></div>
+  </div>
+  <div class="q"><p class="t"><i>13</i>3年後、どんな自分になっていたいですか</p>
+    <div class="lines l3"><div></div><div></div><div></div></div>
+  </div>
+  <div class="q"><p class="t"><i>14</i>聞いておきたいこと・気になること</p>
+    <div class="lines l3"><div></div><div></div><div></div></div>
   </div>
 
   <p class="thanks">ありがとうございました。このあとの面接も、どうぞ気楽にお話しください。</p>
