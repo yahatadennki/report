@@ -35,6 +35,11 @@ h2:first-child{margin-top:4px}
 .step .t small{font-weight:400;font-size:12px;color:var(--soft)}
 .step ul{margin:0;padding-left:1.2em;font-size:13px}
 .step li{margin:1px 0}
+.flow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.flow div{position:relative;border:2px solid #f2a7a3;background:#fff6f5;border-radius:12px;padding:8px 10px 8px 12px}
+.flow i{position:absolute;left:-7px;top:-7px;width:22px;height:22px;border-radius:50%;background:var(--deep);color:#fff;font-style:normal;font-size:12.5px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.flow b{display:block;font-size:14px;margin-left:8px}
+.flow span{display:block;font-size:12px;color:var(--soft);line-height:1.5;margin-top:2px}
 .learn{display:flex;gap:12px;align-items:center;background:var(--deep-bg);border-radius:12px;padding:10px 14px}
 .learn .i{font-size:30px}
 .learn b{font-size:15px}
@@ -46,7 +51,7 @@ h2:first-child{margin-top:4px}
 .foot{margin-top:14px;text-align:center;font-size:15px;font-weight:700;color:var(--deep)}
 .foot small{display:block;font-weight:400;font-size:12px;color:var(--soft)}
 .pbtn{display:block;margin:14px auto;padding:9px 22px;border:0;border-radius:24px;background:var(--deep);color:#fff;font-size:14px;cursor:pointer}
-@media (max-width:560px){.three,.promise,.steps{grid-template-columns:1fr}.hero .ic{display:none}.body{padding:14px 14px 18px}}
+@media (max-width:560px){.three,.promise,.steps,.flow{grid-template-columns:1fr}.hero .ic{display:none}.body{padding:14px 14px 18px}}
 @page{size:A4 portrait;margin:10mm}
 @media print{
   html,body{background:#fff;padding:0}
@@ -64,7 +69,7 @@ h2:first-child{margin-top:4px}
     <p class="e">ヤハタ電機商会</p>
     <h1>サービススタッフのしごと</h1>
     <p class="big">壊れる前に、気づける人に。</p>
-    <p class="s">家電は壊れます。使い方がわからなくなることもあります。<br>そんなとき「困ったときはヤハタさん」と思ってもらえる。その安心を、地域に届ける仕事です。</p>
+    <p class="s">いちばん大切にしているのは、お客様との信頼関係です。<br>約束どおり伺って、きちんと終わらせる。その積み重ねで「困ったときはヤハタさん」と呼んでもらえます。</p>
   </div>
 
   <div class="body">
@@ -76,27 +81,16 @@ h2:first-child{margin-top:4px}
     </div>
     <p class="note">技術は、あとから身につきます。この3つは、入った初日からできることです。</p>
 
-    <h2>おもな仕事</h2>
-    <div class="steps">
-      <div class="step a">
-        <p class="t">🏠 点検と配達 <small>こちらから伺う</small></p>
-        <ul>
-          <li>家電の点検・エアコンフィルターのお手入れ</li>
-          <li>小型家電の配達（使えるようにして帰る）</li>
-          <li>集金・見積書のお届け</li>
-          <li>お客様の暮らしを見て、気づく力をつける</li>
-        </ul>
-      </div>
-      <div class="step b">
-        <p class="t">🌟 お困りごと対応 <small>頼られる存在に</small></p>
-        <ul>
-          <li>「困った」に伺って、状態を確かめる</li>
-          <li>修理する。買い替えのときは見積りを出す</li>
-          <li>工事が必要なものは工事スタッフと連携</li>
-          <li>「ありがとう」を直接受け取る</li>
-        </ul>
-      </div>
+    <h2>仕事の流れ</h2>
+    <div class="flow">
+      <div><i>1</i><b>🚗 伺う</b><span>保証が切れる前の点検、エアコンの点検、お客様からのお電話、ひまわりスタッフがしてきた約束で伺います。</span></div>
+      <div><i>2</i><b>🔍 点検・お手入れ</b><span>家電の状態を確かめて、お手入れをします。直せるものは、その場で直します。</span></div>
+      <div><i>3</i><b>💡 使い方をお伝えする</b><span>便利な使い方や、ふだんのお手入れの仕方を説明します。</span></div>
+      <div><i>4</i><b>📝 提案する</b><span>古くなった家電があれば、買い替えの見積りを出して提案します。</span></div>
+      <div><i>5</i><b>📦 手配して、届ける</b><span>商品を発注して、配達や工事の日を決めます。小さい家電は自分で配達。工事は工事スタッフと連携します。</span></div>
+      <div><i>6</i><b>🔁 また伺う</b><span>そのあとも点検で顔を出します。ここから、次の相談につながります。</span></div>
     </div>
+    <p class="note">最初から1人で全部やるわけではありません。先輩と一緒に、点検から覚えていきます。</p>
 
     <h2>まず身につけること</h2>
     <div class="learn">
