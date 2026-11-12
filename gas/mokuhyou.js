@@ -3,7 +3,7 @@
  *
  * 日報と見込シートから、その月の成績をスタッフごとに集めてランクを付ける。
  *   工事スタッフ     … 工事売上（人数割り後の1人あたり）  4,000 / 6,000 千円
- *   サービススタッフ … 工事スタッフと同じ売上 4,000 / 6,000 千円（ステップ1・2は2026-11-12に廃止）
+ *   サービススタッフ … 売上 3,000 / 6,000 千円（細かいものの配達があるためKILOVOLTは3,000。ステップ1・2は2026-11-12に廃止）
  *   ひまわりスタッフ  … 点検 10件・アンケート 20件（1人あたり。ランクなし）
  *
  * ランクは「同じ単位が1,000倍ずつ上がる」形
@@ -19,6 +19,7 @@ var MK_RANKS = [
 /* 目標の数値。ここを直せば全部そろって変わる */
 var MK_GOAL = {
   kouji:   { step: 4000, top: 6000, unit: '千円' },   // 工事売上（1人あたり）
+  service: { step: 3000, top: 6000, unit: '千円' },   // サービスの売上
   himawari:{ tenken: 10, enquete: 20 }                // ひまわり（1人あたり）
 };
 
@@ -40,7 +41,7 @@ var MK_CONV = {
 var MK_ROLE = {
   '高山': 'kouji',
   '服部': 'kouji',
-  '伊藤': 'kouji'       // サービススタッフ（工事と同じ売上で見る）
+  '伊藤': 'service'     // サービススタッフ（売上 3,000/6,000）
 };
 
 /**
@@ -155,9 +156,9 @@ function 目標の達成状況(ym) {
     var t = byStaff[st];
     t.kouji = Math.round(t.kouji);
     // 役割が決まっている人はそのものさし。決まっていなければ売上→見込みの順で見る
-    var role = MK_ROLE[t.name] || 'kouji';
+    var role = MK_ROLE[t.name] || 'kouji';   // 'kouji' | 'service'
     var useKouji = true;
-    var goal = MK_GOAL.kouji;
+    var goal = (role === 'service') ? MK_GOAL.service : MK_GOAL.kouji;
 
     // ★役割の外でやった仕事も、換算して足す（やったことが消えないように）
     var base = useKouji ? t.kouji : t.mikomi;   // 本来のものさしの分
