@@ -3,7 +3,7 @@
  *
  * 日報と見込シートから、その月の成績をスタッフごとに集めてランクを付ける。
  *   工事スタッフ     … 工事売上（人数割り後の1人あたり）  4,000 / 6,000 千円
- *   サービス ステップ1 … 見込みの記録件数  20件（VOLTのみ。KILOVOLT以上はステップ2の売上で）
+ *   サービススタッフ … 工事スタッフと同じ売上 4,000 / 6,000 千円（ステップ1・2は2026-11-12に廃止）
  *   ひまわりスタッフ  … 点検 10件・アンケート 20件（1人あたり。ランクなし）
  *
  * ランクは「同じ単位が1,000倍ずつ上がる」形
@@ -19,32 +19,28 @@ var MK_RANKS = [
 /* 目標の数値。ここを直せば全部そろって変わる */
 var MK_GOAL = {
   kouji:   { step: 4000, top: 6000, unit: '千円' },   // 工事売上（1人あたり）
-  mikomi:  { step: 20,   top: 20,   unit: '件', voltOnly: true },   // 見込みの記録（ステップ1はVOLTだけ）
   himawari:{ tenken: 10, enquete: 20 }                // ひまわり（1人あたり）
 };
 
 /**
  * ものさしの換算。
  * 役割が違っても、やった仕事が消えないようにするための決まり。
- *   サービススタッフが工事を手伝った  … 工事売上 200千円 ＝ 見込 1件ぶん
  *   工事スタッフが見込を見つけた      … 見込 1件   ＝ 工事売上 50千円ぶん
  */
 var MK_CONV = {
-  koujiPerMikomi: 200,   // 千円。これだけ手伝えば見込1件と同じ
   mikomiToKouji:   50    // 千円。見込1件はこれだけの売上と同じ
 };
 
 /**
  * 誰を何で見るか。役割が決まっている人はここに書く。
  *   'kouji'  … 工事売上で見る（工事スタッフ・発生業務の担当）
- *   'mikomi' … 見込みの記録件数で見る（サービス ステップ1）
  *   'himawari' … 点検・アンケート（ランクなし）
- * ここに無い人は、工事売上があれば売上、無ければ見込み件数で自動判定する。
+ * ここに無い人は売上で見る（見込みは1件50千円で売上に足す）。
  */
 var MK_ROLE = {
   '高山': 'kouji',
   '服部': 'kouji',
-  '伊藤': 'mikomi'      // サービススタッフ。ステップ2に上がったら 'kouji' に変える
+  '伊藤': 'kouji'       // サービススタッフ（工事と同じ売上で見る）
 };
 
 /* 数値からランクを決める */
@@ -120,15 +116,15 @@ function 目標の達成状況(ym) {
     var t = byStaff[st];
     t.kouji = Math.round(t.kouji);
     // 役割が決まっている人はそのものさし。決まっていなければ売上→見込みの順で見る
-    var role = MK_ROLE[t.name] || (t.kouji > 0 ? 'kouji' : 'mikomi');
-    var useKouji = (role === 'kouji');
-    var goal = useKouji ? MK_GOAL.kouji : MK_GOAL.mikomi;
+    var role = MK_ROLE[t.name] || 'kouji';
+    var useKouji = true;
+    var goal = MK_GOAL.kouji;
 
     // ★役割の外でやった仕事も、換算して足す（やったことが消えないように）
     var base = useKouji ? t.kouji : t.mikomi;   // 本来のものさしの分
     var add  = useKouji
       ? t.mikomi * MK_CONV.mikomiToKouji                       // 工事の人が見つけた見込 → 売上に換算
-      : Math.floor(t.kouji / MK_CONV.koujiPerMikomi);          // サービスの人の工事手伝い → 件数に換算
+      : 0;
     var val = base + add;
     var rk = mkRank_(val, goal);
     var nx = mkNext_(val, goal);
@@ -138,15 +134,14 @@ function 目標の達成状況(ym) {
       kouji: t.kouji,
       mikomi: t.mikomi,
       tenken: t.tenken,
-      monosashi: useKouji ? '工事売上' : '見込みの記録',
+      monosashi: '売上',
       value: val,
       base: base,                 // 本来のものさしぶん
       add: add,                   // 役割の外でやった分（換算後）
       addFrom: useKouji ? t.mikomi : t.kouji,   // 換算のもとの数
       addNote: !add ? '' : (useKouji
         ? '見込み' + t.mikomi + '件を換算（1件＝' + MK_CONV.mikomiToKouji + '千円）'
-        : '工事の手伝い' + t.kouji.toLocaleString() + '千円を換算（' +
-          MK_CONV.koujiPerMikomi + '千円＝1件）'),
+        : ''),
       unit: goal.unit,
       step: goal.step,
       top: goal.top,
