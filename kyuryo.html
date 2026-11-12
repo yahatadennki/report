@@ -69,7 +69,7 @@
     box-shadow:0 2px 8px rgba(0,0,0,.05);border-left:8px solid var(--line)}
   .rank.r1{border-left-color:var(--volt)} .rank.r2{border-left-color:var(--kilo)} .rank.r3{border-left-color:var(--mega)}
   .rank .nm{font-size:19px;font-weight:800;letter-spacing:.04em}
-  .rank.r1 .nm{color:var(--volt)} .rank.r2 .nm{color:var(--kilo)} .rank.r3 .nm{color:var(--mega)}
+  .rank.r1 .nm{color:var(--volt)} .rank.r2 .nm{color:var(--kilo)} .rank.r3 .nm{color:var(--mega)} .rank.r4{border-left-color:#d6336c} .rank.r4 .nm{color:#d6336c}
   .rank .cond{font-size:13.5px;color:var(--soft);margin-top:2px}
 
   .vs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
@@ -87,7 +87,7 @@
   table.pay thead th{background:#f3ece2;font-size:12px;color:var(--soft)}
   @media (prefers-color-scheme:dark){ table.pay thead th{background:#2e2722;color:#cbbfb3} }
   table.pay td.rk{font-weight:800;font-size:14px;text-align:left}
-  table.pay tr.v td.rk{color:var(--volt)} table.pay tr.k td.rk{color:var(--kilo)} table.pay tr.m td.rk{color:var(--mega)}
+  table.pay tr.v td.rk{color:var(--volt)} table.pay tr.k td.rk{color:var(--kilo)} table.pay tr.m td.rk{color:var(--mega)} table.pay tr.g td.rk{color:#d6336c}
   table.pay td.sum{font-weight:800;font-size:15px}
   table.pay td.lic{white-space:normal;font-size:12px;text-align:left;min-width:150px}
   .rules{background:var(--card);border-radius:18px;padding:16px 20px;margin:16px 0;
@@ -181,6 +181,8 @@
     <div class="cond">売上 4,000千円以上（サービスは3,000千円以上）</div></div>
   <div class="rank r3"><div class="nm">⚡⚡⚡ MEGAVOLT</div>
     <div class="cond">売上 6,000千円以上</div></div>
+  <div class="rank r4"><div class="nm">⚡⚡⚡⚡ GIGAVOLT</div>
+    <div class="cond">サービスのみ　売上 9,000千円以上</div></div>
 </div>
 
 <p class="sub">ステージが上がると、<b>基本給が上がります。</b><br>
@@ -215,6 +217,8 @@
       <td>260,000</td><td>20,000</td><td>20,000</td><td class="sum">300,000</td></tr>
     <tr class="m"><td class="rk">⚡⚡⚡ MEGAVOLT</td><td>6,000千円以上</td><td class="lic">家電製品アドバイザー</td>
       <td>320,000</td><td>30,000</td><td>20,000</td><td class="sum">370,000</td></tr>
+    <tr class="g"><td class="rk">⚡⚡⚡⚡ GIGAVOLT</td><td>9,000千円以上</td><td class="lic">家電製品アドバイザー</td>
+      <td>440,000</td><td>50,000</td><td>20,000</td><td class="sum">510,000</td></tr>
   </tbody>
 </table>
 </div>
