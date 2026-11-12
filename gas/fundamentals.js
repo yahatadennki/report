@@ -25,17 +25,30 @@ function fundaJson_() {
   try {
     var h1 = fetchTFCached_('USD/JPY', '1h');
     out.price = h1.closes[h1.closes.length - 1];
+    out.macd = fundaMacd_(h1.closes);
   } catch (e) {}
   // ほかの通貨ペア（funda_pairs.js）。現在値は表示用
   try {
     out.pairs = fundaCached_('FUNDA_PAIRS_V1', 3 * 3600, fundaPairs_);
     [['EURJPY', 'EUR/JPY'], ['EURUSD', 'EUR/USD'], ['GBPUSD', 'GBP/USD']].forEach(function(x) {
       if (!out.pairs[x[0]]) return;
-      try { var c = fetchTFCached_(x[1], '1h'); out.pairs[x[0]].price = c.closes[c.closes.length - 1]; } catch (e) {}
+      try { var c = fetchTFCached_(x[1], '1h'); out.pairs[x[0]].price = c.closes[c.closes.length - 1]; out.pairs[x[0]].macd = fundaMacd_(c.closes); } catch (e) {}
     });
   } catch (e) {}
   try { var ai = fundaAiForApp_(); if (ai) out.ai = ai; } catch (e) {}   // AIの読み（お試し期間中だけ。funda_ai.js）
   return JSON.stringify(out);
+}
+
+// 1時間足のMACD(12,26,9)。確定した足だけで見る（最後の1本は作りかけなので外す）
+//   dir：+1＝MACDがシグナルより上（ゴールデンクロス後）／−1＝下（デッドクロス後）
+//   bars：クロスした足から数えて何本たったか（1＝直前の確定足でクロス）
+function fundaMacd_(closes) {
+  var c = closes.slice(0, -1), m = macd_(c), n = c.length - 1;
+  var d = function(i) { return (m.line[i] == null || m.sig[i] == null) ? 0 : (m.line[i] > m.sig[i] ? 1 : -1); };
+  var dir = d(n);
+  if (!dir) return null;
+  for (var i = n; i > 0; i--) if (d(i - 1) !== dir) return d(i - 1) ? { dir: dir, bars: n - i + 1 } : null;
+  return null;
 }
 
 // 取れたら覚えておき、取れなかった時は前回の値を返す
