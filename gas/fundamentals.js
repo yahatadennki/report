@@ -41,13 +41,14 @@ function fundaJson_() {
 
 // 1時間足のMACD(12,26,9)。確定した足だけで見る（最後の1本は作りかけなので外す）
 //   dir：+1＝MACDがシグナルより上（ゴールデンクロス後）／−1＝下（デッドクロス後）
+//   gap：MACD − シグナル（2本の線の開き。重なった時が0。値段の単位）
 //   bars：クロスした足から数えて何本たったか（1＝直前の確定足でクロス）
 function fundaMacd_(closes) {
   var c = closes.slice(0, -1), m = macd_(c), n = c.length - 1;
   var d = function(i) { return (m.line[i] == null || m.sig[i] == null) ? 0 : (m.line[i] > m.sig[i] ? 1 : -1); };
   var dir = d(n);
   if (!dir) return null;
-  for (var i = n; i > 0; i--) if (d(i - 1) !== dir) return d(i - 1) ? { dir: dir, bars: n - i + 1 } : null;
+  for (var i = n; i > 0; i--) if (d(i - 1) !== dir) return d(i - 1) ? { dir: dir, bars: n - i + 1, gap: m.line[n] - m.sig[n] } : null;
   return null;
 }
 
