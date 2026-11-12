@@ -3,7 +3,7 @@
  *
  * 日報と見込シートから、その月の成績をスタッフごとに集めてランクを付ける。
  *   工事スタッフ     … 工事売上（人数割り後の1人あたり）  4,000 / 6,000 千円
- *   サービススタッフ … 売上 3,000 / 5,000 / 7,000 / 9,000 千円（細かいものの配達があるため。GIGAVOLT・TERAVOLTはサービスだけ。ステップ1・2は2026-11-12に廃止）
+ *   サービススタッフ … 売上 3,000 / 6,000 / 9,000 千円（細かいものの配達があるため。GIGAVOLTはサービスだけ。ステップ1・2は2026-11-12に廃止）
  *   ひまわりスタッフ  … 点検 10件・アンケート 20件（1人あたり。ランクなし）
  *
  * ランクは「同じ単位が1,000倍ずつ上がる」形
@@ -14,14 +14,13 @@ var MK_RANKS = [
   { key: 'VOLT',     name: 'VOLT',     mark: '⚡',   color: '#ffb340' },
   { key: 'KILOVOLT', name: 'KILOVOLT', mark: '⚡⚡',  color: '#7bb4e8' },
   { key: 'MEGAVOLT', name: 'MEGAVOLT', mark: '⚡⚡⚡', color: '#bf94e8' },
-  { key: 'GIGAVOLT', name: 'GIGAVOLT', mark: '⚡⚡⚡⚡', color: '#f07fa8' },   // サービスのみ
-  { key: 'TERAVOLT', name: 'TERAVOLT', mark: '⚡⚡⚡⚡⚡', color: '#3cc6b4' }   // サービスのみ
+  { key: 'GIGAVOLT', name: 'GIGAVOLT', mark: '⚡⚡⚡⚡', color: '#f07fa8' }   // サービスのみ
 ];
 
 /* 目標の数値。ここを直せば全部そろって変わる */
 var MK_GOAL = {
   kouji:   { step: 4000, top: 6000, unit: '千円' },   // 工事売上（1人あたり）
-  service: { step: 3000, top: 9000, levels: [3000, 5000, 7000, 9000], unit: '千円' },   // サービスの売上
+  service: { step: 3000, top: 9000, levels: [3000, 6000, 9000], unit: '千円' },   // サービスの売上
   himawari:{ tenken: 10, enquete: 20 }                // ひまわり（1人あたり）
 };
 
@@ -43,7 +42,7 @@ var MK_CONV = {
 var MK_ROLE = {
   '高山': 'kouji',
   '服部': 'kouji',
-  '伊藤': 'service'     // サービススタッフ（売上 3,000/5,000/7,000/9,000）
+  '伊藤': 'service'     // サービススタッフ（売上 3,000/6,000/9,000）
 };
 
 /**
@@ -204,7 +203,7 @@ function 目標の達成状況(ym) {
   });
 
   /* 上の段の人から並べる。同じ段なら数字の大きい順 */
-  var ordRank = { TERAVOLT: 0, GIGAVOLT: 1, MEGAVOLT: 2, KILOVOLT: 3, VOLT: 4 };
+  var ordRank = { GIGAVOLT: 0, MEGAVOLT: 1, KILOVOLT: 2, VOLT: 3 };
   staff.sort(function(a, b) {
     if (ordRank[a.rank] !== ordRank[b.rank]) return ordRank[a.rank] - ordRank[b.rank];
     return b.pct - a.pct;
