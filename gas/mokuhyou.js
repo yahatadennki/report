@@ -3,7 +3,7 @@
  *
  * 日報と見込シートから、その月の成績をスタッフごとに集めてランクを付ける。
  *   工事スタッフ     … 工事売上（人数割り後の1人あたり）  4,000 / 6,000 千円
- *   サービススタッフ … 売上 3,000 / 5,000 千円（細かいものの配達があるため。ステップ1・2は2026-11-12に廃止）
+ *   サービススタッフ … 売上 3,000 / 5,000 / 7,000 / 9,000 千円（細かいものの配達があるため。GIGAVOLT・TERAVOLTはサービスだけ。ステップ1・2は2026-11-12に廃止）
  *   ひまわりスタッフ  … 点検 10件・アンケート 20件（1人あたり。ランクなし）
  *
  * ランクは「同じ単位が1,000倍ずつ上がる」形
@@ -13,13 +13,15 @@
 var MK_RANKS = [
   { key: 'VOLT',     name: 'VOLT',     mark: '⚡',   color: '#ffb340' },
   { key: 'KILOVOLT', name: 'KILOVOLT', mark: '⚡⚡',  color: '#7bb4e8' },
-  { key: 'MEGAVOLT', name: 'MEGAVOLT', mark: '⚡⚡⚡', color: '#bf94e8' }
+  { key: 'MEGAVOLT', name: 'MEGAVOLT', mark: '⚡⚡⚡', color: '#bf94e8' },
+  { key: 'GIGAVOLT', name: 'GIGAVOLT', mark: '⚡⚡⚡⚡', color: '#f07fa8' },   // サービスのみ
+  { key: 'TERAVOLT', name: 'TERAVOLT', mark: '⚡⚡⚡⚡⚡', color: '#3cc6b4' }   // サービスのみ
 ];
 
 /* 目標の数値。ここを直せば全部そろって変わる */
 var MK_GOAL = {
   kouji:   { step: 4000, top: 6000, unit: '千円' },   // 工事売上（1人あたり）
-  service: { step: 3000, top: 5000, unit: '千円' },   // サービスの売上
+  service: { step: 3000, top: 9000, levels: [3000, 5000, 7000, 9000], unit: '千円' },   // サービスの売上
   himawari:{ tenken: 10, enquete: 20 }                // ひまわり（1人あたり）
 };
 
@@ -41,7 +43,7 @@ var MK_CONV = {
 var MK_ROLE = {
   '高山': 'kouji',
   '服部': 'kouji',
-  '伊藤': 'service'     // サービススタッフ（売上 3,000/5,000）
+  '伊藤': 'service'     // サービススタッフ（売上 3,000/5,000/7,000/9,000）
 };
 
 /**
@@ -79,20 +81,23 @@ function mkAlpha_(ym) {
   return out;
 }
 
+/* 段の基準（KILOVOLTから上）。levels が無ければ step・top の2段 */
+function mkLevels_(goal) { return goal.levels || [goal.step, goal.top]; }
+
 /* 数値からランクを決める */
 function mkRank_(val, goal) {
-  if (goal.voltOnly) return MK_RANKS[0];
-  if (val >= goal.top)  return MK_RANKS[2];
-  if (val >= goal.step) return MK_RANKS[1];
-  return MK_RANKS[0];
+  var lv = mkLevels_(goal), i = 0;
+  while (i < lv.length && val >= lv[i]) i++;
+  return MK_RANKS[i];
 }
 
 /* 次の段まであといくら */
 function mkNext_(val, goal) {
-  if (goal.voltOnly) return val >= goal.step ? { target: null, rest: 0 } : { target: goal.step, rest: goal.step - val };
-  if (val >= goal.top)  return { target: null, rest: 0 };
-  if (val >= goal.step) return { target: goal.top,  rest: goal.top  - val };
-  return                       { target: goal.step, rest: goal.step - val };
+  var lv = mkLevels_(goal);
+  for (var i = 0; i < lv.length; i++) {
+    if (val < lv[i]) return { target: lv[i], rest: lv[i] - val, rank: MK_RANKS[i + 1].name };
+  }
+  return { target: null, rest: 0, rank: null };
 }
 
 /* 「2026-08」形式。省略なら今月 */
@@ -190,6 +195,8 @@ function 目標の達成状況(ym) {
       color: rk.color,
       voltOnly: !!goal.voltOnly,
       nextTarget: nx.target,
+      nextRank: nx.rank,
+      levels: mkLevels_(goal),
       nextRest: nx.rest,
       pct: Math.min(100, Math.round(val / goal.top * 100)),
       alpha: alpha[t.name] || null      // +ALPHA { sales, n, pay, list }
@@ -197,7 +204,7 @@ function 目標の達成状況(ym) {
   });
 
   /* 上の段の人から並べる。同じ段なら数字の大きい順 */
-  var ordRank = { MEGAVOLT: 0, KILOVOLT: 1, VOLT: 2 };
+  var ordRank = { TERAVOLT: 0, GIGAVOLT: 1, MEGAVOLT: 2, KILOVOLT: 3, VOLT: 4 };
   staff.sort(function(a, b) {
     if (ordRank[a.rank] !== ordRank[b.rank]) return ordRank[a.rank] - ordRank[b.rank];
     return b.pct - a.pct;
