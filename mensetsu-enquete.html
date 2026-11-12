@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>面接アンケート｜ヤハタ電機商会</title>
+<style>
+:root{--ink:#1c2530;--soft:#55636f;--line:#9aa8b4;--accent:#c25e00;--bg:#fff8ee;--paper:#f4f7fa}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink)}
+body{font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP","Meiryo",sans-serif;line-height:1.5;padding:16px}
+.sheet{max-width:760px;margin:0 auto;background:#fff;border-radius:14px;padding:20px 26px 22px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.head{display:flex;align-items:flex-end;justify-content:space-between;border-bottom:3px solid var(--accent);padding-bottom:8px;margin-bottom:6px}
+.head h1{margin:0;font-size:22px}
+.head h1 span{font-size:12px;color:var(--soft);display:block;font-weight:400;letter-spacing:.15em}
+.head .d{font-size:13px}
+.lead{margin:8px 0 10px;font-size:12.5px;color:var(--soft)}
+.q{margin:0 0 9px}
+.q .t{font-weight:700;font-size:14px;margin:0 0 4px}
+.q .t i{font-style:normal;display:inline-block;min-width:22px;height:22px;line-height:22px;text-align:center;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;margin-right:6px}
+.row{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13.5px;padding-left:28px}
+.row label{white-space:nowrap}
+.box{display:inline-block;width:13px;height:13px;border:1.5px solid var(--ink);border-radius:3px;vertical-align:-1px;margin-right:4px}
+.fill{display:inline-block;border-bottom:1px solid var(--line);min-width:70px}
+.name{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;padding-left:28px;font-size:13.5px}
+.name div{border-bottom:1px solid var(--line);padding:6px 0 2px}
+.name small{color:var(--soft);font-size:11px;margin-right:6px}
+.lines{margin-left:28px}
+.lines div{border-bottom:1px solid var(--line);height:26px}
+.days span{display:inline-block;width:26px;height:26px;line-height:24px;text-align:center;border:1.5px solid var(--line);border-radius:50%;margin-right:4px;font-size:13px}
+.thanks{margin:10px 0 0;text-align:center;font-size:13px;color:var(--accent);font-weight:700}
+.pbtn{display:block;margin:14px auto;padding:9px 22px;border:0;border-radius:24px;background:var(--accent);color:#fff;font-size:14px;cursor:pointer}
+@media (max-width:560px){.sheet{padding:16px 14px}.name{grid-template-columns:1fr}}
+@page{size:A4 portrait;margin:10mm}
+@media print{html,body{background:#fff;padding:0}.sheet{box-shadow:none;max-width:none;border-radius:0;padding:0}.pbtn{display:none}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="head">
+    <h1><span>ヤハタ電機商会</span>面接アンケート</h1>
+    <div class="d">記入日　　　年　　月　　日</div>
+  </div>
+  <p class="lead">お仕事の条件などは、こちらに書いていただければ大丈夫です。面接では、あなたご自身のお話をゆっくり聞かせてください。<br>わかるところだけで構いません。あてはまるものに ✓ をつけてください。</p>
+
+  <div class="q"><p class="t"><i>1</i>お名前・ご連絡先</p>
+    <div class="name"><div><small>ふりがな</small></div><div><small>電話番号</small></div><div><small>お名前</small></div><div><small>メール</small></div></div>
+  </div>
+
+  <div class="q"><p class="t"><i>2</i>希望するお仕事（いくつでも）</p>
+    <div class="row"><label><span class="box"></span>工事</label><label><span class="box"></span>サービス</label><label><span class="box"></span>ひまわり</label><label><span class="box"></span>事務</label><label><span class="box"></span>まだ決めていない</label></div>
+  </div>
+
+  <div class="q"><p class="t"><i>3</i>働き方</p>
+    <div class="row"><label><span class="box"></span>フルタイム</label><label><span class="box"></span>パート</label><label>働きはじめられる日　<span class="fill" style="min-width:120px">　　月　　日ごろ</span></label></div>
+    <div class="row days" style="margin-top:5px">働ける曜日に○　<span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span><span>日</span>　時間　<span class="fill" style="min-width:110px;border:0;border-bottom:1px solid var(--line);border-radius:0;width:auto">　　時 〜 　　時</span></div>
+  </div>
+
+  <div class="q"><p class="t"><i>4</i>通勤と運転</p>
+    <div class="row"><label><span class="box"></span>車</label><label><span class="box"></span>バイク</label><label><span class="box"></span>自転車</label><label><span class="box"></span>その他</label><label>片道 約<span class="fill" style="min-width:40px"></span>分</label></div>
+    <div class="row" style="margin-top:3px">運転免許　<label><span class="box"></span>普通（AT限定）</label><label><span class="box"></span>普通（MT）</label><label><span class="box"></span>準中型以上</label><label><span class="box"></span>なし</label></div>
+  </div>
+
+  <div class="q"><p class="t"><i>5</i>持っている資格</p>
+    <div class="row"><label><span class="box"></span>第二種電気工事士</label><label><span class="box"></span>第一種電気工事士</label><label><span class="box"></span>家電製品アドバイザー</label><label>その他<span class="fill" style="min-width:150px"></span></label></div>
+  </div>
+
+  <div class="q"><p class="t"><i>6</i>できること・やったことがあること</p>
+    <div class="row"><label><span class="box"></span>パソコンで文字を打つ</label><label><span class="box"></span>エクセル</label><label><span class="box"></span>スマホで写真・LINE</label><label><span class="box"></span>電話の応対</label><label><span class="box"></span>接客</label><label><span class="box"></span>電動ドリルなどの工具</label><label><span class="box"></span>脚立に乗っての作業</label><label><span class="box"></span>重いものを2人で運ぶ</label></div>
+  </div>
+
+  <div class="q"><p class="t"><i>7</i>これまでのお仕事（アルバイトも）</p>
+    <div class="lines"><div></div><div></div></div>
+  </div>
+
+  <div class="q"><p class="t"><i>8</i>好きなこと・得意なこと</p>
+    <div class="lines"><div></div></div>
+  </div>
+
+  <div class="q"><p class="t"><i>9</i>ヤハタデンキのことは</p>
+    <div class="row"><label><span class="box"></span>お店の前を通って</label><label><span class="box"></span>チラシ</label><label><span class="box"></span>知り合いから</label><label><span class="box"></span>求人を見て</label><label><span class="box"></span>はじめて知った</label></div>
+  </div>
+
+  <div class="q"><p class="t"><i>10</i>聞いておきたいこと・気になること</p>
+    <div class="lines"><div></div><div></div></div>
+  </div>
+
+  <p class="thanks">ありがとうございました。このあとの面接も、どうぞ気楽にお話しください。</p>
+</div>
+<button class="pbtn" onclick="window.print()">🖨️ 印刷する</button>
+</body>
+</html>
