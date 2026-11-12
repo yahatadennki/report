@@ -143,7 +143,7 @@
         <span class="num next"><span><span class="lbl">その先</span><span class="v">6,000</span></span><span class="u">千円/月</span></span>
       </div>
       <p class="why">2人で行った工事は<b>半分ずつ</b>で数えます。金額を狙うのではなく、丁寧な工事と取扱説明を積み重ねた結果として見る数字です。</p>
-      <p class="why" style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)">✨ <b>+ALPHA</b>　自分で販売したら、ランクとは別に、<b>成約した見積の合計金額（税込）の3%</b>を手当にします。見積の担当者を自分にしておけば、自動で数えます。</p>
+      <p class="why" style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)">✨ <b>+ALPHA</b>　自分で販売したら、ランクとは別に、<b>成約した見積の合計金額（税込）</b>から手当を出します。<b>VOLTは1%、KILOVOLT以上は5%</b>（給与のランクで決まります）。見積の担当者を自分にしておけば、自動で数えます。</p>
     </div>
   </div>
 
@@ -287,7 +287,7 @@ function mkRender(data) {
         <div class="bar"><i style="width:${s.pct}%;background:${s.color}"></i></div>
         <p class="card__rest">${rest}</p>
         ${s.add ? `<p class="card__conv">うち <b>${s.add.toLocaleString()}</b> ${s.unit} は ${s.addNote}</p>` : ''}
-        ${s.alpha ? `<p class="card__conv" style="color:#b8860b">✨ +ALPHA　販売 <b>${s.alpha.n}</b> 件・<b>${s.alpha.sales.toLocaleString()}</b> 円 → 手当 <b>${s.alpha.pay.toLocaleString()}</b> 円</p>` : ''}
+        ${s.alpha ? `<p class="card__conv" style="color:#b8860b">✨ +ALPHA　販売 <b>${s.alpha.n}</b> 件・<b>${s.alpha.sales.toLocaleString()}</b> 円 × ${Math.round(s.alpha.rate*100)}%（${s.alpha.payRank}）→ 手当 <b>${s.alpha.pay.toLocaleString()}</b> 円</p>` : ''}
         <p class="card__sub">訪問 ${s.count} 件${s.tenken ? '／点検 ' + s.tenken + ' 件' : ''}</p>
       </div>`;
   }).join('');

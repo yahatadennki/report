@@ -46,9 +46,16 @@ var MK_ROLE = {
 /**
  * +ALPHA：工事スタッフが自分で販売したとき（ランクとは別の手当）
  *   商品見積の台帳（入力シート）で、担当者が工事スタッフ・成約日がその月の見積の
- *   合計金額（税込）× rate を手当にする。台帳は読むだけ（tkEstimates_ を使う）。
+ *   合計金額（税込）× 率 を手当にする。台帳は読むだけ（tkEstimates_ を使う）。
+ *   率は給与のランク（4月・10月に判定したもの）で決まる：VOLT 1%／KILOVOLT以上 5%
+ *   ★判定でランクが変わったら payRank を直す
  */
-var MK_ALPHA = { rate: 0.03, staff: ['服部'] };
+var MK_ALPHA = {
+  staff: ['服部'],
+  rates: { VOLT: 0.01, KILOVOLT: 0.05, MEGAVOLT: 0.05 },
+  payRank: { '服部': 'VOLT' }
+};
+function mkAlphaRate_(name) { return MK_ALPHA.rates[MK_ALPHA.payRank[name] || 'VOLT']; }
 
 function mkAlpha_(ym) {
   var out = {};
@@ -64,7 +71,9 @@ function mkAlpha_(ym) {
     out[who].list.push({ cust: e.cust, total: e.total, date: e.seiyaku });
   });
   Object.keys(out).forEach(function (k) {
-    out[k].pay = Math.floor(out[k].sales * MK_ALPHA.rate);
+    out[k].payRank = MK_ALPHA.payRank[k] || 'VOLT';
+    out[k].rate = mkAlphaRate_(k);
+    out[k].pay = Math.floor(out[k].sales * out[k].rate);
   });
   return out;
 }
@@ -193,7 +202,7 @@ function 目標の達成状況(ym) {
     return b.pct - a.pct;
   });
 
-  return { ym: ym, goal: MK_GOAL, alphaRate: MK_ALPHA.rate, staff: staff };
+  return { ym: ym, goal: MK_GOAL, alphaRates: MK_ALPHA.rates, staff: staff };
 }
 
 /* 画面用（mokuhyou.html から google.script.run で呼ぶ） */
