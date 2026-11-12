@@ -43,6 +43,32 @@ var MK_ROLE = {
   '伊藤': 'kouji'       // サービススタッフ（工事と同じ売上で見る）
 };
 
+/**
+ * +ALPHA：工事スタッフが自分で販売したとき（ランクとは別の手当）
+ *   商品見積の台帳（入力シート）で、担当者が工事スタッフ・成約日がその月の見積の
+ *   合計金額（税込）× rate を手当にする。台帳は読むだけ（tkEstimates_ を使う）。
+ */
+var MK_ALPHA = { rate: 0.03, staff: ['服部'] };
+
+function mkAlpha_(ym) {
+  var out = {};
+  var ests = [];
+  try { ests = tkEstimates_(); } catch (e) { return out; }
+  ests.forEach(function (e) {
+    if (!e.seiyaku || e.seiyaku.slice(0, 7) !== ym) return;
+    var who = MK_ALPHA.staff.filter(function (n) { return e.tan.indexOf(n) === 0; })[0];
+    if (!who) return;
+    if (!out[who]) out[who] = { sales: 0, n: 0, list: [] };
+    out[who].sales += e.total;
+    out[who].n++;
+    out[who].list.push({ cust: e.cust, total: e.total, date: e.seiyaku });
+  });
+  Object.keys(out).forEach(function (k) {
+    out[k].pay = Math.floor(out[k].sales * MK_ALPHA.rate);
+  });
+  return out;
+}
+
 /* 数値からランクを決める */
 function mkRank_(val, goal) {
   if (goal.voltOnly) return MK_RANKS[0];
@@ -111,7 +137,11 @@ function 目標の達成状況(ym) {
     });
   }
 
-  /* ランクを付ける。工事売上がある人は売上、無ければ見込み件数で見る */
+  /* +ALPHA（工事スタッフの販売）。日報が無くても出す */
+  var alpha = mkAlpha_(ym);
+  Object.keys(alpha).forEach(function (k) { pick(k); });
+
+  /* ランクを付ける。全員売上で見る（見込みは1件50千円で足す） */
   var staff = order.map(function(st) {
     var t = byStaff[st];
     t.kouji = Math.round(t.kouji);
@@ -151,7 +181,8 @@ function 目標の達成状況(ym) {
       voltOnly: !!goal.voltOnly,
       nextTarget: nx.target,
       nextRest: nx.rest,
-      pct: Math.min(100, Math.round(val / goal.top * 100))
+      pct: Math.min(100, Math.round(val / goal.top * 100)),
+      alpha: alpha[t.name] || null      // +ALPHA { sales, n, pay, list }
     };
   });
 
@@ -162,7 +193,7 @@ function 目標の達成状況(ym) {
     return b.pct - a.pct;
   });
 
-  return { ym: ym, goal: MK_GOAL, staff: staff };
+  return { ym: ym, goal: MK_GOAL, alphaRate: MK_ALPHA.rate, staff: staff };
 }
 
 /* 画面用（mokuhyou.html から google.script.run で呼ぶ） */
