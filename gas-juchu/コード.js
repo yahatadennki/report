@@ -307,6 +307,33 @@ function authorize() {
 
 // ウェブアプリとしてHTMLを配信
 function doGet(e) {
+  // 高山・伊藤・服部のカレンダー予定（添付の見積書つき）。集計用・読むだけ
+  if (e && e.parameter && e.parameter.action === 'calsum' && e.parameter.pin === '7860') {
+    const cals = [['高山', 'yawata51@gmail.com'], ['伊藤', 'yahata.itou@gmail.com'], ['服部', 'yahata.hattori@gmail.com']];
+    const from = e.parameter.from + 'T00:00:00+09:00', to = e.parameter.to + 'T23:59:59+09:00';
+    const out = [];
+    cals.forEach(function(c) {
+      let token = '';
+      do {
+        let res;
+        try {
+          res = Calendar.Events.list(c[1], { timeMin: from, timeMax: to, singleEvents: true, orderBy: 'startTime', maxResults: 250, pageToken: token || undefined });
+        } catch (err) { out.push({ staff: c[0], err: String(err) }); break; }
+        (res.items || []).forEach(function(ev) {
+          if (!ev.start || !ev.start.dateTime) return;   // 終日は除く
+          out.push({
+            staff: c[0],
+            date: ev.start.dateTime.slice(0, 10),
+            time: ev.start.dateTime.slice(11, 16),
+            title: ev.summary || '',
+            files: (ev.attachments || []).map(function(a) { return { title: a.title || '', id: a.fileId || '' }; })
+          });
+        });
+        token = res.nextPageToken;
+      } while (token);
+    });
+    return ContentService.createTextOutput(JSON.stringify(out)).setMimeType(ContentService.MimeType.JSON);
+  }
   // 直近の受注が、なぜカレンダーに入らなかったか調べる
   if (e && e.parameter && e.parameter.action === 'caldiag2') {
     const ss2 = SpreadsheetApp.getActiveSpreadsheet();

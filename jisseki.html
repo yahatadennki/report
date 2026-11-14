@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>実績 2026年10月〜11月｜ヤハタ電機商会</title>
+<style>
+  :root{--ink:#222;--soft:#777;--line:#ddd;--paper:#f6f4ef;--card:#fff;--accent:#7a1f2b}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo",system-ui,sans-serif;line-height:1.5}
+  .page{max-width:800px;margin:16px auto;background:var(--card);padding:22px 26px 18px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  .hd{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid var(--accent);padding-bottom:6px;margin-bottom:10px}
+  .hd h1{margin:0;font-size:21px}
+  .hd .sub{font-size:11px;color:var(--soft);text-align:right}
+  h2{font-size:13px;margin:12px 0 4px;padding-left:8px;border-left:4px solid var(--accent)}
+  .tw{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;min-width:520px}
+  col.c0{width:22%}
+  th,td{border:1px solid var(--line);padding:3px 6px;text-align:right}
+  tr:first-child th{background:#f1ece4;text-align:center;font-size:11.5px}
+  th:first-child{text-align:left;font-weight:600;background:#faf8f4}
+  .tot{background:#fbf3e6;font-weight:700}
+  tr.sum td,tr.sum th{font-weight:700;border-top:2px solid #bbb}
+  tr.ind th{padding-left:16px;font-weight:400;color:#555}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .two table{min-width:0}
+  .chart{width:100%;height:auto;display:block}
+  .legend{font-size:11px;color:#555;display:flex;gap:12px;justify-content:center;margin-top:-4px}
+  .legend i{display:inline-block;width:10px;height:10px;margin-right:4px;vertical-align:-1px}
+  .legend .u{color:var(--soft)}
+  ul.pt{margin:4px 0 0;padding-left:18px;font-size:12.5px}
+  ul.pt li{margin:0 0 3px}
+  .note{font-size:10.5px;color:var(--soft);margin-top:8px}
+  .print-btn{position:fixed;right:16px;bottom:16px;font-size:15px;font-weight:700;padding:12px 22px;border:none;border-radius:999px;background:var(--accent);color:#fff;box-shadow:0 3px 12px rgba(0,0,0,.25);cursor:pointer;font-family:inherit}
+  @media (max-width:640px){.two{grid-template-columns:1fr}.page{padding:16px}}
+  @media print{
+    @page{size:A4 portrait;margin:8mm}
+    body{background:#fff}
+    .page{box-shadow:none;margin:0;max-width:none;padding:0}
+    .print-btn,#pinGate{display:none!important}
+    table{font-size:10px;min-width:0}
+    th,td{padding:1px 5px}
+    h2{margin:9px 0 3px}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+  #pinGate{position:fixed;inset:0;z-index:9999;background:var(--paper);display:flex;align-items:center;justify-content:center;padding:20px}
+  #pinGate.hidden{display:none}
+  #pinGate .box{background:#fff;border-radius:14px;padding:28px;text-align:center;max-width:300px;width:100%;box-shadow:0 6px 24px rgba(0,0,0,.12)}
+  #pinGate input{font-size:24px;letter-spacing:.35em;text-align:center;padding:10px;width:160px;border:1px solid var(--line);border-radius:10px}
+  #pinGate button{margin-top:10px;font-size:15px;font-weight:700;padding:10px 28px;border:none;border-radius:8px;background:var(--accent);color:#fff}
+  #pinErr{color:#c33;font-size:12px;height:16px;margin-top:6px}
+  tr.mh th{background:var(--accent);color:#fff;text-align:left;font-size:12.5px}
+  .s{display:block;font-size:10px;color:var(--soft);font-weight:400}
+  col.c0{width:16%}
+</style>
+
+</head>
+<body>
+<div id="pinGate"><div class="box"><div style="font-size:32px">🔒</div><p style="font-weight:700;margin:8px 0 12px">実績</p>
+<input id="pinInput" type="tel" inputmode="numeric" maxlength="4" placeholder="••••" autocomplete="off"><div id="pinErr"></div>
+<button type="button" onclick="checkPin()">見る</button></div></div>
+
+<div class="page">
+  <div class="hd"><h1>実績　高山・伊藤・服部</h1><div class="sub">㈲ヤハタ電機商会<br>業務日報・カレンダー・見積台帳より（11/14時点）</div></div>
+
+  <div class="tw"><table>
+  <colgroup><col class="c0"><col><col><col><col><col><col></colgroup>
+  <tr><th></th><th>件数</th><th>販売金額<br>（成約）</th><th>工事配達<br>金額</th><th>見積件数</th><th>見積金額</th><th>成約率</th></tr>
+  <tr class="mh"><th colspan="7">10月</th></tr><tr><th>高山</th><td>152</td><td>8,758<span class="s">その場2件込</span></td><td>1,021</td><td>74</td><td>10,993</td><td>76%<span class="s">56/74</span></td></tr><tr><th>伊藤</th><td>121</td><td>478</td><td>1,091</td><td>2</td><td>138</td><td>100%<span class="s">2/2</span></td></tr><tr><th>服部</th><td>64</td><td>0</td><td>1,768</td><td>0</td><td>0</td><td>—</td></tr><tr class="mh"><th colspan="7">11月<small>（14日まで）</small></th></tr><tr><th>高山</th><td>88</td><td>2,646<span class="s">その場3件込</span></td><td>372</td><td>19</td><td>2,781</td><td>84%<span class="s">16/19</span></td></tr><tr><th>伊藤</th><td>46</td><td>327</td><td>353</td><td>4</td><td>327</td><td>100%<span class="s">4/4</span></td></tr><tr><th>服部</th><td>19</td><td>0</td><td>1,283</td><td>0</td><td>0</td><td>—</td></tr>
+  </table></div>
+
+  <p class="note">金額は千円。<b>件数</b>＝伊藤・服部は業務日報の件数、高山はカレンダーの訪問予定の数（当日急ぎ用・在庫確認など社内の予定は除く）。<b>販売金額</b>＝その月に成約した見積の合計（成約日か工事済の日で月を分ける）。その場販売は販売にも工事配達にも全額入れる。<b>工事配達金額</b>＝伊藤・服部は業務日報の一人あたり売上（写真のない工事は半額）、高山は見積の工事日・工事済の日にカレンダーで行った分を人数で割ったもの。<b>見積</b>＝その月に初めて作った見積（作った人＝台帳の担当）。<b>成約率</b>＝その月に作った見積のうち成約したもの。</p>
+</div>
+<button class="print-btn" onclick="window.print()">🖨️ 印刷する</button>
+<script>
+(function(){var KEY='yahataKeieiAuth_v1',PIN='7860';
+function reveal(){document.getElementById('pinGate').classList.add('hidden');}
+window.checkPin=function(){var v=(document.getElementById('pinInput').value||'').trim();
+ if(v===PIN){try{localStorage.setItem(KEY,'1')}catch(e){}reveal();}else document.getElementById('pinErr').textContent='PINが違います';};
+var ok=false;try{ok=localStorage.getItem(KEY)==='1'}catch(e){}
+if(ok)reveal();else document.getElementById('pinInput').addEventListener('keydown',function(e){if(e.key==='Enter')checkPin();});})();
+</script>
+</body>
+</html>
