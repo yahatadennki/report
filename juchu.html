@@ -277,7 +277,7 @@ listDiv.innerHTML = '';
 results.forEach(r => {
 const div = document.createElement('div');
 div.className = 'customer-search-result';
-div.innerHTML = '<div class="font-bold text-gray-800">' + (r.name || '') + '</div><div class="text-sm text-gray-600">' + (r.tel || '') + '</div><div class="text-sm text-gray-500">' + (r.address || '') + '</div>';
+div.innerHTML = '<div class="font-bold text-gray-800">' + (r.name || '') + '</div><div class="text-sm text-gray-600">' + custTels(r) + '</div><div class="text-sm text-gray-500">' + (r.address || '') + '</div>';
 div.onclick = function() { applyCustomer(r); hideCustomerModal(); };
 listDiv.appendChild(div);
 });
@@ -298,6 +298,12 @@ function onCustomerNameEdited() {
   if (now !== _kuMarkFor) selectedKuMark = '';
 }
 
+// 電話番号が複数あれば全部（「 / 」区切り）
+function custTels(c) {
+  const list = (c && c.telList && c.telList.length) ? c.telList : [c && c.tel];
+  return list.filter(Boolean).join(' / ');
+}
+
 function applyCustomer(customer) {
 // ☎電話連絡ONのままなら、上書きしてもマークを維持する
 selectedKuMark = kuMark(customer);   // カレンダー予定名に付けるため区の丸数字を覚えておく
@@ -305,7 +311,7 @@ _kuMarkFor = (customer.name || '').trim();   // この顧客名のときだけ�
 const name = customer.name || '';
 document.getElementById('顧客名').value = (phoneContactOn && !name.startsWith(PHONE_MARK)) ? PHONE_MARK + name : name;
 document.getElementById('住所text').value = customer.address || '';
-document.getElementById('電話番号').value = customer.tel || '';
+document.getElementById('電話番号').value = custTels(customer);
 document.getElementById('searchQuery').value = customer.tel || '';
 updateTimeEstimate();
 }
@@ -441,7 +447,7 @@ function onSearchInput() {
   box.innerHTML = _lastSearchResults.map(function(r, i) {
     return '<div class="customer-search-result" onclick="pickSearchResult(' + i + ')">' +
       '<div class="font-bold text-gray-800 text-sm">' + kuMark(r) + (r.name || '') + '</div>' +
-      '<div class="text-xs text-gray-500">' + (r.tel || '') + '　' + (r.address || '') + '</div></div>';
+      '<div class="text-xs text-gray-500">' + custTels(r) + '　' + (r.address || '') + '</div></div>';
   }).join('');
 }
 

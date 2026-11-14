@@ -386,6 +386,7 @@ function doGet(e) {
         name: String(r[1] || ''),
         kana: String(r[2] || ''),
         tel:  String(r[3] || ''),
+        telList: juchuTelList_(r),   // 電話番号1〜5（ハイフン付きのまま・重複なし）
         tels: [r[3], r[4], r[5], r[6], r[7]].map(function(t) { return String(t || '').replace(/[-\s]/g, ''); }).filter(String).join(','),
         address: String(r[15] || '') + String(r[16] || ''),
         ku: String(r[8] || '')        // I列「担当者」例：1区 角井 → 区番号の判定に使う
@@ -601,6 +602,16 @@ function normalizeKana(str) {
 // 顧客検索（全カナ形式対応、電話番号1〜5対応、カナ前方一致、住所1・住所2検索対応）
 // 顧客マスタは商品見積SS（本家）を直接参照（2026-07-19一本化。全アプリ共通）
 const CUSTOMER_MASTER_SS_ID = '1Pqb_DY3utvxKhTCIb4PJ0yNGra3hi1aSyFOHrydmuY0'; // 商品見積SS（本家・2026-07-19移設）
+// 顧客マスタの電話番号1〜5（D〜H列）を空・重複なしで並べる
+function juchuTelList_(r) {
+  const out = [];
+  [r[3], r[4], r[5], r[6], r[7]].forEach(function(t) {
+    const s = String(t || '').trim();
+    if (s && out.indexOf(s) < 0) out.push(s);
+  });
+  return out;
+}
+
 function searchCustomer(query) {
   const ss = SpreadsheetApp.openById(CUSTOMER_MASTER_SS_ID);
   const s = ss.getSheetByName("顧客マスタ") || ss.getSheetByName("顧客ﾏｽﾀ");
@@ -638,6 +649,7 @@ function searchCustomer(query) {
       const fullAddress = [d[i][15], d[i][16]].filter(a => String(a).trim() !== "").join(" ");
       results.push({
         tel: d[i][3],
+        telList: juchuTelList_(d[i]),
         name: d[i][1],
         address: fullAddress
       });
