@@ -33,7 +33,7 @@ csv(fs.readFileSync(S + 'ledger.csv', 'utf8')).slice(1).forEach(r => {
   const no = String(r[0] || '').trim();
   if (!no || r[8] === 'invoice') return;
   const date = ymd(r[1]), sokubai = r[8] === 'sokubai';
-  est[no] = { no, cust: nameKey(r[2]), total: yen(r[4]), tan: who(r[9]) || '空欄', made: ymd(r[22]) || date, koji: ymd(r[11]), sumi: ymd(r[21]),
+  est[no] = { no, cust: nameKey(r[2]), custName: String(r[2] || '').trim(), total: yen(r[4]), tan: who(r[9]) || '空欄', made: ymd(r[22]) || date, koji: ymd(r[11]), sumi: ymd(r[21]),
     seiyaku: ymd(r[23]) || ymd(r[21]) || ymd(r[11]) || (sokubai ? date : ''), sokubai };
   try { items[no] = JSON.parse(r[5] || '[]'); } catch (e) { items[no] = []; }
 });
@@ -72,6 +72,10 @@ const CATS = [
 ];
 const PHOTO_RULE_FROM = '2026-06';   // 写真つき日報が始まった月（写真なし工事の半額はここから）
 const COLORS = { 高山: '#7a1f2b', 伊藤: '#2f6fae', 服部: '#4a9e6e', 渡辺: '#c98a1b', 空欄: '#aaa' };
+
+// 見込（見込シートの件数・撮影者で数える。業務日報GAS action=mokuhyou の mikomi）
+const MK = JSON.parse(fs.readFileSync(S + 'mk.json', 'utf8'));
+const MIKOMI_FROM = '2026-08';   // 見込シートを使い始めた月
 
 const months = [];
 for (let d = new Date(2026, 10, 1); d >= new Date(2026, 1, 1); d.setMonth(d.getMonth() - 1))
@@ -158,6 +162,7 @@ function page(m) {
   const label = st => st === '空欄' ? '担当欄なし' : st;
   const trs = m.rows.map(r => '<tr><th><i class="dot" style="background:' + COLORS[r.st] + '"></i>' + label(r.st) + '</th>' +
     cell(r.visits == null ? null : r.visits, r.visits != null && r.visitsFrom === 'カレンダー' ? 'カレンダー' : '') +
+    cell(r.st === '空欄' || m.ym < MIKOMI_FROM ? null : ((MK[m.ym] || {})[r.st] || 0)) +
     cell(r.sales == null ? null : fmt(r.sales), r.soku ? 'その場' + r.soku + '件込' : '') +
     cell(r.kd == null ? null : fmt(r.kd), r.kdFrom === 'カレンダー' ? 'カレンダー' : '') +
     cell(r.estN) + cell(r.estSum == null ? null : fmt(r.estSum)) +
@@ -170,8 +175,8 @@ function page(m) {
   return `<section class="page" id="m${m.ym}">
   <div class="hd"><h1>実績　${y}年${Number(mo)}月${partial}</h1><div class="sub">㈲ヤハタ電機商会<br>業務日報・カレンダー・見積台帳より</div></div>
   <div class="tw"><table>
-  <colgroup><col class="c0"><col><col><col><col><col><col></colgroup>
-  <tr><th></th><th>件数</th><th>販売金額<br>（成約）</th><th>工事配達<br>金額</th><th>見積件数</th><th>見積金額</th><th>成約率</th></tr>
+  <colgroup><col class="c0"><col><col><col><col><col><col><col></colgroup>
+  <tr><th></th><th>件数</th><th>見込</th><th>販売金額<br>（成約）</th><th>工事配達<br>金額</th><th>見積件数</th><th>見積金額</th><th>成約率</th></tr>
   ${trs}
   </table></div>
   <h2>商品の台数（成約した見積）</h2>
@@ -179,16 +184,84 @@ function page(m) {
   <p class="note">${NOTE}</p>
 </section>`;
 }
-const NOTE = '金額は千円。<b>件数</b>＝業務日報の件数（日報が無い月の高山はカレンダーの訪問予定の数。社内の予定は除く）。<b>販売金額</b>＝その月に成約した見積の合計（成約日・工事済・工事日の順で月を分ける。成約の記録は8月から）。その場販売は販売にも工事配達にも全額入れる。<b>工事配達金額</b>＝業務日報の一人あたり売上（6月からは写真のない工事を半額、高山は全額）。日報が無い月の高山は、見積の工事日・工事済の日にカレンダーで行った分（添付の見積書かお客様名で照合）を、行った人数で割ったもの。<b>見積</b>＝その月に初めて作った見積（作った人＝台帳の担当）。<b>成約率</b>＝その月に作った見積のうち成約したもの。<b>商品の台数</b>＝その月に成約した見積の商品（作った人で色分け）。工事・部材・電球などは数えない。';
+const NOTE = '金額は千円。<b>件数</b>＝業務日報の件数（日報が無い月の高山はカレンダーの訪問予定の数。社内の予定は除く）。<b>見込</b>＝見込シートに写真で記録した件数（撮影者で数える。8月から）。<b>販売金額</b>＝その月に成約した見積の合計（成約日・工事済・工事日の順で月を分ける。成約の記録は8月から）。その場販売は販売にも工事配達にも全額入れる。<b>工事配達金額</b>＝業務日報の一人あたり売上（6月からは写真のない工事を半額、高山は全額）。日報が無い月の高山は、見積の工事日・工事済の日にカレンダーで行った分（添付の見積書かお客様名で照合）を、行った人数で割ったもの。<b>見積</b>＝その月に初めて作った見積（作った人＝台帳の担当）。<b>成約率</b>＝その月に作った見積のうち成約したもの。<b>商品の台数</b>＝その月に成約した見積の商品（作った人で色分け）。工事・部材・電球などは数えない。';
+
+// ── エアコンだけの1枚 ──
+const AIR_EXCL = /取付|取外|工事|移設|洗浄|クリーニング|リサイクル|カバー|配管|置台|架台|処分/;
+const air = [];   // エアコン本体の行（1行＝見積の1明細）
+E.forEach(x => (items[x.no] || []).forEach(it => {
+  const nm = String(it.name || '');
+  if (it.cls !== 'shohin' || it.isSubtotal || !/エアコン/.test(nm) || AIR_EXCL.test(nm)) return;
+  const model = String(it.note || '').trim();
+  const sm = model.match(/^CS-([A-Z]*)\d/);
+  const series = /床置/.test(nm) ? '床置き' : (sm && sm[1]) || (nm.match(/([A-Z]+)シリーズ/) || [])[1] || 'その他';
+  let kw = Number((nm.match(/\(([\d.]+)kW\)/) || [])[1]);
+  if (!kw) { const d = model.match(/^CS-[A-Z]*(\d)(\d)\d/); kw = d ? Number(d[1] + '.' + d[2]) : 0; }
+  air.push({ x, model, nm, series, kw, v200: /200V/.test(nm) || /\d2$/.test(model), qty: Number(it.qty) || 1, price: yen(it.price), teika: yen(it.teika) });
+}));
+const KW = [['〜2.5', k => k > 0 && k <= 2.5], ['2.8', k => k === 2.8], ['3.6', k => k === 3.6], ['4.0', k => k === 4], ['5.6', k => k === 5.6], ['6.3〜', k => k >= 6.3], ['不明', k => !k]];
+const SERIES_ORDER = ['J', 'XS', 'EX', 'X', 'LX', '床置き', 'その他'];
+function airPage() {
+  const won = air.filter(a => a.x.seiyaku && a.x.seiyaku >= SEIYAKU_FROM);
+  const sumQ = l => l.reduce((s, a) => s + a.qty, 0);
+  const avg = l => sumQ(l) ? fmt(l.reduce((s, a) => s + a.price * a.qty, 0) / sumQ(l) / 1000) : null;
+  const disc = l => { const t = l.filter(a => a.teika > 0); const q = sumQ(t); return q ? Math.round((1 - t.reduce((s, a) => s + a.price * a.qty, 0) / t.reduce((s, a) => s + a.teika * a.qty, 0)) * 100) + '%' : null; };
+  const staffs = ['高山', '伊藤', '空欄'];
+  // 月ごと
+  const airFrom = air.map(a => a.x.made).filter(Boolean).sort()[0].slice(0, 7);   // エアコンの見積が台帳に出てきた月から
+  const mrows = months.filter(ym => ym >= airFrom).map(ym => {
+    const made = air.filter(a => a.x.made.startsWith(ym));
+    const madeWon = made.filter(a => a.x.seiyaku);
+    const w = won.filter(a => a.x.seiyaku.startsWith(ym));
+    const ok = ym >= SEIYAKU_FROM;
+    return '<tr><th>' + Number(ym.slice(5)) + '月' + (UNTIL.startsWith(ym) ? '<span class="s">' + Number(UNTIL.slice(8)) + '日まで</span>' : '') + '</th>' +
+      cell(sumQ(made)) + cell(ok ? sumQ(w) : null) + cell(ok ? avg(w) : null) + cell(ok ? disc(w) : null) +
+      cell(ok ? sumQ(w.filter(a => a.v200)) : null) +
+      staffs.map(st => cell(ok ? sumQ(w.filter(a => a.x.tan === st)) : null)).join('') +
+      cell(ok && sumQ(made) ? Math.round(sumQ(madeWon) / sumQ(made) * 100) + '%' : null, ok && sumQ(made) ? sumQ(madeWon) + '/' + sumQ(made) : '') + '</tr>';
+  }).join('');
+  // シリーズ×能力（8月から成約したもの）
+  const ser = SERIES_ORDER.filter(s => won.some(a => a.series === s));
+  const srows = ser.map(s => {
+    const l = won.filter(a => a.series === s);
+    return '<tr><th>' + s + '</th>' + KW.map(([, f]) => { const q = sumQ(l.filter(a => f(a.kw))); return cell(q || ''); }).join('') + cell('<b>' + sumQ(l) + '</b>') + cell(avg(l)) + '</tr>';
+  }).join('') + '<tr class="sum"><th>計</th>' + KW.map(([, f]) => cell(sumQ(won.filter(a => f(a.kw))) || '')).join('') + cell('<b>' + sumQ(won) + '</b>') + cell(avg(won)) + '</tr>';
+  // 一覧
+  const lrows = won.slice().sort((a, b) => b.x.seiyaku.localeCompare(a.x.seiyaku)).map(a =>
+    '<tr><td class="l">' + a.x.seiyaku.slice(5).replace('-', '/') + '</td><td class="l">' + a.x.custName + '</td><td class="l">' + (a.model || a.nm) + '</td><td>' + (a.kw ? a.kw.toFixed(1) : '') + '</td><td>' + (a.v200 ? '200V' : '') + '</td><td>' + a.qty + '</td><td>' + (a.price ? fmt(a.price / 1000) : '') + '</td><td class="l">' + (a.x.tan === '空欄' ? '—' : a.x.tan) + '</td></tr>').join('');
+  return `<section class="page" id="air">
+  <div class="hd"><h1>エアコン</h1><div class="sub">㈲ヤハタ電機商会<br>見積台帳より（${Number(UNTIL.slice(5, 7))}/${Number(UNTIL.slice(8))}時点）</div></div>
+  <h2>月ごと</h2>
+  <div class="tw"><table class="air">
+  <tr><th></th><th>見積台数</th><th>成約台数</th><th>平均単価<br>（本体）</th><th>値引率</th><th>200V</th><th>高山</th><th>伊藤</th><th>担当欄<br>なし</th><th>成約率</th></tr>
+  ${mrows}
+  </table></div>
+  <h2>シリーズ × 能力（8月から成約した台数）</h2>
+  <div class="tw"><table class="air">
+  <tr><th></th>${KW.map(k => '<th>' + k[0] + (k[0] === '不明' ? '' : 'kW') + '</th>').join('')}<th>計</th><th>平均単価</th></tr>
+  ${srows}
+  </table></div>
+  <h2>成約した1台ずつ（8月から）</h2>
+  <div class="tw"><table class="air list">
+  <tr><th>成約</th><th>お客様</th><th>型番</th><th>kW</th><th>電源</th><th>台</th><th>単価</th><th>作った人</th></tr>
+  ${lrows}
+  </table></div>
+  <p class="note">金額は千円。<b>見積台数</b>＝その月に初めて作った見積に入っているエアコン本体の台数（成約していないものも入る）。<b>成約台数・平均単価・値引率・200V・担当</b>＝その月に成約した見積のエアコン本体（成約の記録は8月から）。<b>平均単価</b>＝本体の見積単価の平均（工事・部材・処分は入れない）。<b>値引率</b>＝定価が入っている明細で、定価からどれだけ下げたか。<b>成約率</b>＝その月に作った見積のエアコンのうち、もう成約した台数。シリーズは型番（CS-XS…＝XS、CS-J…＝J）で分ける。</p>
+</section>`;
+}
 
 const data = months.map(month);
-const nav = '<nav class="mnav">' + data.map(m => `<a href="#m${m.ym}">${Number(m.ym.slice(5))}月</a>`).join('') + '</nav>';
+const nav = '<nav class="mnav"><a href="#air">❄️ エアコン</a>' + data.map(m => `<a href="#m${m.ym}">${Number(m.ym.slice(5))}月</a>`).join('') + '</nav>';
 const tpl = fs.readFileSync(S + 'tpl.html', 'utf8');
 const css = tpl.slice(tpl.indexOf('<style>'), tpl.indexOf('</style>')).replace(/\n  \.ct\{[^\n]*/, '') + `
   .page{min-height:auto}
   .page + .page{margin-top:22px}
   .dot{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:0}
   .na{color:#bbb}
+  table.air{font-size:11.5px}
+  table.air th:first-child{width:auto}
+  table.list td.l{text-align:left}
+  table.list td,table.list th{padding:2px 5px}
   .empty{font-size:12.5px;color:var(--soft);background:#faf8f4;border:1px dashed var(--line);padding:18px;text-align:center;margin:6px 0}
   .mnav{max-width:800px;margin:12px auto 0;display:flex;flex-wrap:wrap;gap:6px;padding:0 4px}
   .mnav a{font-size:13px;font-weight:700;color:var(--accent);background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px 12px;text-decoration:none}
@@ -197,5 +270,5 @@ const css = tpl.slice(tpl.indexOf('<style>'), tpl.indexOf('</style>')).replace(/
 const head = tpl.slice(0, tpl.indexOf('<style>')).replace(/<title>.*?<\/title>/, '<title>実績（月ごと）｜ヤハタ電機商会</title>');
 const gate = tpl.slice(tpl.indexOf('<div id="pinGate">'), tpl.indexOf('<div class="page">'));
 const tail = tpl.slice(tpl.indexOf('<button class="print-btn"'));
-fs.writeFileSync(OUT, head + css + '\n</head>\n<body>\n' + gate + nav + '\n' + data.map(page).join('\n') + '\n' + tail);
+fs.writeFileSync(OUT, head + css + '\n</head>\n<body>\n' + gate + nav + '\n' + airPage() + '\n' + data.map(page).join('\n') + '\n' + tail);
 data.forEach(m => console.log(m.ym, m.rows.map(r => r.st + ':' + [r.visits, r.sales && fmt(r.sales), r.kd != null && fmt(r.kd), r.estN, r.estSum && fmt(r.estSum), r.won].join('/')).join('  ')));
