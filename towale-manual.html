@@ -53,8 +53,15 @@
   .one{padding:11px 14px;}
   .one ul{margin:0;padding-left:18px;}
   .one li{font-size:13.5px;margin:4px 0;}
-  .one p{margin:0;font-size:13.5px;}
-  .one .sub{color:var(--ink-soft);font-size:12.5px;margin-top:4px;}
+  .one .sub{color:var(--ink-soft);font-size:12.5px;margin:5px 0 0;}
+  .tag{font-size:11px;font-weight:800;background:var(--hojo-bg);color:var(--hojo-fg);border-radius:999px;padding:2px 9px;margin-left:auto;white-space:nowrap;}
+  .kit{display:grid;grid-template-columns:repeat(3,1fr);}
+  .kit>div{padding:11px 14px;border-right:1px solid var(--line);}
+  .kit>div:last-child{border-right:0;}
+  .kit b{display:inline-block;font-size:11.5px;background:var(--kouji-bg);color:var(--kouji-fg);border-radius:999px;padding:2px 9px;margin-bottom:6px;}
+  .kit ul{margin:0;padding-left:18px;}
+  .kit li{font-size:13px;margin:3px 0;}
+  @media(max-width:560px){.kit{grid-template-columns:1fr;}.kit>div{border-right:0;border-bottom:1px solid var(--line);}.kit>div:last-child{border-bottom:0;}}
   .warn{background:var(--sun);color:#3a2600;font-size:12.5px;font-weight:700;border-radius:8px;padding:10px 14px;margin-top:16px;}
   .warn b{display:block;margin-bottom:3px;}
 
@@ -74,15 +81,35 @@
   <div class="head">
     <p class="head__eyebrow">ヤハタ電機商会　工事手順書</p>
     <h1 class="head__title">トワレ取付 手順書</h1>
-    <p class="head__sub">温水洗浄便座の取り替え。上から順に進めます。</p>
+    <p class="head__sub">温水洗浄便座の取り替え。上から順に進めます。パナソニック「ビューティ・トワレ」の施工説明書をもとにしています。</p>
   </div>
 
   <div class="phase">用意するもの</div>
   <div class="steps">
-    <div class="step"><div class="one"><ul>
-      <li>手袋</li>
-      <li>ビニール袋</li>
-    </ul></div></div>
+    <div class="step"><div class="kit">
+      <div><b>🔧 持っていく</b><ul>
+        <li>手袋</li>
+        <li>モンキーレンチ</li>
+        <li>プラスドライバー</li>
+        <li>マイナスドライバー</li>
+        <li>メジャー</li>
+        <li>バケツ・ぞうきん</li>
+        <li>ビニール袋</li>
+      </ul></div>
+      <div><b>📦 箱に入っている</b><ul>
+        <li>スパナ</li>
+        <li>型紙</li>
+        <li>分岐金具（給水ホース付き）</li>
+        <li>フレキシブルパイプ</li>
+        <li>パッキン</li>
+        <li>乾電池（リモコン用）</li>
+      </ul></div>
+      <div><b>🧰 場合によって使う</b><ul>
+        <li>ねじゆるめスプレー・金のこ（ナットがさびているとき）</li>
+        <li>ドリル（タイルなどにリモコンを付けるとき）</li>
+        <li>パイプカッター（今の給水管を切って使うとき）</li>
+      </ul></div>
+    </div></div>
   </div>
 
   <div class="phase">手順</div>
@@ -90,23 +117,30 @@
     <div class="step">
       <div class="step__no"><span class="step__num">1</span><span class="step__title">箱を開けて、部材を確かめる</span></div>
       <div class="one"><ul>
-        <li>部材がそろっているか、説明書の一覧と見くらべる。</li>
-      </ul></div>
+        <li>箱の中の部品を、施工説明書の一覧と見くらべる。</li>
+        <li>給水管の長さを見る。止水栓からタンクの給水口までが約150〜330mmなら、箱のフレキシブルパイプ（300mm）で付く。それ以外は別売品か市販品を用意する。</li>
+        <li>本体を運ぶときは、便座や便ふたではなく本体を持つ。</li>
+      </ul>
+      <p class="sub">💡 電源プラグは、取り付けが終わるまで差さない。</p></div>
     </div>
     <div class="step">
       <div class="step__no"><span class="step__num">2</span><span class="step__title">止水栓を閉めて、コンセントを抜く</span></div>
       <div class="one"><ul>
-        <li>止水栓を閉める。</li>
-        <li>コンセントを抜く。</li>
-        <li>古い便座を外して、空いた段ボールに入れる。</li>
+        <li>止水栓を閉めて、タンクの水を流しきる。</li>
+        <li>コンセントを抜き、アース線を外す。</li>
+        <li>給水ホースを外す。残った水が出るので、バケツで受ける。</li>
+        <li>ナットをモンキーレンチでゆるめて、古い便座を外す。空いた段ボールに入れる。</li>
       </ul>
-      <p class="sub">💧 水がたれることがあるので、ホースなどは、できるだけビニール袋に入れる。</p></div>
+      <p class="sub">💡 水がたれることがあるので、ホースなどは、できるだけビニール袋に入れる。</p>
+      <p class="sub">💡 ナットがさびて回らないときは、ねじゆるめスプレー。それでも取れなければ、金のこでボルトを切る。</p></div>
     </div>
     <div class="step">
       <div class="step__no"><span class="step__num">3</span><span class="step__title">リモコンを外す</span></div>
       <div class="one"><ul>
         <li>古いリモコンを壁から外す。</li>
-      </ul></div>
+        <li>古いひとセンサーが付いていたら、それも必ず外す。</li>
+      </ul>
+      <p class="sub">💡 古いリモコンやセンサーを残すと、新しい本体が誤動作する。</p></div>
     </div>
     <div class="step">
       <div class="step__no"><span class="step__num">4</span><span class="step__title">便器を掃除する</span></div>
@@ -117,40 +151,90 @@
     <div class="step">
       <div class="step__no"><span class="step__num">5</span><span class="step__title">ベースを取り付ける</span></div>
       <div class="one"><ul>
-        <li>型紙を使って、本体の位置を合わせる。</li>
-      </ul></div>
+        <li>本体の裏から、ベース（本体固定板）を外す。脱着ボタンを奥まで押しながらずらす。</li>
+        <li>型紙を便器にのせて、ベースの位置を決める。ナットは、動く程度に軽く締める。</li>
+        <li>型紙を外して、ベースが動かないように締める。ナットは手で締める（工具は使わない）。</li>
+        <li>上からねじで止める便器は、外した固定ねじをプラスドライバーで締める。</li>
+      </ul>
+      <p class="sub">💡 型紙の穴が便器でふさがると、逃がし水が便器の外にもれる。位置を変えたら、型紙でもう一度確かめる。</p></div>
     </div>
     <div class="step">
-      <div class="step__no"><span class="step__num">6</span><span class="step__title">本体と給水ホースを取り付ける</span></div>
+      <div class="step__no"><span class="step__num">6</span><span class="step__title">分岐金具を取り替える</span></div>
       <div class="one"><ul>
-        <li>本体をベースにはめる。</li>
-        <li>給水ホースをつなぐ。</li>
-      </ul></div>
+        <li>古い分岐金具と給水ホースは使わない。箱の分岐金具（給水ホース付き）に取り替える。</li>
+        <li>パッキンも、箱のものを使う。シールテープは使わない。</li>
+        <li>手で仮締めしてから、箱のスパナで締める。回らないように、モンキーレンチで押さえる。</li>
+        <li>フレキシブルパイプは、曲げすぎない。切らない。</li>
+      </ul>
+      <p class="sub">💡 止水栓や給水管の形で、付け方と使うパッキンが変わる。施工説明書の図で、同じ形を探す。</p></div>
     </div>
     <div class="step">
-      <div class="step__no"><span class="step__num">7</span><span class="step__title">リモコンを取り付ける</span></div>
+      <div class="step__no"><span class="step__num">7</span><span class="step__title">本体と給水ホースを取り付ける</span></div>
       <div class="one"><ul>
-        <li>新しいリモコンを壁に取り付ける。</li>
-      </ul></div>
+        <li>ベースと本体の中心を合わせる。後ろを少し浮かせてすべらせ、「カチッ」と音がするまで押し込む。</li>
+        <li>軽く手前に引いて、しっかり付いたか確かめる。</li>
+        <li>給水ホースの先（Oリング）にゴミがないか見て、本体にまっすぐ差し込む。</li>
+        <li>クイックファスナーを「パチッ」と音がするまではめて、フックを固定する。</li>
+        <li>ホースを引いても抜けないこと、クイックファスナーが軽く回ることを確かめる。</li>
+      </ul>
+      <p class="sub">💡 電源コードをはさまない。ノズルの入っているところは押さない。</p></div>
     </div>
     <div class="step">
-      <div class="step__no"><span class="step__num">8</span><span class="step__title">水もれを確かめる</span></div>
+      <div class="step__no"><span class="step__num">8</span><span class="step__title">アース線をつないで、止水栓を開ける</span></div>
       <div class="one"><ul>
-        <li>止水栓を開けて、つなぎ目を目と手で確かめる。</li>
-        <li>時間をおいて、もう一度確かめる。</li>
-      </ul></div>
+        <li>アース線を、コンセントのアース端子につなぐ。</li>
+        <li>止水栓をゆっくり開ける。元栓を閉めたときは、元栓も開ける。</li>
+        <li>つなぎ目から水がもれていないか、目と手で確かめる。</li>
+      </ul>
+      <p class="sub">💡 止水栓を開ける前に電源プラグを差すと、ランプが点滅して動かない。先に水、あとで電気。</p></div>
     </div>
     <div class="step">
-      <div class="step__no"><span class="step__num">9</span><span class="step__title">試運転して、使い方を伝える</span></div>
+      <div class="step__no"><span class="step__num">9</span><span class="step__title">リモコンを取り付ける</span></div>
       <div class="one"><ul>
-        <li>コンセントを差して、おしり・ビデ・便座の温かさを確かめる。</li>
-        <li>リモコンとノズル掃除のしかたを伝える。</li>
+        <li>リモコンに乾電池を入れる。</li>
+        <li>電源プラグを差す。電源ランプが約10秒点滅して、点灯に変わる。</li>
+        <li>付けたい位置にリモコンを当てて「おしり」を押す。本体が「ピピピ」と鳴れば、届いている。</li>
+        <li>届く位置が決まったら、リモコンホルダーをねじ2本で壁に付ける。</li>
+        <li>リモコンがホルダーから外せることを確かめる（電池交換のため）。</li>
+      </ul>
+      <p class="sub">💡 天井とのあいだに棚などがない位置に。直射日光や、ほかの機器の熱が当たる場所は避ける。</p>
+      <p class="sub">💡 タイル・コンクリート・石こうボードは、下穴（直径5.8mm・深さ35mm）をあけて樹脂プラグを入れる。ねじ止めできない壁は、別売のリモコンプレートでペーパーホルダーに付ける。</p></div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">10</span><span class="step__title">ひとセンサーを確かめる</span><span class="tag">センサー付の場合</span></div>
+      <div class="one"><ul>
+        <li>ひとセンサーは、リモコンに付いている。トイレに入った人を確実に見つけられる位置に付ける。</li>
+        <li>高さの目安は、床から約90cm（80〜100cm）。</li>
+        <li>便ふたを閉めて、いったんトイレの外に出る。</li>
+        <li>3分以上たってから入り、便ふたが開いて、便座あたためランプが点滅から点灯に変わることを確かめる。</li>
+      </ul>
+      <p class="sub">💡 直射日光の当たる場所と、暖房の温風が当たる場所は避ける。室温が30℃をこえると、働かないことがある。</p>
+      <p class="sub">💡 便ふたが自動で開かない機種は、便ふたを開けて外に出て、ランプだけを確かめる。</p></div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">11</span><span class="step__title">試運転する</span></div>
+      <div class="one"><ul>
+        <li>箱のポリ袋を、便座と便器のあいだにはさむ。</li>
+        <li>便座の左うしろを押しながら「おしり」「ビデ」を押す。ポリ袋の上から手を当てて、温水が出ることを確かめる。</li>
+        <li>便座に手を当てて、温まっていることを確かめる。</li>
+        <li>漏電テストスイッチを2秒以上押す。赤いランプがついて、電源ランプが消える。電源プラグを抜き、赤いランプが消えたら差し直す。</li>
+        <li>つなぎ目の水もれを、もう一度確かめる。</li>
+      </ul>
+      <p class="sub">💡 ノズルの左から出る水は、水圧を整える逃がし水。故障ではない。</p>
+      <p class="sub">💡 便座のうしろ脚が少し浮いているのが正しい。すき間がないと、座ったことを感じ取れない。</p></div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">12</span><span class="step__title">使い方を伝える</span></div>
+      <div class="one"><ul>
+        <li>リモコンの使い方と、ノズル掃除のしかたを伝える。</li>
+        <li>取扱説明書と施工説明書をお渡しする。</li>
+        <li>古い便座を引き取るかを確かめる。</li>
       </ul></div>
     </div>
   </div>
 
   <div class="warn">
     <b>⚠ 大事なところ</b>
-    止水栓は、外す前に必ず閉める。取り付けは、その機種の説明書で確かめながら進める。
+    部品や数字は、機種でちがいます。必ず、その機種の施工説明書で確かめながら進める。止水栓がないトイレと、フラッシュバルブのトイレは、取り付け方が変わるので先に相談する。
   </div>
 </div>
