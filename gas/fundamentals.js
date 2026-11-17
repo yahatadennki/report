@@ -25,14 +25,14 @@ function fundaJson_() {
   try {
     var h1 = fetchTFCached_('USD/JPY', '1h');
     out.price = h1.closes[h1.closes.length - 1];
-    out.macd = fundaMacd_(h1.closes, 0.01);
+    out.macd = fundaMacd_(fundaWeekdayCloses_(h1), 0.01);
   } catch (e) {}
   // ほかの通貨ペア（funda_pairs.js）。現在値は表示用
   try {
     out.pairs = fundaCached_('FUNDA_PAIRS_V1', 3 * 3600, fundaPairs_);
     [['EURJPY', 'EUR/JPY'], ['EURUSD', 'EUR/USD'], ['GBPUSD', 'GBP/USD']].forEach(function(x) {
       if (!out.pairs[x[0]]) return;
-      try { var c = fetchTFCached_(x[1], '1h'); out.pairs[x[0]].price = c.closes[c.closes.length - 1]; out.pairs[x[0]].macd = fundaMacd_(c.closes, /JPY/.test(x[0]) ? 0.01 : 0.0001); } catch (e) {}
+      try { var c = fetchTFCached_(x[1], '1h'); out.pairs[x[0]].price = c.closes[c.closes.length - 1]; out.pairs[x[0]].macd = fundaMacd_(fundaWeekdayCloses_(c), /JPY/.test(x[0]) ? 0.01 : 0.0001); } catch (e) {}
     });
   } catch (e) {}
   try { var ai = fundaAiForApp_(); if (ai) out.ai = ai; } catch (e) {}   // AIの読み（お試し期間中だけ。funda_ai.js）
@@ -248,10 +248,32 @@ function fundaDiag_() {
   return lines.join('\n');
 }
 
-// 点検用：?action=funda_macd_diag　直近の1時間足でMACDとシグナル（EMA版／MT4と同じSMA版）を並べる
+// 土日の足を外す。データ元は土日にも（動かない）足を入れてくるが、MT4のチャートには土日の足が無い。
+//   入れたままだとMACDがMT4とずれる。NY時間で 金曜17時〜日曜17時 に始まる足を外す（MT4の週末と同じ）。
+//   時刻の表記がどの国の時間でも困らないよう、最後の足＝今の1時間 として実際の時刻に直す。
+function fundaWeekdayCloses_(h) {
+  var n = h.closes.length, base = Math.floor(Date.now() / 3600000) * 3600000, out = [];
+  var ms = function(s) { return Date.parse(String(s).replace(' ', 'T') + 'Z'); };
+  var last = ms(h.time[n - 1]);
+  for (var i = 0; i < n; i++) {
+    var d = new Date(base - (last - ms(h.time[i])));
+    var u = Number(Utilities.formatDate(d, 'America/New_York', 'u')), hr = Number(Utilities.formatDate(d, 'America/New_York', 'H'));   // u：月=1…日=7
+    if ((u === 5 && hr >= 17) || u === 6 || (u === 7 && hr < 17)) continue;
+    out.push(h.closes[i]);
+  }
+  return out;
+}
+
+// 点検用：?action=funda_macd_diag　土日を外した1時間足でのMACD・シグナル（MT4と見比べる用）
 function fundaMacdDiag_() {
-  var h = fetchTFCached_('USD/JPY', '1h'), c = h.closes, m = macd_(c), sm = sma_(m.line.map(function(v) { return v == null ? 0 : v; }), 9);
-  var L = ['時刻, 終値, MACD, シグナルEMA, シグナルSMA(MT4)'];
-  for (var i = c.length - 16; i < c.length; i++) L.push([h.time[i], c[i], m.line[i].toFixed(4), m.sig[i].toFixed(4), sm[i].toFixed(4)].join(', '));
-  return L.join('\n');
+  var L = [];
+  [['USD/JPY', 0.01], ['EUR/JPY', 0.01], ['EUR/USD', 0.0001], ['GBP/USD', 0.0001]].forEach(function(x) {
+    var h = fetchTFCached_(x[0], '1h'), c = fundaWeekdayCloses_(h), line = macd_(c).line, st = 0;
+    while (line[st] == null) st++;
+    var sig = new Array(st).fill(null).concat(sma_(line.slice(st), 9)), g = [];
+    for (var i = st + 8; i < c.length; i++) g.push(((line[i] - sig[i]) / x[1]).toFixed(1));
+    L.push(x[0] + '　全' + h.closes.length + '本→平日' + c.length + '本　今の足 MACD ' + line[c.length - 1].toFixed(4) + ' シグナル ' + sig[c.length - 1].toFixed(4) + '　' + JSON.stringify(fundaMacd_(c, x[1])));
+    L.push(g.join(' '));
+  });
+  return L.join(String.fromCharCode(10));
 }
