@@ -41,10 +41,10 @@ function fundaJson_() {
 
 // 1時間足のMACD(12,26,9)。確定した足だけで見る（最後の1本は作りかけなので外す）
 //   シグナルはMT4と同じ「MACDの9本単純平均」。MT4のチャートと見え方をそろえるため
-//   2本の線の開きが2pipsに届かない小さなクロスは数えない（くっついて行ったり来たりする時に印が入れ替わらないように）
+//   小さなクロスも数える（MT4の見え方と同じ。2pips未満を外したら、MT4で見えているクロスが出なかった）
 //   dir：+1＝MACDがシグナルより上／−1＝下　　bars：そのクロスの足から数えて何本たったか
 function fundaMacd_(closes, pip) {
-  var c = closes.slice(0, -1), line = macd_(c).line, n = c.length - 1, th = 2 * (pip || 0.01);
+  var c = closes.slice(0, -1), line = macd_(c).line, n = c.length - 1, th = 0;
   var st = 0; while (st <= n && line[st] == null) st++;
   var sig = new Array(st).fill(null).concat(sma_(line.slice(st), 9));
   var dir = 0, at = -1, run = -1, prev = 0;
