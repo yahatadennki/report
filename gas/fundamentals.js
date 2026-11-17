@@ -35,6 +35,7 @@ function fundaJson_() {
       try { var c = fetchTFCached_(x[1], '1h'); out.pairs[x[0]].price = c.closes[c.closes.length - 1]; out.pairs[x[0]].macd = fundaMacd_(fundaWeekdayCloses_(c), /JPY/.test(x[0]) ? 0.01 : 0.0001); } catch (e) {}
     });
   } catch (e) {}
+  try { out.perfect = fundaPerfect_(); } catch (e) {}   // パーフェクトMACD（4通貨。funda_perfect.js）
   try { var ai = fundaAiForApp_(); if (ai) out.ai = ai; } catch (e) {}   // AIの読み（お試し期間中だけ。funda_ai.js）
   return JSON.stringify(out);
 }
