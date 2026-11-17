@@ -25,14 +25,14 @@ function fundaJson_() {
   try {
     var h1 = fetchTFCached_('USD/JPY', '1h');
     out.price = h1.closes[h1.closes.length - 1];
-    out.macd = fundaMacd_(h1.closes);
+    out.macd = fundaMacd_(h1.closes, 0.01);
   } catch (e) {}
   // ほかの通貨ペア（funda_pairs.js）。現在値は表示用
   try {
     out.pairs = fundaCached_('FUNDA_PAIRS_V1', 3 * 3600, fundaPairs_);
     [['EURJPY', 'EUR/JPY'], ['EURUSD', 'EUR/USD'], ['GBPUSD', 'GBP/USD']].forEach(function(x) {
       if (!out.pairs[x[0]]) return;
-      try { var c = fetchTFCached_(x[1], '1h'); out.pairs[x[0]].price = c.closes[c.closes.length - 1]; out.pairs[x[0]].macd = fundaMacd_(c.closes); } catch (e) {}
+      try { var c = fetchTFCached_(x[1], '1h'); out.pairs[x[0]].price = c.closes[c.closes.length - 1]; out.pairs[x[0]].macd = fundaMacd_(c.closes, /JPY/.test(x[0]) ? 0.01 : 0.0001); } catch (e) {}
     });
   } catch (e) {}
   try { var ai = fundaAiForApp_(); if (ai) out.ai = ai; } catch (e) {}   // AIの読み（お試し期間中だけ。funda_ai.js）
@@ -40,16 +40,21 @@ function fundaJson_() {
 }
 
 // 1時間足のMACD(12,26,9)。確定した足だけで見る（最後の1本は作りかけなので外す）
-//   dir：+1＝MACDがシグナルより上（ゴールデンクロス後）／−1＝下（デッドクロス後）
-//   gap：MACD − シグナル（2本の線の開き。重なった時が0。値段の単位）
-//   bars：クロスした足から数えて何本たったか（1＝直前の確定足でクロス）
-function fundaMacd_(closes) {
-  var c = closes.slice(0, -1), m = macd_(c), n = c.length - 1;
-  var d = function(i) { return (m.line[i] == null || m.sig[i] == null) ? 0 : (m.line[i] > m.sig[i] ? 1 : -1); };
-  var dir = d(n);
-  if (!dir) return null;
-  for (var i = n; i > 0; i--) if (d(i - 1) !== dir) return d(i - 1) ? { dir: dir, bars: n - i + 1, gap: m.line[n] - m.sig[n] } : null;
-  return null;
+//   シグナルはMT4と同じ「MACDの9本単純平均」。MT4のチャートと見え方をそろえるため
+//   2本の線の開きが2pipsに届かない小さなクロスは数えない（くっついて行ったり来たりする時に印が入れ替わらないように）
+//   dir：+1＝MACDがシグナルより上／−1＝下　　bars：そのクロスの足から数えて何本たったか
+function fundaMacd_(closes, pip) {
+  var c = closes.slice(0, -1), line = macd_(c).line, n = c.length - 1, th = 2 * (pip || 0.01);
+  var st = 0; while (st <= n && line[st] == null) st++;
+  var sig = new Array(st).fill(null).concat(sma_(line.slice(st), 9));
+  var dir = 0, at = -1, run = -1, prev = 0;
+  for (var i = st; i <= n; i++) {
+    if (sig[i] == null) continue;
+    var gap = line[i] - sig[i], s = gap > 0 ? 1 : gap < 0 ? -1 : prev;
+    if (s !== prev) { run = i; prev = s; }          // 線が入れ替わった足
+    if (s !== dir && Math.abs(gap) >= th) { at = dir ? run : -1; dir = s; }   // 開きが十分になって初めてクロスと数える
+  }
+  return (dir && at >= 0) ? { dir: dir, bars: n - at + 1 } : null;
 }
 
 // 取れたら覚えておき、取れなかった時は前回の値を返す
@@ -241,4 +246,12 @@ function fundaDiag_() {
   var c = CacheService.getScriptCache().get('FUNDA_CAL_V1');
   try { var o = c ? JSON.parse(c) : null; lines.push('指標（いま返す内容）：' + (o ? ((o.list ? o.list.length + '件' : '0件') + (o.got ? ' 取得' + o.got : '') + (o.error ? ' ／ ' + o.error : '')) : '未取得')); } catch (e) {}
   return lines.join('\n');
+}
+
+// 点検用：?action=funda_macd_diag　直近の1時間足でMACDとシグナル（EMA版／MT4と同じSMA版）を並べる
+function fundaMacdDiag_() {
+  var h = fetchTFCached_('USD/JPY', '1h'), c = h.closes, m = macd_(c), sm = sma_(m.line.map(function(v) { return v == null ? 0 : v; }), 9);
+  var L = ['時刻, 終値, MACD, シグナルEMA, シグナルSMA(MT4)'];
+  for (var i = c.length - 16; i < c.length; i++) L.push([h.time[i], c[i], m.line[i].toFixed(4), m.sig[i].toFixed(4), sm[i].toFixed(4)].join(', '));
+  return L.join('\n');
 }

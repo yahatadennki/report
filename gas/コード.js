@@ -317,6 +317,9 @@ function getProductMaster_() {
   if (e && e.parameter && e.parameter.action === 'funda_pairs_diag') {
     return ContentService.createTextOutput(fundaPairsDiag_());
   }
+  if (e && e.parameter && e.parameter.action === 'funda_macd_diag') {
+    return ContentService.createTextOutput(fundaMacdDiag_());
+  }
   if (e && e.parameter && e.parameter.action === 'funda_ai_diag') {
     return ContentService.createTextOutput(fundaAiDiag_());
   }
