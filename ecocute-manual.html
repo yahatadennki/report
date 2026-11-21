@@ -88,6 +88,9 @@
   .col .tip{font-size:12px;}
   .tag{font-size:11px;font-weight:800;background:var(--hojo-bg);color:var(--hojo-fg);border-radius:999px;padding:2px 9px;margin-left:auto;white-space:nowrap;}
   .pb{break-before:page;}
+  .cols2{padding:10px 14px;columns:2;column-gap:28px;}
+  .cols2 .chk li{break-inside:avoid;}
+  @media(max-width:560px){.cols2{columns:1;}}
   .intro{background:var(--card);border:2px solid var(--sun);border-radius:10px;padding:12px 16px;margin-top:14px;}
   .intro__h{font-weight:800;font-size:16px;margin:0 0 6px;}
   .intro p{font-size:13.5px;margin:4px 0;}
@@ -112,15 +115,18 @@
   <div class="part"><span class="part__no">第1部</span><h2 class="part__t">準備編</h2></div>
   <p class="part__s">見積のときにサービススタッフが撮った下見写真で確かめてから出かけます。現場に着いたら、もう一度見ます。</p>
 
-  <div class="box"><div class="box__h">✅ 確認するところ</div><div class="grid2">
-    <div><span class="sub-h">📷 下見の写真で（お伺いする前に）</span><ul class="chk"><li>今の給湯器<small>ガス給湯器・電気温水器・エコキュート。品番とタンク容量</small></li><li>置き場所<small>貯湯ユニットとヒートポンプの場所。隣の家の寝室や窓の近くはさける（夜中に動く音）</small></li><li>基礎<small>コンクリートの基礎があるか。なければ基礎工事がいる</small></li><li>電気<small>単相200Vの専用回路。電力契約が時間帯別か（深夜電力契約はできない）</small></li><li>お風呂<small>フルオート・セミオート・給湯専用。浴そうの穴（ふろ接続アダプター）</small></li><li>配管の長さと高さの差<small>ヒートポンプとタンク、浴そうとタンクの高低差</small></li><li>搬入の道</li></ul></div>
-    <div><span class="sub-h g">🏠 現場に着いたら</span><ul class="chk"><li>水圧<small>パワフル高圧力型は300kPa、ほかは200kPa以上。バケツで満水になる時間で目安を見る</small></li><li>排水溝<small>タンクとヒートポンプの排水を流せるか。50mm以上の吐水口空間</small></li><li>まわりのスペース<small>点検・配管のスペース</small></li><li>水道水か<small>井戸水には使えない</small></li><li>凍結のおそれ<small>凍結予防ヒーターがいるか</small></li></ul></div>
-  </div></div>
+  <div class="box"><div class="box__h">① 📷 下見の写真で確かめる（お伺いする前に）</div>
+    <div class="cols2"><ul class="chk"><li>今の給湯器<small>ガス給湯器・電気温水器・エコキュート。品番とタンク容量</small></li><li>置き場所<small>貯湯ユニットとヒートポンプの場所。隣の家の寝室や窓の近くはさける（夜中に動く音）</small></li><li>基礎<small>コンクリートの基礎があるか。なければ基礎工事がいる</small></li><li>電気<small>単相200Vの専用回路。電力契約が時間帯別か（深夜電力契約はできない）</small></li><li>お風呂<small>フルオート・セミオート・給湯専用。浴そうの穴（ふろ接続アダプター）</small></li><li>配管の長さと高さの差<small>ヒートポンプとタンク、浴そうとタンクの高低差</small></li><li>搬入の道</li></ul></div>
+  </div>
 
-  <div class="box"><div class="box__h">🎒 持ち物</div><div class="grid2">
+  <div class="box"><div class="box__h">② 🎒 持ち物</div><div class="grid2">
     <div><span class="sub-h">📦 材料</span><ul class="chk"><li>貯湯ユニット・ヒートポンプユニット・リモコン<small>箱の部品：取扱説明書・工事説明書・保証書</small></li><li>アンカーボルトセット（M12）<small>脚部すべてに</small></li><li>給水側止水栓（AD-HESB67UAA）<small>必ず付ける</small></li><li>ヒートポンプユニット循環配管セット</li><li>ふろ接続アダプター<small>フルオート・セミオート</small></li><li>給水・給湯・ふろ配管と断熱材</li><li>排水エルボ（トラップ付）<small>下水ガスが出るとき</small></li><li>凍結予防ヒーター（必要なとき）</li><li>電源ケーブル（VVF 2.0・2.6）・アース線</li><li>置き台（高さ100mm以上）</li><li>シールパテ</li></ul></div>
     <div><span class="sub-h g">🔧 工具</span><ul class="chk"><li>手袋</li><li>ハンマードリル（アンカー用）</li><li>水平器</li><li>モンキーレンチ・パイプレンチ</li><li>トルクレンチ</li><li>圧着工具</li><li>パイプカッター</li><li>テスター</li><li>圧力計（またはバケツとストップウォッチ）</li><li>台車</li></ul></div>
   </div></div>
+
+  <div class="box"><div class="box__h">③ 🏠 現場に着いたら（作業の前に）</div>
+    <div class="cols2"><ul class="chk"><li>水圧<small>パワフル高圧力型は300kPa、ほかは200kPa以上。バケツで満水になる時間で目安を見る</small></li><li>排水溝<small>タンクとヒートポンプの排水を流せるか。50mm以上の吐水口空間</small></li><li>まわりのスペース<small>点検・配管のスペース</small></li><li>水道水か<small>井戸水には使えない</small></li><li>凍結のおそれ<small>凍結予防ヒーターがいるか</small></li></ul></div>
+  </div>
   </div>
 
   <div class="part pb"><span class="part__no">第2部</span><h2 class="part__t">作業編</h2></div>

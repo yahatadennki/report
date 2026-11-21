@@ -88,6 +88,15 @@
   .col .tip{font-size:12px;}
   .tag{font-size:11px;font-weight:800;background:var(--hojo-bg);color:var(--hojo-fg);border-radius:999px;padding:2px 9px;margin-left:auto;white-space:nowrap;}
   .pb{break-before:page;}
+  .cols2{padding:10px 14px;columns:2;column-gap:28px;}
+  .cols2 .chk li{break-inside:avoid;}
+  @media(max-width:560px){.cols2{columns:1;}}
+  .intro{background:var(--card);border:2px solid var(--sun);border-radius:10px;padding:12px 16px;margin-top:14px;}
+  .intro__h{font-weight:800;font-size:16px;margin:0 0 6px;}
+  .intro p{font-size:13.5px;margin:4px 0;}
+  .intro ul{margin:4px 0;padding-left:20px;font-size:13.5px;}
+  .cardlink{font-size:12.5px;margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+  .cardlink a{text-decoration:none;color:var(--kouji-fg);background:var(--kouji-bg);border-radius:999px;padding:2px 10px;font-weight:700;}
   @media(max-width:560px){.grid2{grid-template-columns:1fr;}.grid2>div+div{border-left:0;border-top:1px solid var(--line);}}
   @media print{.part{margin-top:6px;}.box{break-inside:avoid;}.prep{zoom:.74}.prep .chk li{margin:3px 0}}
 </style>
@@ -102,18 +111,22 @@
   </div>
 
   <div class="prep">
+
   <div class="part"><span class="part__no">第1部</span><h2 class="part__t">準備編</h2></div>
   <p class="part__s">見積のときにサービススタッフが撮った下見写真で確かめてから出かけます。現場に着いたら、もう一度見ます。</p>
 
-  <div class="box"><div class="box__h">✅ 確認するところ</div><div class="grid2">
-    <div><span class="sub-h">📷 下見の写真で（お伺いする前に）</span><ul class="chk"><li>室内機の取付位置<small>壁の下地（間柱）、上と左右のすき間</small></li><li>配管の通り道と穴の位置<small>今の穴が使えるか、新しく穴をあけるか</small></li><li>室外機の置き場所<small>地面・ベランダ・屋根置き・壁面。架台がいるか</small></li><li>配管の長さ<small>延長配管が何m いるか</small></li><li>電源<small>専用コンセントか、100V・200V、コンセントの形</small></li><li>取り替えか<small>古いエアコンの取り外しと引き取り</small></li><li>化粧カバー<small>いるか、色と長さ</small></li><li>高さ<small>脚立で届くか、2階以上の室外機</small></li></ul></div>
-    <div><span class="sub-h g">🏠 現場に着いたら</span><ul class="chk"><li>写真と同じか<small>据付位置・配管ルート・室外機置き場</small></li><li>専用回路と電圧<small>ブレーカーとコンセントで確かめる</small></li><li>壁の中<small>柱・配線・水道管の位置（穴あけの前に）</small></li><li>室外機のまわり<small>風通し、吹き出した風が当たらないか</small></li><li>運び入れる道<small>玄関から部屋まで、ぶつけそうなところ</small></li></ul></div>
-  </div></div>
+  <div class="box"><div class="box__h">① 📷 下見の写真で確かめる（お伺いする前に）</div>
+    <div class="cols2"><ul class="chk"><li>室内機の取付位置<small>壁の下地（間柱）、上と左右のすき間</small></li><li>配管の通り道と穴の位置<small>今の穴が使えるか、新しく穴をあけるか</small></li><li>室外機の置き場所<small>地面・ベランダ・屋根置き・壁面。架台がいるか</small></li><li>配管の長さ<small>延長配管が何m いるか</small></li><li>電源<small>専用コンセントか、100V・200V、コンセントの形</small></li><li>取り替えか<small>古いエアコンの取り外しと引き取り</small></li><li>化粧カバー<small>いるか、色と長さ</small></li><li>高さ<small>脚立で届くか、2階以上の室外機</small></li></ul></div>
+  </div>
 
-  <div class="box"><div class="box__h">🎒 持ち物</div><div class="grid2">
+  <div class="box"><div class="box__h">② 🎒 持ち物</div><div class="grid2">
     <div><span class="sub-h">📦 材料</span><ul class="chk"><li>エアコン本体<small>室内機・室外機・リモコン・据付板</small></li><li>延長配管</li><li>2㍉3芯（Fケーブル）</li><li>断熱ドレン・ドレンホース</li><li>化粧カバー（ダクト）一式</li><li>スリーブ・パテ</li><li>プラ台・架台・ブロック</li><li>ビス・ビスケース</li><li>養生マット・シート</li><li>ゴミ袋</li></ul></div>
     <div><span class="sub-h g">🔧 工具</span><ul class="chk"><li>手袋</li><li>脚立</li><li>コアドリル</li><li>水平器</li><li>トルクレンチ</li><li>ゲージ・真空ポンプ</li><li>フレアツール・パイプカッター</li><li>インパクトドライバー</li><li>のこぎり（化粧カバー用）</li><li>メジャー</li><li>ガス漏れ検知器（石鹸水）</li></ul></div>
   </div></div>
+
+  <div class="box"><div class="box__h">③ 🏠 現場に着いたら（作業の前に）</div>
+    <div class="cols2"><ul class="chk"><li>写真と同じか<small>据付位置・配管ルート・室外機置き場</small></li><li>専用回路と電圧<small>ブレーカーとコンセントで確かめる</small></li><li>壁の中<small>柱・配線・水道管の位置（穴あけの前に）</small></li><li>室外機のまわり<small>風通し、吹き出した風が当たらないか</small></li><li>運び入れる道<small>玄関から部屋まで、ぶつけそうなところ</small></li></ul></div>
+  </div>
   </div>
 
   <div class="part pb"><span class="part__no">第2部</span><h2 class="part__t">作業編</h2></div>

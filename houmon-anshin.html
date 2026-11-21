@@ -88,6 +88,9 @@
   .col .tip{font-size:12px;}
   .tag{font-size:11px;font-weight:800;background:var(--hojo-bg);color:var(--hojo-fg);border-radius:999px;padding:2px 9px;margin-left:auto;white-space:nowrap;}
   .pb{break-before:page;}
+  .cols2{padding:10px 14px;columns:2;column-gap:28px;}
+  .cols2 .chk li{break-inside:avoid;}
+  @media(max-width:560px){.cols2{columns:1;}}
   .intro{background:var(--card);border:2px solid var(--sun);border-radius:10px;padding:12px 16px;margin-top:14px;}
   .intro__h{font-weight:800;font-size:16px;margin:0 0 6px;}
   .intro p{font-size:13.5px;margin:4px 0;}
@@ -121,15 +124,18 @@
   <div class="part"><span class="part__no">第1部</span><h2 class="part__t">準備編</h2></div>
   <p class="part__s">出かける前に、どの家電を、何のために見るのかを確かめておきます。</p>
 
-  <div class="box"><div class="box__h">✅ 確認するところ</div><div class="grid2">
-    <div><span class="sub-h">📞 お伺いする前に</span><ul class="chk"><li>どの家電か<small>品番・お買い上げ日・保証の種類（1年・5年・7年）と、いつ切れるか</small></li><li>ひまわりスタッフが聞いてきたこと<small>約束の日と時間、お客様が気にしていること（順路帳・おうちまるごと点検シート）</small></li><li>前の記録<small>前回の点検や修理の記録。同じところが悪くなっていないか</small></li><li>その家電の点検のしかた<small>下の「点検する」と、点検＆お手入れのカードを読んでおく</small></li><li>取扱説明書<small>その品番のお手入れのページと、エラー表示の一覧（スマホで見られるように）</small></li><li>カレンダー<small>約束の時間。前後の予定と移動の時間</small></li></ul></div>
-    <div><span class="sub-h g">🏠 現場に着いたら</span><ul class="chk"><li>お客様が気にしていること<small>最初に聞く。点検の前に聞くと、見るところが分かる</small></li><li>家電のまわり<small>置き方・すき間・コンセントのまわり</small></li><li>ほかの家電<small>古いものや、困っていそうなものがあれば、気づいたことを記録だけしておく</small></li></ul></div>
-  </div></div>
+  <div class="box"><div class="box__h">① 📞 お伺いする前に</div>
+    <div class="cols2"><ul class="chk"><li>どの家電か<small>品番・お買い上げ日・保証の種類（1年・5年・7年）と、いつ切れるか</small></li><li>ひまわりスタッフが聞いてきたこと<small>約束の日と時間、お客様が気にしていること（順路帳・おうちまるごと点検シート）</small></li><li>前の記録<small>前回の点検や修理の記録。同じところが悪くなっていないか</small></li><li>その家電の点検のしかた<small>下の「点検する」と、点検＆お手入れのカードを読んでおく</small></li><li>取扱説明書<small>その品番のお手入れのページと、エラー表示の一覧（スマホで見られるように）</small></li><li>カレンダー<small>約束の時間。前後の予定と移動の時間</small></li></ul></div>
+  </div>
 
-  <div class="box"><div class="box__h">🎒 持ち物</div><div class="grid2">
+  <div class="box"><div class="box__h">② 🎒 持ち物</div><div class="grid2">
     <div><span class="sub-h">📦 材料</span><ul class="chk"><li>点検の記録用紙<small>おうちまるごと点検シート</small></li><li>リモコン用の乾電池<small>単3・単4（エアコン点検では無料で交換）</small></li><li>空気清浄フィルター<small>交換する機種のとき</small></li><li>掃除の道具（ブラシ・ハンディ掃除機・ぞうきん）</li><li>養生シート（エアコンの下に敷く）</li><li>次の点検のお知らせ<small>次に伺う時期を書いて渡す</small></li><li>名刺</li></ul></div>
     <div><span class="sub-h g">🔧 工具</span><ul class="chk"><li>脚立（エアコン）</li><li>温度計<small>エアコンの吹き出し温度</small></li><li>懐中電灯</li><li>ドライバー</li><li>スマホ（写真・カレンダー・取扱説明書）</li></ul></div>
   </div></div>
+
+  <div class="box"><div class="box__h">③ 🏠 現場に着いたら（作業の前に）</div>
+    <div class="cols2"><ul class="chk"><li>お客様が気にしていること<small>最初に聞く。点検の前に聞くと、見るところが分かる</small></li><li>家電のまわり<small>置き方・すき間・コンセントのまわり</small></li><li>ほかの家電<small>古いものや、困っていそうなものがあれば、気づいたことを記録だけしておく</small></li></ul></div>
+  </div>
   </div>
 
   <div class="part pb"><span class="part__no">第2部</span><h2 class="part__t">作業編</h2></div>

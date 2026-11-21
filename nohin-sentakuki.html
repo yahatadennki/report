@@ -88,6 +88,9 @@
   .col .tip{font-size:12px;}
   .tag{font-size:11px;font-weight:800;background:var(--hojo-bg);color:var(--hojo-fg);border-radius:999px;padding:2px 9px;margin-left:auto;white-space:nowrap;}
   .pb{break-before:page;}
+  .cols2{padding:10px 14px;columns:2;column-gap:28px;}
+  .cols2 .chk li{break-inside:avoid;}
+  @media(max-width:560px){.cols2{columns:1;}}
   .intro{background:var(--card);border:2px solid var(--sun);border-radius:10px;padding:12px 16px;margin-top:14px;}
   .intro__h{font-weight:800;font-size:16px;margin:0 0 6px;}
   .intro p{font-size:13.5px;margin:4px 0;}
@@ -112,15 +115,18 @@
   <div class="part"><span class="part__no">第1部</span><h2 class="part__t">準備編</h2></div>
   <p class="part__s">見積のときにサービススタッフが撮った下見写真で確かめてから出かけます。現場に着いたら、もう一度見ます。</p>
 
-  <div class="box"><div class="box__h">✅ 確認するところ</div><div class="grid2">
-    <div><span class="sub-h">📷 下見の写真で（お伺いする前に）</span><ul class="chk"><li>防水パンの大きさ<small>ドラム式は内寸で幅590mm・奥行540mm以上</small></li><li>蛇口の高さと形<small>ドラム式は本体に当たらない高さか（低いと壁ピタ水栓がいる）。ツバ・オートストッパー付きか（なければ給水栓ジョイント）</small></li><li>排水口の位置<small>本体の右・左・後ろ・真下か。真下なら真下排水ユニットがいる</small></li><li>排水パイプの高さ<small>本体の底に当たるときは、フロアーあて板がいる</small></li><li>通り道<small>洗面所のドアと廊下の幅。ドラム式は重い（2人以上）</small></li><li>ドアの開く向き<small>ドラム式は左開き・右開き。壁に当たらないか</small></li><li>コンセントとアース<small>交流100V・15Aを単独で。アース端子があるか</small></li><li>古い洗濯機<small>引き取るか。リサイクル券</small></li></ul></div>
-    <div><span class="sub-h g">🏠 現場に着いたら</span><ul class="chk"><li>排水口の掃除<small>糸くずがたまっていたら掃除する（排水不良の原因）</small></li><li>蛇口の汚れ・サビ・傷<small>傷んでいたら蛇口を替える（水もれの原因）</small></li><li>床の強さ<small>弱いときは補強板</small></li><li>凍結のおそれ</li></ul></div>
-  </div></div>
+  <div class="box"><div class="box__h">① 📷 下見の写真で確かめる（お伺いする前に）</div>
+    <div class="cols2"><ul class="chk"><li>防水パンの大きさ<small>ドラム式は内寸で幅590mm・奥行540mm以上</small></li><li>蛇口の高さと形<small>ドラム式は本体に当たらない高さか（低いと壁ピタ水栓がいる）。ツバ・オートストッパー付きか（なければ給水栓ジョイント）</small></li><li>排水口の位置<small>本体の右・左・後ろ・真下か。真下なら真下排水ユニットがいる</small></li><li>排水パイプの高さ<small>本体の底に当たるときは、フロアーあて板がいる</small></li><li>通り道<small>洗面所のドアと廊下の幅。ドラム式は重い（2人以上）</small></li><li>ドアの開く向き<small>ドラム式は左開き・右開き。壁に当たらないか</small></li><li>コンセントとアース<small>交流100V・15Aを単独で。アース端子があるか</small></li><li>古い洗濯機<small>引き取るか。リサイクル券</small></li></ul></div>
+  </div>
 
-  <div class="box"><div class="box__h">🎒 持ち物</div><div class="grid2">
+  <div class="box"><div class="box__h">② 🎒 持ち物</div><div class="grid2">
     <div><span class="sub-h">📦 材料</span><ul class="chk"><li>洗濯機本体<small>箱の部品：給水ホース・給水栓継手・外部排水ホース・ホース穴カバー・輸送用固定ボルト用のスパナ</small></li><li>給水栓ジョイント<small>ツバ・オートストッパーなしの蛇口のとき</small></li><li>延長用給水ホース・延長用排水ホース<small>長さが足りないとき</small></li><li>フロアーあて板<small>排水パイプが当たるとき</small></li><li>真下排水ユニット<small>排水口が本体の真下のとき</small></li><li>簡易トラップホルダ<small>排水トラップがないとき</small></li><li>ホースバンド</li><li>養生シート・毛布</li><li>リサイクル券</li></ul></div>
     <div><span class="sub-h g">🔧 工具</span><ul class="chk"><li>手袋（軍手）</li><li>台車・背負いベルト</li><li>プラスドライバー</li><li>モンキーレンチ</li><li>水平器</li><li>バケツ・ぞうきん</li><li>懐中電灯</li></ul></div>
   </div></div>
+
+  <div class="box"><div class="box__h">③ 🏠 現場に着いたら（作業の前に）</div>
+    <div class="cols2"><ul class="chk"><li>排水口の掃除<small>糸くずがたまっていたら掃除する（排水不良の原因）</small></li><li>蛇口の汚れ・サビ・傷<small>傷んでいたら蛇口を替える（水もれの原因）</small></li><li>床の強さ<small>弱いときは補強板</small></li><li>凍結のおそれ</li></ul></div>
+  </div>
   </div>
 
   <div class="part pb"><span class="part__no">第2部</span><h2 class="part__t">作業編</h2></div>
