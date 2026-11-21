@@ -513,14 +513,21 @@
   .hm-head h1{font-size:23px;font-weight:700;margin:0 0 6px;color:#fff;line-height:1.4;}
   .hm-head .s{font-size:13px;color:rgba(255,255,255,.82);margin:0;}
   .strip-title{font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--ink-soft);margin:30px 0 12px;padding-left:11px;border-left:3px solid var(--sun);}
-  .card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(265px,1fr));gap:12px;}
+  .card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px;}
+  @media (max-width:700px){.card-grid{grid-template-columns:1fr;}}
   .hcard{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;text-decoration:none;color:inherit;box-shadow:0 1px 3px rgba(0,0,0,.06);transition:box-shadow .18s,transform .18s;}
   .hcard:hover{box-shadow:0 4px 14px rgba(0,0,0,.11);transform:translateY(-1px);}
   .hcard__head{display:flex;align-items:center;gap:8px;padding:10px 15px;font-size:16px;font-weight:700;}
   .hcard__head .ic{font-size:17px;line-height:1;}
-  .hcard__body{padding:12px 15px 14px;}
+  .hcard__body{padding:10px 15px 12px;}
   .hcard__title{font-size:16px;font-weight:700;margin:0 0 3px;}
   .hcard__desc{font-size:13.5px;color:var(--ink);margin:0;}
+  .toc{list-style:none;margin:0;padding:0;}
+  .toc li{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px;padding:6px 0;border-bottom:1px dotted var(--line);font-size:13.5px;}
+  .toc li:last-child{border-bottom:none;padding-bottom:0;}
+  .toc li:first-child{padding-top:0;}
+  .toc b{font-weight:700;color:var(--ink);}
+  .toc span{font-size:12px;color:var(--ink-soft);}
   :root{--c1b:#fde7ec;--c1f:#8f2340;--c2b:#ffedd5;--c2f:#9a3412;--c3b:#e4eefa;--c3f:#164a7a;--c4b:#fff4d1;--c4f:#7a5200;--c5b:#e3f2ec;--c5f:#1f5f4a;--c6b:#eceff1;--c6f:#37474f;}
   @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--c1b:#3a1a24;--c1f:#f0a0b4;--c2b:#3a2410;--c2f:#f5a86a;--c3b:#152a3d;--c3f:#8ec2ef;--c4b:#33291a;--c4f:#f3c96a;--c5b:#153026;--c5f:#8fd6bb;--c6b:#242c33;--c6f:#a7bac6;}}
   :root[data-theme="dark"]{--c1b:#3a1a24;--c1f:#f0a0b4;--c2b:#3a2410;--c2f:#f5a86a;--c3b:#152a3d;--c3f:#8ec2ef;--c4b:#33291a;--c4f:#f3c96a;--c5b:#153026;--c5f:#8fd6bb;--c6b:#242c33;--c6f:#a7bac6;}
@@ -560,13 +567,13 @@
     <a class="hcard k1" href="nippo-top.html">
       <div class="hcard__head"><span class="ic">📝</span>日報</div>
       <div class="hcard__body">
-        <p class="hcard__desc">受注日報・ひまわり日報・業務日報</p>
+        <ul class="toc"><li><b>📞 受注日報</b></li><li><b>🌻 ひまわり日報</b></li><li><b>📝 業務日報</b></li><li><b>📘 業務日報の入力マニュアル</b></li></ul>
       </div>
     </a>
     <a class="hcard k2" href="fair-top.html">
       <div class="hcard__head"><span class="ic">🎪</span>フェア</div>
       <div class="hcard__body">
-        <p class="hcard__desc">年間販促スケジュール・招待状作成・招待状訪問</p>
+        <ul class="toc"><li><b>📅 年間販促スケジュール</b></li><li><b>✏️ 招待状作成</b></li><li><b>💌 招待状訪問</b></li><li><b>🃏 打合せカード</b></li></ul>
       </div>
     </a>
   </div>
@@ -576,25 +583,25 @@
     <a class="hcard k3" href="staff-jimu.html">
       <div class="hcard__head"><span class="ic">📎</span>事務スタッフ</div>
       <div class="hcard__body">
-        <p class="hcard__desc">在庫・納期・アポの伝え方、成約したらやること</p>
+        <ul class="toc"><li><b>📎 事務の仕事</b><span>在庫・納期・アポの伝え方、成約したら</span></li><li><b>🤝 全員共通</b></li></ul>
       </div>
     </a>
     <a class="hcard k4" href="staff-himawari.html">
       <div class="hcard__head"><span class="ic">🌻</span>ひまわりスタッフ</div>
       <div class="hcard__body">
-        <p class="hcard__desc">巡回訪問・招待状訪問・お礼ハガキ、招待状作成、アンケート</p>
+        <ul class="toc"><li><b>🚪 訪問活動</b><span>巡回・招待状・お礼／保証切れ／バースデーハガキ</span></li><li><b>🎪 フェア</b><span>招待状作成・年間販促スケジュール</span></li><li><b>📝 アンケート</b></li><li><b>🧰 準備・片付け・その他</b><span>車両の手入れ</span></li><li><b>🤝 全員共通</b></li></ul>
       </div>
     </a>
     <a class="hcard k5" href="staff-service.html">
       <div class="hcard__head"><span class="ic">🔧</span>サービススタッフ</div>
       <div class="hcard__body">
-        <p class="hcard__desc">お困りごと訪問・安心点検、エアコンなどの点検、修理の流れ、テレビ・小物家電の配達</p>
+        <ul class="toc"><li><b>🚪 訪問活動</b><span>お困りごと・安心点検・招待状</span></li><li><b>🧽 メンテナンス</b><span>エアコンなどの点検・修理の流れ</span></li><li><b>🚚 配達（補助）</b><span>テレビ・冷蔵庫・洗濯機・マッサージチェア</span></li><li><b>🚚 配達（サービス）</b><span>テレビ50型まで・レコーダー・小物家電</span></li><li><b>🧰 準備・片付け・その他</b><span>車両の手入れ</span></li><li><b>🤝 全員共通</b></li></ul>
       </div>
     </a>
     <a class="hcard k6" href="staff-koji.html">
       <div class="hcard__head"><span class="ic">⚙️</span>工事スタッフ</div>
       <div class="hcard__body">
-        <p class="hcard__desc">朝の準備・片付け・集金、エアコン取付などの工事手順書、大物の配達</p>
+        <ul class="toc"><li><b>🧰 準備・片付け・その他</b><span>朝の準備・写真・片付け・廃材・車両・集金</span></li><li><b>🔧 工事（手順書）</b><span>エアコン・照明・換気扇・トイレ・IH・エコキュートなど</span></li><li><b>🚚 配達</b><span>テレビ・冷蔵庫・洗濯機・食洗機・マッサージチェア</span></li><li><b>🤝 全員共通</b></li></ul>
       </div>
     </a>
   </div>
