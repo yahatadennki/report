@@ -16,12 +16,34 @@
   .head{background:linear-gradient(135deg,var(--navy),var(--navy-deep));color:#fff;border-radius:10px;padding:24px 28px;}
   .head p{font-size:12px;letter-spacing:.14em;color:#cfe0ee;margin:0 0 6px;}
   .head h1{font-size:23px;margin:0;}
+  .sec{font-size:13px;font-weight:800;letter-spacing:.08em;color:var(--ink-soft);margin:28px 2px 8px;}
+  .sec small{font-weight:400;letter-spacing:0;margin-left:6px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;}
+  .item{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-decoration:none;color:var(--ink);}
+  .item:hover{border-color:#2e75b6;}
+  .item .ic{font-size:24px;line-height:1;}
+  .item b{display:block;font-size:14.5px;}
+  .item span{display:block;font-size:12px;color:var(--ink-soft);margin-top:2px;}
+  .item.card{border-style:dashed;}
+  .role{display:inline-block;font-size:11px;font-weight:800;border-radius:999px;padding:1px 8px;margin-left:6px;vertical-align:middle;}
+  .role.h{background:#e8f5e9;color:#2e7d32;} .role.m{background:#e4eefa;color:#164a7a;}
 </style>
 </head>
 <body>
 <div class="wrap">
   <a class="back" href="manual.html">&larr; ポータルへ戻る</a>
   <div class="head"><p>ヤハタ電機商会　現場サポート</p><h1>🌻 ひまわりスタッフ</h1></div>
+
+  <!-- 中身 -->
+  <p class="sec">🚪 訪問活動</p>
+  <div class="grid">
+      <a class="item card" href="card-himawari-2.html"><span class="ic">🏠</span><span><b>巡回訪問</b><span>打合せカード</span></span></a>
+      <a class="item" href="houmon-shotai.html"><span class="ic">💌</span><span><b>招待状訪問</b><span>フェアの招待状を届ける。準備編と作業編</span></span></a>
+      <a class="item card" href="card-himawari-7.html"><span class="ic">✉️</span><span><b>お礼ハガキ</b><span>打合せカード</span></span></a>
+      <a class="item card" href="card-himawari-3.html"><span class="ic">🛡️</span><span><b>保証切れハガキ</b><span>打合せカード 保証切れ前訪問</span></span></a>
+      <a class="item card" href="card-himawari-8.html"><span class="ic">🎂</span><span><b>バースデーハガキ</b><span>打合せカード バースデー訪問</span></span></a>
+  </div>
+  <!-- /中身 -->
 </div>
 </body>
 </html>
