@@ -500,6 +500,12 @@
   .pchips__h{font-size:12px;font-weight:800;margin-right:4px;min-width:7.5em;}
   .pchips a{font-size:12.5px;text-decoration:none;color:inherit;border:1px solid var(--line,#d7e0e8);border-radius:999px;padding:3px 10px;background:var(--paper,#f4f7fa);}
   .pchips a:hover{border-color:#2e75b6;color:#2e75b6;}
+  /* ほかのポータル */
+  .plinks{max-width:780px;margin:40px auto 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;}
+  .plink{display:block;padding:16px 18px;border-radius:10px;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,0.06);}
+  .plink .e{display:block;font-size:11px;letter-spacing:.14em;color:rgba(255,255,255,.72);}
+  .plink .t{display:block;font-size:17px;font-weight:700;color:#fff;margin:3px 0 2px;}
+  .plink .s{display:block;font-size:12px;color:rgba(255,255,255,.82);}
 </style>
 
 <div id="pinGate">
@@ -570,6 +576,20 @@
         <p class="menu-card__title">工事スタッフ</p>
       </span>
     </button>
+  </div>
+
+  <p class="portal-head__sub" style="max-width:780px;margin:40px auto 10px;text-align:left;font-size:12px;letter-spacing:0.1em;color:var(--ink-soft);">ほかのポータル</p>
+  <div class="plinks" style="margin-top:0">
+    <a class="plink" href="menu.html" style="background:linear-gradient(135deg,#1a3a5c 0%,#12283f 100%)">
+      <span class="e">毎日つかう</span>
+      <span class="t">業務ポータル</span>
+      <span class="s">日報・見積・リスト。</span>
+    </a>
+    <a class="plink" href="roadmap.html" style="background:linear-gradient(135deg,#7a4d10 0%,#573608 100%)">
+      <span class="e">先を読む</span>
+      <span class="t">年間販促スケジュール</span>
+      <span class="s">フェア・チラシ・かわら版。一年の流れ。</span>
+    </a>
   </div>
 </section>
 
