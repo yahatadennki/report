@@ -11,16 +11,16 @@
   :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844;--navy:#3f6a94;--navy-deep:#1a3a5c;}
   *{box-sizing:border-box}
   body{margin:0;background:var(--paper);color:var(--ink);font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;line-height:1.7;padding:28px 16px 70px;}
-  .wrap{max-width:860px;margin:0 auto;}
+  .wrap{max-width:900px;margin:0 auto;}
   .back{display:inline-block;font-size:13px;padding:8px 16px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);text-decoration:none;margin-bottom:16px;}
-  .head{background:linear-gradient(135deg,var(--navy),var(--navy-deep));color:#fff;border-radius:10px;padding:24px 28px;}
-  .head p{font-size:12px;letter-spacing:.14em;color:#cfe0ee;margin:0 0 6px;}
+  .head{background:linear-gradient(135deg,#1f5f4a 0%,#123d31 100%);color:#fff;border-radius:10px;padding:26px 30px 24px;}
+  .head p{font-size:12px;letter-spacing:.14em;color:rgba(255,255,255,.72);margin:0 0 6px;}
   .head h1{font-size:23px;margin:0;}
-  .sec{font-size:13px;font-weight:800;letter-spacing:.08em;color:var(--ink-soft);margin:28px 2px 8px;}
+  .sec{font-size:13px;font-weight:700;letter-spacing:.08em;color:var(--ink-soft);margin:30px 0 12px;padding-left:11px;border-left:3px solid #f0a500;}
   .sec small{font-weight:400;letter-spacing:0;margin-left:6px;}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;}
-  .item{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-decoration:none;color:var(--ink);}
-  .item:hover{border-color:#2e75b6;}
+  .item{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-decoration:none;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.06);transition:box-shadow .18s,transform .18s;}
+  .item:hover{box-shadow:0 4px 14px rgba(0,0,0,.11);transform:translateY(-1px);}
   .item .ic{font-size:24px;line-height:1;}
   .item b{display:block;font-size:14.5px;}
   .item span{display:block;font-size:12px;color:var(--ink-soft);margin-top:2px;}
