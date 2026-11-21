@@ -517,7 +517,7 @@
     <h1 class="portal-head__title">現場サポートポータル</h1>
     <p class="portal-head__sub">訪問の前後で迷ったら、ここから開いてください。</p>
   </div>
-  <p class="portal-head__sub" style="max-width:780px;margin:0 auto 10px;text-align:left;font-size:12px;letter-spacing:0.1em;color:var(--ink-soft);">実践ガイド</p>
+  <p class="portal-head__sub" style="max-width:780px;margin:0 auto 10px;text-align:left;font-size:12px;letter-spacing:0.1em;color:var(--ink-soft);">サービスガイド</p>
   <div class="menu-grid">
     <button class="menu-card" onclick="showView('view-talk')">
       <span class="menu-card__icon">🗣️</span>
@@ -543,6 +543,10 @@
         <span class="menu-card__tag">携帯用</span>
       </span>
     </button>
+  </div>
+
+  <p class="portal-head__sub" style="max-width:780px;margin:32px auto 10px;text-align:left;font-size:12px;letter-spacing:0.1em;color:var(--ink-soft);">配達ガイド</p>
+  <div class="menu-grid">
     <button class="menu-card" onclick="showView('view-delivery')">
       <span class="menu-card__icon">📦</span>
       <span>
@@ -553,46 +557,7 @@
     </button>
   </div>
 
-  <p class="portal-head__sub" style="max-width:780px;margin:32px auto 10px;text-align:left;font-size:12px;letter-spacing:0.1em;color:var(--ink-soft);">会社・職種ガイド</p>
-  <div class="menu-grid">
-    <button class="menu-card" onclick="showView('view-jimu')">
-      <span class="menu-card__icon">🗂</span>
-      <span>
-        <p class="menu-card__title">事務スタッフガイド</p>
-        <p class="menu-card__desc">お店を動かす「司令塔」の仕事。</p>
-      </span>
-    </button>
-    <button class="menu-card" onclick="showView('view-himawari')">
-      <span class="menu-card__icon">🌻</span>
-      <span>
-        <p class="menu-card__title">ひまわりスタッフガイド</p>
-        <p class="menu-card__desc">お客様との関係をつくる「顔」の仕事。</p>
-      </span>
-    </button>
-    <button class="menu-card" onclick="showView('view-service')">
-      <span class="menu-card__icon">🔧</span>
-      <span>
-        <p class="menu-card__title">サービススタッフガイド</p>
-        <p class="menu-card__desc">「困った」を解決する頼れる存在。</p>
-      </span>
-    </button>
-    <button class="menu-card" onclick="showView('view-koji')">
-      <span class="menu-card__icon">⚙️</span>
-      <span>
-        <p class="menu-card__title">工事スタッフガイド</p>
-        <p class="menu-card__desc">暮らしの快適を実現する職人の仕事。</p>
-      </span>
-    </button>
-    <button class="menu-card" onclick="showView('view-company')">
-      <span class="menu-card__icon">🏠</span>
-      <span>
-        <p class="menu-card__title">ヤハタ電機商会とは何か</p>
-        <p class="menu-card__desc">会社の考え方と4部門の連携。全スタッフ向け。</p>
-      </span>
-    </button>
-  </div>
-
-  <p class="portal-head__sub" style="max-width:780px;margin:32px auto 10px;text-align:left;font-size:12px;letter-spacing:0.1em;color:var(--ink-soft);">工事手順書</p>
+  <p class="portal-head__sub" style="max-width:780px;margin:32px auto 10px;text-align:left;font-size:12px;letter-spacing:0.1em;color:var(--ink-soft);">工事ガイド</p>
   <div class="menu-grid">
     <button class="menu-card" onclick="location.href='aircon-manual.html'">
       <span class="menu-card__icon">❄️</span>
@@ -682,14 +647,6 @@
         <span class="menu-card__tag">現場用</span>
       </span>
     </button>
-    <button class="menu-card" onclick="location.href='nippo-manual.html'">
-      <span class="menu-card__icon">📝</span>
-      <span>
-        <p class="menu-card__title">業務日報の入力マニュアル</p>
-        <p class="menu-card__desc">作業内容ごとの入力項目と必須チェック。</p>
-        <span class="menu-card__tag">全員</span>
-      </span>
-    </button>
   </div>
 
   <p class="portal-head__sub" style="max-width:780px;margin:32px auto 10px;text-align:left;font-size:12px;letter-spacing:0.1em;color:var(--ink-soft);">打合せカード</p>
@@ -699,6 +656,14 @@
       <span>
         <p class="menu-card__title">打合せカード（目次）</p>
         <p class="menu-card__desc">1枚1テーマ。職種ごと・商品ごとのカード。</p>
+        <span class="menu-card__tag">全員</span>
+      </span>
+    </button>
+    <button class="menu-card" onclick="location.href='nippo-manual.html'">
+      <span class="menu-card__icon">📝</span>
+      <span>
+        <p class="menu-card__title">業務日報の入力マニュアル</p>
+        <p class="menu-card__desc">作業内容ごとの入力項目と必須チェック。</p>
         <span class="menu-card__tag">全員</span>
       </span>
     </button>
@@ -4196,6 +4161,9 @@
     document.getElementById('backBtn').classList.toggle('show', id !== 'view-home');
     window.scrollTo(0, 0);
   }
+
+  // アドレスの #view-◯◯ でそのガイドを開く（経営ポータルの職種ガイドから）
+  if (/^#view-/.test(location.hash)) showView(location.hash.slice(1));
 
   // ===== PINロック（7860）。※Artifactはソースが見えるため簡易的な目隠しです =====
   (function () {
