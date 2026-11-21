@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>車両の手入れ 手順書｜ヤハタ電機商会</title>
+<style>
+  :root{
+    --navy:#1a3a5c; --navy-deep:#12283f; --blue:#2e75b6; --sun:#f0a500;
+    --paper:#f4f7fa; --card:#fff; --ink:#1c2530; --ink-soft:#4a5a6a; --line:#d7e0e8;
+    --kouji-bg:#e4eefa; --kouji-fg:#164a7a; --hojo-bg:#e8f5e9; --hojo-fg:#2e7d32;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --paper:#10161d; --card:#1a2028; --ink:#e8edf2; --ink-soft:#a9b6c2; --line:#2c3844;
+    --navy:#3f6a94; --navy-deep:#1a3a5c; --kouji-bg:#16283a; --kouji-fg:#8fc2f2; --hojo-bg:#1b2e1c; --hojo-fg:#a5d6a7;
+  }}
+  :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844;--navy:#3f6a94;--navy-deep:#1a3a5c;--kouji-bg:#16283a;--kouji-fg:#8fc2f2;--hojo-bg:#1b2e1c;--hojo-fg:#a5d6a7;}
+  :root[data-theme="light"]{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;--navy:#1a3a5c;--navy-deep:#12283f;--kouji-bg:#e4eefa;--kouji-fg:#164a7a;--hojo-bg:#e8f5e9;--hojo-fg:#2e7d32;}
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;
+    line-height:1.7;padding:28px 14px 70px;}
+  .wrap{max-width:860px;margin:0 auto;}
+  .toolbar{max-width:860px;margin:0 auto 16px;display:flex;justify-content:flex-end;}
+  .toolbar button{font-family:inherit;font-size:13px;padding:8px 16px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;}
+  .toolbar button:hover{border-color:var(--blue);color:var(--blue);}
+
+  .head{background:linear-gradient(135deg,var(--navy),var(--navy-deep));color:#fff;border-radius:10px;padding:24px 28px;margin-bottom:8px;}
+  .head__eyebrow{font-size:12px;letter-spacing:.14em;color:#cfe0ee;margin:0 0 6px;}
+  .head__title{font-size:23px;font-weight:700;margin:0;}
+  .head__sub{font-size:13px;color:#b9cee0;margin:8px 0 0;}
+
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink-soft);margin:14px 2px;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .legend i{width:12px;height:12px;border-radius:3px;display:inline-block;}
+  .legend i.k{background:var(--blue);} .legend i.h{background:var(--hojo-fg);}
+
+  .phase{font-weight:800;font-size:15px;color:#fff;background:var(--navy);border-radius:8px;padding:7px 14px;margin:20px 0 0;}
+
+  .steps{display:flex;flex-direction:column;gap:10px;margin-top:10px;}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .step__no{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--line);background:var(--paper);}
+  .step__num{width:26px;height:26px;border-radius:50%;background:var(--sun);color:#3a2600;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .step__title{font-weight:700;font-size:14.5px;}
+  .cols{display:grid;grid-template-columns:1fr 1fr;}
+  .col{padding:11px 14px;}
+  .col.kouji{border-right:1px solid var(--line);}
+  .col__h{font-size:11.5px;font-weight:800;letter-spacing:.04em;padding:2px 8px;border-radius:999px;display:inline-block;margin-bottom:7px;}
+  .col.kouji .col__h{background:var(--kouji-bg);color:var(--kouji-fg);}
+  .col.hojo  .col__h{background:var(--hojo-bg);color:var(--hojo-fg);}
+  .col ul{margin:0;padding-left:18px;}
+  .col li{font-size:13px;margin:4px 0;color:var(--ink);}
+  .col .blank{list-style:none;margin-left:-18px;color:var(--ink-soft);font-size:12px;}
+  .col .note-li{list-style:none;margin-left:-18px;color:#b8860b;font-weight:700;font-size:12px;}
+  @media (prefers-color-scheme:dark){.col .note-li{color:#f0c14b;}}
+  :root[data-theme="dark"] .col .note-li{color:#f0c14b;}
+
+  .warn{background:var(--sun);color:#3a2600;font-size:12.5px;font-weight:700;border-radius:8px;padding:10px 14px;margin-top:16px;}
+  .warn b{display:block;margin-bottom:3px;}
+
+  @media(max-width:560px){ .cols{grid-template-columns:1fr;} .col.kouji{border-right:none;border-bottom:1px solid var(--line);} }
+
+  @media print{
+    body{padding:0;background:#fff;}
+    .toolbar{display:none;}
+    .step{break-inside:avoid;}
+    :root,:root[data-theme="dark"]{--paper:#fff;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;--navy:#1a3a5c;--navy-deep:#12283f;--kouji-bg:#e4eefa;--kouji-fg:#164a7a;--hojo-bg:#e8f5e9;--hojo-fg:#2e7d32;}
+  }
+
+  .part{display:flex;align-items:center;gap:10px;margin:22px 0 4px;}
+  .part__no{background:var(--sun);color:#3a2600;font-weight:800;font-size:13px;border-radius:999px;padding:3px 12px;}
+  .part__t{font-size:20px;font-weight:800;color:var(--ink);margin:0;}
+  .part__s{font-size:12.5px;color:var(--ink-soft);margin:0 2px 6px;}
+  .box{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:10px;}
+  .box__h{font-weight:800;font-size:14.5px;padding:8px 14px;border-bottom:1px solid var(--line);background:var(--paper);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;}
+  .grid2>div{padding:10px 14px;}
+  .grid2>div+div{border-left:1px solid var(--line);}
+  .sub-h{display:inline-block;font-size:11.5px;font-weight:800;padding:2px 9px;border-radius:999px;background:var(--kouji-bg);color:var(--kouji-fg);margin-bottom:6px;}
+  .sub-h.g{background:var(--hojo-bg);color:var(--hojo-fg);}
+  .chk{list-style:none;margin:0;padding:0;}
+  .chk li{font-size:13px;margin:5px 0;padding-left:22px;position:relative;}
+  .chk li::before{content:"";position:absolute;left:0;top:3px;width:13px;height:13px;border:1.6px solid var(--ink-soft);border-radius:3px;}
+  .chk li small{display:block;color:var(--ink-soft);font-size:11.5px;}
+  .one{padding:11px 14px;}
+  .one ul{margin:0;padding-left:18px;}
+  .one li{font-size:13.5px;margin:4px 0;}
+  .tip{color:var(--ink-soft);font-size:12.5px;margin:5px 0 0;}
+  .col .tip{font-size:12px;}
+  .tag{font-size:11px;font-weight:800;background:var(--hojo-bg);color:var(--hojo-fg);border-radius:999px;padding:2px 9px;margin-left:auto;white-space:nowrap;}
+  .pb{break-before:page;}
+  .daihyo{background:var(--card);border:1px dashed var(--line);border-radius:8px;padding:7px 12px;font-size:12.5px;color:var(--ink-soft);margin:12px 0 0;}
+  .cols2{padding:10px 14px;columns:2;column-gap:28px;}
+  .cols2 .chk li{break-inside:avoid;}
+  @media(max-width:560px){.cols2{columns:1;}}
+  .intro{background:var(--card);border:2px solid var(--sun);border-radius:10px;padding:12px 16px;margin-top:14px;}
+  .intro__h{font-weight:800;font-size:16px;margin:0 0 6px;}
+  .intro p{font-size:13.5px;margin:4px 0;}
+  .intro ul{margin:4px 0;padding-left:20px;font-size:13.5px;}
+  .cardlink{font-size:12.5px;margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+  .cardlink a{text-decoration:none;color:var(--kouji-fg);background:var(--kouji-bg);border-radius:999px;padding:2px 10px;font-weight:700;}
+  @media(max-width:560px){.grid2{grid-template-columns:1fr;}.grid2>div+div{border-left:0;border-top:1px solid var(--line);}}
+  @media print{.part{margin-top:6px;}.box{break-inside:avoid;}.prep{zoom:.71}.prep .chk li{margin:3px 0}}
+</style>
+
+<div class="toolbar" style="justify-content:space-between;"><a class="back-portal" href="manual.html" style="font-size:13px;padding:8px 16px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);text-decoration:none;">&larr; ポータルへ戻る</a><button onclick="window.print()">🖨️ 印刷 / PDF保存</button></div>
+
+<div class="wrap">
+  <div class="head">
+    <p class="head__eyebrow">ヤハタ電機商会　準備・片付け・その他</p>
+    <h1 class="head__title">車両の手入れ</h1>
+    <p class="head__sub">工事・サービス・ひまわり、みんなが使う車（バイク）の手入れ。車はお店の看板で、お客様の家の前に停める「顔」です。</p>
+  </div>
+
+  <div class="prep">
+  <p class="daihyo">📌 これは<b>代表的な作業手順</b>です。機種や現場によってちがうところは、その機種の取扱説明書・施工説明書で確かめてください。</p>
+
+  <div class="part"><span class="part__no">第1部</span><h2 class="part__t">準備編</h2></div>
+  <p class="part__s">出かける前に、ここを見ておきます。</p>
+
+  <div class="box"><div class="box__h">① 🚗 乗る前に（毎日）</div>
+    <div class="cols2"><ul class="chk"><li>燃料<small>半分を切っていたら入れておく</small></li><li>まわりをひと回り<small>タイヤのへこみ・傷・ライトの割れ</small></li><li>積んだもの<small>落ちない・崩れないように積んであるか。今日使うものがあるか</small></li><li>ランプ<small>メーターに警告ランプが点いていないか</small></li></ul></div>
+  </div>
+
+  <div class="box"><div class="box__h">② 🎒 持ち物</div><div class="grid2">
+    <div><span class="sub-h">🧽 手入れに使うもの</span><ul class="chk"><li>ぞうきん・ウエス</li><li>ごみ袋</li><li>ウォッシャー液</li><li>洗車の道具</li></ul></div>
+    <div><span class="sub-h g">📝 そのほか</span><ul class="chk"><li>タイヤの空気圧計</li><li>車検証・自賠責・保険証券<small>いつもの場所に入っているか</small></li><li>点検の記録</li></ul></div>
+  </div></div>
+
+  <div class="box"><div class="box__h">③ 🏠 現場に着いたら（作業の前に）</div>
+    <div class="cols2"><ul class="chk"><li>停める場所<small>お客様やご近所の出入りのじゃまにならないか。お客様に停める場所を聞く</small></li><li>降りるとき<small>鍵をかける。窓を閉める。工具や品物を外から見えるところに置かない</small></li></ul></div>
+  </div>
+  </div>
+
+  <div class="part pb"><span class="part__no">第2部</span><h2 class="part__t">作業編</h2></div>
+  <p class="part__s">上から順に進めます。</p>
+  <div class="phase">1. 帰ってきたら（毎日）</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">1</span><span class="step__title">中をきれいにして、次の日に備える</span></div>
+      <div class="one"><ul><li>車の中のごみを捨てる。</li><li>次の日の荷物を積み直す（工事は「朝の準備」へ）。</li><li>傷・へこみ・こすったところがあれば、その日のうちに伝える。</li></ul><p class="tip">💡 小さな傷でも、その日に言う。あとから分かると、いつのことか分からなくなる。</p><p class="cardlink">🃏 カードで確かめる：<a href="card-all-5.html">きまりは1つ</a></p></div>
+    </div>
+  </div>
+  <div class="phase">2. 毎週</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">2</span><span class="step__title">洗う・ふく・見る</span></div>
+      <div class="one"><ul><li>車の外を洗う（汚れた日は、その都度）。</li><li>窓・ミラー・ライトをふく。</li><li>車の中を掃除する（床・座席・ダッシュボード）。</li><li>タイヤの空気圧を見る。</li></ul></div>
+    </div>
+  </div>
+  <div class="phase">3. 毎月</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">3</span><span class="step__title">点検する</span></div>
+      <div class="one"><ul><li>エンジンオイル・冷却水・ブレーキ液・ウォッシャー液の量。</li><li>タイヤの溝・ひび。</li><li>ライト・ウインカー・ブレーキランプが全部点くか（2人で見る）。</li><li>ワイパーのゴムが切れていないか。</li></ul><p class="tip">💡 気になるところは、整備に出す。自分で無理に直さない。</p></div>
+    </div>
+  </div>
+  <div class="phase">4. 期限があるもの</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">4</span><span class="step__title">車検・点検・保険</span></div>
+      <div class="one"><ul><li>車検・定期点検・保険の期限を、事務と一緒に確かめる。</li><li>オイル交換の時期（走った距離）を、記録しておく。</li></ul></div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">5</span><span class="step__title">事故・故障のとき</span></div>
+      <div class="one"><ul><li>まずけが人の確認と安全。警察に連絡する。</li><li>すぐ店に電話する。</li><li>お客様との約束に遅れるときは、先にお客様へ連絡する（店から連絡してもらってもよい）。</li></ul><p class="tip">💡 あわてない。安全が先。</p><p class="cardlink">🃏 カードで確かめる：<a href="card-all-4.html">その場で約束</a></p></div>
+    </div>
+  </div>
+
+  <div class="warn">
+    <b>⚠ 大事なところ</b>
+    傷・へこみ・故障は、小さくてもその日に言う。車はお店の顔。中も外もきれいに。
+  </div>
+</div>
