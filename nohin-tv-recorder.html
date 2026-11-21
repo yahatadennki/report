@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>テレビとレコーダー 納品＆取扱説明 手順書｜ヤハタ電機商会</title>
+<style>
+  :root{
+    --navy:#1a3a5c; --navy-deep:#12283f; --blue:#2e75b6; --sun:#f0a500;
+    --paper:#f4f7fa; --card:#fff; --ink:#1c2530; --ink-soft:#4a5a6a; --line:#d7e0e8;
+    --kouji-bg:#e4eefa; --kouji-fg:#164a7a; --hojo-bg:#e8f5e9; --hojo-fg:#2e7d32;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --paper:#10161d; --card:#1a2028; --ink:#e8edf2; --ink-soft:#a9b6c2; --line:#2c3844;
+    --navy:#3f6a94; --navy-deep:#1a3a5c; --kouji-bg:#16283a; --kouji-fg:#8fc2f2; --hojo-bg:#1b2e1c; --hojo-fg:#a5d6a7;
+  }}
+  :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844;--navy:#3f6a94;--navy-deep:#1a3a5c;--kouji-bg:#16283a;--kouji-fg:#8fc2f2;--hojo-bg:#1b2e1c;--hojo-fg:#a5d6a7;}
+  :root[data-theme="light"]{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;--navy:#1a3a5c;--navy-deep:#12283f;--kouji-bg:#e4eefa;--kouji-fg:#164a7a;--hojo-bg:#e8f5e9;--hojo-fg:#2e7d32;}
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;
+    line-height:1.7;padding:28px 14px 70px;}
+  .wrap{max-width:860px;margin:0 auto;}
+  .toolbar{max-width:860px;margin:0 auto 16px;display:flex;justify-content:flex-end;}
+  .toolbar button{font-family:inherit;font-size:13px;padding:8px 16px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;}
+  .toolbar button:hover{border-color:var(--blue);color:var(--blue);}
+
+  .head{background:linear-gradient(135deg,var(--navy),var(--navy-deep));color:#fff;border-radius:10px;padding:24px 28px;margin-bottom:8px;}
+  .head__eyebrow{font-size:12px;letter-spacing:.14em;color:#cfe0ee;margin:0 0 6px;}
+  .head__title{font-size:23px;font-weight:700;margin:0;}
+  .head__sub{font-size:13px;color:#b9cee0;margin:8px 0 0;}
+
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink-soft);margin:14px 2px;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .legend i{width:12px;height:12px;border-radius:3px;display:inline-block;}
+  .legend i.k{background:var(--blue);} .legend i.h{background:var(--hojo-fg);}
+
+  .phase{font-weight:800;font-size:15px;color:#fff;background:var(--navy);border-radius:8px;padding:7px 14px;margin:20px 0 0;}
+
+  .steps{display:flex;flex-direction:column;gap:10px;margin-top:10px;}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .step__no{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--line);background:var(--paper);}
+  .step__num{width:26px;height:26px;border-radius:50%;background:var(--sun);color:#3a2600;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .step__title{font-weight:700;font-size:14.5px;}
+  .cols{display:grid;grid-template-columns:1fr 1fr;}
+  .col{padding:11px 14px;}
+  .col.kouji{border-right:1px solid var(--line);}
+  .col__h{font-size:11.5px;font-weight:800;letter-spacing:.04em;padding:2px 8px;border-radius:999px;display:inline-block;margin-bottom:7px;}
+  .col.kouji .col__h{background:var(--kouji-bg);color:var(--kouji-fg);}
+  .col.hojo  .col__h{background:var(--hojo-bg);color:var(--hojo-fg);}
+  .col ul{margin:0;padding-left:18px;}
+  .col li{font-size:13px;margin:4px 0;color:var(--ink);}
+  .col .blank{list-style:none;margin-left:-18px;color:var(--ink-soft);font-size:12px;}
+  .col .note-li{list-style:none;margin-left:-18px;color:#b8860b;font-weight:700;font-size:12px;}
+  @media (prefers-color-scheme:dark){.col .note-li{color:#f0c14b;}}
+  :root[data-theme="dark"] .col .note-li{color:#f0c14b;}
+
+  .warn{background:var(--sun);color:#3a2600;font-size:12.5px;font-weight:700;border-radius:8px;padding:10px 14px;margin-top:16px;}
+  .warn b{display:block;margin-bottom:3px;}
+
+  @media(max-width:560px){ .cols{grid-template-columns:1fr;} .col.kouji{border-right:none;border-bottom:1px solid var(--line);} }
+
+  @media print{
+    body{padding:0;background:#fff;}
+    .toolbar{display:none;}
+    .step{break-inside:avoid;}
+    :root,:root[data-theme="dark"]{--paper:#fff;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;--navy:#1a3a5c;--navy-deep:#12283f;--kouji-bg:#e4eefa;--kouji-fg:#164a7a;--hojo-bg:#e8f5e9;--hojo-fg:#2e7d32;}
+  }
+
+  .part{display:flex;align-items:center;gap:10px;margin:22px 0 4px;}
+  .part__no{background:var(--sun);color:#3a2600;font-weight:800;font-size:13px;border-radius:999px;padding:3px 12px;}
+  .part__t{font-size:20px;font-weight:800;color:var(--ink);margin:0;}
+  .part__s{font-size:12.5px;color:var(--ink-soft);margin:0 2px 6px;}
+  .box{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:10px;}
+  .box__h{font-weight:800;font-size:14.5px;padding:8px 14px;border-bottom:1px solid var(--line);background:var(--paper);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;}
+  .grid2>div{padding:10px 14px;}
+  .grid2>div+div{border-left:1px solid var(--line);}
+  .sub-h{display:inline-block;font-size:11.5px;font-weight:800;padding:2px 9px;border-radius:999px;background:var(--kouji-bg);color:var(--kouji-fg);margin-bottom:6px;}
+  .sub-h.g{background:var(--hojo-bg);color:var(--hojo-fg);}
+  .chk{list-style:none;margin:0;padding:0;}
+  .chk li{font-size:13px;margin:5px 0;padding-left:22px;position:relative;}
+  .chk li::before{content:"";position:absolute;left:0;top:3px;width:13px;height:13px;border:1.6px solid var(--ink-soft);border-radius:3px;}
+  .chk li small{display:block;color:var(--ink-soft);font-size:11.5px;}
+  .one{padding:11px 14px;}
+  .one ul{margin:0;padding-left:18px;}
+  .one li{font-size:13.5px;margin:4px 0;}
+  .tip{color:var(--ink-soft);font-size:12.5px;margin:5px 0 0;}
+  .col .tip{font-size:12px;}
+  .tag{font-size:11px;font-weight:800;background:var(--hojo-bg);color:var(--hojo-fg);border-radius:999px;padding:2px 9px;margin-left:auto;white-space:nowrap;}
+  .pb{break-before:page;}
+  .cols2{padding:10px 14px;columns:2;column-gap:28px;}
+  .cols2 .chk li{break-inside:avoid;}
+  @media(max-width:560px){.cols2{columns:1;}}
+  .intro{background:var(--card);border:2px solid var(--sun);border-radius:10px;padding:12px 16px;margin-top:14px;}
+  .intro__h{font-weight:800;font-size:16px;margin:0 0 6px;}
+  .intro p{font-size:13.5px;margin:4px 0;}
+  .intro ul{margin:4px 0;padding-left:20px;font-size:13.5px;}
+  .cardlink{font-size:12.5px;margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+  .cardlink a{text-decoration:none;color:var(--kouji-fg);background:var(--kouji-bg);border-radius:999px;padding:2px 10px;font-weight:700;}
+  @media(max-width:560px){.grid2{grid-template-columns:1fr;}.grid2>div+div{border-left:0;border-top:1px solid var(--line);}}
+  @media print{.part{margin-top:6px;}.box{break-inside:avoid;}.prep{zoom:.74}.prep .chk li{margin:3px 0}}
+</style>
+
+<div class="toolbar" style="justify-content:space-between;"><a class="back-portal" href="manual.html" style="font-size:13px;padding:8px 16px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);text-decoration:none;">&larr; ポータルへ戻る</a><button onclick="window.print()">🖨️ 印刷 / PDF保存</button></div>
+
+<div class="wrap">
+  <div class="head">
+    <p class="head__eyebrow">ヤハタ電機商会　配達ガイド</p>
+    <h1 class="head__title">テレビとレコーダー 納品＆取扱説明 手順書</h1>
+    <p class="head__sub">テレビとレコーダーを一緒に配達・設置するときの流れ。パナソニック「ビエラ」の取扱説明書と「ディーガ」の接続ガイドをもとにしています。</p>
+  </div>
+
+  <div class="prep">
+
+  <div class="part"><span class="part__no">第1部</span><h2 class="part__t">準備編</h2></div>
+  <p class="part__s">見積のときにサービススタッフが撮った下見写真で確かめてから出かけます。現場に着いたら、もう一度見ます。</p>
+
+  <div class="box"><div class="box__h">① 📷 下見の写真で確かめる（お伺いする前に）</div>
+    <div class="cols2"><ul class="chk"><li>大きさと種類<small>液晶50型までは1人、有機ELと50型より大きいものは2人で行く</small></li><li>置く台の幅と強さ<small>スタンドの幅より広く、重さに耐えるか</small></li><li>通り道<small>玄関・廊下・ドアの幅。箱のまま入るか</small></li><li>レコーダーを置く場所<small>テレビ台の中に入るか。まわりにすき間があるか</small></li><li>アンテナ<small>壁のアンテナ端子の場所と数。地デジだけか、BS/CSもか。分波器・分配器がいるか</small></li><li>ほかにつなぐ機器<small>ゲーム機など。HDMIケーブルの本数</small></li><li>インターネット<small>ネットにつなぐか（動画を見る・スマホで録画予約する）。BSを見るか（NHKのメッセージを消す手続きがいる）</small></li><li>壁掛けか<small>壁掛けは別の工事になる</small></li><li>古い機器<small>古いテレビ・古いレコーダーを引き取るか。テレビはリサイクル券。古いレコーダーに残したい録画がないか</small></li></ul></div>
+  </div>
+
+  <div class="box"><div class="box__h">② 🎒 持ち物</div><div class="grid2">
+    <div><span class="sub-h">📦 材料</span><ul class="chk"><li>テレビ本体<small>箱の部品：リモコン・乾電池・B-CASカード・スタンド・ねじ・転倒防止部品</small></li><li>レコーダー本体<small>箱の部品：リモコン・乾電池・B-CASカード・電源コード・地デジ用アンテナケーブル</small></li><li>HDMIケーブル<small>レコーダーには付いていない。必ず持っていく</small></li><li>BS・CS用アンテナケーブル（4K対応）<small>BS/CSも録るとき</small></li><li>アンテナケーブル（同軸・F型）<small>長さちがいを2〜3本</small></li><li>分波器・分配器<small>壁のアンテナ端子が1つのとき</small></li><li>LANケーブル<small>有線でつなぐとき</small></li><li>養生シート・毛布</li><li>リサイクル券</li></ul></div>
+    <div><span class="sub-h g">🔧 工具</span><ul class="chk"><li>手袋</li><li>プラスドライバー<small>12cm以上の長いもの（スタンド用）</small></li><li>ドライバー（転倒防止用）</li><li>台車</li><li>懐中電灯（裏の端子を見る）</li></ul></div>
+  </div></div>
+
+  <div class="box"><div class="box__h">③ 🏠 現場に着いたら（作業の前に）</div>
+    <div class="cols2"><ul class="chk"><li>置く場所<small>直射日光や暖房器具から離れているか</small></li><li>アンテナ端子<small>壁の端子がゆるんでいないか、ケーブルが傷んでいないか</small></li><li>コンセント<small>近くにあるか、たこ足になっていないか</small></li><li>今の映り<small>映りの悪いチャンネルがないか聞いておく</small></li><li>Wi-Fiがあるか<small>ルーターの場所。Wi-Fiの名前（SSID）とパスワードが分かるか（ルーターのラベルや、契約の書類）</small></li><li>Amazonアカウントがあるか<small>Wi-Fiがあるときに聞く。あれば、メールアドレスとパスワードをお客様が分かるか</small></li></ul></div>
+  </div>
+  </div>
+
+  <div class="part pb"><span class="part__no">第2部</span><h2 class="part__t">作業編</h2></div>
+  <p class="part__s">上から順に進めます。</p>
+  <div class="phase">1. 運ぶ・片付ける</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">1</span><span class="step__title">古い機器を外す</span></div>
+      <div class="one"><ul><li>古いテレビの電源を切り、コンセントを抜く。</li><li>アンテナ線・HDMIなどを外す。どこに何がつながっていたか、写真を撮っておく。</li><li>B-CASカードや録画用USBが入っていないか見て、お客様に返す。</li><li>古い機器を運び出す。</li><li>古いレコーダーの録画を残したいときは、ダビングできるか先に相談する（その場で無理にしない）。</li></ul><p class="tip">💡 画面を上や下に向けて運ばない。必ず立てたまま運ぶ。</p></div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">2</span><span class="step__title">新しいテレビを運び入れる</span></div>
+      <div class="one"><ul><li>箱は立てたまま運ぶ。</li><li>置く場所の近くで箱を開け、付属品をそろえる。</li></ul><p class="tip">💡 画面を押さない。持つのはふちとスタンド部分。</p></div>
+    </div>
+  </div>
+  <div class="phase">2. 設置する</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">3</span><span class="step__title">スタンドを付ける</span></div>
+      <div class="one"><ul><li>毛布の上に、画面を下にしてそっと置く（2人で）。</li><li>スタンドを付け、ねじをまっすぐ締める。</li><li>起こして台に置く。</li></ul><p class="tip">💡 ねじを斜めに締めると、ねじ山がこわれる。</p></div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">4</span><span class="step__title">レコーダーを置く</span></div>
+      <div class="one"><ul><li>テレビ台の中に、まわりにすき間をあけて置く（熱がこもらないように）。</li><li>B-CASカードを、向きに気をつけて差す。</li></ul><p class="tip">💡 上に物を置かない。</p></div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">5</span><span class="step__title">アンテナ線をつなぐ（テレビとレコーダーの両方へ）</span></div>
+      <div class="one"><ul><li>電源を切った状態でつなぐ。</li><li>壁のアンテナ端子が1つのときは、分波器で「地デジ」と「BS/CS」に分ける。</li><li>分配器で分けて、テレビとレコーダーの両方の「入力」につなぐ。</li><li>地デジは「地上デジタル入力」、BS/CSは「BS・110度CS-IF入力」へ。</li><li>最後に、レコーダーとテレビをHDMIケーブルでつなぐ。</li></ul><p class="tip">💡 地デジとBS/CSの端子を逆にしない。入力と出力をまちがえない（映らない原因のいちばん多いところ）。</p><p class="tip">💡 レコーダーのBS出力からテレビのBS入力へはつながない。</p><p class="tip">💡 4Kで見るときは、テレビの4K対応のHDMI端子へ。</p></div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">6</span><span class="step__title">テレビにB-CASカードを差す</span></div>
+      <div class="one"><ul><li>テレビにもB-CASカードを差す。</li><li>LANをつなぐときは、ここでつなぐ。</li></ul></div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">7</span><span class="step__title">転倒防止をする</span></div>
+      <div class="one"><ul><li>ベルトで台に固定する。</li><li>台が動くときは、壁や柱にも固定する。</li><li>ケーブルをクランパーでまとめる。</li></ul><p class="tip">💡 転倒防止は、全部つなぎ終わってから。</p></div>
+    </div>
+  </div>
+  <div class="phase">3. 設定する</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">8</span><span class="step__title">テレビのかんたん設置設定</span></div>
+      <div class="one"><ul><li>リモコンに電池を入れる。</li><li>電源を入れると「かんたん設置設定」が出る。画面にそって進める。</li><li>郵便番号・地域、チャンネルの設定（初期スキャン）。</li><li>Wi-Fiは、あとの「ネットにつなぐ」で設定する。</li></ul><p class="tip">💡 レコーダーは、この設定の前につないでおく。</p></div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">9</span><span class="step__title">レコーダーのかんたん設置設定</span></div>
+      <div class="one"><ul><li>テレビの入力を、レコーダーをつないだHDMIに切り替える。</li><li>レコーダーの電源を入れると「かんたん設置設定」が出る。画面にそって進める。</li><li>地域・チャンネルの設定。</li><li>テレビのリモコンでレコーダーが動くか（HDMI連動）を確かめる。</li></ul><p class="tip">💡 レコーダーの画面が出ないときは、テレビの入力とHDMIケーブルを確かめる。</p></div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">10</span><span class="step__title">ネットにつなぐ</span><span class="tag">Wi-Fiがあるとき</span></div>
+      <div class="one"><ul><li>Wi-Fiの名前（SSID）を選び、パスワードを入れる（テレビとレコーダーの両方）。</li><li>Amazonアカウントでログインする（メールアドレスとパスワードは、お客様に入れてもらう）。</li><li>動画のアプリ（YouTubeなど）が見られるか、一緒に確かめる。</li><li>Amazonアカウントがないときは、作成のお手伝いまで。メールアドレスとパスワードはお客様が決めて、控えはお客様に持ってもらう。</li><li>スマホで録画予約したいときは、お客様のスマホにアプリを入れて、つなぎ方を一緒にやる。</li></ul><p class="tip">💡 パスワードは、こちらで書き留めたり、写真に撮ったりしない。</p><p class="tip">💡 Wi-Fiの名前やパスワードが分からないときは、無理にさがさない。分かったら、あとで伺うか電話で手順を伝える。</p></div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">11</span><span class="step__title">映りと録画を確かめる</span></div>
+      <div class="one"><ul><li>地デジ・BS・CSのチャンネルを全部回す。</li><li>映らないチャンネルは、受信レベルを見る（地デジ44以上・BS50以上が目安）。</li><li>番組を1つ録画して、再生できるかを確かめる。</li><li>テレビとレコーダーの画面を、入力切替で行き来できるか。</li></ul><p class="tip">💡 BSが映らないときは「アンテナ電源」の設定を見る。</p></div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">12</span><span class="step__title">NHKのメッセージを消す</span><span class="tag">BSがあるとき</span></div>
+      <div class="one"><ul><li>BSを映すと、画面にNHKのメッセージが出る。</li><li>テレビのB-CAS（ACAS）番号を確かめる（画面のメニューか、カード）。</li><li>お客様と一緒に、NHKへ連絡して手続きする（電話かWeb）。</li><li>メッセージが消えたことを確かめる（消えるまで少し時間がかかることがある）。</li></ul><p class="tip">💡 手続きはお客様の名前で行うもの。お客様の了解をもらってから進める。</p></div>
+    </div>
+  </div>
+  <div class="phase">4. 使い方を伝える</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">13</span><span class="step__title">よく使うところだけ、一緒にさわる</span></div>
+      <div class="one"><ul><li>電源・音量・チャンネル。</li><li>入力切替（テレビとレコーダー）。</li><li>字幕と音声（聞きやすくする設定）。</li><li>録画予約（番組表から選んで予約）。</li><li>録画した番組の見方と消し方。</li><li>毎週の番組を続けて録る予約（毎回予約）。</li></ul><p class="tip">💡 全部説明しない。お客様に実際に押してもらう。 リモコンが2つになるときは、どちらで何をするかを伝える。</p></div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">14</span><span class="step__title">片付けて、引き渡す</span></div>
+      <div class="one"><ul><li>付属品の渡し忘れがないか、箱の中まで見る。</li><li>取扱説明書と保証書をお渡しする。置き場所を一緒に決める。</li><li>箱とごみを持ち帰る。</li><li>作業前と後の写真を撮る（業務日報に添付）。</li><li>「わからなくなったら電話してください」で終わる。</li></ul></div>
+    </div>
+  </div>
+
+  <div class="warn">
+    <b>⚠ 大事なところ</b>
+    画面を上下にして運ばない。2人で持つ大きさのものは、1人で無理をしない。転倒防止は必ずする。アンテナの地デジとBS/CS、入力と出力をまちがえない。HDMIケーブルはレコーダーに付いていないので必ず持っていく。
+  </div>
+</div>
