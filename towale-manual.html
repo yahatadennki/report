@@ -49,19 +49,11 @@
   .col.hojo  .col__h{background:var(--hojo-bg);color:var(--hojo-fg);}
   .col ul{margin:0;padding-left:18px;}
   .col li{font-size:13px;margin:4px 0;color:var(--ink);}
+  .col .blank{list-style:none;margin-left:-18px;color:var(--ink-soft);font-size:12px;}
+  .col .note-li{list-style:none;margin-left:-18px;color:#b8860b;font-weight:700;font-size:12px;}
+  @media (prefers-color-scheme:dark){.col .note-li{color:#f0c14b;}}
+  :root[data-theme="dark"] .col .note-li{color:#f0c14b;}
 
-  .one{padding:11px 14px;}
-  .one ul{margin:0;padding-left:18px;}
-  .one li{font-size:13.5px;margin:4px 0;}
-  .one .sub{color:var(--ink-soft);font-size:12.5px;margin:5px 0 0;}
-  .tag{font-size:11px;font-weight:800;background:var(--hojo-bg);color:var(--hojo-fg);border-radius:999px;padding:2px 9px;margin-left:auto;white-space:nowrap;}
-  .kit{display:grid;grid-template-columns:repeat(3,1fr);}
-  .kit>div{padding:11px 14px;border-right:1px solid var(--line);}
-  .kit>div:last-child{border-right:0;}
-  .kit b{display:inline-block;font-size:11.5px;background:var(--kouji-bg);color:var(--kouji-fg);border-radius:999px;padding:2px 9px;margin-bottom:6px;}
-  .kit ul{margin:0;padding-left:18px;}
-  .kit li{font-size:13px;margin:3px 0;}
-  @media(max-width:560px){.kit{grid-template-columns:1fr;}.kit>div{border-right:0;border-bottom:1px solid var(--line);}.kit>div:last-child{border-bottom:0;}}
   .warn{background:var(--sun);color:#3a2600;font-size:12.5px;font-weight:700;border-radius:8px;padding:10px 14px;margin-top:16px;}
   .warn b{display:block;margin-bottom:3px;}
 
@@ -73,6 +65,31 @@
     .step{break-inside:avoid;}
     :root,:root[data-theme="dark"]{--paper:#fff;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;--navy:#1a3a5c;--navy-deep:#12283f;--kouji-bg:#e4eefa;--kouji-fg:#164a7a;--hojo-bg:#e8f5e9;--hojo-fg:#2e7d32;}
   }
+
+  .part{display:flex;align-items:center;gap:10px;margin:22px 0 4px;}
+  .part__no{background:var(--sun);color:#3a2600;font-weight:800;font-size:13px;border-radius:999px;padding:3px 12px;}
+  .part__t{font-size:20px;font-weight:800;color:var(--ink);margin:0;}
+  .part__s{font-size:12.5px;color:var(--ink-soft);margin:0 2px 6px;}
+  .box{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:10px;}
+  .box__h{font-weight:800;font-size:14.5px;padding:8px 14px;border-bottom:1px solid var(--line);background:var(--paper);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;}
+  .grid2>div{padding:10px 14px;}
+  .grid2>div+div{border-left:1px solid var(--line);}
+  .sub-h{display:inline-block;font-size:11.5px;font-weight:800;padding:2px 9px;border-radius:999px;background:var(--kouji-bg);color:var(--kouji-fg);margin-bottom:6px;}
+  .sub-h.g{background:var(--hojo-bg);color:var(--hojo-fg);}
+  .chk{list-style:none;margin:0;padding:0;}
+  .chk li{font-size:13px;margin:5px 0;padding-left:22px;position:relative;}
+  .chk li::before{content:"";position:absolute;left:0;top:3px;width:13px;height:13px;border:1.6px solid var(--ink-soft);border-radius:3px;}
+  .chk li small{display:block;color:var(--ink-soft);font-size:11.5px;}
+  .one{padding:11px 14px;}
+  .one ul{margin:0;padding-left:18px;}
+  .one li{font-size:13.5px;margin:4px 0;}
+  .tip{color:var(--ink-soft);font-size:12.5px;margin:5px 0 0;}
+  .col .tip{font-size:12px;}
+  .tag{font-size:11px;font-weight:800;background:var(--hojo-bg);color:var(--hojo-fg);border-radius:999px;padding:2px 9px;margin-left:auto;white-space:nowrap;}
+  .pb{break-before:page;}
+  @media(max-width:560px){.grid2{grid-template-columns:1fr;}.grid2>div+div{border-left:0;border-top:1px solid var(--line);}}
+  @media print{.part{margin-top:6px;}.box{break-inside:avoid;}.prep{zoom:.74}.prep .chk li{margin:3px 0}}
 </style>
 
 <div class="toolbar" style="justify-content:space-between;"><a class="back-portal" href="manual.html" style="font-size:13px;padding:8px 16px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);text-decoration:none;">&larr; ポータルへ戻る</a><button onclick="window.print()">🖨️ 印刷 / PDF保存</button></div>
@@ -81,155 +98,81 @@
   <div class="head">
     <p class="head__eyebrow">ヤハタ電機商会　工事手順書</p>
     <h1 class="head__title">トワレ取付 手順書</h1>
-    <p class="head__sub">温水洗浄便座の取り替え。上から順に進めます。パナソニック「ビューティ・トワレ」の施工説明書をもとにしています。</p>
+    <p class="head__sub">温水洗浄便座の取り替え。パナソニック「ビューティ・トワレ」の施工説明書をもとにしています。</p>
   </div>
 
-  <div class="phase">用意するもの</div>
-  <div class="steps">
-    <div class="step"><div class="kit">
-      <div><b>🔧 持っていく</b><ul>
-        <li>手袋</li>
-        <li>モンキーレンチ</li>
-        <li>プラスドライバー</li>
-        <li>マイナスドライバー</li>
-        <li>メジャー</li>
-        <li>バケツ・ぞうきん</li>
-        <li>ビニール袋</li>
-      </ul></div>
-      <div><b>📦 箱に入っている</b><ul>
-        <li>スパナ</li>
-        <li>型紙</li>
-        <li>分岐金具（給水ホース付き）</li>
-        <li>フレキシブルパイプ</li>
-        <li>パッキン</li>
-        <li>乾電池（リモコン用）</li>
-      </ul></div>
-      <div><b>🧰 場合によって使う</b><ul>
-        <li>ねじゆるめスプレー・金のこ（ナットがさびているとき）</li>
-        <li>ドリル（タイルなどにリモコンを付けるとき）</li>
-        <li>パイプカッター（今の給水管を切って使うとき）</li>
-      </ul></div>
-    </div></div>
+  <div class="prep">
+  <div class="part"><span class="part__no">第1部</span><h2 class="part__t">準備編</h2></div>
+  <p class="part__s">出かける前に、ここを全部チェックしてから行きます。</p>
+
+  <div class="box"><div class="box__h">✅ 確認するところ</div><div class="grid2">
+    <div><span class="sub-h">📞 お伺いする前に</span><ul class="chk"><li>品番と、ひとセンサー付かどうか<small>センサー付なら、リモコンの位置を考えておく</small></li><li>今のトイレの止水栓の形<small>ハンドル・マイナス溝ならそのまま付く。内ねじ式や止水栓がないときは、先に相談</small></li><li>フラッシュバルブのトイレではないか<small>タンクがないトイレは、別売のアダプターが必要</small></li><li>トイレにコンセントがあるか<small>アース端子付きか。ないときはアース工事の相談</small></li></ul></div>
+    <div><span class="sub-h g">🏠 現場に着いたら</span><ul class="chk"><li>給水管の長さ<small>止水栓からタンクの給水口まで約150〜330mmなら、箱のフレキシブルパイプで付く</small></li><li>便器の大きさ<small>便ふたがタンクに当たらないか</small></li><li>リモコンを付ける壁<small>合板・ビニールクロスはねじだけ。タイル・コンクリート・石こうボードは下穴とプラグ</small></li><li>直射日光や暖房が当たらないか<small>センサー付は、日差しや温風で誤作動する</small></li><li>古い便座のナットがさびていないか</li></ul></div>
+  </div></div>
+
+  <div class="box"><div class="box__h">🎒 持ち物</div><div class="grid2">
+    <div><span class="sub-h">📦 材料</span><ul class="chk"><li>トワレ本体<small>箱の部品：スパナ・型紙・分岐金具（給水ホース付き）・フレキシブルパイプ・パッキン・乾電池</small></li><li>ビニール袋<small>外したホースを入れる</small></li><li>空いた段ボール<small>古い便座を入れる</small></li><li>フレキシブルパイプ（別売・市販）<small>給水管が短い・長いとき</small></li><li>リモコンプレート（別売）<small>ねじ止めできない壁のとき</small></li></ul></div>
+    <div><span class="sub-h g">🔧 工具</span><ul class="chk"><li>手袋</li><li>モンキーレンチ</li><li>プラスドライバー</li><li>マイナスドライバー</li><li>メジャー</li><li>バケツ・ぞうきん</li><li>ねじゆるめスプレー・金のこ<small>ナットがさびているとき</small></li><li>ドリル<small>タイルなどにリモコンを付けるとき</small></li><li>パイプカッター<small>今の給水管を切って使うとき</small></li></ul></div>
+  </div></div>
   </div>
 
-  <div class="phase">手順</div>
+  <div class="part pb"><span class="part__no">第2部</span><h2 class="part__t">作業編</h2></div>
+  <p class="part__s">上から順に進めます。</p>
+  <div class="phase">1. 取り外し</div>
   <div class="steps">
     <div class="step">
       <div class="step__no"><span class="step__num">1</span><span class="step__title">箱を開けて、部材を確かめる</span></div>
-      <div class="one"><ul>
-        <li>箱の中の部品を、施工説明書の一覧と見くらべる。</li>
-        <li>給水管の長さを見る。止水栓からタンクの給水口までが約150〜330mmなら、箱のフレキシブルパイプ（300mm）で付く。それ以外は別売品か市販品を用意する。</li>
-        <li>本体を運ぶときは、便座や便ふたではなく本体を持つ。</li>
-      </ul>
-      <p class="sub">💡 電源プラグは、取り付けが終わるまで差さない。</p></div>
+      <div class="one"><ul><li>箱の中の部品を、施工説明書の一覧と見くらべる。</li><li>本体を運ぶときは、便座や便ふたではなく本体を持つ。</li></ul><p class="tip">💡 電源プラグは、取り付けが終わるまで差さない。</p></div>
     </div>
     <div class="step">
       <div class="step__no"><span class="step__num">2</span><span class="step__title">止水栓を閉めて、コンセントを抜く</span></div>
-      <div class="one"><ul>
-        <li>止水栓を閉めて、タンクの水を流しきる。</li>
-        <li>コンセントを抜き、アース線を外す。</li>
-        <li>給水ホースを外す。残った水が出るので、バケツで受ける。</li>
-        <li>ナットをモンキーレンチでゆるめて、古い便座を外す。空いた段ボールに入れる。</li>
-      </ul>
-      <p class="sub">💡 水がたれることがあるので、ホースなどは、できるだけビニール袋に入れる。</p>
-      <p class="sub">💡 ナットがさびて回らないときは、ねじゆるめスプレー。それでも取れなければ、金のこでボルトを切る。</p></div>
+      <div class="one"><ul><li>止水栓を閉めて、タンクの水を流しきる。</li><li>コンセントを抜き、アース線を外す。</li><li>給水ホースを外す。残った水が出るので、バケツで受ける。</li><li>ナットをモンキーレンチでゆるめて、古い便座を外す。空いた段ボールに入れる。</li></ul><p class="tip">💡 水がたれることがあるので、ホースなどは、できるだけビニール袋に入れる。</p><p class="tip">💡 ナットがさびて回らないときは、ねじゆるめスプレー。それでも取れなければ、金のこでボルトを切る。</p></div>
     </div>
     <div class="step">
       <div class="step__no"><span class="step__num">3</span><span class="step__title">リモコンを外す</span></div>
-      <div class="one"><ul>
-        <li>古いリモコンを壁から外す。</li>
-        <li>古いひとセンサーが付いていたら、それも必ず外す。</li>
-      </ul>
-      <p class="sub">💡 古いリモコンやセンサーを残すと、新しい本体が誤動作する。</p></div>
+      <div class="one"><ul><li>古いリモコンを壁から外す。</li><li>古いひとセンサーが付いていたら、それも必ず外す。</li></ul><p class="tip">💡 古いリモコンやセンサーを残すと、新しい本体が誤動作する。</p></div>
     </div>
     <div class="step">
       <div class="step__no"><span class="step__num">4</span><span class="step__title">便器を掃除する</span></div>
-      <div class="one"><ul>
-        <li>トイレットペーパーで汚れを取り、便器の中へ流す。</li>
-      </ul></div>
+      <div class="one"><ul><li>トイレットペーパーで汚れを取り、便器の中へ流す。</li></ul></div>
     </div>
+  </div>
+  <div class="phase">2. 取り付け</div>
+  <div class="steps">
     <div class="step">
       <div class="step__no"><span class="step__num">5</span><span class="step__title">ベースを取り付ける</span></div>
-      <div class="one"><ul>
-        <li>本体の裏から、ベース（本体固定板）を外す。脱着ボタンを奥まで押しながらずらす。</li>
-        <li>型紙を便器にのせて、ベースの位置を決める。ナットは、動く程度に軽く締める。</li>
-        <li>型紙を外して、ベースが動かないように締める。ナットは手で締める（工具は使わない）。</li>
-        <li>上からねじで止める便器は、外した固定ねじをプラスドライバーで締める。</li>
-      </ul>
-      <p class="sub">💡 型紙の穴が便器でふさがると、逃がし水が便器の外にもれる。位置を変えたら、型紙でもう一度確かめる。</p></div>
+      <div class="one"><ul><li>本体の裏から、ベース（本体固定板）を外す。脱着ボタンを奥まで押しながらずらす。</li><li>型紙を便器にのせて、ベースの位置を決める。ナットは、動く程度に軽く締める。</li><li>型紙を外して、ベースが動かないように締める。ナットは手で締める（工具は使わない）。</li><li>上からねじで止める便器は、外した固定ねじをプラスドライバーで締める。</li></ul><p class="tip">💡 型紙の穴が便器でふさがると、逃がし水が便器の外にもれる。位置を変えたら、型紙でもう一度確かめる。</p></div>
     </div>
     <div class="step">
       <div class="step__no"><span class="step__num">6</span><span class="step__title">分岐金具を取り替える</span></div>
-      <div class="one"><ul>
-        <li>古い分岐金具と給水ホースは使わない。箱の分岐金具（給水ホース付き）に取り替える。</li>
-        <li>パッキンも、箱のものを使う。シールテープは使わない。</li>
-        <li>手で仮締めしてから、箱のスパナで締める。回らないように、モンキーレンチで押さえる。</li>
-        <li>フレキシブルパイプは、曲げすぎない。切らない。</li>
-      </ul>
-      <p class="sub">💡 止水栓や給水管の形で、付け方と使うパッキンが変わる。施工説明書の図で、同じ形を探す。</p></div>
+      <div class="one"><ul><li>古い分岐金具と給水ホースは使わない。箱の分岐金具（給水ホース付き）に取り替える。</li><li>パッキンも、箱のものを使う。シールテープは使わない。</li><li>手で仮締めしてから、箱のスパナで締める。回らないように、モンキーレンチで押さえる。</li><li>フレキシブルパイプは、曲げすぎない。切らない。</li></ul><p class="tip">💡 止水栓や給水管の形で、付け方と使うパッキンが変わる。施工説明書の図で、同じ形を探す。</p></div>
     </div>
     <div class="step">
       <div class="step__no"><span class="step__num">7</span><span class="step__title">本体と給水ホースを取り付ける</span></div>
-      <div class="one"><ul>
-        <li>ベースと本体の中心を合わせる。後ろを少し浮かせてすべらせ、「カチッ」と音がするまで押し込む。</li>
-        <li>軽く手前に引いて、しっかり付いたか確かめる。</li>
-        <li>給水ホースの先（Oリング）にゴミがないか見て、本体にまっすぐ差し込む。</li>
-        <li>クイックファスナーを「パチッ」と音がするまではめて、フックを固定する。</li>
-        <li>ホースを引いても抜けないこと、クイックファスナーが軽く回ることを確かめる。</li>
-      </ul>
-      <p class="sub">💡 電源コードをはさまない。ノズルの入っているところは押さない。</p></div>
+      <div class="one"><ul><li>ベースと本体の中心を合わせる。後ろを少し浮かせてすべらせ、「カチッ」と音がするまで押し込む。</li><li>軽く手前に引いて、しっかり付いたか確かめる。</li><li>給水ホースの先（Oリング）にゴミがないか見て、本体にまっすぐ差し込む。</li><li>クイックファスナーを「パチッ」と音がするまではめて、フックを固定する。</li><li>ホースを引いても抜けないこと、クイックファスナーが軽く回ることを確かめる。</li></ul><p class="tip">💡 電源コードをはさまない。ノズルの入っているところは押さない。</p></div>
     </div>
     <div class="step">
       <div class="step__no"><span class="step__num">8</span><span class="step__title">アース線をつないで、止水栓を開ける</span></div>
-      <div class="one"><ul>
-        <li>アース線を、コンセントのアース端子につなぐ。</li>
-        <li>止水栓をゆっくり開ける。元栓を閉めたときは、元栓も開ける。</li>
-        <li>つなぎ目から水がもれていないか、目と手で確かめる。</li>
-      </ul>
-      <p class="sub">💡 止水栓を開ける前に電源プラグを差すと、ランプが点滅して動かない。先に水、あとで電気。</p></div>
+      <div class="one"><ul><li>アース線を、コンセントのアース端子につなぐ。</li><li>止水栓をゆっくり開ける。元栓を閉めたときは、元栓も開ける。</li><li>つなぎ目から水がもれていないか、目と手で確かめる。</li></ul><p class="tip">💡 止水栓を開ける前に電源プラグを差すと、ランプが点滅して動かない。先に水、あとで電気。</p></div>
     </div>
     <div class="step">
       <div class="step__no"><span class="step__num">9</span><span class="step__title">リモコンを取り付ける</span></div>
-      <div class="one"><ul>
-        <li>リモコンに乾電池を入れる。</li>
-        <li>電源プラグを差す。電源ランプが約10秒点滅して、点灯に変わる。</li>
-        <li>付けたい位置にリモコンを当てて「おしり」を押す。本体が「ピピピ」と鳴れば、届いている。</li>
-        <li>届く位置が決まったら、リモコンホルダーをねじ2本で壁に付ける。</li>
-        <li>リモコンがホルダーから外せることを確かめる（電池交換のため）。</li>
-      </ul>
-      <p class="sub">💡 天井とのあいだに棚などがない位置に。直射日光や、ほかの機器の熱が当たる場所は避ける。</p>
-      <p class="sub">💡 タイル・コンクリート・石こうボードは、下穴（直径5.8mm・深さ35mm）をあけて樹脂プラグを入れる。ねじ止めできない壁は、別売のリモコンプレートでペーパーホルダーに付ける。</p></div>
+      <div class="one"><ul><li>リモコンに乾電池を入れる。</li><li>電源プラグを差す。電源ランプが約10秒点滅して、点灯に変わる。</li><li>付けたい位置にリモコンを当てて「おしり」を押す。本体が「ピピピ」と鳴れば、届いている。</li><li>届く位置が決まったら、リモコンホルダーをねじ2本で壁に付ける。</li><li>リモコンがホルダーから外せることを確かめる（電池交換のため）。</li></ul><p class="tip">💡 天井とのあいだに棚などがない位置に。直射日光や、ほかの機器の熱が当たる場所は避ける。</p><p class="tip">💡 タイル・コンクリート・石こうボードは、下穴（直径5.8mm・深さ35mm）をあけて樹脂プラグを入れる。ねじ止めできない壁は、別売のリモコンプレートでペーパーホルダーに付ける。</p></div>
     </div>
     <div class="step">
       <div class="step__no"><span class="step__num">10</span><span class="step__title">ひとセンサーを確かめる</span><span class="tag">センサー付の場合</span></div>
-      <div class="one"><ul>
-        <li>ひとセンサーは、リモコンに付いている。トイレに入った人を確実に見つけられる位置に付ける。</li>
-        <li>高さの目安は、床から約90cm（80〜100cm）。</li>
-        <li>便ふたを閉めて、いったんトイレの外に出る。</li>
-        <li>3分以上たってから入り、便ふたが開いて、便座あたためランプが点滅から点灯に変わることを確かめる。</li>
-      </ul>
-      <p class="sub">💡 直射日光の当たる場所と、暖房の温風が当たる場所は避ける。室温が30℃をこえると、働かないことがある。</p>
-      <p class="sub">💡 便ふたが自動で開かない機種は、便ふたを開けて外に出て、ランプだけを確かめる。</p></div>
+      <div class="one"><ul><li>ひとセンサーは、リモコンに付いている。トイレに入った人を確実に見つけられる位置に付ける。</li><li>高さの目安は、床から約90cm（80〜100cm）。</li><li>便ふたを閉めて、いったんトイレの外に出る。</li><li>3分以上たってから入り、便ふたが開いて、便座あたためランプが点滅から点灯に変わることを確かめる。</li></ul><p class="tip">💡 直射日光の当たる場所と、暖房の温風が当たる場所は避ける。室温が30℃をこえると、働かないことがある。</p><p class="tip">💡 便ふたが自動で開かない機種は、便ふたを開けて外に出て、ランプだけを確かめる。</p></div>
     </div>
+  </div>
+  <div class="phase">3. 試運転 ＆ 引き渡し</div>
+  <div class="steps">
     <div class="step">
       <div class="step__no"><span class="step__num">11</span><span class="step__title">試運転する</span></div>
-      <div class="one"><ul>
-        <li>箱のポリ袋を、便座と便器のあいだにはさむ。</li>
-        <li>便座の左うしろを押しながら「おしり」「ビデ」を押す。ポリ袋の上から手を当てて、温水が出ることを確かめる。</li>
-        <li>便座に手を当てて、温まっていることを確かめる。</li>
-        <li>漏電テストスイッチを2秒以上押す。赤いランプがついて、電源ランプが消える。電源プラグを抜き、赤いランプが消えたら差し直す。</li>
-        <li>つなぎ目の水もれを、もう一度確かめる。</li>
-      </ul>
-      <p class="sub">💡 ノズルの左から出る水は、水圧を整える逃がし水。故障ではない。</p>
-      <p class="sub">💡 便座のうしろ脚が少し浮いているのが正しい。すき間がないと、座ったことを感じ取れない。</p></div>
+      <div class="one"><ul><li>箱のポリ袋を、便座と便器のあいだにはさむ。</li><li>便座の左うしろを押しながら「おしり」「ビデ」を押す。ポリ袋の上から手を当てて、温水が出ることを確かめる。</li><li>便座に手を当てて、温まっていることを確かめる。</li><li>漏電テストスイッチを2秒以上押す。赤いランプがついて、電源ランプが消える。電源プラグを抜き、赤いランプが消えたら差し直す。</li><li>つなぎ目の水もれを、もう一度確かめる。</li></ul><p class="tip">💡 ノズルの左から出る水は、水圧を整える逃がし水。故障ではない。</p><p class="tip">💡 便座のうしろ脚が少し浮いているのが正しい。すき間がないと、座ったことを感じ取れない。</p></div>
     </div>
     <div class="step">
       <div class="step__no"><span class="step__num">12</span><span class="step__title">使い方を伝える</span></div>
-      <div class="one"><ul>
-        <li>リモコンの使い方と、ノズル掃除のしかたを伝える。</li>
-        <li>取扱説明書と施工説明書をお渡しする。</li>
-        <li>古い便座を引き取るかを確かめる。</li>
-      </ul></div>
+      <div class="one"><ul><li>リモコンの使い方と、ノズル掃除のしかたを伝える。</li><li>取扱説明書と施工説明書をお渡しする。</li><li>古い便座を引き取るかを確かめる。</li><li>作業前と後の写真を撮る（業務日報に添付）。</li></ul></div>
     </div>
   </div>
 
