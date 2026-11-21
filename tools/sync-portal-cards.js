@@ -1,4 +1,4 @@
-// 現場サポート（manual.html）の一番下「打合せカード」欄に、訪問・配達・工事ごとに関係するカードを並べる。
+// 現場サポート（manual.html）の訪問・配達・工事ガイドの欄の下に、それぞれ関係する打合せカードを並べる。
 // build-cards.js の最後に自動で動く。単独なら：node tools/sync-portal-cards.js
 const fs=require('fs');const path=require('path');
 const D=path.join(__dirname,'..')+'/';
@@ -29,11 +29,11 @@ function block(key){
   }).join('');
   return rows?`    <p class="pchips__t">${TITLE[key]}</p>\n${rows}`:'';
 }
-const TITLE={houmon:'🚪 訪問ガイドのカード',haitatsu:'🚚 配達ガイドのカード',koji:'⚙️ 工事ガイドのカード'};
+const TITLE={houmon:'🃏 打合せカード',haitatsu:'🃏 打合せカード',koji:'🃏 打合せカード'};
 const CSS=`
   /* 打合せカードのリンク（tools/sync-portal-cards.js が作る） */
   .pchips{max-width:780px;margin:10px auto 0;padding-top:2px;background:var(--card,#fff);border:1px solid var(--line,#d7e0e8);border-radius:10px;padding:10px 14px;}
-  .pchips__t{margin:12px 0 4px;font-size:11.5px;font-weight:800;letter-spacing:.08em;color:var(--ink-soft,#4a5a6a);}
+  .pchips__t{margin:2px 0 4px;font-size:11.5px;font-weight:800;letter-spacing:.08em;color:var(--ink-soft,#4a5a6a);}
   .pchips__row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:5px 0;}
   .pchips__h{font-size:12px;font-weight:800;margin-right:4px;min-width:7.5em;}
   .pchips a{font-size:12.5px;text-decoration:none;color:inherit;border:1px solid var(--line,#d7e0e8);border-radius:999px;padding:3px 10px;background:var(--paper,#f4f7fa);}
@@ -42,11 +42,13 @@ const CSS=`
 const f=D+'manual.html';
 let m=fs.readFileSync(f,'utf8');const crlf=m.includes('\r\n');m=m.replace(/\r\n/g,'\n');
 if(!m.includes('.pchips{'))m=m.replace('</style>',CSS+'</style>');
-// 一番下の「打合せカード」欄（目次ボタンのグリッドの直後）に1つだけ置く
+// 訪問・配達・工事ガイドの欄それぞれの最後（ボタンのグリッドの直後）に、その欄のカードを置く。一番下の欄は目次ボタンだけ。
 m=m.replace(/  <!-- cards:(\w+) -->[\s\S]*?<!-- \/cards:\1 -->\n/g,'');
-const h=m.indexOf('color:var(--ink-soft);">打合せカード</p>');if(h<0)throw new Error('打合せカードの見出しがない');
-const g=m.indexOf('\n  </div>\n',h)+10;
-const inner=Object.keys(TITLE).map(block).join('');
-m=m.slice(0,g)+'  <!-- cards:all -->\n  <div class="pchips">\n'+inner+'  </div>\n  <!-- /cards:all -->\n'+m.slice(g);
+const HEAD={houmon:'訪問ガイド',haitatsu:'配達ガイド',koji:'工事ガイド'};
+for(const k of Object.keys(HEAD)){
+  const h=m.indexOf('color:var(--ink-soft);">'+HEAD[k]+'</p>');if(h<0)throw new Error('見出しがない '+HEAD[k]);
+  const g=m.indexOf('\n  </div>\n',h)+10;
+  m=m.slice(0,g)+'  <!-- cards:'+k+' -->\n  <div class="pchips">\n'+block(k)+'  </div>\n  <!-- /cards:'+k+' -->\n'+m.slice(g);
+}
 fs.writeFileSync(f,crlf?m.replace(/\n/g,'\r\n'):m);
 console.log('portal cards synced');
