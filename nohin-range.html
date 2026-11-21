@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>電子レンジ・オーブンレンジ 納品＆取扱説明 手順書｜ヤハタ電機商会</title>
+<style>
+  :root{
+    --navy:#1a3a5c; --navy-deep:#12283f; --blue:#2e75b6; --sun:#f0a500;
+    --paper:#f4f7fa; --card:#fff; --ink:#1c2530; --ink-soft:#4a5a6a; --line:#d7e0e8;
+    --kouji-bg:#e4eefa; --kouji-fg:#164a7a; --hojo-bg:#e8f5e9; --hojo-fg:#2e7d32;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --paper:#10161d; --card:#1a2028; --ink:#e8edf2; --ink-soft:#a9b6c2; --line:#2c3844;
+    --navy:#3f6a94; --navy-deep:#1a3a5c; --kouji-bg:#16283a; --kouji-fg:#8fc2f2; --hojo-bg:#1b2e1c; --hojo-fg:#a5d6a7;
+  }}
+  :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844;--navy:#3f6a94;--navy-deep:#1a3a5c;--kouji-bg:#16283a;--kouji-fg:#8fc2f2;--hojo-bg:#1b2e1c;--hojo-fg:#a5d6a7;}
+  :root[data-theme="light"]{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;--navy:#1a3a5c;--navy-deep:#12283f;--kouji-bg:#e4eefa;--kouji-fg:#164a7a;--hojo-bg:#e8f5e9;--hojo-fg:#2e7d32;}
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;
+    line-height:1.7;padding:28px 14px 70px;}
+  .wrap{max-width:860px;margin:0 auto;}
+  .toolbar{max-width:860px;margin:0 auto 16px;display:flex;justify-content:flex-end;}
+  .toolbar button{font-family:inherit;font-size:13px;padding:8px 16px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;}
+  .toolbar button:hover{border-color:var(--blue);color:var(--blue);}
+
+  .head{background:linear-gradient(135deg,var(--navy),var(--navy-deep));color:#fff;border-radius:10px;padding:24px 28px;margin-bottom:8px;}
+  .head__eyebrow{font-size:12px;letter-spacing:.14em;color:#cfe0ee;margin:0 0 6px;}
+  .head__title{font-size:23px;font-weight:700;margin:0;}
+  .head__sub{font-size:13px;color:#b9cee0;margin:8px 0 0;}
+
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink-soft);margin:14px 2px;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .legend i{width:12px;height:12px;border-radius:3px;display:inline-block;}
+  .legend i.k{background:var(--blue);} .legend i.h{background:var(--hojo-fg);}
+
+  .phase{font-weight:800;font-size:15px;color:#fff;background:var(--navy);border-radius:8px;padding:7px 14px;margin:20px 0 0;}
+
+  .steps{display:flex;flex-direction:column;gap:10px;margin-top:10px;}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .step__no{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--line);background:var(--paper);}
+  .step__num{width:26px;height:26px;border-radius:50%;background:var(--sun);color:#3a2600;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .step__title{font-weight:700;font-size:14.5px;}
+  .cols{display:grid;grid-template-columns:1fr 1fr;}
+  .col{padding:11px 14px;}
+  .col.kouji{border-right:1px solid var(--line);}
+  .col__h{font-size:11.5px;font-weight:800;letter-spacing:.04em;padding:2px 8px;border-radius:999px;display:inline-block;margin-bottom:7px;}
+  .col.kouji .col__h{background:var(--kouji-bg);color:var(--kouji-fg);}
+  .col.hojo  .col__h{background:var(--hojo-bg);color:var(--hojo-fg);}
+  .col ul{margin:0;padding-left:18px;}
+  .col li{font-size:13px;margin:4px 0;color:var(--ink);}
+  .col .blank{list-style:none;margin-left:-18px;color:var(--ink-soft);font-size:12px;}
+  .col .note-li{list-style:none;margin-left:-18px;color:#b8860b;font-weight:700;font-size:12px;}
+  @media (prefers-color-scheme:dark){.col .note-li{color:#f0c14b;}}
+  :root[data-theme="dark"] .col .note-li{color:#f0c14b;}
+
+  .warn{background:var(--sun);color:#3a2600;font-size:12.5px;font-weight:700;border-radius:8px;padding:10px 14px;margin-top:16px;}
+  .warn b{display:block;margin-bottom:3px;}
+
+  @media(max-width:560px){ .cols{grid-template-columns:1fr;} .col.kouji{border-right:none;border-bottom:1px solid var(--line);} }
+
+  @media print{
+    body{padding:0;background:#fff;}
+    .toolbar{display:none;}
+    .step{break-inside:avoid;}
+    :root,:root[data-theme="dark"]{--paper:#fff;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;--navy:#1a3a5c;--navy-deep:#12283f;--kouji-bg:#e4eefa;--kouji-fg:#164a7a;--hojo-bg:#e8f5e9;--hojo-fg:#2e7d32;}
+  }
+
+  .part{display:flex;align-items:center;gap:10px;margin:22px 0 4px;}
+  .part__no{background:var(--sun);color:#3a2600;font-weight:800;font-size:13px;border-radius:999px;padding:3px 12px;}
+  .part__t{font-size:20px;font-weight:800;color:var(--ink);margin:0;}
+  .part__s{font-size:12.5px;color:var(--ink-soft);margin:0 2px 6px;}
+  .box{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:10px;}
+  .box__h{font-weight:800;font-size:14.5px;padding:8px 14px;border-bottom:1px solid var(--line);background:var(--paper);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;}
+  .grid2>div{padding:10px 14px;}
+  .grid2>div+div{border-left:1px solid var(--line);}
+  .sub-h{display:inline-block;font-size:11.5px;font-weight:800;padding:2px 9px;border-radius:999px;background:var(--kouji-bg);color:var(--kouji-fg);margin-bottom:6px;}
+  .sub-h.g{background:var(--hojo-bg);color:var(--hojo-fg);}
+  .chk{list-style:none;margin:0;padding:0;}
+  .chk li{font-size:13px;margin:5px 0;padding-left:22px;position:relative;}
+  .chk li::before{content:"";position:absolute;left:0;top:3px;width:13px;height:13px;border:1.6px solid var(--ink-soft);border-radius:3px;}
+  .chk li small{display:block;color:var(--ink-soft);font-size:11.5px;}
+  .one{padding:11px 14px;}
+  .one ul{margin:0;padding-left:18px;}
+  .one li{font-size:13.5px;margin:4px 0;}
+  .tip{color:var(--ink-soft);font-size:12.5px;margin:5px 0 0;}
+  .col .tip{font-size:12px;}
+  .tag{font-size:11px;font-weight:800;background:var(--hojo-bg);color:var(--hojo-fg);border-radius:999px;padding:2px 9px;margin-left:auto;white-space:nowrap;}
+  .pb{break-before:page;}
+  .daihyo{background:var(--card);border:1px dashed var(--line);border-radius:8px;padding:7px 12px;font-size:12.5px;color:var(--ink-soft);margin:12px 0 0;}
+  .cols2{padding:10px 14px;columns:2;column-gap:28px;}
+  .cols2 .chk li{break-inside:avoid;}
+  @media(max-width:560px){.cols2{columns:1;}}
+  .intro{background:var(--card);border:2px solid var(--sun);border-radius:10px;padding:12px 16px;margin-top:14px;}
+  .intro__h{font-weight:800;font-size:16px;margin:0 0 6px;}
+  .intro p{font-size:13.5px;margin:4px 0;}
+  .intro ul{margin:4px 0;padding-left:20px;font-size:13.5px;}
+  .cardlink{font-size:12.5px;margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+  .cardlink a{text-decoration:none;color:var(--kouji-fg);background:var(--kouji-bg);border-radius:999px;padding:2px 10px;font-weight:700;}
+  @media(max-width:560px){.grid2{grid-template-columns:1fr;}.grid2>div+div{border-left:0;border-top:1px solid var(--line);}}
+  @media print{.part{margin-top:6px;}.box{break-inside:avoid;}.prep{zoom:.71}.prep .chk li{margin:3px 0}}
+</style>
+
+<div class="toolbar" style="justify-content:space-between;"><a class="back-portal" href="manual.html" style="font-size:13px;padding:8px 16px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);text-decoration:none;">&larr; ポータルへ戻る</a><button onclick="window.print()">🖨️ 印刷 / PDF保存</button></div>
+
+<div class="wrap">
+  <div class="head">
+    <p class="head__eyebrow">ヤハタ電機商会　配達ガイド</p>
+    <h1 class="head__title">電子レンジ・オーブンレンジ 納品＆取扱説明 手順書</h1>
+    <p class="head__sub">パナソニックの電子レンジ・オーブンレンジ（ビストロなど）の配達・設置と、使い始めの説明。</p>
+  </div>
+
+  <div class="prep">
+  <p class="daihyo">📌 これは<b>代表的な作業手順</b>です。機種や現場によってちがうところは、その機種の取扱説明書・施工説明書で確かめてください。</p>
+
+  <div class="part"><span class="part__no">第1部</span><h2 class="part__t">準備編</h2></div>
+  <p class="part__s">お伺いする前に、ここを確かめておきます。</p>
+
+  <div class="box"><div class="box__h">① 📞 お伺いする前に</div>
+    <div class="cols2"><ul class="chk"><li>品番と大きさ<small>置く場所に入るか（まわりのすき間も入れて）</small></li><li>置く場所<small>上・左右・後ろに、説明書の決まったすき間がとれるか。冷蔵庫の上に置くときは、冷蔵庫が耐えられるか</small></li><li>コンセント<small>単独で使えるか（15A）。アース端子があるか</small></li><li>古いレンジ<small>引き取るか</small></li></ul></div>
+  </div>
+
+  <div class="box"><div class="box__h">② 🎒 持ち物</div><div class="grid2">
+    <div><span class="sub-h">📦 材料</span><ul class="chk"><li>レンジ本体<small>箱の部品：角皿・網・取扱説明書・料理集</small></li><li>アース線<small>アース端子があるとき</small></li></ul></div>
+    <div><span class="sub-h g">🔧 工具</span><ul class="chk"><li>ドライバー（アース用）</li><li>ふきん</li><li>スマホ（説明書）</li></ul></div>
+  </div></div>
+
+  <div class="box"><div class="box__h">③ 🏠 現場に着いたら（作業の前に）</div>
+    <div class="cols2"><ul class="chk"><li>置く台<small>平らで、重さに耐えるか。ぐらつかないか</small></li><li>まわりのすき間<small>説明書の設置スペースどおりか</small></li><li>コンセントとアース<small>たこ足になっていないか</small></li></ul></div>
+  </div>
+  </div>
+
+  <div class="part pb"><span class="part__no">第2部</span><h2 class="part__t">作業編</h2></div>
+  <p class="part__s">上から順に進めます。</p>
+  <div class="phase">1. 置いて、つなぐ</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">1</span><span class="step__title">すき間をあけて置く</span></div>
+      <div class="one"><ul><li>古いレンジを外して運び出す。</li><li>説明書の設置スペース（上・左右・後ろ）をあけて、平らな台に置く。</li><li>アース線をアース端子につなぎ、コンセントを単独で差す。</li><li>庫内の包装材やテープを全部はずす。</li></ul><p class="tip">💡 すき間がないと、熱がこもって壊れたり、まわりが熱くなったりする。</p></div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">2</span><span class="step__title">使い始めの準備</span></div>
+      <div class="one"><ul><li>時刻を合わせる。</li><li>オーブン機能があるものは、説明書に「使い始めの空焼き（においを取る）」があれば、お客様と一緒にする。</li></ul><p class="tip">💡 空焼きは、においと煙が少し出る。窓を開けて、お客様に先に伝える。</p></div>
+    </div>
+  </div>
+  <div class="phase">2. 使い方を伝える</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">3</span><span class="step__title">よく使うところだけ、一緒にさわる</span></div>
+      <div class="one"><ul><li>あたため（自動あたため）。</li><li>解凍。</li><li>オーブン・グリルを使うなら、角皿と網の使い方。</li><li>お手入れ：庫内をふく、角皿を洗う。</li></ul><p class="tip">💡 いつも何を温めるか聞いて、それで一回やってみる。</p><p class="tip">💡 金属や、使えない容器を伝える。</p><p class="cardlink">🃏 カードで確かめる：<a href="card-nohin-5.html">納品＆取説 調理家電</a></p></div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">4</span><span class="step__title">片付けて、引き渡す</span></div>
+      <div class="one"><ul><li>付属品の渡し忘れがないか、箱の中まで見る。</li><li>取扱説明書と保証書をお渡しする。置き場所を一緒に決める。</li><li>古いものを引き取るときは、持ち帰る。箱とごみも持ち帰る。</li><li>「わからなくなったら電話してください」で終わる。</li></ul><p class="cardlink">🃏 カードで確かめる：<a href="card-service-2.html">納品の手順（サービス）</a></p></div>
+    </div>
+  </div>
+
+  <div class="warn">
+    <b>⚠ 大事なところ</b>
+    まわりのすき間は説明書どおりに。庫内の包装材は全部はずす。単独のコンセントで、アースもつなぐ。
+  </div>
+</div>
