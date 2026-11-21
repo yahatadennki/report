@@ -16,12 +16,51 @@
   .head{background:linear-gradient(135deg,var(--navy),var(--navy-deep));color:#fff;border-radius:10px;padding:24px 28px;}
   .head p{font-size:12px;letter-spacing:.14em;color:#cfe0ee;margin:0 0 6px;}
   .head h1{font-size:23px;margin:0;}
+  .sec{font-size:13px;font-weight:800;letter-spacing:.08em;color:var(--ink-soft);margin:28px 2px 8px;}
+  .sec small{font-weight:400;letter-spacing:0;margin-left:6px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;}
+  .item{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-decoration:none;color:var(--ink);}
+  .item:hover{border-color:#2e75b6;}
+  .item .ic{font-size:24px;line-height:1;}
+  .item b{display:block;font-size:14.5px;}
+  .item span{display:block;font-size:12px;color:var(--ink-soft);margin-top:2px;}
+  .item.card{border-style:dashed;}
+  .role{display:inline-block;font-size:11px;font-weight:800;border-radius:999px;padding:1px 8px;margin-left:6px;vertical-align:middle;}
+  .role.h{background:#e8f5e9;color:#2e7d32;} .role.m{background:#e4eefa;color:#164a7a;}
 </style>
 </head>
 <body>
 <div class="wrap">
   <a class="back" href="manual.html">&larr; ポータルへ戻る</a>
   <div class="head"><p>ヤハタ電機商会　現場サポート</p><h1>🔧 サービススタッフ</h1></div>
+
+  <!-- 中身 -->
+  <p class="sec">🚪 訪問活動</p>
+  <div class="grid">
+      <a class="item" href="manual.html#view-talk"><span class="ic">🗣️</span><span><b>お困りごと訪問</b><span>お客様対応 5つの流れ</span></span></a>
+      <a class="item" href="manual.html#view-symptom"><span class="ic">🔍</span><span><b>お困りごと訪問　症状別の聞き取り</b><span>聞くことと、その場で確かめること</span></span></a>
+      <a class="item" href="houmon-anshin.html"><span class="ic">🛡️</span><span><b>安心点検訪問</b><span>保証が切れる前の点検。準備編と作業編</span></span></a>
+      <a class="item" href="houmon-shotai.html"><span class="ic">💌</span><span><b>招待状訪問</b><span>フェアの招待状を届ける。準備編と作業編</span></span></a>
+  </div>
+
+  <p class="sec">🚚 配達 <small><span class="role h">補助</span> 工事スタッフの補助で行く</small></p>
+  <div class="grid">
+      <a class="item" href="nohin-tv.html"><span class="ic">📺</span><span><b>テレビ（テレビのみ）</b><span>納品＆取扱説明</span></span></a>
+      <a class="item" href="nohin-tv-recorder.html"><span class="ic">📼</span><span><b>テレビとレコーダー</b><span>納品＆取扱説明</span></span></a>
+      <a class="item" href="nohin-tvdai.html"><span class="ic">🪑</span><span><b>テレビ台（壁寄せスタンド）</b><span>組立＆設置</span></span></a>
+      <a class="item" href="nohin-reizoko.html"><span class="ic">🧊</span><span><b>冷蔵庫</b><span>納品＆取扱説明</span></span></a>
+      <a class="item" href="nohin-sentakuki.html"><span class="ic">🧺</span><span><b>洗濯機</b><span>納品＆取扱説明</span></span></a>
+  </div>
+
+  <p class="sec">🚚 配達 <small><span class="role m">サービス</span> その他の家電はサービススタッフが行く</small></p>
+  <div class="grid">
+      <a class="item" href="nohin-recorder.html"><span class="ic">💿</span><span><b>レコーダー（レコーダーのみ）</b><span>納品＆取扱説明</span></span></a>
+      <a class="item card" href="card-service-2.html"><span class="ic">📦</span><span><b>納品の手順</b><span>打合せカード</span></span></a>
+      <a class="item card" href="card-nohin-5.html"><span class="ic">🍳</span><span><b>調理家電</b><span>打合せカード 納品＆取説</span></span></a>
+      <a class="item card" href="card-nohin-6.html"><span class="ic">💺</span><span><b>マッサージチェア</b><span>打合せカード 納品＆取説</span></span></a>
+      <a class="item card" href="card-service-3.html"><span class="ic">🤝</span><span><b>工事・大物配達のフォロー</b><span>打合せカード</span></span></a>
+  </div>
+  <!-- /中身 -->
 </div>
 </body>
 </html>
