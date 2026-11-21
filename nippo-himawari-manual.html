@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ひまわり日報の入力マニュアル｜ヤハタ電機商会</title>
+<style>
+  :root{
+    --navy:#1a3a5c; --navy-deep:#12283f; --blue:#2e75b6; --sun:#f0a500;
+    --paper:#f4f7fa; --card:#fff; --ink:#1c2530; --ink-soft:#4a5a6a; --line:#d7e0e8;
+    --req-bg:#fdecea; --req-fg:#c0392b; --ok-bg:#e8f5e9; --ok-fg:#2e7d32;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --paper:#10161d; --card:#1a2028; --ink:#e8edf2; --ink-soft:#a9b6c2; --line:#2c3844;
+    --navy:#3f6a94; --navy-deep:#1a3a5c; --req-bg:#3a1e1c; --req-fg:#f5a79f; --ok-bg:#1b2e1c; --ok-fg:#a5d6a7;
+  }}
+  :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844;--navy:#3f6a94;--navy-deep:#1a3a5c;--req-bg:#3a1e1c;--req-fg:#f5a79f;--ok-bg:#1b2e1c;--ok-fg:#a5d6a7;}
+  :root[data-theme="light"]{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;--navy:#1a3a5c;--navy-deep:#12283f;--req-bg:#fdecea;--req-fg:#c0392b;--ok-bg:#e8f5e9;--ok-fg:#2e7d32;}
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;
+    line-height:1.75;padding:26px 14px 70px;}
+  .wrap{max-width:760px;margin:0 auto;}
+  .toolbar{max-width:760px;margin:0 auto 14px;display:flex;justify-content:flex-end;}
+  .toolbar button{font-family:inherit;font-size:13px;padding:8px 16px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;}
+
+  .head{background:linear-gradient(135deg,var(--navy),var(--navy-deep));color:#fff;border-radius:10px;padding:22px 26px;margin-bottom:18px;}
+  .head__eyebrow{font-size:12px;letter-spacing:.14em;color:#cfe0ee;margin:0 0 6px;}
+  .head__title{font-size:22px;font-weight:800;margin:0;}
+  .head__sub{font-size:13px;color:#b9cee0;margin:8px 0 0;}
+
+  .step{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:12px;}
+  .step__h{display:flex;align-items:center;gap:10px;margin:0 0 8px;}
+  .step__n{width:28px;height:28px;border-radius:50%;background:var(--sun);color:#3a2600;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .step__t{font-weight:800;font-size:15.5px;}
+  .step p{margin:4px 0;font-size:14px;}
+  .step ul{margin:6px 0 0;padding-left:20px;}
+  .step li{font-size:13.5px;margin:4px 0;}
+
+  .req{background:var(--req-bg);color:var(--req-fg);font-weight:800;font-size:11px;padding:1px 8px;border-radius:999px;display:inline-block;}
+  .opt{background:var(--ok-bg);color:var(--ok-fg);font-weight:700;font-size:11px;padding:1px 8px;border-radius:999px;display:inline-block;}
+
+  .tag{background:var(--navy);color:#fff;font-size:12px;font-weight:700;padding:2px 9px;border-radius:6px;display:inline-block;margin:1px 2px;}
+  .tag.pdf{background:var(--sun);color:#3a2600;}
+
+  .callout{border-left:4px solid var(--sun);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:14px 0;font-size:13.5px;}
+  .callout b{color:var(--req-fg);}
+
+  table{width:100%;border-collapse:collapse;margin-top:6px;font-size:13px;}
+  th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top;}
+  th{background:var(--navy);color:#fff;font-weight:700;white-space:nowrap;}
+
+  .must{background:var(--card);border:2px solid var(--req-fg);border-radius:12px;padding:14px 18px;margin:18px 0;}
+  .must h3{margin:0 0 8px;color:var(--req-fg);font-size:15px;}
+  .must li{font-size:13.5px;margin:5px 0;}
+
+  @media print{ body{padding:0;background:#fff;} .toolbar{display:none;} .step,.must{break-inside:avoid;}
+    :root,:root[data-theme="dark"]{--paper:#fff;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;--navy:#1a3a5c;--navy-deep:#12283f;} }
+</style>
+
+<div class="toolbar" style="justify-content:space-between;"><a class="back-portal" href="nippo-top.html" style="font-size:13px;padding:8px 16px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);text-decoration:none;">&larr; 日報へ戻る</a><button onclick="window.print()">🖨️ 印刷 / PDF保存</button></div>
+
+<div class="wrap">
+  <div class="head">
+    <p class="head__eyebrow">ヤハタ電機商会　ひまわり日報</p>
+    <h1 class="head__title">ひまわり日報の入力マニュアル</h1>
+    <p class="head__sub">回った日の数を入れて、送信するだけ。</p>
+  </div>
+
+  <div class="callout">
+    📱 <b style="color:inherit">開き方</b>：日報のページ（<a href="nippo-top.html">日報</a> → ひまわり日報）を開く → PINを入れる。一度入れると30日は聞かれません。
+  </div>
+
+  <div class="step">
+    <div class="step__h"><span class="step__n">1</span><span class="step__t">日にち・担当者</span></div>
+    <ul>
+      <li>日にち：その日の日付を選ぶ <span class="req">必須</span></li>
+      <li>担当者：自分を<b>1人だけ</b>選ぶ <span class="req">必須</span></li>
+    </ul>
+  </div>
+  <div class="step">
+    <div class="step__h"><span class="step__n">2</span><span class="step__t">区域を選ぶ（複数可）</span></div>
+    <ul>
+      <li>その日に回った区を押す（1区〜9区）</li>
+      <li>もう一度押すと外れる</li>
+    </ul>
+  </div>
+  <div class="step">
+    <div class="step__h"><span class="step__n">3</span><span class="step__t">件数を入れる</span></div>
+    <table>
+      <tr><th>欄</th><th>入れること</th></tr>
+      <tr><td>面談件数</td><td>お客様とお会いして話せた件数</td></tr>
+      <tr><td>TEL件数</td><td>お客様に電話した件数</td></tr>
+      <tr><td>ポスティング件数</td><td>お会いできず、ポストに入れた件数</td></tr>
+    </table>
+    <p style="font-size:13px;color:var(--ink-soft);margin-top:8px;">半角の数字で。0件の欄は空のままでかまいません。</p>
+  </div>
+  <div class="step">
+    <div class="step__h"><span class="step__n">4</span><span class="step__t">配布物を選ぶ（複数可）</span></div>
+    <p>その日に配ったものを押します。</p>
+    <p><span class="tag">消耗品</span><span class="tag">ハガキ</span><span class="tag">チラシ</span><span class="tag">招待状</span><span class="tag">カレンダー</span><span class="tag">年賀タオル</span></p>
+  </div>
+  <div class="step">
+    <div class="step__h"><span class="step__n">5</span><span class="step__t">備考</span></div>
+    <ul>
+      <li>お客様からの要望・気づいたことを書く</li>
+      <li>ご依頼を承ったときは、<b>受注日報にも入れる</b>（<a href="nippo-juchu-manual.html">受注日報の入力マニュアル</a>）</li>
+    </ul>
+  </div>
+  <div class="step">
+    <div class="step__h"><span class="step__n">6</span><span class="step__t">送信する</span></div>
+    <ul>
+      <li>「送信」を押す → 「✅ 〇〇のシートに送信しました！」が出ればOK</li>
+      <li>「❌ 送信に失敗しました」のときは、電波のよい所でもう一度押す</li>
+    </ul>
+  </div>
+  <div class="must">
+    <h3>⛔ これが入っていないと送信できません</h3>
+    <ul>
+      <li>日にち ／ 担当者</li>
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>受注日報の入力マニュアル｜ヤハタ電機商会</title>
+<style>
+  :root{
+    --navy:#1a3a5c; --navy-deep:#12283f; --blue:#2e75b6; --sun:#f0a500;
+    --paper:#f4f7fa; --card:#fff; --ink:#1c2530; --ink-soft:#4a5a6a; --line:#d7e0e8;
+    --req-bg:#fdecea; --req-fg:#c0392b; --ok-bg:#e8f5e9; --ok-fg:#2e7d32;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --paper:#10161d; --card:#1a2028; --ink:#e8edf2; --ink-soft:#a9b6c2; --line:#2c3844;
+    --navy:#3f6a94; --navy-deep:#1a3a5c; --req-bg:#3a1e1c; --req-fg:#f5a79f; --ok-bg:#1b2e1c; --ok-fg:#a5d6a7;
+  }}
+  :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844;--navy:#3f6a94;--navy-deep:#1a3a5c;--req-bg:#3a1e1c;--req-fg:#f5a79f;--ok-bg:#1b2e1c;--ok-fg:#a5d6a7;}
+  :root[data-theme="light"]{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;--navy:#1a3a5c;--navy-deep:#12283f;--req-bg:#fdecea;--req-fg:#c0392b;--ok-bg:#e8f5e9;--ok-fg:#2e7d32;}
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;
+    line-height:1.75;padding:26px 14px 70px;}
+  .wrap{max-width:760px;margin:0 auto;}
+  .toolbar{max-width:760px;margin:0 auto 14px;display:flex;justify-content:flex-end;}
+  .toolbar button{font-family:inherit;font-size:13px;padding:8px 16px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;}
+
+  .head{background:linear-gradient(135deg,var(--navy),var(--navy-deep));color:#fff;border-radius:10px;padding:22px 26px;margin-bottom:18px;}
+  .head__eyebrow{font-size:12px;letter-spacing:.14em;color:#cfe0ee;margin:0 0 6px;}
+  .head__title{font-size:22px;font-weight:800;margin:0;}
+  .head__sub{font-size:13px;color:#b9cee0;margin:8px 0 0;}
+
+  .step{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:12px;}
+  .step__h{display:flex;align-items:center;gap:10px;margin:0 0 8px;}
+  .step__n{width:28px;height:28px;border-radius:50%;background:var(--sun);color:#3a2600;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .step__t{font-weight:800;font-size:15.5px;}
+  .step p{margin:4px 0;font-size:14px;}
+  .step ul{margin:6px 0 0;padding-left:20px;}
+  .step li{font-size:13.5px;margin:4px 0;}
+
+  .req{background:var(--req-bg);color:var(--req-fg);font-weight:800;font-size:11px;padding:1px 8px;border-radius:999px;display:inline-block;}
+  .opt{background:var(--ok-bg);color:var(--ok-fg);font-weight:700;font-size:11px;padding:1px 8px;border-radius:999px;display:inline-block;}
+
+  .tag{background:var(--navy);color:#fff;font-size:12px;font-weight:700;padding:2px 9px;border-radius:6px;display:inline-block;margin:1px 2px;}
+  .tag.pdf{background:var(--sun);color:#3a2600;}
+
+  .callout{border-left:4px solid var(--sun);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:14px 0;font-size:13.5px;}
+  .callout b{color:var(--req-fg);}
+
+  table{width:100%;border-collapse:collapse;margin-top:6px;font-size:13px;}
+  th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top;}
+  th{background:var(--navy);color:#fff;font-weight:700;white-space:nowrap;}
+
+  .must{background:var(--card);border:2px solid var(--req-fg);border-radius:12px;padding:14px 18px;margin:18px 0;}
+  .must h3{margin:0 0 8px;color:var(--req-fg);font-size:15px;}
+  .must li{font-size:13.5px;margin:5px 0;}
+
+  @media print{ body{padding:0;background:#fff;} .toolbar{display:none;} .step,.must{break-inside:avoid;}
+    :root,:root[data-theme="dark"]{--paper:#fff;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;--navy:#1a3a5c;--navy-deep:#12283f;} }
+</style>
+
+<div class="toolbar" style="justify-content:space-between;"><a class="back-portal" href="nippo-top.html" style="font-size:13px;padding:8px 16px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);text-decoration:none;">&larr; 日報へ戻る</a><button onclick="window.print()">🖨️ 印刷 / PDF保存</button></div>
+
+<div class="wrap">
+  <div class="head">
+    <p class="head__eyebrow">ヤハタ電機商会　受注日報</p>
+    <h1 class="head__title">受注日報の入力マニュアル</h1>
+    <p class="head__sub">ご依頼を承ったら、その場で入れる。訪問の予定を入れると、担当者のカレンダーに入ります。</p>
+  </div>
+
+  <div class="callout">
+    📱 <b style="color:inherit">だれが入れる？</b>：<b style="color:inherit">全員</b>。電話を受けるのは事務・高山ですが、訪問中やこちらから電話したときにご依頼を承ったら、その人が入れます。
+  </div>
+
+  <div class="step">
+    <div class="step__h"><span class="step__n">1</span><span class="step__t">受注担当者・受注種類</span></div>
+    <ul>
+      <li>受注担当者：承った人（自分）を選ぶ <span class="req">必須</span></li>
+      <li>受注種類：どうやって承ったか <span class="req">必須</span><br><span class="tag">電話</span><span class="tag">LINE</span><span class="tag">来店</span><span class="tag">訪問</span></li>
+    </ul>
+  </div>
+  <div class="step">
+    <div class="step__h"><span class="step__n">2</span><span class="step__t">お客様を入れる</span></div>
+    <ul>
+      <li>🔍 顧客検索に名前・電話・住所・カタカナを入れると候補が出る → 選ぶと顧客名・住所・電話番号が入る</li>
+      <li>同じ名前が何人かいるときは、一覧から選ぶ</li>
+      <li>候補になければ、顧客名を直接入れる <span class="req">必須</span>。住所・電話番号も分かれば入れる</li>
+    </ul>
+  </div>
+  <div class="step">
+    <div class="step__h"><span class="step__n">3</span><span class="step__t">サービス・商品</span></div>
+    <p>何のご依頼かを選びます。</p>
+    <table>
+      <tr><th>選ぶもの</th><th>追加で入れること</th></tr>
+      <tr><td>修理／エアコンクリーニング</td><td>商品区分（パナソニック／パナ以外）。パナ以外は商品名・メーカー</td></tr>
+      <tr><td>業者</td><td>業者種別（大工・水道・ガス・内装・表具・その他、複数可）</td></tr>
+    </table>
+    <ul><li>見込商品：次につながりそうな商品があれば「➕」で追加（場所・品名・内容）</li></ul>
+  </div>
+  <div class="step">
+    <div class="step__h"><span class="step__n">4</span><span class="step__t">⚡ クイック入力（使うときだけ）</span></div>
+    <table>
+      <tr><th>ボタン</th><th>使うとき</th></tr>
+      <tr><td>❄️ エアコン点検</td><td>エアコン点検のご依頼。台数を選ぶと内容に入る。訪問担当は伊藤が入る（変えられる）<br>⚠️ 点検は<b>午前9時半から／午後13時半から</b></td></tr>
+      <tr><td>☎ 電話連絡</td><td>あとで<b>お客様に電話する</b>だけのとき。だれのカレンダーに入れるか選ぶ → 何の件か書く → 「この内容で送信」</td></tr>
+      <tr><td>📎 見積書添付</td><td>見積書を一緒に残すとき。一覧から選ぶ</td></tr>
+    </table>
+  </div>
+  <div class="step">
+    <div class="step__h"><span class="step__n">5</span><span class="step__t">訪問日時・担当</span></div>
+    <ul>
+      <li>日にち・時刻・訪問担当・予定時間を入れる</li>
+      <li>住所が入っていると、予定時間の目安が自動で入る（変えられる）</li>
+      <li><b>4つ全部そろうと、訪問担当のカレンダーに予定が入る</b></li>
+    </ul>
+  </div>
+  <div class="callout">
+    ⚠️ <b>1つでも抜けるとカレンダーに入りません。</b>送るときに「〇〇が入っていません」と出たら、「キャンセル」で戻って入れる。
+  </div>
+
+  <div class="step">
+    <div class="step__h"><span class="step__n">6</span><span class="step__t">受注内容を書いて、追加する</span></div>
+    <ul>
+      <li>受注内容：お客様のご依頼を、そのまま分かるように書く（例：エアコンの調子を見てほしい）</li>
+      <li>「受注を追加」を押す → 下の「受注一覧」に出ればOK</li>
+      <li>まちがえたときは、一覧のごみ箱で消して入れ直す</li>
+    </ul>
+  </div>
+  <div class="must">
+    <h3>⛔ これが入っていないと送信できません</h3>
+    <ul>
+      <li>受注担当者 ／ 受注種類 ／ 顧客名</li>
+      <li>電話連絡 → カレンダーに入れる人・何の件か</li>
+    </ul>
+  </div>
+</div>
