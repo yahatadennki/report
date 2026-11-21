@@ -1,4 +1,5 @@
 // 現場サポート（manual.html）の訪問・メンテナンス・配達・工事ガイドの欄の下に、それぞれ関係する打合せカードを並べる。
+// ※2026-11-22 ポータル1ページ目を6つのボタンだけにしたので、今は欄がなく何もしない。新しいカードは staff-*.html / nippo-top / fair-top のカードの枠に手で足す。
 // build-cards.js の最後に自動で動く。単独なら：node tools/sync-portal-cards.js
 const fs=require('fs');const path=require('path');
 const D=path.join(__dirname,'..')+'/';
@@ -47,7 +48,7 @@ if(!m.includes('.pchips{'))m=m.replace('</style>',CSS+'</style>');
 m=m.replace(/  <!-- cards:(\w+) -->[\s\S]*?<!-- \/cards:\1 -->\n/g,'');
 const HEAD={houmon:'訪問ガイド',mente:'メンテナンスガイド',haitatsu:'配達ガイド',koji:'工事ガイド'};
 for(const k of Object.keys(HEAD)){
-  const h=m.indexOf('color:var(--ink-soft);">'+HEAD[k]+'</p>');if(h<0)throw new Error('見出しがない '+HEAD[k]);
+  const h=m.indexOf('color:var(--ink-soft);">'+HEAD[k]+'</p>');if(h<0){console.log('（ポータルに '+HEAD[k]+' の欄がないので飛ばす。カードは各スタッフのページに手で置く）');continue;}
   const g=m.indexOf('\n  </div>\n',h)+10;
   m=m.slice(0,g)+'  <!-- cards:'+k+' -->\n  <div class="pchips">\n'+block(k)+'  </div>\n  <!-- /cards:'+k+' -->\n'+m.slice(g);
 }
