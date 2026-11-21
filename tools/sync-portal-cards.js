@@ -43,7 +43,7 @@ const CSS=`
 const f=D+'manual.html';
 let m=fs.readFileSync(f,'utf8');const crlf=m.includes('\r\n');m=m.replace(/\r\n/g,'\n');
 if(!m.includes('.pchips{'))m=m.replace('</style>',CSS+'</style>');
-// 訪問・配達・工事ガイドの欄それぞれの最後（ボタンのグリッドの直後）に、その欄のカードを置く。一番下の欄は目次ボタンだけ。
+// 訪問・配達・工事ガイドの欄それぞれの最後（ボタンのグリッドの直後）に、その欄のカードを置く。ほかのカード（全員共通・ひまわり・事務・アンケート）は各スタッフのページに置く（目次の欄は2026-11-22に廃止）。
 m=m.replace(/  <!-- cards:(\w+) -->[\s\S]*?<!-- \/cards:\1 -->\n/g,'');
 const HEAD={houmon:'訪問ガイド',mente:'メンテナンスガイド',haitatsu:'配達ガイド',koji:'工事ガイド'};
 for(const k of Object.keys(HEAD)){

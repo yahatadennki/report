@@ -16,12 +16,44 @@
   .head{background:linear-gradient(135deg,var(--navy),var(--navy-deep));color:#fff;border-radius:10px;padding:24px 28px;}
   .head p{font-size:12px;letter-spacing:.14em;color:#cfe0ee;margin:0 0 6px;}
   .head h1{font-size:23px;margin:0;}
+  .sec{font-size:13px;font-weight:800;letter-spacing:.08em;color:var(--ink-soft);margin:28px 2px 8px;}
+  .sec small{font-weight:400;letter-spacing:0;margin-left:6px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;}
+  .item{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-decoration:none;color:var(--ink);}
+  .item:hover{border-color:#2e75b6;}
+  .item .ic{font-size:24px;line-height:1;}
+  .item b{display:block;font-size:14.5px;}
+  .item span{display:block;font-size:12px;color:var(--ink-soft);margin-top:2px;}
+  .item.card{border-style:dashed;}
+  .role{display:inline-block;font-size:11px;font-weight:800;border-radius:999px;padding:1px 8px;margin-left:6px;vertical-align:middle;}
+  .role.h{background:#e8f5e9;color:#2e7d32;} .role.m{background:#e4eefa;color:#164a7a;}
+  .cbox{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .cbox .h{width:100%;font-size:11.5px;font-weight:800;letter-spacing:.08em;color:var(--ink-soft);margin-bottom:2px;}
+  .cbox a{font-size:13px;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:4px 11px;background:var(--paper);}
+  .cbox a:hover{border-color:#2e75b6;color:#2e75b6;}
 </style>
 </head>
 <body>
 <div class="wrap">
   <a class="back" href="manual.html">&larr; ポータルへ戻る</a>
   <div class="head"><p>ヤハタ電機商会　現場サポート</p><h1>📎 事務スタッフ</h1></div>
+
+  <!-- 中身 -->
+  <p class="sec">📎 事務の仕事</p>
+  <div class="cbox"><span class="h">🃏 打合せカード</span>
+    <a href="card-jimu-1.html">在庫・納期・アポ</a>
+    <a href="card-jimu-2.html">成約したら</a>
+  </div>
+
+  <p class="sec">🤝 全員共通</p>
+  <div class="cbox"><span class="h">🃏 打合せカード</span>
+    <a href="card-all-1.html">キャンペーン（リサイクラー）</a>
+    <a href="card-all-2.html">荷受け</a>
+    <a href="card-all-3.html">アポの取り方</a>
+    <a href="card-all-4.html">その場で約束</a>
+    <a href="card-all-5.html">きまりは1つ</a>
+  </div>
+  <!-- /中身 -->
 </div>
 </body>
 </html>
