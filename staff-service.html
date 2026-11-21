@@ -27,6 +27,10 @@
   .item.card{border-style:dashed;}
   .role{display:inline-block;font-size:11px;font-weight:800;border-radius:999px;padding:1px 8px;margin-left:6px;vertical-align:middle;}
   .role.h{background:#e8f5e9;color:#2e7d32;} .role.m{background:#e4eefa;color:#164a7a;}
+  .cbox{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .cbox .h{width:100%;font-size:11.5px;font-weight:800;letter-spacing:.08em;color:var(--ink-soft);margin-bottom:2px;}
+  .cbox a{font-size:13px;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:4px 11px;background:var(--paper);}
+  .cbox a:hover{border-color:#2e75b6;color:#2e75b6;}
 </style>
 </head>
 <body>
@@ -55,8 +59,10 @@
   <p class="sec">🚚 配達 <small><span class="role m">サービス</span> その他の家電はサービススタッフが行く</small></p>
   <div class="grid">
       <a class="item" href="nohin-recorder.html"><span class="ic">💿</span><span><b>レコーダー（レコーダーのみ）</b><span>納品＆取扱説明</span></span></a>
-      <a class="item card" href="card-nohin-5.html"><span class="ic">🍳</span><span><b>調理家電</b><span>打合せカード 納品＆取説</span></span></a>
-      <a class="item card" href="card-nohin-6.html"><span class="ic">💺</span><span><b>マッサージチェア</b><span>打合せカード 納品＆取説</span></span></a>
+  </div>
+  <div class="cbox"><span class="h">🃏 打合せカード</span>
+    <a href="card-nohin-5.html">🍳 調理家電</a>
+    <a href="card-nohin-6.html">💺 マッサージチェア</a>
   </div>
   <!-- /中身 -->
 </div>
