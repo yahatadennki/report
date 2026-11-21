@@ -492,6 +492,14 @@
     padding: 10px 28px; border: none; border-radius: 8px; background: var(--blue); color: #fff; cursor: pointer;
   }
   #pinGate button:hover { background: var(--navy); }
+
+  /* 打合せカードのリンク（tools/sync-portal-cards.js が作る） */
+  .pchips{max-width:780px;margin:10px auto 0;background:var(--card,#fff);border:1px solid var(--line,#d7e0e8);border-radius:10px;padding:10px 14px;}
+  .pchips__t{margin:0 0 6px;font-size:11.5px;font-weight:800;letter-spacing:.08em;color:var(--ink-soft,#4a5a6a);}
+  .pchips__row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:5px 0;}
+  .pchips__h{font-size:12px;font-weight:800;margin-right:4px;min-width:7.5em;}
+  .pchips a{font-size:12.5px;text-decoration:none;color:inherit;border:1px solid var(--line,#d7e0e8);border-radius:999px;padding:3px 10px;background:var(--paper,#f4f7fa);}
+  .pchips a:hover{border-color:#2e75b6;color:#2e75b6;}
 </style>
 
 <div id="pinGate">
@@ -563,15 +571,15 @@
         <span class="menu-card__tag">携帯用</span>
       </span>
     </button>
-    <button class="menu-card" onclick="location.href='cards.html#mente'">
-      <span class="menu-card__icon">🧽</span>
-      <span>
-        <p class="menu-card__title">点検＆お手入れ</p>
-        <p class="menu-card__desc">テレビ・エアコン・冷蔵庫・洗濯機など。</p>
-        <span class="menu-card__tag">携帯用</span>
-      </span>
-    </button>
   </div>
+  <!-- cards:houmon -->
+  <div class="pchips">
+    <p class="pchips__t">打合せカード</p>
+    <div class="pchips__row"><span class="pchips__h">🆘 お困りごと</span><a href="card-trouble-1.html">お困りごと訪問の基本</a><a href="card-trouble-2.html">テレビがつかない・映らない</a><a href="card-trouble-3.html">照明がつかない・チカチカする</a><a href="card-trouble-4.html">エアコンが効かない・水がたれる</a><a href="card-trouble-5.html">冷蔵庫が冷えない</a><a href="card-trouble-6.html">洗濯機が動かない・水が流れない</a><a href="card-trouble-7.html">ブレーカーが落ちる・電気がこない</a><a href="card-trouble-8.html">トイレ（温水便座・水もれ）</a><a href="card-trouble-9.html">給湯器（お湯が出ない・エラー）</a></div>
+    <div class="pchips__row"><span class="pchips__h">🧽 点検＆お手入れ</span><a href="card-mente-1.html">テレビ</a><a href="card-mente-2.html">エアコン</a><a href="card-mente-3.html">冷蔵庫</a><a href="card-mente-4.html">洗濯機</a></div>
+    <div class="pchips__row"><span class="pchips__h">🚪 訪問</span><a href="card-himawari-3.html">保証切れ前訪問</a></div>
+  </div>
+  <!-- /cards:houmon -->
 
   <p class="portal-head__sub" style="max-width:780px;margin:32px auto 10px;text-align:left;font-size:12px;letter-spacing:0.1em;color:var(--ink-soft);">配達ガイド</p>
   <div class="menu-grid">
@@ -584,6 +592,13 @@
       </span>
     </button>
   </div>
+  <!-- cards:haitatsu -->
+  <div class="pchips">
+    <p class="pchips__t">打合せカード</p>
+    <div class="pchips__row"><span class="pchips__h">📦 納品＆取扱説明</span><a href="card-nohin-1.html">テレビ</a><a href="card-nohin-2.html">エアコン</a><a href="card-nohin-3.html">冷蔵庫</a><a href="card-nohin-4.html">洗濯機</a><a href="card-nohin-5.html">調理家電</a><a href="card-nohin-6.html">マッサージチェア</a></div>
+    <div class="pchips__row"><span class="pchips__h">🚚 配達</span><a href="card-service-2.html">納品の手順（サービス）</a><a href="card-service-3.html">工事・大物配達のフォロー</a><a href="card-koji-4.html">納品の手順（工事）</a></div>
+  </div>
+  <!-- /cards:haitatsu -->
 
   <p class="portal-head__sub" style="max-width:780px;margin:32px auto 10px;text-align:left;font-size:12px;letter-spacing:0.1em;color:var(--ink-soft);">工事ガイド</p>
   <div class="menu-grid">
@@ -676,6 +691,12 @@
       </span>
     </button>
   </div>
+  <!-- cards:koji -->
+  <div class="pchips">
+    <p class="pchips__t">打合せカード</p>
+    <div class="pchips__row"><span class="pchips__h">⚙️ 工事</span><a href="card-koji-1.html">片付け　工具編</a><a href="card-koji-2.html">片付け　材料編</a><a href="card-koji-3.html">作業準備</a><a href="card-koji-5.html">トワレ取付</a><a href="card-koji-6.html">写真の撮り方</a></div>
+  </div>
+  <!-- /cards:koji -->
 
   <p class="portal-head__sub" style="max-width:780px;margin:32px auto 10px;text-align:left;font-size:12px;letter-spacing:0.1em;color:var(--ink-soft);">打合せカード</p>
   <div class="menu-grid">
