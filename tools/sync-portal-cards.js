@@ -1,4 +1,4 @@
-// 現場サポート（manual.html）の訪問・配達・工事ガイドの欄の下に、それぞれ関係する打合せカードを並べる。
+// 現場サポート（manual.html）の訪問・メンテナンス・配達・工事ガイドの欄の下に、それぞれ関係する打合せカードを並べる。
 // build-cards.js の最後に自動で動く。単独なら：node tools/sync-portal-cards.js
 const fs=require('fs');const path=require('path');
 const D=path.join(__dirname,'..')+'/';
@@ -10,8 +10,9 @@ const HOUMON_TITLES=['安心点検','招待状訪問','保証切れ前訪問'];
 const SECTIONS={
   houmon:[
     {label:'🆘 お困りごと',pick:c=>c.who==='trouble'},
-    {label:'🧽 点検＆お手入れ',pick:c=>c.who==='mente'},
     {label:'🚪 訪問',pick:c=>HOUMON_TITLES.includes(c.title)}],
+  mente:[
+    {label:'🧽 点検＆お手入れ',pick:c=>c.who==='mente'}],
   haitatsu:[
     {label:'📦 納品＆取扱説明',pick:c=>c.who==='nohin'},
     {label:'🚚 配達',pick:c=>['service','koji'].includes(c.who)&&/納品|配達/.test(c.title)}],
@@ -29,7 +30,7 @@ function block(key){
   }).join('');
   return rows?`    <p class="pchips__t">${TITLE[key]}</p>\n${rows}`:'';
 }
-const TITLE={houmon:'🃏 打合せカード',haitatsu:'🃏 打合せカード',koji:'🃏 打合せカード'};
+const TITLE={houmon:'🃏 打合せカード',mente:'🃏 打合せカード',haitatsu:'🃏 打合せカード',koji:'🃏 打合せカード'};
 const CSS=`
   /* 打合せカードのリンク（tools/sync-portal-cards.js が作る） */
   .pchips{max-width:780px;margin:10px auto 0;padding-top:2px;background:var(--card,#fff);border:1px solid var(--line,#d7e0e8);border-radius:10px;padding:10px 14px;}
@@ -44,7 +45,7 @@ let m=fs.readFileSync(f,'utf8');const crlf=m.includes('\r\n');m=m.replace(/\r\n/
 if(!m.includes('.pchips{'))m=m.replace('</style>',CSS+'</style>');
 // 訪問・配達・工事ガイドの欄それぞれの最後（ボタンのグリッドの直後）に、その欄のカードを置く。一番下の欄は目次ボタンだけ。
 m=m.replace(/  <!-- cards:(\w+) -->[\s\S]*?<!-- \/cards:\1 -->\n/g,'');
-const HEAD={houmon:'訪問ガイド',haitatsu:'配達ガイド',koji:'工事ガイド'};
+const HEAD={houmon:'訪問ガイド',mente:'メンテナンスガイド',haitatsu:'配達ガイド',koji:'工事ガイド'};
 for(const k of Object.keys(HEAD)){
   const h=m.indexOf('color:var(--ink-soft);">'+HEAD[k]+'</p>');if(h<0)throw new Error('見出しがない '+HEAD[k]);
   const g=m.indexOf('\n  </div>\n',h)+10;
