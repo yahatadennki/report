@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>照明取付 手順書｜ヤハタ電機商会</title>
+<style>
+  :root{
+    --navy:#1a3a5c; --navy-deep:#12283f; --blue:#2e75b6; --sun:#f0a500;
+    --paper:#f4f7fa; --card:#fff; --ink:#1c2530; --ink-soft:#4a5a6a; --line:#d7e0e8;
+    --kouji-bg:#e4eefa; --kouji-fg:#164a7a; --hojo-bg:#e8f5e9; --hojo-fg:#2e7d32;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --paper:#10161d; --card:#1a2028; --ink:#e8edf2; --ink-soft:#a9b6c2; --line:#2c3844;
+    --navy:#3f6a94; --navy-deep:#1a3a5c; --kouji-bg:#16283a; --kouji-fg:#8fc2f2; --hojo-bg:#1b2e1c; --hojo-fg:#a5d6a7;
+  }}
+  :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844;--navy:#3f6a94;--navy-deep:#1a3a5c;--kouji-bg:#16283a;--kouji-fg:#8fc2f2;--hojo-bg:#1b2e1c;--hojo-fg:#a5d6a7;}
+  :root[data-theme="light"]{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;--navy:#1a3a5c;--navy-deep:#12283f;--kouji-bg:#e4eefa;--kouji-fg:#164a7a;--hojo-bg:#e8f5e9;--hojo-fg:#2e7d32;}
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;
+    line-height:1.7;padding:28px 14px 70px;}
+  .wrap{max-width:860px;margin:0 auto;}
+  .toolbar{max-width:860px;margin:0 auto 16px;display:flex;justify-content:flex-end;}
+  .toolbar button{font-family:inherit;font-size:13px;padding:8px 16px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;}
+  .toolbar button:hover{border-color:var(--blue);color:var(--blue);}
+
+  .head{background:linear-gradient(135deg,var(--navy),var(--navy-deep));color:#fff;border-radius:10px;padding:24px 28px;margin-bottom:8px;}
+  .head__eyebrow{font-size:12px;letter-spacing:.14em;color:#cfe0ee;margin:0 0 6px;}
+  .head__title{font-size:23px;font-weight:700;margin:0;}
+  .head__sub{font-size:13px;color:#b9cee0;margin:8px 0 0;}
+
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink-soft);margin:14px 2px;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .legend i{width:12px;height:12px;border-radius:3px;display:inline-block;}
+  .legend i.k{background:var(--blue);} .legend i.h{background:var(--hojo-fg);}
+
+  .phase{font-weight:800;font-size:15px;color:#fff;background:var(--navy);border-radius:8px;padding:7px 14px;margin:20px 0 0;}
+
+  .steps{display:flex;flex-direction:column;gap:10px;margin-top:10px;}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .step__no{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--line);background:var(--paper);}
+  .step__num{width:26px;height:26px;border-radius:50%;background:var(--sun);color:#3a2600;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .step__title{font-weight:700;font-size:14.5px;}
+  .cols{display:grid;grid-template-columns:1fr 1fr;}
+  .col{padding:11px 14px;}
+  .col.kouji{border-right:1px solid var(--line);}
+  .col__h{font-size:11.5px;font-weight:800;letter-spacing:.04em;padding:2px 8px;border-radius:999px;display:inline-block;margin-bottom:7px;}
+  .col.kouji .col__h{background:var(--kouji-bg);color:var(--kouji-fg);}
+  .col.hojo  .col__h{background:var(--hojo-bg);color:var(--hojo-fg);}
+  .col ul{margin:0;padding-left:18px;}
+  .col li{font-size:13px;margin:4px 0;color:var(--ink);}
+  .col .blank{list-style:none;margin-left:-18px;color:var(--ink-soft);font-size:12px;}
+  .col .note-li{list-style:none;margin-left:-18px;color:#b8860b;font-weight:700;font-size:12px;}
+  @media (prefers-color-scheme:dark){.col .note-li{color:#f0c14b;}}
+  :root[data-theme="dark"] .col .note-li{color:#f0c14b;}
+
+  .warn{background:var(--sun);color:#3a2600;font-size:12.5px;font-weight:700;border-radius:8px;padding:10px 14px;margin-top:16px;}
+  .warn b{display:block;margin-bottom:3px;}
+
+  @media(max-width:560px){ .cols{grid-template-columns:1fr;} .col.kouji{border-right:none;border-bottom:1px solid var(--line);} }
+
+  @media print{
+    body{padding:0;background:#fff;}
+    .toolbar{display:none;}
+    .step{break-inside:avoid;}
+    :root,:root[data-theme="dark"]{--paper:#fff;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;--navy:#1a3a5c;--navy-deep:#12283f;--kouji-bg:#e4eefa;--kouji-fg:#164a7a;--hojo-bg:#e8f5e9;--hojo-fg:#2e7d32;}
+  }
+
+  .part{display:flex;align-items:center;gap:10px;margin:22px 0 4px;}
+  .part__no{background:var(--sun);color:#3a2600;font-weight:800;font-size:13px;border-radius:999px;padding:3px 12px;}
+  .part__t{font-size:20px;font-weight:800;color:var(--ink);margin:0;}
+  .part__s{font-size:12.5px;color:var(--ink-soft);margin:0 2px 6px;}
+  .box{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:10px;}
+  .box__h{font-weight:800;font-size:14.5px;padding:8px 14px;border-bottom:1px solid var(--line);background:var(--paper);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;}
+  .grid2>div{padding:10px 14px;}
+  .grid2>div+div{border-left:1px solid var(--line);}
+  .sub-h{display:inline-block;font-size:11.5px;font-weight:800;padding:2px 9px;border-radius:999px;background:var(--kouji-bg);color:var(--kouji-fg);margin-bottom:6px;}
+  .sub-h.g{background:var(--hojo-bg);color:var(--hojo-fg);}
+  .chk{list-style:none;margin:0;padding:0;}
+  .chk li{font-size:13px;margin:5px 0;padding-left:22px;position:relative;}
+  .chk li::before{content:"";position:absolute;left:0;top:3px;width:13px;height:13px;border:1.6px solid var(--ink-soft);border-radius:3px;}
+  .chk li small{display:block;color:var(--ink-soft);font-size:11.5px;}
+  .one{padding:11px 14px;}
+  .one ul{margin:0;padding-left:18px;}
+  .one li{font-size:13.5px;margin:4px 0;}
+  .tip{color:var(--ink-soft);font-size:12.5px;margin:5px 0 0;}
+  .col .tip{font-size:12px;}
+  .tag{font-size:11px;font-weight:800;background:var(--hojo-bg);color:var(--hojo-fg);border-radius:999px;padding:2px 9px;margin-left:auto;white-space:nowrap;}
+  .pb{break-before:page;}
+  @media(max-width:560px){.grid2{grid-template-columns:1fr;}.grid2>div+div{border-left:0;border-top:1px solid var(--line);}}
+  @media print{.part{margin-top:6px;}.box{break-inside:avoid;}.prep{zoom:.74}.prep .chk li{margin:3px 0}}
+</style>
+
+<div class="toolbar" style="justify-content:space-between;"><a class="back-portal" href="manual.html" style="font-size:13px;padding:8px 16px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);text-decoration:none;">&larr; ポータルへ戻る</a><button onclick="window.print()">🖨️ 印刷 / PDF保存</button></div>
+
+<div class="wrap">
+  <div class="head">
+    <p class="head__eyebrow">ヤハタ電機商会　工事手順書</p>
+    <h1 class="head__title">照明取付 手順書</h1>
+    <p class="head__sub">天井の照明（シーリングライト）の取り替え。パナソニックのシーリングライトの取扱説明書をもとにしています。</p>
+  </div>
+
+  <div class="prep">
+  <div class="part"><span class="part__no">第1部</span><h2 class="part__t">準備編</h2></div>
+  <p class="part__s">見積のときにサービススタッフが撮った下見写真で確かめてから出かけます。現場に着いたら、もう一度見ます。</p>
+
+  <div class="box"><div class="box__h">✅ 確認するところ</div><div class="grid2">
+    <div><span class="sub-h">📷 下見の写真で（お伺いする前に）</span><ul class="chk"><li>天井の配線器具の形<small>引掛シーリング（角・丸）、引掛ローゼット、埋込ローゼットなら、そのまま付く。それ以外や、器具がないときは配線器具の工事がいる</small></li><li>天井が平らか<small>傾斜天井・竿縁天井は別売のアダプタがいる</small></li><li>器具の大きさと、部屋の広さ<small>直径840mm未満のせまい場所には付けない</small></li><li>壁スイッチがあるか<small>壁スイッチがない部屋には付けない</small></li><li>ペンダントやダウンライトか<small>直付け器具は電気工事になる</small></li><li>古い照明を引き取るか</li></ul></div>
+    <div><span class="sub-h g">🏠 現場に着いたら</span><ul class="chk"><li>配線器具がぐらついていないか、割れていないか<small>ぐらつき・破損は、配線器具を取り替えてから</small></li><li>天井から器具の出しろ<small>重ね貼りなどで出しろが足りないと付かない</small></li><li>天井の強さ<small>ベニヤ板や石こうボードだけで、補強がない場所は注意</small></li><li>浴室など湿気の多い場所ではないか</li></ul></div>
+  </div></div>
+
+  <div class="box"><div class="box__h">🎒 持ち物</div><div class="grid2">
+    <div><span class="sub-h">📦 材料</span><ul class="chk"><li>照明器具<small>箱の部品：アダプタ・リモコン</small></li><li>引掛シーリング（予備）<small>配線器具を取り替えるとき</small></li><li>傾斜天井用・竿縁天井用アダプタ<small>その天井のとき</small></li><li>養生シート</li><li>ゴミ袋</li></ul></div>
+    <div><span class="sub-h g">🔧 工具</span><ul class="chk"><li>手袋</li><li>脚立</li><li>プラスドライバー・マイナスドライバー</li><li>検電器</li><li>懐中電灯</li><li>電気工事の工具一式<small>配線器具を取り替えるとき：ペンチ・ストリッパー・VVFケーブル</small></li></ul></div>
+  </div></div>
+  </div>
+
+  <div class="part pb"><span class="part__no">第2部</span><h2 class="part__t">作業編</h2></div>
+  <p class="part__s">上から順に進めます。</p>
+  <div class="phase">1. 取り外し</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">1</span><span class="step__title">電気を切る</span></div>
+      <div class="one"><ul><li>壁スイッチを切る。</li><li>配線器具をさわるときは、ブレーカーも切る。</li></ul><p class="tip">💡 リモコンだけで消しても、電気は来ている。必ず壁スイッチで切る。</p></div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">2</span><span class="step__title">古い照明を外す</span></div>
+      <div class="one"><ul><li>カバーを外す。</li><li>本体を支えながら、アダプタを外す。</li><li>天井の配線器具の様子を見る（ぐらつき・割れ・焦げ）。</li></ul><p class="tip">💡 外した器具は落とさないよう、下で受ける人がいると安心。</p></div>
+    </div>
+  </div>
+  <div class="phase">2. 取り付け</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">3</span><span class="step__title">アダプタを付ける</span></div>
+      <div class="one"><ul><li>アダプタの引掛刃を、配線器具のスライド穴に入れる。</li><li>「カチッ」と音がするまで右に回す。</li><li>ボタンを押さずに左に回して、外れないことを確かめる。</li></ul><p class="tip">💡 ローゼットの取付金具にネジが残っていたら外す。</p></div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">4</span><span class="step__title">本体を付ける</span></div>
+      <div class="one"><ul><li>本体の中心のセンターパッドが付いていたら外す。</li><li>アダプタに本体の穴を合わせて、水平のまま均等に押し上げる。</li><li>本体が簡単に回らないことを確かめる。</li><li>梱包材を全部はずして、カバーを付ける。</li></ul><p class="tip">💡 押し上げても付かないときは、アダプタの付け方が正しくない。外してやり直す。</p><p class="tip">💡 器具裏の黒いスポンジは外さない。</p></div>
+    </div>
+  </div>
+  <div class="phase">3. 確認 ＆ 引き渡し</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">5</span><span class="step__title">点灯を確かめる</span></div>
+      <div class="one"><ul><li>壁スイッチを入れて、点灯する。</li><li>リモコンで、明るさ・色・常夜灯を確かめる。</li></ul></div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">6</span><span class="step__title">使い方を伝える</span></div>
+      <div class="one"><ul><li>リモコンの使い方を伝える。</li><li>取扱説明書をお渡しする。</li><li>古い照明を引き取る。</li><li>作業前と後の写真を撮る（業務日報に添付）。</li></ul></div>
+    </div>
+  </div>
+
+  <div class="warn">
+    <b>⚠ 大事なところ</b>
+    配線器具の取り替えや、直付け器具の取り付けは電気工事。電気工事士の資格がある人が、ブレーカーを切ってから行う。ぐらつく・割れた配線器具には、絶対に付けない。
+  </div>
+</div>
