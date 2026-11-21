@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>安心点検訪問 手順書｜ヤハタ電機商会</title>
+<style>
+  :root{
+    --navy:#1a3a5c; --navy-deep:#12283f; --blue:#2e75b6; --sun:#f0a500;
+    --paper:#f4f7fa; --card:#fff; --ink:#1c2530; --ink-soft:#4a5a6a; --line:#d7e0e8;
+    --kouji-bg:#e4eefa; --kouji-fg:#164a7a; --hojo-bg:#e8f5e9; --hojo-fg:#2e7d32;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --paper:#10161d; --card:#1a2028; --ink:#e8edf2; --ink-soft:#a9b6c2; --line:#2c3844;
+    --navy:#3f6a94; --navy-deep:#1a3a5c; --kouji-bg:#16283a; --kouji-fg:#8fc2f2; --hojo-bg:#1b2e1c; --hojo-fg:#a5d6a7;
+  }}
+  :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844;--navy:#3f6a94;--navy-deep:#1a3a5c;--kouji-bg:#16283a;--kouji-fg:#8fc2f2;--hojo-bg:#1b2e1c;--hojo-fg:#a5d6a7;}
+  :root[data-theme="light"]{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;--navy:#1a3a5c;--navy-deep:#12283f;--kouji-bg:#e4eefa;--kouji-fg:#164a7a;--hojo-bg:#e8f5e9;--hojo-fg:#2e7d32;}
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;
+    line-height:1.7;padding:28px 14px 70px;}
+  .wrap{max-width:860px;margin:0 auto;}
+  .toolbar{max-width:860px;margin:0 auto 16px;display:flex;justify-content:flex-end;}
+  .toolbar button{font-family:inherit;font-size:13px;padding:8px 16px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;}
+  .toolbar button:hover{border-color:var(--blue);color:var(--blue);}
+
+  .head{background:linear-gradient(135deg,var(--navy),var(--navy-deep));color:#fff;border-radius:10px;padding:24px 28px;margin-bottom:8px;}
+  .head__eyebrow{font-size:12px;letter-spacing:.14em;color:#cfe0ee;margin:0 0 6px;}
+  .head__title{font-size:23px;font-weight:700;margin:0;}
+  .head__sub{font-size:13px;color:#b9cee0;margin:8px 0 0;}
+
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink-soft);margin:14px 2px;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .legend i{width:12px;height:12px;border-radius:3px;display:inline-block;}
+  .legend i.k{background:var(--blue);} .legend i.h{background:var(--hojo-fg);}
+
+  .phase{font-weight:800;font-size:15px;color:#fff;background:var(--navy);border-radius:8px;padding:7px 14px;margin:20px 0 0;}
+
+  .steps{display:flex;flex-direction:column;gap:10px;margin-top:10px;}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .step__no{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--line);background:var(--paper);}
+  .step__num{width:26px;height:26px;border-radius:50%;background:var(--sun);color:#3a2600;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .step__title{font-weight:700;font-size:14.5px;}
+  .cols{display:grid;grid-template-columns:1fr 1fr;}
+  .col{padding:11px 14px;}
+  .col.kouji{border-right:1px solid var(--line);}
+  .col__h{font-size:11.5px;font-weight:800;letter-spacing:.04em;padding:2px 8px;border-radius:999px;display:inline-block;margin-bottom:7px;}
+  .col.kouji .col__h{background:var(--kouji-bg);color:var(--kouji-fg);}
+  .col.hojo  .col__h{background:var(--hojo-bg);color:var(--hojo-fg);}
+  .col ul{margin:0;padding-left:18px;}
+  .col li{font-size:13px;margin:4px 0;color:var(--ink);}
+  .col .blank{list-style:none;margin-left:-18px;color:var(--ink-soft);font-size:12px;}
+  .col .note-li{list-style:none;margin-left:-18px;color:#b8860b;font-weight:700;font-size:12px;}
+  @media (prefers-color-scheme:dark){.col .note-li{color:#f0c14b;}}
+  :root[data-theme="dark"] .col .note-li{color:#f0c14b;}
+
+  .warn{background:var(--sun);color:#3a2600;font-size:12.5px;font-weight:700;border-radius:8px;padding:10px 14px;margin-top:16px;}
+  .warn b{display:block;margin-bottom:3px;}
+
+  @media(max-width:560px){ .cols{grid-template-columns:1fr;} .col.kouji{border-right:none;border-bottom:1px solid var(--line);} }
+
+  @media print{
+    body{padding:0;background:#fff;}
+    .toolbar{display:none;}
+    .step{break-inside:avoid;}
+    :root,:root[data-theme="dark"]{--paper:#fff;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;--navy:#1a3a5c;--navy-deep:#12283f;--kouji-bg:#e4eefa;--kouji-fg:#164a7a;--hojo-bg:#e8f5e9;--hojo-fg:#2e7d32;}
+  }
+
+  .part{display:flex;align-items:center;gap:10px;margin:22px 0 4px;}
+  .part__no{background:var(--sun);color:#3a2600;font-weight:800;font-size:13px;border-radius:999px;padding:3px 12px;}
+  .part__t{font-size:20px;font-weight:800;color:var(--ink);margin:0;}
+  .part__s{font-size:12.5px;color:var(--ink-soft);margin:0 2px 6px;}
+  .box{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:10px;}
+  .box__h{font-weight:800;font-size:14.5px;padding:8px 14px;border-bottom:1px solid var(--line);background:var(--paper);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;}
+  .grid2>div{padding:10px 14px;}
+  .grid2>div+div{border-left:1px solid var(--line);}
+  .sub-h{display:inline-block;font-size:11.5px;font-weight:800;padding:2px 9px;border-radius:999px;background:var(--kouji-bg);color:var(--kouji-fg);margin-bottom:6px;}
+  .sub-h.g{background:var(--hojo-bg);color:var(--hojo-fg);}
+  .chk{list-style:none;margin:0;padding:0;}
+  .chk li{font-size:13px;margin:5px 0;padding-left:22px;position:relative;}
+  .chk li::before{content:"";position:absolute;left:0;top:3px;width:13px;height:13px;border:1.6px solid var(--ink-soft);border-radius:3px;}
+  .chk li small{display:block;color:var(--ink-soft);font-size:11.5px;}
+  .one{padding:11px 14px;}
+  .one ul{margin:0;padding-left:18px;}
+  .one li{font-size:13.5px;margin:4px 0;}
+  .tip{color:var(--ink-soft);font-size:12.5px;margin:5px 0 0;}
+  .col .tip{font-size:12px;}
+  .tag{font-size:11px;font-weight:800;background:var(--hojo-bg);color:var(--hojo-fg);border-radius:999px;padding:2px 9px;margin-left:auto;white-space:nowrap;}
+  .pb{break-before:page;}
+  .intro{background:var(--card);border:2px solid var(--sun);border-radius:10px;padding:12px 16px;margin-top:14px;}
+  .intro__h{font-weight:800;font-size:16px;margin:0 0 6px;}
+  .intro p{font-size:13.5px;margin:4px 0;}
+  .intro ul{margin:4px 0;padding-left:20px;font-size:13.5px;}
+  .cardlink{font-size:12.5px;margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+  .cardlink a{text-decoration:none;color:var(--kouji-fg);background:var(--kouji-bg);border-radius:999px;padding:2px 10px;font-weight:700;}
+  @media(max-width:560px){.grid2{grid-template-columns:1fr;}.grid2>div+div{border-left:0;border-top:1px solid var(--line);}}
+  @media print{.part{margin-top:6px;}.box{break-inside:avoid;}.prep{zoom:.74}.prep .chk li{margin:3px 0}}
+</style>
+
+<div class="toolbar" style="justify-content:space-between;"><a class="back-portal" href="manual.html" style="font-size:13px;padding:8px 16px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);text-decoration:none;">&larr; ポータルへ戻る</a><button onclick="window.print()">🖨️ 印刷 / PDF保存</button></div>
+
+<div class="wrap">
+  <div class="head">
+    <p class="head__eyebrow">ヤハタ電機商会　訪問ガイド</p>
+    <h1 class="head__title">安心点検訪問</h1>
+    <p class="head__sub">保証が切れる前に伺って、お買い上げいただいた家電を一度しっかり見る訪問です。初めて行く人は、すぐ下の「なにしにいくの？」から読んでください。</p>
+  </div>
+
+  <div class="prep">
+  <div class="intro"><p class="intro__h">💡 安心点検って、なにしにいくの？</p>
+  <p>お買い上げいただいた家電の<b>保証（1年・5年・7年）が切れる前に</b>、一度しっかり見に伺う訪問です。</p>
+  <ul>
+   <li><b>保証のうちに見つける</b>：不具合が見つかれば、保証のうちにメーカーで直せます。お客様の出費がありません。</li>
+   <li><b>長く、安全に使ってもらう</b>：その家の使い方に合わせて、お手入れのしかたを伝えます。</li>
+   <li><b>使い方を聞いてくる</b>：どんな使い方が多いか、欠かせない機能は何かを聞いて、記録に残します。</li>
+  </ul>
+  <p>売り込みに行くのではありません。<b>「壊れる前に気づく」</b>ための訪問です。点検料はいただきません。</p>
+  <p><b>きっかけ</b>：ひまわりスタッフが保証切れ前のハガキを届けて、点検に伺ってよい日と時間を聞いてきます。サービススタッフは、その約束の日に伺います。</p></div>
+
+  <div class="part"><span class="part__no">第1部</span><h2 class="part__t">準備編</h2></div>
+  <p class="part__s">出かける前に、どの家電を、何のために見るのかを確かめておきます。</p>
+
+  <div class="box"><div class="box__h">✅ 確認するところ</div><div class="grid2">
+    <div><span class="sub-h">📞 お伺いする前に</span><ul class="chk"><li>どの家電か<small>品番・お買い上げ日・保証の種類（1年・5年・7年）と、いつ切れるか</small></li><li>ひまわりスタッフが聞いてきたこと<small>約束の日と時間、お客様が気にしていること（順路帳・おうちまるごと点検シート）</small></li><li>前の記録<small>前回の点検や修理の記録。同じところが悪くなっていないか</small></li><li>その家電の点検のしかた<small>下の「点検する」と、点検＆お手入れのカードを読んでおく</small></li><li>取扱説明書<small>その品番のお手入れのページと、エラー表示の一覧（スマホで見られるように）</small></li><li>カレンダー<small>約束の時間。前後の予定と移動の時間</small></li></ul></div>
+    <div><span class="sub-h g">🏠 現場に着いたら</span><ul class="chk"><li>お客様が気にしていること<small>最初に聞く。点検の前に聞くと、見るところが分かる</small></li><li>家電のまわり<small>置き方・すき間・コンセントのまわり</small></li><li>ほかの家電<small>古いものや、困っていそうなものがあれば、気づいたことを記録だけしておく</small></li></ul></div>
+  </div></div>
+
+  <div class="box"><div class="box__h">🎒 持ち物</div><div class="grid2">
+    <div><span class="sub-h">📦 材料</span><ul class="chk"><li>点検の記録用紙<small>おうちまるごと点検シート</small></li><li>リモコン用の乾電池<small>単3・単4（エアコン点検では無料で交換）</small></li><li>空気清浄フィルター<small>交換する機種のとき</small></li><li>掃除の道具（ブラシ・ハンディ掃除機・ぞうきん）</li><li>養生シート（エアコンの下に敷く）</li><li>次の点検のお知らせ<small>次に伺う時期を書いて渡す</small></li><li>名刺</li></ul></div>
+    <div><span class="sub-h g">🔧 工具</span><ul class="chk"><li>脚立（エアコン）</li><li>温度計<small>エアコンの吹き出し温度</small></li><li>懐中電灯</li><li>ドライバー</li><li>スマホ（写真・カレンダー・取扱説明書）</li></ul></div>
+  </div></div>
+  </div>
+
+  <div class="part pb"><span class="part__no">第2部</span><h2 class="part__t">作業編</h2></div>
+  <p class="part__s">上から順に進めます。</p>
+  <div class="phase">1. 伺う</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">1</span><span class="step__title">あいさつして、今日やることを伝える</span></div>
+      <div class="one"><ul><li>約束の時間に伺う。遅れそうなときは、先に電話する。</li><li>「保証が切れる前の安心点検に伺いました」とあいさつする。</li><li>どの家電を見るか、時間はどのくらいかを伝える。</li><li>「最近、気になることはありませんか？」と先に聞く。</li></ul><p class="tip">💡 点検は無料。売り込みではないことが伝わると、お客様も安心して話してくれる。</p><p class="cardlink">🃏 カードで確かめる：<a href="card-service-1.html">安心点検</a><a href="card-himawari-3.html">保証切れ前訪問（ひまわり）</a></p></div>
+    </div>
+  </div>
+  <div class="phase">2. 点検する</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">2</span><span class="step__title">どの家電でも見るところ</span></div>
+      <div class="one"><ul><li>電源プラグとコンセント：ほこり・焦げ・ゆるみがないか。</li><li>置き方：まわりにすき間があるか、水平か、ぐらつかないか。</li><li>音・におい・水もれ・ゆれ：いつもとちがうところがないか。</li><li>エラー表示やランプの点滅：出ていたら、取扱説明書で意味を確かめる。</li></ul><p class="tip">💡 気になるところは写真を撮っておく。</p></div>
+    </div>
+    <div class="step">
+      <div class="step__no"><span class="step__num">3</span><span class="step__title">家電ごとに見るところ</span></div>
+      <div class="one"><ul><li>テレビ：画面、うしろの通気口のほこり、リモコンの電池。</li><li>エアコン：フィルター清掃、空気清浄フィルターの交換、吹き出し温度、リモコンの電池、ドレンホース、室外機の音とゆれ。</li><li>冷蔵庫：冷え具合と音、ドアのパッキン、給水タンクと製氷、うしろと下のほこり。</li><li>洗濯機：排水口と給水ホース（水もれ・ゆるみ・つまり）、フィルター、脱水のときの音とゆれ。</li></ul><p class="tip">💡 手順は、それぞれの「点検＆お手入れ」カードに1枚ずつまとめてある。</p><p class="cardlink">🃏 カードで確かめる：<a href="card-mente-1.html">テレビ</a><a href="card-mente-2.html">エアコン</a><a href="card-mente-3.html">冷蔵庫</a><a href="card-mente-4.html">洗濯機</a></p></div>
+    </div>
+  </div>
+  <div class="phase">3. 不具合が見つかったら</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">4</span><span class="step__title">保証のうちに直す段取りをする</span></div>
+      <div class="one"><ul><li>保証書で、保証の期限を確かめる。</li><li>不具合のところの写真を撮る。</li><li>お客様に、どこが悪いか、これからどうなるかを伝える。</li><li>メーカーに修理を頼む（保証のうちに）。修理の日は、その場でカレンダーを見て約束する。</li></ul><p class="tip">💡 その場で直せない・分からないときは、正直に「確かめてご連絡します」。適当に答えない。</p><p class="cardlink">🃏 カードで確かめる：<a href="card-all-4.html">その場で約束</a></p></div>
+    </div>
+  </div>
+  <div class="phase">4. お手入れを伝える</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">5</span><span class="step__title">その家の使い方に合わせて、1つやって見せる</span></div>
+      <div class="one"><ul><li>全部説明しない。その家でいちばん大事なお手入れを1つだけ、一緒にやる。</li><li>例：エアコンのフィルター（2週間に1回）、洗濯機の糸くずフィルター（毎回）、冷蔵庫の給水タンク（週に1回）、テレビのプラグのほこり（年に1回）。</li><li>使ってはいけない洗剤も伝える（ベンジン・シンナー・アルコールなど）。</li></ul><p class="cardlink">🃏 カードで確かめる：<a href="card-mente-1.html">テレビ</a><a href="card-mente-2.html">エアコン</a><a href="card-mente-3.html">冷蔵庫</a><a href="card-mente-4.html">洗濯機</a></p></div>
+    </div>
+  </div>
+  <div class="phase">5. 使い方を聞いてくる</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">6</span><span class="step__title">どんな使い方が多いか、欠かせない機能は何か</span></div>
+      <div class="one"><ul><li>テレビ：どんな番組をよく見るか。録画やネット動画を使うか。</li><li>エアコン：冷房・暖房・除湿のどれをいちばん使うか。1日に何時間くらいか。</li><li>冷蔵庫：冷凍と野菜、どちらが多いか。製氷や急速冷凍は使うか。</li><li>洗濯機：毎日か、まとめ洗いか。乾燥まで使うか。</li></ul><p class="tip">💡 聞いたことは、次に買い替えるときに、その家に合うものを選ぶためのもの。その場ですすめなくてよい。</p></div>
+    </div>
+  </div>
+  <div class="phase">6. 次の約束をして帰る</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step__no"><span class="step__num">7</span><span class="step__title">記録して、次の点検の時期を伝える</span></div>
+      <div class="one"><ul><li>次に点検に伺う時期を伝える（エアコンは毎年）。</li><li>点検の結果と聞いたことを、おうちまるごと点検シートに書く。</li><li>業務日報に入れる。不具合があったときは、写真もつける。</li><li>片付けて、「わからなくなったら電話してください」で終わる。</li></ul><p class="cardlink">🃏 カードで確かめる：<a href="card-all-5.html">きまりは1つ</a></p></div>
+    </div>
+  </div>
+
+  <div class="warn">
+    <b>⚠ 大事なところ</b>
+    安心点検は売り込みではない。壊れる前に気づくための訪問。分からないことは適当に答えず、持ち帰って確かめる。不具合は、保証が切れる前にメーカーへ。
+  </div>
+</div>
