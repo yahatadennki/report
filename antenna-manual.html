@@ -88,6 +88,7 @@
   .col .tip{font-size:12px;}
   .tag{font-size:11px;font-weight:800;background:var(--hojo-bg);color:var(--hojo-fg);border-radius:999px;padding:2px 9px;margin-left:auto;white-space:nowrap;}
   .pb{break-before:page;}
+  .daihyo{background:var(--card);border:1px dashed var(--line);border-radius:8px;padding:7px 12px;font-size:12.5px;color:var(--ink-soft);margin:12px 0 0;}
   .cols2{padding:10px 14px;columns:2;column-gap:28px;}
   .cols2 .chk li{break-inside:avoid;}
   @media(max-width:560px){.cols2{columns:1;}}
@@ -98,7 +99,7 @@
   .cardlink{font-size:12.5px;margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
   .cardlink a{text-decoration:none;color:var(--kouji-fg);background:var(--kouji-bg);border-radius:999px;padding:2px 10px;font-weight:700;}
   @media(max-width:560px){.grid2{grid-template-columns:1fr;}.grid2>div+div{border-left:0;border-top:1px solid var(--line);}}
-  @media print{.part{margin-top:6px;}.box{break-inside:avoid;}.prep{zoom:.74}.prep .chk li{margin:3px 0}}
+  @media print{.part{margin-top:6px;}.box{break-inside:avoid;}.prep{zoom:.71}.prep .chk li{margin:3px 0}}
 </style>
 
 <div class="toolbar" style="justify-content:space-between;"><a class="back-portal" href="manual.html" style="font-size:13px;padding:8px 16px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);text-decoration:none;">&larr; ポータルへ戻る</a><button onclick="window.print()">🖨️ 印刷 / PDF保存</button></div>
@@ -111,6 +112,7 @@
   </div>
 
   <div class="prep">
+  <p class="daihyo">📌 これは<b>代表的な作業手順</b>です。機種や現場によってちがうところは、その機種の取扱説明書・施工説明書で確かめてください。</p>
 
   <div class="part"><span class="part__no">第1部</span><h2 class="part__t">準備編</h2></div>
   <p class="part__s">見積のときにサービススタッフが撮った下見写真で確かめてから出かけます。現場に着いたら、もう一度見ます。</p>
