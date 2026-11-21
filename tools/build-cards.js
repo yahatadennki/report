@@ -227,4 +227,3 @@ ${sec.replace(/<section style=/g,(m,i)=>m)}
 // 古いURL（No.のみ）は新しいカードへ
 ['card-1.html','card-2.html'].forEach((f,i)=>fs.writeFileSync(D+f,'<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta http-equiv="refresh" content="0;url=card-himawari-'+(i+1)+'.html"><title>打合せカード</title></head><body><a href="card-himawari-'+(i+1)+'.html">カードへ</a></body></html>','utf8'));
 console.log('cards',CARDS.length);
-require('./sync-portal-cards.js');
