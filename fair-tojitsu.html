@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>フェア当日の時間｜ヤハタ電機商会</title>
+<style>
+  :root{
+    --navy:#1a3a5c; --navy-deep:#12283f; --blue:#2e75b6; --sun:#f0a500;
+    --paper:#f4f7fa; --card:#fff; --ink:#1c2530; --ink-soft:#4a5a6a; --line:#d7e0e8;
+    --req-bg:#fdecea; --req-fg:#c0392b; --ok-bg:#e8f5e9; --ok-fg:#2e7d32;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --paper:#10161d; --card:#1a2028; --ink:#e8edf2; --ink-soft:#a9b6c2; --line:#2c3844;
+    --navy:#3f6a94; --navy-deep:#1a3a5c; --req-bg:#3a1e1c; --req-fg:#f5a79f; --ok-bg:#1b2e1c; --ok-fg:#a5d6a7;
+  }}
+  :root[data-theme="dark"]{--paper:#10161d;--card:#1a2028;--ink:#e8edf2;--ink-soft:#a9b6c2;--line:#2c3844;--navy:#3f6a94;--navy-deep:#1a3a5c;--req-bg:#3a1e1c;--req-fg:#f5a79f;--ok-bg:#1b2e1c;--ok-fg:#a5d6a7;}
+  :root[data-theme="light"]{--paper:#f4f7fa;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;--navy:#1a3a5c;--navy-deep:#12283f;--req-bg:#fdecea;--req-fg:#c0392b;--ok-bg:#e8f5e9;--ok-fg:#2e7d32;}
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;
+    line-height:1.75;padding:26px 14px 70px;}
+  .wrap{max-width:760px;margin:0 auto;}
+  .toolbar{max-width:760px;margin:0 auto 14px;display:flex;justify-content:flex-end;}
+  .toolbar button{font-family:inherit;font-size:13px;padding:8px 16px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;}
+
+  .head{background:linear-gradient(135deg,var(--navy),var(--navy-deep));color:#fff;border-radius:10px;padding:22px 26px;margin-bottom:18px;}
+  .head__eyebrow{font-size:12px;letter-spacing:.14em;color:#cfe0ee;margin:0 0 6px;}
+  .head__title{font-size:22px;font-weight:800;margin:0;}
+  .head__sub{font-size:13px;color:#b9cee0;margin:8px 0 0;}
+
+  .step{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:12px;}
+  .step__h{display:flex;align-items:center;gap:10px;margin:0 0 8px;}
+  .step__n{width:28px;height:28px;border-radius:50%;background:var(--sun);color:#3a2600;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .step__t{font-weight:800;font-size:15.5px;}
+  .step p{margin:4px 0;font-size:14px;}
+  .step ul{margin:6px 0 0;padding-left:20px;}
+  .step li{font-size:13.5px;margin:4px 0;}
+
+  .req{background:var(--req-bg);color:var(--req-fg);font-weight:800;font-size:11px;padding:1px 8px;border-radius:999px;display:inline-block;}
+  .opt{background:var(--ok-bg);color:var(--ok-fg);font-weight:700;font-size:11px;padding:1px 8px;border-radius:999px;display:inline-block;}
+
+  .tag{background:var(--navy);color:#fff;font-size:12px;font-weight:700;padding:2px 9px;border-radius:6px;display:inline-block;margin:1px 2px;}
+  .tag.pdf{background:var(--sun);color:#3a2600;}
+
+  .callout{border-left:4px solid var(--sun);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:14px 0;font-size:13.5px;}
+  .callout b{color:var(--req-fg);}
+
+  table{width:100%;border-collapse:collapse;margin-top:6px;font-size:13px;}
+  th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top;}
+  th{background:var(--navy);color:#fff;font-weight:700;white-space:nowrap;}
+
+  .must{background:var(--card);border:2px solid var(--req-fg);border-radius:12px;padding:14px 18px;margin:18px 0;}
+  .must h3{margin:0 0 8px;color:var(--req-fg);font-size:15px;}
+  .must li{font-size:13.5px;margin:5px 0;}
+
+  @media print{ body{padding:0;background:#fff;} .toolbar{display:none;} .step,.must{break-inside:avoid;}
+    :root,:root[data-theme="dark"]{--paper:#fff;--card:#fff;--ink:#1c2530;--ink-soft:#4a5a6a;--line:#d7e0e8;--navy:#1a3a5c;--navy-deep:#12283f;} }
+  .tt td:first-child{white-space:nowrap;font-weight:800;width:6.5em;}
+  .tt tr.hl td{background:var(--req-bg);}
+</style>
+
+<div class="toolbar" style="justify-content:space-between;"><a class="back-portal" href="fair-top.html" style="font-size:13px;padding:8px 16px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);text-decoration:none;">&larr; フェアへ戻る</a><button onclick="window.print()">🖨️ 印刷 / PDF保存</button></div>
+
+<div class="wrap">
+  <div class="head">
+    <p class="head__eyebrow">ヤハタ電機商会　フェア</p>
+    <h1 class="head__title">フェア当日の時間</h1>
+    <p class="head__sub">フェアは10時〜18時。片付けは16時から（最終日は15時から）。ひまわりスタッフは17時に解散。</p>
+  </div>
+
+  <div class="step">
+    <div class="step__h"><span class="step__n">1</span><span class="step__t">ふだんの日</span></div>
+    <table class="tt">
+      <tr><th>時間</th><th>やること</th></tr>
+      <tr><td>10:00</td><td>フェア開始</td></tr>
+      <tr><td>お昼</td><td>🍱 お弁当あり</td></tr>
+      <tr class="hl"><td>16:00</td><td>片付け開始</td></tr>
+      <tr class="hl"><td>17:00</td><td>ひまわりスタッフ 解散</td></tr>
+      <tr><td>18:00</td><td>フェア終了</td></tr>
+    </table>
+  </div>
+
+  <div class="step">
+    <div class="step__h"><span class="step__n">2</span><span class="step__t">最終日（テントの解体あり）</span></div>
+    <table class="tt">
+      <tr><th>時間</th><th>やること</th></tr>
+      <tr><td>10:00</td><td>フェア開始</td></tr>
+      <tr><td>お昼</td><td>🍱 お弁当あり</td></tr>
+      <tr class="hl"><td>15:00</td><td>片付け開始（<b>テントの解体</b>があるので、1時間早い）</td></tr>
+      <tr class="hl"><td>17:00</td><td>ひまわりスタッフ 解散（ふだんの日と同じ）</td></tr>
+      <tr><td>18:00</td><td>フェア終了</td></tr>
+    </table>
+  </div>
+
+  <div class="must">
+    <h3>⏰ 覚えておくこと</h3>
+    <ul>
+      <li>フェアは <b>10時〜18時</b></li>
+      <li>片付けは <b>16時から</b>。<b>最終日だけ15時から</b>（テントの解体）</li>
+      <li>ひまわりスタッフは <b>17時に解散</b>（最終日も同じ）</li>
+      <li>フェアの期間中は <b>お弁当あり</b></li>
+    </ul>
+  </div>
+</div>
