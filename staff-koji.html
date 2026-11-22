@@ -25,6 +25,10 @@
   .item b{display:block;font-size:14.5px;}
   .item span{display:block;font-size:12px;color:var(--ink-soft);margin-top:2px;}
   .item.card{border-style:dashed;}
+  .item .lk{display:flex;flex-direction:column;gap:6px;margin-top:6px;}
+  .item .lk a{display:block;font-size:13px;color:var(--ink);text-decoration:none;border:1px solid var(--line);border-radius:7px;padding:6px 10px;background:var(--paper);}
+  .item .lk a:hover{border-color:#2e75b6;color:#2e75b6;}
+  div.item:hover{transform:none;}
   .role{display:inline-block;font-size:11px;font-weight:800;border-radius:999px;padding:1px 8px;margin-left:6px;vertical-align:middle;}
   .role.h{background:#e8f5e9;color:#2e7d32;} .role.m{background:#e4eefa;color:#164a7a;}
   .cbox{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
@@ -59,8 +63,7 @@
 
   <p class="sec">🔧 工事（手順書）</p>
   <div class="grid">
-      <a class="item" href="aircon-manual.html"><span class="ic">❄️</span><span><b>エアコン取付</b><span>準備編と作業編</span></span></a>
-      <a class="item" href="manual.html#view-delivery"><span class="ic">🗣️</span><span><b>エアコン 納品時説明マニュアル</b><span>引き渡しのトーク（エアコン取付の手順12）</span></span></a>
+      <div class="item"><span class="ic">❄️</span><span><b>エアコン取付</b><span class="lk"><a href="aircon-manual.html">🔧 手順書（準備編と作業編）</a><a href="manual.html#view-delivery">🗣️ 納品時説明マニュアル（手順12）</a></span></span></div>
       <a class="item" href="consent-manual.html"><span class="ic">🔌</span><span><b>コンセント・スイッチ交換</b><span>準備編と作業編</span></span></a>
       <a class="item" href="shomei-manual.html"><span class="ic">💡</span><span><b>照明取付</b><span>シーリング・ローゼット・直付け・ダウンライト・外灯</span></span></a>
       <a class="item" href="intercom-manual.html"><span class="ic">📞</span><span><b>インターホン取付</b><span>玄関子機と親機</span></span></a>
