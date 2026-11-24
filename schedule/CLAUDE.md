@@ -21,13 +21,13 @@
 `node --check dist/budget.js`
 
 ## 公開（2026-11-24〜 GitHub Pages）
-- ソースは GitHub  リポジトリの  フォルダで管理。公開対象は 。
+- ソースは GitHub `yahatadennki/report` リポジトリの `schedule/` フォルダで管理。公開対象は `schedule/dist/`。
 - main へ push すると GitHub Pages（main / ルート）に反映：https://yahatadennki.github.io/report/schedule/dist/
--  は dist への転送だけ。
+- `schedule/index.html` は dist への転送だけ。
 - 旧サイト（ChatGPT Sites）からの移行は、旧サイトで「バックアップ保存」→ 新サイトで「読み込み」。端末ごとに1回。
-- バックアップJSONは公開リポジトリに入れない（ で *.json を除外）。
+- バックアップJSONは公開リポジトリに入れない（`schedule/.gitignore` で *.json を除外）。
 - チラシ保管庫は ChatGPT Sites のまま（https://yahata-flyer-library.yahatadennki.chatgpt.site/）。保管庫はChatGPTでのみ更新。
-- localStorage は yahatadennki.github.io 全体で同じ保存領域。キー  を他ページで使わないこと。
+- localStorage は yahatadennki.github.io 全体で同じ保存領域。キー `yahata-schedule-v1` を他ページで使わないこと。
 - ブラウザ確認は headless Chrome（CDP）で実施できる。
 
 ## 引き継ぎメモ（Claude Code）
