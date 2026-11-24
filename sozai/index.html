@@ -1,91 +1,25 @@
 <!doctype html>
-<html lang="ja">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>素材置き場｜ヤハタ電機商会</title>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>素材置き場｜ヤハタデンキ</title><link rel="stylesheet" href="sozai.css">
 <style>
-:root{--ink:#1f2a24;--sub:#5d6b63;--line:#dde5df;--bg:#f4f6f2;--card:#fff;--green:#1f5f4a;--green2:#123d31;--gold:#c9a227;}
-@media (prefers-color-scheme:dark){:root{--ink:#e8eee9;--sub:#a9b6ae;--line:#33423a;--bg:#141a17;--card:#1d2621;}}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif;line-height:1.7}
-.wrap{max-width:960px;margin:0 auto;padding:0 16px 48px}
-.top{padding:12px 0}.top a{color:var(--sub);font-size:13px;text-decoration:none}
-.head{background:linear-gradient(135deg,var(--green),var(--green2));color:#fff;border-radius:14px;padding:22px 22px 18px}
-.head p{margin:0;font-size:12px;opacity:.8;letter-spacing:.1em}.head h1{margin:4px 0 6px;font-size:24px}.head .sub{font-size:13px;opacity:.9;letter-spacing:0}
-.sec{margin:28px 0 10px;padding-left:10px;border-left:5px solid var(--gold);font-size:18px}
-.note{font-size:13px;color:var(--sub);margin:0 0 12px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
-.grid.wide{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
-.item{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.pv{background:#fff;display:flex;align-items:center;justify-content:center;height:190px;padding:12px;border-bottom:1px solid var(--line)}
-.grid.wide .pv{height:150px}
-.pv img{max-width:100%;max-height:100%;object-fit:contain;cursor:zoom-in}
-dialog{border:0;border-radius:14px;padding:0;max-width:min(92vw,900px);width:100%;background:var(--card);color:var(--ink)}dialog::backdrop{background:rgba(0,0,0,.6)}
-.vw-img{background:#fff;display:flex;align-items:center;justify-content:center;max-height:70vh;padding:12px}.vw-img img{max-width:100%;max-height:66vh;object-fit:contain}
-.vw-bar{display:flex;gap:8px;align-items:center;padding:12px;flex-wrap:wrap}.vw-bar b{flex:1 1 100%;font-size:15px}.vw-bar a,.vw-bar button{flex:1;font:inherit;font-size:14px;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);text-align:center;text-decoration:none;cursor:pointer}.vw-bar a.dl{background:var(--green);border-color:var(--green);color:#fff}
-.hint{font-size:12px;color:var(--sub);padding:0 12px 12px;margin:0}
-.pv .file{font-size:40px;color:#7a8a80;text-align:center;line-height:1.2}.pv .file small{display:block;font-size:12px}
-.meta{padding:10px 12px 12px;display:flex;flex-direction:column;gap:6px;flex:1}
-.meta b{font-size:15px}.meta span{font-size:12px;color:var(--sub)}
-.btns{display:flex;gap:6px;margin-top:auto;flex-wrap:wrap}
-.btns a,.btns button{flex:1;min-width:90px;font:inherit;font-size:13px;padding:8px 6px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);text-align:center;text-decoration:none;cursor:pointer}
-.btns a.dl{background:var(--green);border-color:var(--green);color:#fff}
-.rule{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;font-size:13px}
-.rule ul{margin:4px 0;padding-left:20px}
-#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--green2);color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;display:none}
-</style>
-</head>
-<body>
-<div class="wrap">
-  <div class="top"><a href="../manual.html">&larr; 現場サポートポータルへ</a></div>
-  <div class="head">
-    <p>ヤハタ電機商会</p>
-    <h1>素材置き場</h1>
-    <div class="sub">公式LINEのQRコード・店のロゴ・スタッフの似顔絵。チラシやPOP、ハガキを作るときにここから使います。</div>
-  </div>
-
-  <div id="list"></div>
-
-  <h2 class="sec">使うときの約束</h2>
-  <div class="rule"><ul>
-    <li>ロゴの形や色は変えない。縦横の比率を崩さない（引き伸ばさない）。</li>
-    <li>QRコードは小さくしすぎない（目安：2cm角以上）。印刷したら、スマホで読み取れるか必ず確かめる。</li>
-    <li>似顔絵は、お店のチラシ・POP・ハガキだけに使う。</li>
-    <li>このページは、URLを知っていれば誰でも見られます。印鑑の画像や、お客様・スタッフの個人情報はここに置かない。</li>
-    <li>素材を足したいときは、高山に渡す。</li>
-  </ul></div>
-</div>
-<div id="toast"></div>
-<dialog id="viewer"><div class="vw-img"><img id="vw-img" alt=""></div><div class="vw-bar"><b id="vw-title"></b><a class="dl" id="vw-dl" href="#">⬇ 保存</a><button type="button" id="vw-close">閉じる</button></div><p class="hint">保存できないときは、画像を長押しして「写真に追加」「画像を保存」を選んでください。</p></dialog>
-<script>
-const groups=[
- {h:'💬 公式LINE（@112akvoe）',note:'読み取ると、ヤハタデンキ公式LINEの友だち追加ページが開きます。',items:[
-  {f:'line-qr.png',n:'ヤハタデンキ_公式LINE_QRコード.png',t:'QRコードだけ',d:'チラシ・ハガキ・POPに'},
-  {f:'line-qr-waku.png',n:'ヤハタデンキ_公式LINE_QRコード_吹き出し.png',t:'QRコード（吹き出し・お友だち登録お願いします！）',d:'そのまま貼れる枠つき'}]},
- {h:'🏪 店のロゴ',note:'チラシなどにはPNG。印刷屋さんに渡すときは PDF・EPS（拡大してもきれい）。',wide:true,items:[
-  {f:'logo-full.png',n:'ヤハタデンキ_ロゴ_住所電話QRつき.png',t:'ロゴ＋住所・電話＋QR（HP・LINE）',d:'いちばん情報が多いもの'},
-  {f:'logo.png',n:'ヤハタデンキ_ロゴ_住所電話.png',t:'ロゴ＋住所・電話',d:'QRなし'},
-  {f:'logo-tel.png',n:'ヤハタデンキ_ロゴ_電話.png',t:'ロゴ＋電話',d:'住所なし。商品券などに'},
-  {f:'logo-full.pdf',n:'ヤハタデンキ_ロゴ_住所電話QRつき.pdf',t:'ロゴ＋住所・電話＋QR（PDF）',d:'印刷屋さん用'},
-  {f:'logo.eps',n:'ヤハタデンキ_ロゴ.eps',t:'ロゴ（EPS）',d:'印刷屋さん用（Illustrator）'},
-  {f:'logo-map.eps',n:'ヤハタデンキ_ロゴ_地図つき.eps',t:'地図つきロゴ（EPS）',d:'印刷屋さん用（Illustrator）'}]},
- {h:'🙂 スタッフの似顔絵',note:'白い背景のPNGです。',items:[
-  {f:'nigaoe-takayama.png',n:'似顔絵_高山.png',t:'高山',d:''},
-  {f:'nigaoe-ishibashi.png',n:'似顔絵_石橋.png',t:'石橋',d:''},
-  {f:'nigaoe-sumii.png',n:'似顔絵_角井.png',t:'角井',d:''},
-  {f:'nigaoe-arita.png',n:'似顔絵_有田.png',t:'有田',d:''},
-  {f:'nigaoe-kurimori.png',n:'似顔絵_栗盛.png',t:'栗盛',d:''}]},
-];
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const isImg=f=>/\.(png|jpe?g|gif|webp|svg)$/i.test(f);
-document.getElementById('list').innerHTML=groups.map(g=>'<h2 class="sec">'+g.h+'</h2>'+(g.note?'<p class="note">'+g.note+'</p>':'')+'<div class="grid'+(g.wide?' wide':'')+'">'+g.items.map(it=>{const ext=it.f.split('.').pop().toUpperCase();return '<div class="item"><div class="pv">'+(isImg(it.f)?'<img loading="lazy" src="files/'+esc(it.f)+'" alt="'+esc(it.t)+'" data-view="'+esc(it.f)+'" data-name="'+esc(it.n)+'" data-title="'+esc(it.t)+'">':'<div class="file">📄<small>'+ext+'</small></div>')+'</div><div class="meta"><b>'+esc(it.t)+'</b>'+(it.d?'<span>'+esc(it.d)+'</span>':'')+'<div class="btns"><a class="dl" href="files/'+esc(it.f)+'" download="'+esc(it.n)+'" data-dl="'+esc(it.f)+'" data-name="'+esc(it.n)+'">⬇ 保存（'+ext+'）</a><button data-url="files/'+esc(it.f)+'">🔗 URLコピー</button></div></div></div>'}).join('')+'</div>').join('');
-const toast=t=>{const e=document.getElementById('toast');e.textContent=t;e.style.display='block';setTimeout(()=>e.style.display='none',2000)};
-async function save(file,name,a){a.textContent='保存中…';try{const r=await fetch('files/'+file);if(!r.ok)throw 0;const blob=await r.blob(),u=URL.createObjectURL(blob),x=document.createElement('a');x.href=u;x.download=name;document.body.append(x);x.click();x.remove();setTimeout(()=>URL.revokeObjectURL(u),60000);toast('保存しました（ダウンロードを確認）')}catch{location.href='files/'+file}finally{a.textContent='⬇ 保存（'+file.split('.').pop().toUpperCase()+'）'}}
-document.addEventListener('click',e=>{const d=e.target.closest('[data-dl]');if(d){e.preventDefault();save(d.dataset.dl,d.dataset.name,d);return}const v=e.target.closest('[data-view]');if(v){const vw=document.getElementById('viewer');document.getElementById('vw-img').src='files/'+v.dataset.view;document.getElementById('vw-title').textContent=v.dataset.title;const l=document.getElementById('vw-dl');l.href='files/'+v.dataset.view;l.dataset.dl=v.dataset.view;l.dataset.name=v.dataset.name;l.setAttribute('download',v.dataset.name);vw.showModal()}});
-document.getElementById('vw-close').onclick=()=>document.getElementById('viewer').close();
-document.getElementById('viewer').addEventListener('click',e=>{if(e.target.id==='viewer')e.target.close()});
-document.addEventListener('click',async e=>{const b=e.target.closest('[data-url]');if(!b)return;const u=new URL(b.dataset.url,location.href).href;try{await navigator.clipboard.writeText(u);toast('URLをコピーしました')}catch{prompt('このURLをコピーしてください',u)}});
-</script>
-</body>
-</html>
+.rule{background:#fff;border:1px solid #dbe4d7;border-radius:13px;padding:14px 20px;font-size:13px;line-height:1.9;margin:30px 0}.rule h2{font-size:16px;margin:0 0 4px}.rule ul{margin:0;padding-left:20px}
+#pages .noprev{padding:40px 20px;text-align:center;background:#f1f5ec;border-radius:10px;font-size:13px;line-height:1.8;color:#4c6658}
+#pages img{max-height:70vh;width:auto;max-width:100%;background:#fff}
+.hint{font-size:12px;color:#6c786c;margin:8px 0 0}
+.paper-cover{background:#fff}
+</style></head>
+<body><header class="top"><a class="brand" href="../manual.html">Y<span>●</span>HATA <small>ヤハタデンキ</small></a><a class="back" href="../schedule/dist/index.html">▦ 年間スケジュールへ →</a></header>
+<main><div class="intro"><p class="eyebrow">チラシ・POP・ハガキの部品を、ひとつの場所に。</p><h1>いつもの素材を、<br>すぐ取り出せるように。</h1><p>公式LINEのQRコード・店のロゴ・スタッフの似顔絵の保管場所です。</p></div>
+<div class="counts" id="counts"></div>
+<div class="shelf-heading"><p class="eyebrow">MATERIALS · 種類ごとの保管場所</p><h2>部品で選ぶ、いつもの素材。</h2><p>フォルダを開いて、使うものを選んで保存します。</p></div>
+<div class="tools"><label>素材を検索<input id="search" type="search" placeholder="名前・用途で検索"></label><div class="filters" aria-label="素材の種類"><button data-kind="all" aria-pressed="true">すべて</button><button data-kind="line" aria-pressed="false">公式LINE</button><button data-kind="logo" aria-pressed="false">ロゴ</button><button data-kind="nigaoe" aria-pressed="false">似顔絵</button></div></div>
+<p class="note">チラシなどにはPNG。印刷屋さんに渡すときは PDF・EPS（拡大してもきれい）。画像は閲覧用、ダウンロードは元ファイルです。</p>
+<div id="library" class="grid"></div>
+<div class="rule"><h2>使うときの約束</h2><ul>
+<li>ロゴの形や色は変えない。縦横の比率を崩さない（引き伸ばさない）。</li>
+<li>QRコードは小さくしすぎない（目安：2cm角以上）。印刷したら、スマホで読み取れるか必ず確かめる。</li>
+<li>似顔絵は、お店のチラシ・POP・ハガキだけに使う。</li>
+<li>このページは、URLを知っていれば誰でも見られます。印鑑の画像や、お客様・スタッフの個人情報はここに置かない。</li>
+<li>素材を足したいときは、高山に渡す。</li></ul></div>
+<footer>保存したファイルは、iPhoneは「ファイル」アプリ、Android・パソコンは「ダウンロード」フォルダに入ります。</footer></main>
+<dialog id="viewer"><div class="dialog-head"><h2 id="viewer-title"></h2><button id="close" aria-label="閉じる">閉じる ×</button></div><p id="viewer-hint" class="hint"></p><div id="versions" class="versions"></div><div id="file-info"></div><div id="pages"></div></dialog>
+<script src="sozai.js"></script></body></html>
