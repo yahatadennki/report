@@ -1,0 +1,17 @@
+const assert=require('node:assert/strict'),B=require('./dist/budget-core.js');
+const l=(price,quantity=1,times=1,actual='')=>({name:'配布',price,quantity,times,actual});
+assert.equal(B.lineTotal(l(3,10000,4)),120000);
+assert.equal(B.lineTotal(l('',20000)),null);
+assert.equal(B.totals([l(0,1,1,0)]).complete,true);
+assert.equal(B.totals([l(1000,2,1,'')]).difference,null);
+assert.deepEqual(B.totals([l(1000,2,1,1500)]),{planned:2000,actual:1500,missingPlan:0,missingActual:0,lines:1,complete:true,difference:500});
+assert.equal(B.totals([l('',1,1,500),l(1000)]).missingPlan,1);
+assert.equal(B.totals([l('',1,1,500),l(1000)]).missingActual,1);
+const data={version:1,events:[{id:'spring',title:'春号',month:4,repeat:'annual',years:{}},{id:'winter',title:'冬号',month:1,repeat:'annual',years:{}},{id:'once',title:'一度',month:12,repeat:'once',year:2025,years:{}}],budgets:{'spring@2026':{title:'春号',period:'2026-04',lines:[l(3,10000,2,60000)]},'winter@2027':{title:'冬号',period:'2026-12',lines:[l(5,20000,1,90000)]}}};
+let entries=B.entries(data,2026);assert.equal(entries.length,2);assert.equal(entries.find(x=>x.eventId==='winter').year,2027);assert.equal(entries.filter(x=>B.inPeriod(x,'quarter:2')).length,1);assert.equal(entries.filter(x=>B.inPeriod(x,'second')).length,1);assert.equal(entries.filter(x=>B.inPeriod(x,'month:12')).length,1);
+data.budgets['spring@2026'].period='2027-04';assert.equal(B.entries(data,2026).length,1);assert(B.entries(data,2027).some(x=>x.id==='spring@2026'));assert(B.entries(data,2027).some(x=>x.id==='spring@2027'));
+assert.equal(B.periodFY('2027-03'),2026);assert.equal(B.periodFY('2027-04'),2027);assert.equal(B.periodFY('2027-13'),null);
+const good={period:'2026-10',lines:[l(2.5,10000,1,25000)]};assert(B.validateRecord(good));assert(!B.validateRecord({...good,lines:[l(-1)]}));assert(!B.validateRecord({...good,period:'garbage'}));assert(!B.validateRecord({...good,lines:[l(Infinity)]}));
+const restored=JSON.parse(JSON.stringify(data));assert.deepEqual(B.entries(restored,2027),B.entries(data,2027));
+assert.equal(B.template('かわらばん 秋号').filter(x=>x.name.includes('配布')).length,2);assert(B.template('冬フェア').some(x=>x.name==='焼きそば'));assert(B.template('冬フェア').some(x=>x.name==='ポップコーン'));
+console.log('Passed: units x quantities x repetitions, zero vs missing, partial actuals, fiscal year, quarter/month, cost-period moves, backup round trip and templates');

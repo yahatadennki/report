@@ -1,0 +1,9 @@
+(()=>{
+ const link=document.createElement('a');link.href='budget.html';link.className='budget-nav';link.innerHTML='￥ 予算・実績・会議資料 <small>活動の費用をまとめる →</small>';document.querySelector('aside nav').before(link);link.onclick=()=>{link.href='budget.html?fy='+year};
+ const budgetButton=document.createElement('a');budgetButton.className='budget-event-link';budgetButton.textContent='￥ この予定の予算・実績';document.querySelector('#dialog .modal-actions').prepend(budgetButton);
+ const baseOpen=openEditor;openEditor=function(id){baseOpen(id);budgetButton.hidden=!id;if(id){const e=effective(data.events.find(x=>x.id===id)),m=e.start?Number(e.start.slice(5,7)):Number(e.month)||0;budgetButton.href='budget.html?event='+encodeURIComponent(id)+'&year='+year+'&fy='+(year-(m>0&&m<4?1:0))}};
+ const basePersist=persist;persist=function(next){try{const latest=JSON.parse(localStorage.getItem(key)||'null');if(latest?.version===1){for(const field of ['budgets','budgetMeetings'])if(JSON.stringify(next[field])===JSON.stringify(data[field])){if(latest[field])next[field]=latest[field];else delete next[field]}}}catch{}return basePersist(next)};
+ const budgetRender=render;render=function(){budgetRender();document.querySelectorAll('#months [data-id]').forEach(node=>{const record=data.budgets?.[node.dataset.id+'@'+year];if(!record)return;const t=YahataBudget.totals(record.lines);const badge=document.createElement('small');badge.className='budget-badge';badge.textContent='予算 '+t.planned.toLocaleString('ja-JP')+'円 ／ 実績 '+t.actual.toLocaleString('ja-JP')+'円'+(t.missingPlan||t.missingActual?'（一部未入力）':'');node.append(badge)})};
+ window.addEventListener('storage',e=>{if(e.key===key){try{const latest=JSON.parse(e.newValue);if(valid(latest)){data=latest;render()}}catch{}}});
+ window.addEventListener('pageshow',()=>{try{const latest=JSON.parse(localStorage.getItem(key));if(valid(latest)){data=latest;render()}}catch{}});render();
+})();
