@@ -40,3 +40,9 @@ Sitesへの公開は未実施（この環境にSitesの公開権限・ツール�
 - データ移行：旧サイトで「バックアップ保存」→ 新サイトの年間スケジュールで「読み込み」。予定・予算・会議メモが移る。
 - `*.json` を `schedule/.gitignore` で除外（バックアップを誤って公開しない）。
 - チラシ保管庫の戻り先は ChatGPT 側で新URLへ変更が必要。
+
+## 2026-11-26 チラシ保管庫を Claude Code 管理へ
+- チラシ保管庫を ChatGPT Sites から自前の Cloudflare（Workers + KV）へ移した。新URL: https://yahata-flyer-library.yahatadennki.workers.dev/
+- ソースは非公開リポジトリ yawata51-dotcom/yahata-flyer-library（ローカル C:\Users\KouichiTakayama\Documents\yahata-flyer-library）。
+- flyer-bridge.js・budget.html・index.html の保管庫リンクを新URLに変更。素材ボタンは保管庫の素材ページへ。
+- report/sozai/ は保管庫の素材ページへ転送するだけにした。

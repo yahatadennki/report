@@ -1,6 +1,6 @@
 /* Carry the selected calendar context and resolved fair dates across the two sites. */
 (()=>{
- const base='https://yahata-flyer-library.yahatadennki.chatgpt.site/';
+ const base='https://yahata-flyer-library.yahatadennki.workers.dev/';
  const make=(id='')=>{const month=Number(document.getElementById('calendar-month')?.value)||new Date().getMonth()+1;const fairs=fairRules.map(r=>({...resolvedFair(r),title:r.title,month:r.m,note:resolvedFair(r).manual?'スケジュールで設定した日程':'曜日からの仮日程'}));return base+'?year='+year+'&month='+month+(id?'&item='+id:'')+'#plan='+encodeURIComponent(JSON.stringify({year,fairs}));};
  document.querySelectorAll('a[href^="'+base+'"]').forEach(a=>{a.className='library-link';a.innerHTML='<span>▧ チラシ・かわらばん</span><small>紙面と使う時期を見る →</small>';a.onclick=()=>{a.href=make()}});
  const related=document.createElement('a');related.className='library-related';related.textContent='この予定の配布物を見る →';document.querySelector('#dialog .modal-actions').prepend(related);
