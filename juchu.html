@@ -690,16 +690,31 @@ try {
 console.log('=== 送信データ詳細 ===');
 console.log('完全なデータ:', JSON.stringify(order));
 
-await fetch(scriptUrl, {
+// ★届いたか確かめる（以前は no-cors で返事を読めず、届かなくても気づけなかった）
+order.送信 = 'sending'; render();
+const res = await fetch(scriptUrl, {
 method: 'POST',
-mode: 'no-cors',
-headers: { 'Content-Type': 'application/json' },
+headers: { 'Content-Type': 'text/plain;charset=utf-8' },
 body: JSON.stringify(order)
 });
-console.log('スプレッドシートに送信しました');
+const txt = await res.text();
+order.送信 = txt.indexOf('Success') === 0 ? 'ok' : 'ng';
+if (order.送信 === 'ng') order.送信エラー = txt.slice(0, 80);
+console.log('送信結果:', txt);
 } catch (error) {
 console.error('送信エラー:', error);
+order.送信 = 'ng';
+order.送信エラー = String(error).slice(0, 80);
 }
+render();
+if (order.送信 === 'ng') {
+  alert('⚠️ ' + order.顧客名 + ' 様の受注が【送れませんでした】。\n受注表にもカレンダーにも入っていません。\n\n電波を確かめて、一覧の「もう一度送る」を押してください。');
+}
+}
+
+function resendOrder(id) {
+  const o = orders.find(x => x.id === id);
+  if (o) sendToSpreadsheet(o);
 }
 
 async function openEstimatePicker() {
@@ -1282,6 +1297,9 @@ document.getElementById('app').innerHTML = `
                        <div class="flex flex-wrap items-center gap-2 mb-2">
                          <span class="px-2 py-1 bg-gray-200 text-gray-700 rounded text-sm font-bold">#${index + 1}</span>
                          <span class="px-2 py-1 bg-orange-100 text-orange-800 rounded text-sm font-semibold">${order.登録時刻}</span>
+                         ${order.送信 === 'ok' ? '<span class="px-2 py-1 bg-green-100 text-green-800 rounded text-sm font-semibold">✓ 送信済み</span>' : ''}
+                         ${order.送信 === 'sending' ? '<span class="px-2 py-1 bg-gray-100 text-gray-600 rounded text-sm font-semibold">送信中…</span>' : ''}
+                         ${order.送信 === 'ng' ? `<button onclick="resendOrder(${order.id})" class="px-3 py-1 bg-red-600 text-white rounded text-sm font-bold">⚠️ 届いていません → もう一度送る</button>` : ''}
                          <span class="px-3 py-1 rounded-full text-sm font-semibold border-2 flex items-center gap-1 ${typeColor.bg} ${typeColor.text} ${typeColor.border}">
                            ${getIconForType(order.種類)} ${order.種類}
                          </span>
