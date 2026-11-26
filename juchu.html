@@ -195,10 +195,23 @@ function showApp() {
   document.getElementById('pinOverlay').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   render();
+  resendPending();
 }
 
-let orders = [];
-let currentDate = new Date().toISOString().slice(0, 10);
+// ★受注はスマホにも残す（画面を閉じても消えない・未送信を後で送り直せる）
+const ORDERS_KEY = 'juchu_orders_v1';
+function loadOrders() {
+  try {
+    const a = JSON.parse(localStorage.getItem(ORDERS_KEY) || '[]');
+    const limit = Date.now() - 14 * 24 * 3600 * 1000;   // 2週間分だけ持つ
+    return a.filter(o => o.id > limit || o.送信 !== 'ok');
+  } catch (e) { return []; }
+}
+function saveOrders() { try { localStorage.setItem(ORDERS_KEY, JSON.stringify(orders)); } catch (e) {} }
+let orders = loadOrders();
+// 日本時間の今日（toISOStringは世界時なので朝9時前だと前日になってしまう）
+function localYmd(d) { d = d || new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+let currentDate = localYmd();
 let scriptUrl = 'https://script.google.com/macros/s/AKfycbybHVTvastbYdcePLc-WxDZtChBKtpcEPF7IYqMX4UPVs1TbfKnIhvnhlIJGtIfK8Y/exec';
 let selectedKuMark = '';      // 選んだ顧客の区（「①」など）。カレンダー予定名に付ける
 let selectedService = '';
@@ -681,41 +694,55 @@ if (name === '業者') return { normal: 'bg-purple-50 text-purple-700 border-pur
 return { normal: 'bg-gray-50 text-gray-700 border-gray-300', active: 'bg-gray-200 text-gray-900 border-gray-400' };
 }
 
-async function sendToSpreadsheet(order) {
-if (!scriptUrl) {
-console.log('URL未設定');
-return;
+async function postOnce(order) {
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), 30000);   // 30秒で返事が無ければ失敗扱い
+  try {
+    const res = await fetch(scriptUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(order),
+      signal: ctl.signal
+    });
+    const txt = await res.text();
+    return txt.indexOf('Success') === 0 ? '' : (txt.slice(0, 80) || '返事が空');
+  } catch (e) {
+    return e.name === 'AbortError' ? '30秒たっても返事がありません' : String(e).slice(0, 80);
+  } finally { clearTimeout(timer); }
 }
-try {
-console.log('=== 送信データ詳細 ===');
-console.log('完全なデータ:', JSON.stringify(order));
 
-// ★届いたか確かめる（以前は no-cors で返事を読めず、届かなくても気づけなかった）
-order.送信 = 'sending'; render();
-const res = await fetch(scriptUrl, {
-method: 'POST',
-headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-body: JSON.stringify(order)
-});
-const txt = await res.text();
-order.送信 = txt.indexOf('Success') === 0 ? 'ok' : 'ng';
-if (order.送信 === 'ng') order.送信エラー = txt.slice(0, 80);
-console.log('送信結果:', txt);
-} catch (error) {
-console.error('送信エラー:', error);
-order.送信 = 'ng';
-order.送信エラー = String(error).slice(0, 80);
-}
-render();
-if (order.送信 === 'ng') {
-  alert('⚠️ ' + order.顧客名 + ' 様の受注が【送れませんでした】。\n受注表にもカレンダーにも入っていません。\n\n電波を確かめて、一覧の「もう一度送る」を押してください。');
-}
+/* ★届いたか確かめて送る。
+   ・返事を読む（以前は no-cors で読めず、届かなくても気づけなかった）
+   ・失敗したら少し待って自動で3回まで送り直す（GAS側で同じ受注は二重に入らない）
+   ・それでもダメなら知らせて、スマホに残しておく（開き直したとき・電波が戻ったときに自動で送る） */
+async function sendToSpreadsheet(order, quiet) {
+  if (!scriptUrl || order.送信 === 'sending') return;
+  order.送信 = 'sending'; saveOrders(); render();
+  let err = '';
+  for (let i = 0; i < 3; i++) {
+    if (i) await new Promise(r => setTimeout(r, i * 3000));
+    err = await postOnce(order);
+    if (!err) break;
+  }
+  order.送信 = err ? 'ng' : 'ok';
+  order.送信エラー = err;
+  saveOrders(); render();
+  if (err && !quiet) {
+    alert('⚠️ ' + order.顧客名 + ' 様の受注が【送れませんでした】。\n受注表にもカレンダーにも入っていません。\n\n電波を確かめて、一覧の赤いボタン「もう一度送る」を押してください。\n（スマホには残してあります）');
+  }
 }
 
 function resendOrder(id) {
   const o = orders.find(x => x.id === id);
-  if (o) sendToSpreadsheet(o);
+  if (o) { o.送信 = 'ng'; sendToSpreadsheet(o); }
 }
+
+// 送れていない受注を自動で送り直す（開いたとき・電波が戻ったとき）
+function resendPending() {
+  orders.filter(o => o.送信 === 'ng' || o.送信 === 'sending')
+        .forEach(o => { o.送信 = 'ng'; sendToSpreadsheet(o, true); });
+}
+window.addEventListener('online', resendPending);
 
 async function openEstimatePicker() {
   document.getElementById('estimateModal').classList.add('active');
@@ -1026,6 +1053,7 @@ id: Date.now(),
 };
 
 orders.push(newOrder);
+saveOrders();
 sendToSpreadsheet(newOrder);
 
 document.getElementById('searchQuery').value = '';
@@ -1053,6 +1081,7 @@ render();
 function deleteOrder(id) {
 if (confirm('この受注を削除しますか？')) {
 orders = orders.filter(o => o.id !== id);
+saveOrders();
 render();
 }
 }
@@ -1272,6 +1301,7 @@ document.getElementById('app').innerHTML = `
 
        <!-- 受注一覧 -->
        <div class="bg-white rounded-lg shadow-lg p-6">
+         ${(() => { const ng = orders.filter(o => o.送信 === 'ng'); return ng.length ? `<div class="mb-4 p-3 bg-red-50 border-2 border-red-400 rounded-lg text-red-800 font-bold">⚠️ 届いていない受注が ${ng.length}件 あります：${ng.map(o => o.日付.slice(5) + ' ' + o.顧客名).join('、')}<br><button onclick="resendPending()" class="mt-2 px-3 py-1 bg-red-600 text-white rounded">まとめて送り直す</button></div>` : ''; })()}
          <h2 class="text-xl font-bold text-gray-800 mb-4">${currentDate} の受注一覧 (${todayOrders.length}件)</h2>
          ${todayOrders.length === 0 ? `
            <div class="text-center py-12 text-gray-500">

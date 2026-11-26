@@ -462,7 +462,30 @@ function doPost(e) {
         '訪問日時', '訪問担当', '予定時間', '内容', '見込商品', 'カレンダーID'
       ]);
     }
-    
+
+    // ★同じ受注の送り直しは二重に入れない（アプリは届くまで自動で再送する）。R列に送信IDを残す
+    const lock = LockService.getScriptLock();
+    lock.waitLock(20000);
+    try {
+      if (data.id) {
+        const sid = String(data.id);
+        const lr = sheet.getLastRow();
+        if (lr >= 2 && sheet.getMaxColumns() >= 18) {
+          const hit = sheet.getRange(2, 18, lr - 1, 1).createTextFinder(sid).matchEntireCell(true).findNext();
+          if (hit) return ContentService.createTextOutput('Success (already)');
+        }
+      }
+      return juchuAppend_(sheet, ss, data);
+    } finally {
+      lock.releaseLock();
+    }
+  } catch (err) {
+    console.log('エラー発生: ' + err.toString());
+    return ContentService.createTextOutput("Error: " + err.toString());
+  }
+}
+
+function juchuAppend_(sheet, ss, data) {
     let 見込商品文字列 = '';
     if (data.見込商品 && data.見込商品.length > 0) {
       見込商品文字列 = data.見込商品.map(item => {
@@ -478,9 +501,11 @@ function doPost(e) {
       data.住所 || '', data.電話番号 || '', data.サービス種別 || '',
       data.業者種別 || '', data.商品区分 || '', data.商品詳細 || '', 
       data.訪問日時 || '', data.訪問担当 || '', data.予定時間 || '', 
-      内容テキスト, 見込商品文字列, ''
+      内容テキスト, 見込商品文字列, '', data.id ? String(data.id) : ''
     ];
     sheet.appendRow(rowData);
+    const myRow = sheet.getLastRow();
+    if (data.id && !sheet.getRange(1, 18).getValue()) sheet.getRange(1, 18).setValue('送信ID');
 
     if (data.訪問日時 && data.訪問担当メール && data.予定時間) {
       try {
@@ -546,7 +571,7 @@ function doPost(e) {
             if (isServiceJob) ev.setColor(CalendarApp.EventColor.ORANGE);
             eventId = ev.getId();
           }
-          sheet.getRange(sheet.getLastRow(), 17).setValue(eventId);
+          sheet.getRange(myRow, 17).setValue(eventId);
         }
       } catch (calendarError) {
         try {
@@ -588,8 +613,8 @@ function doPost(e) {
             const t2e = new Date(t2s.getTime() + 30 * 60 * 1000);
             ids.push(phoneCal.createEvent(title, t2s, t2e, { location: loc, description: desc }).getId());
 
-            const cur = sheet.getRange(sheet.getLastRow(), 17).getValue();
-            sheet.getRange(sheet.getLastRow(), 17).setValue([cur].concat(ids).filter(String).join(','));
+            const cur = sheet.getRange(myRow, 17).getValue();
+            sheet.getRange(myRow, 17).setValue([cur].concat(ids).filter(String).join(','));
           }
         }
       } catch (phoneCalErr) {
@@ -598,11 +623,6 @@ function doPost(e) {
     }
 
     return ContentService.createTextOutput("Success");
-
-  } catch (err) {
-    console.log('エラー発生: ' + err.toString());
-    return ContentService.createTextOutput("Error: " + err.toString());
-  }
 }
 
 // カナ正規化（半角カタカナ・ひらがな・全角カタカナ → すべて全角カタカナに統一）
