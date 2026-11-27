@@ -171,7 +171,6 @@ function start(){
   setInterval(()=>{ if (pending().length) resendPending(); }, 30000);
   setInterval(()=>{ if (!form || !form.id) loadList(); }, 60000);   // 他の端末の分も反映
 }
-if (Number(localStorage.getItem(AUTH_KEY)||0) > Date.now()) start();
 
 function renderStaff(){
   document.getElementById('staff').innerHTML = STAFF.map(s =>
@@ -475,6 +474,9 @@ async function delVisit(){
   visits = visits.filter(v=>v.id!==id); renderList(); clearForm();
   try { await post({action:'fairDelete', id}); toast('取り消しました'); } catch(e){ toast('⚠ 取消を送れませんでした'); loadList(); }
 }
+
+// 準備（上の定義）がすべて済んでから起動する。PINを覚えていればそのまま開く
+if (Number(localStorage.getItem(AUTH_KEY)||0) > Date.now()) start();
 </script>
 </body>
 </html>
