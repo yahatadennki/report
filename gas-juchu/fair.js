@@ -41,6 +41,10 @@ function fairGet_(e) {
     const m = s.getSheetByName('顧客マスタ') || s.getSheetByName('顧客ﾏｽﾀ');
     return fairJson_(m.getRange(1, 1, 1, Math.min(m.getLastColumn(), 20)).getDisplayValues()[0]);
   }
+  if (p.action === 'fairSheetUrl') {     // 記録シートを開くボタン用
+    const sh = fairSheet_();
+    return fairJson_({ url: sh.getParent().getUrl() + '#gid=' + sh.getSheetId() });
+  }
   if (p.action !== 'fairList') return null;
   const date = String(p.date || Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy-MM-dd'));
   const sh = fairSheet_();

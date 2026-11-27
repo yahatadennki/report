@@ -81,7 +81,11 @@
 
 <div class="wrap" id="app" style="display:none">
   <div class="head">
-    <h1>🎪 フェア来店記録</h1><div class="d" id="today"></div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+      <div><h1>🎪 フェア来店記録</h1><div class="d" id="today"></div></div>
+      <a id="sheetLink" href="https://docs.google.com/spreadsheets/d/1Cg5FACS_HqpAlchsU6O4ansNHc7GO_FOWAYhpX_72_w/edit" target="_blank"
+         style="flex:none;background:#fff;color:#c2410c;font-weight:700;font-size:13px;text-decoration:none;padding:8px 12px;border-radius:999px">📊 シートを開く</a>
+    </div>
     <div class="areas" id="areas"></div>
   </div>
 
@@ -163,6 +167,7 @@ function start(){
   const d = new Date();
   document.getElementById('today').textContent = d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日（'+'日月火水木金土'[d.getDay()]+'）';
   renderStaff(); renderForm(); renderAreas(); loadCustomers(); loadList(); resendPending();
+  fetch(GAS+'?action=fairSheetUrl').then(r=>r.json()).then(j=>{ if (j.url) document.getElementById('sheetLink').href = j.url; }).catch(()=>{});
   setInterval(()=>{ if (pending().length) resendPending(); }, 30000);
   setInterval(()=>{ if (!form || !form.id) loadList(); }, 60000);   // 他の端末の分も反映
 }
