@@ -193,7 +193,7 @@
     <p class="lbl">お客様 <button class="clear" id="clearBtn" onclick="clearForm()" style="display:none">やり直す</button></p>
     <div id="searchArea">
       <input id="q" placeholder="お名前・ふりがな・電話・顧客コード" oninput="onSearch()" onkeydown="if(event.key==='Enter'){event.preventDefault();codeEnter();}" autocomplete="off">
-      <button class="scan" id="scanBtn" onclick="toggleScan()">📷 カードのバーコードを読む</button>
+      <button class="scan" id="scanBtn" onclick="toggleScan()">📷 バーコードを読む</button>
       <div id="scanMsg"></div>
       <video id="cam" playsinline muted autoplay style="display:none;width:100%;margin-top:8px;border-radius:10px;background:#000"></video>
       <div class="cands" id="cands"></div>
@@ -622,7 +622,7 @@ async function toggleScan(){
     v.srcObject = scanStream;
     v.style.display = 'block';
     await v.play().catch(()=>{});
-    scanMsg('📷 カードのバーコードを枠いっぱいに映してください');
+    scanMsg('📷 バーコードを枠いっぱいに映してください');
 
     let detect;
     if ('BarcodeDetector' in window){
@@ -672,7 +672,7 @@ function stopScan(){
   clearInterval(scanTimer); scanTimer = null;
   if (scanStream){ scanStream.getTracks().forEach(t=>t.stop()); scanStream = null; }
   const v = document.getElementById('cam'); if (v){ v.srcObject = null; v.style.display = 'none'; }
-  const btn = document.getElementById('scanBtn'); if (btn) btn.textContent = '📷 カードのバーコードを読む';
+  const btn = document.getElementById('scanBtn'); if (btn) btn.textContent = '📷 バーコードを読む';
   scanMsg('');
 }
 
