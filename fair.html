@@ -9,18 +9,27 @@
   * { box-sizing:border-box; }
   body { margin:0; background:var(--bg); color:var(--ink);
     font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP","Meiryo",sans-serif; }
-  .wrap { max-width:640px; margin:0 auto; padding:16px 14px 80px; }
-  .head { background:linear-gradient(135deg,#f59e0b,#ea580c); color:#fff; border-radius:14px; padding:18px 20px; display:flex; justify-content:space-between; align-items:center; }
-  .head h1 { margin:0; font-size:21px; }
+  button { font-family:inherit; cursor:pointer; }
+  .wrap { max-width:680px; margin:0 auto; padding:16px 14px 80px; }
+  .head { background:linear-gradient(135deg,#f59e0b,#ea580c); color:#fff; border-radius:14px; padding:16px 18px; }
+  .head h1 { margin:0; font-size:20px; }
   .head .d { font-size:13px; opacity:.9; }
-  .count { text-align:center; background:rgba(255,255,255,.2); border-radius:10px; padding:6px 12px; }
-  .count b { display:block; font-size:26px; line-height:1.1; }
-  .count span { font-size:11px; }
+  .areas { display:grid; grid-template-columns:repeat(10,1fr); gap:4px; margin-top:12px; }
+  .areas div { background:rgba(255,255,255,.2); border-radius:8px; text-align:center; padding:4px 0; }
+  .areas b { display:block; font-size:18px; line-height:1.2; }
+  .areas span { font-size:10px; }
+  .areas .tot { background:#fff; color:#c2410c; }
   .box { background:#fff; border-radius:14px; padding:16px; margin-top:14px; box-shadow:0 1px 4px rgba(0,0,0,.06); }
-  .lbl { font-size:13px; font-weight:700; color:var(--navy); margin:0 0 8px; }
-  .staff { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
-  .staff button { padding:10px 0; border:2px solid var(--line); background:#fff; border-radius:8px; font-size:15px; font-weight:700; color:var(--ink); }
-  .staff button.on { background:var(--sun); border-color:var(--sun-d); color:#fff; }
+  .box.edit { outline:3px solid #3b82f6; }
+  .lbl { font-size:13px; font-weight:700; color:var(--navy); margin:14px 0 8px; }
+  .lbl:first-child { margin-top:0; }
+  .grid { display:grid; gap:6px; }
+  .g4 { grid-template-columns:repeat(4,1fr); } .g5 { grid-template-columns:repeat(5,1fr); } .g3 { grid-template-columns:repeat(3,1fr); }
+  .opt { padding:10px 0; border:2px solid var(--line); background:#fff; border-radius:8px; font-size:15px; font-weight:700; color:var(--ink); }
+  .opt.on { background:var(--sun); border-color:var(--sun-d); color:#fff; }
+  .chk { padding:11px 4px; border:2px solid var(--line); background:#fff; border-radius:8px; font-size:14px; font-weight:700; color:var(--ink); }
+  .chk.on { background:#16a34a; border-color:#15803d; color:#fff; }
+  .chk.on::before { content:'✓ '; }
   input, textarea { width:100%; padding:12px; font-size:17px; border:2px solid var(--line); border-radius:10px; outline:none; font-family:inherit; }
   input:focus, textarea:focus { border-color:var(--sun); }
   .cands { margin-top:6px; border-radius:10px; overflow:hidden; }
@@ -38,17 +47,18 @@
   .tag.new { background:#fee2e2; color:#991b1b; }
   .warn { margin-top:8px; font-size:13px; color:#b45309; font-weight:700; }
   .clear { float:right; font-size:13px; background:none; border:none; color:var(--soft); text-decoration:underline; }
-  .go { margin-top:14px; width:100%; padding:16px; font-size:19px; font-weight:700; color:#fff; background:var(--navy); border:none; border-radius:12px; }
-  .go:disabled { background:#9ca3af; }
-  .toast { position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:#166534; color:#fff; padding:12px 22px; border-radius:999px; font-weight:700; display:none; z-index:50; }
-  .item { display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-bottom:1px solid var(--line); }
+  .go { margin-top:16px; width:100%; padding:16px; font-size:19px; font-weight:700; color:#fff; background:var(--navy); border:none; border-radius:12px; }
+  .go.blue { background:#2563eb; }
+  .sub { margin-top:8px; width:100%; padding:10px; font-size:14px; background:#fff; border:1px solid var(--line); border-radius:10px; color:var(--soft); }
+  .toast { position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:#166534; color:#fff; padding:12px 22px; border-radius:999px; font-weight:700; display:none; z-index:50; white-space:nowrap; }
+  .item { display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-bottom:1px solid var(--line); cursor:pointer; }
   .item:last-child { border-bottom:none; }
-  .item .t { font-size:13px; color:var(--soft); width:42px; flex:none; padding-top:2px; }
+  .item .no { font-size:15px; font-weight:700; color:#c2410c; width:28px; flex:none; text-align:right; }
   .item .b { flex:1; }
   .item .n { font-weight:700; }
   .item .s { font-size:12px; color:var(--soft); }
-  .item .del { font-size:12px; border:1px solid var(--line); background:#fff; border-radius:6px; padding:4px 8px; color:var(--soft); }
-  .item .del.sure { background:#dc2626; color:#fff; border-color:#dc2626; }
+  .mk { display:inline-block; font-size:11px; padding:0 6px; border-radius:4px; background:#e0f2fe; color:#075985; margin-right:3px; }
+  .mk.g { background:#fef3c7; color:#92400e; }
   .pend { font-size:11px; color:#b45309; }
   #pin { position:fixed; inset:0; background:linear-gradient(135deg,#f59e0b,#ea580c); display:flex; align-items:center; justify-content:center; z-index:99; }
   #pin > div { background:#fff; border-radius:20px; padding:36px 28px; width:90%; max-width:340px; text-align:center; }
@@ -68,29 +78,44 @@
 
 <div class="wrap" id="app" style="display:none">
   <div class="head">
-    <div><h1>🎪 フェア来店記録</h1><div class="d" id="today"></div></div>
-    <div class="count"><b id="cnt">0</b><span>本日の来店</span></div>
+    <h1>🎪 フェア来店記録</h1><div class="d" id="today"></div>
+    <div class="areas" id="areas"></div>
   </div>
 
-  <div class="box">
+  <div class="box" id="formBox">
     <p class="lbl">受付した人</p>
-    <div class="staff" id="staff"></div>
-  </div>
+    <div class="grid g4" id="staff"></div>
 
-  <div class="box">
-    <p class="lbl">来店されたお客様 <button class="clear" id="clearBtn" onclick="clearPick()" style="display:none">やり直す</button></p>
+    <p class="lbl">お客様 <button class="clear" id="clearBtn" onclick="clearForm()" style="display:none">やり直す</button></p>
     <div id="searchArea">
       <input id="q" placeholder="お名前・ふりがな・電話番号の一部" oninput="onSearch()" autocomplete="off">
       <div class="cands" id="cands"></div>
     </div>
     <div id="pickedArea"></div>
-    <p class="lbl" style="margin-top:14px">メモ（任意）</p>
-    <textarea id="memo" rows="2" placeholder="見たい商品・ご家族で来店 など"></textarea>
-    <button class="go" id="goBtn" onclick="submitVisit()">来店を記録する</button>
+
+    <div id="detail" style="display:none">
+      <p class="lbl">区域</p>
+      <div class="grid g5" id="areaBtns"></div>
+
+      <p class="lbl">チェック</p>
+      <div class="grid g3" id="chks"></div>
+
+      <p class="lbl">ガラポン</p>
+      <div class="grid g5" id="gara"></div>
+
+      <p class="lbl">予定日</p>
+      <input id="plan" placeholder="例）12/5 工事" oninput="form.plan=this.value">
+
+      <p class="lbl">内容</p>
+      <textarea id="memo" rows="2" placeholder="例）エアコン買換え・記入済後日・口座未 など" oninput="form.memo=this.value"></textarea>
+
+      <button class="go" id="goBtn" onclick="submitVisit()">来店を記録する</button>
+      <button class="sub" id="delBtn" onclick="delVisit()" style="display:none">この記録を取り消す</button>
+    </div>
   </div>
 
   <div class="box">
-    <p class="lbl">本日の来店一覧</p>
+    <p class="lbl">本日の来店一覧（タップで変更）</p>
     <div id="list"><div class="msg">読み込み中…</div></div>
   </div>
 </div>
@@ -101,12 +126,15 @@ const GAS = 'https://script.google.com/macros/s/AKfycbybHVTvastbYdcePLc-WxDZtChB
 const PIN_HASH = 'e2f691407acb1efa4c9f9f8b1ae626cf6d9a4d96e73e207e9ea7f429293127a8';
 const AUTH_KEY = 'fair_auth_v1';
 const STAFF = ['高山','伊藤','服部','石橋','角井','北沢','宇留野'];
+const AREAS = ['1区','2区','3区','4区','5区','6区','7区','8区','9区'];
+const CHKS = [['md','MD'],['panaJoin','ﾊﾟﾅｶｰﾄﾞ入会'],['panaForm','ﾊﾟﾅｶｰﾄﾞ用紙記入'],['credit','クレジット'],['cash','現金']];
+const GARA = ['特賞','1等','金','銀',''];
 const CUST_CACHE_KEY = 'juchu_customers_v1';   // 受注日報と同じ保存分を使う（同じ形）
 const PEND_KEY = 'fair_pending_v1';
 
 const ymd = d => { const z = n => String(n).padStart(2,'0'); return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate()); };
 const hm  = d => String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
-const esc = s => String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const TODAY = ymd(new Date());
 
 /* ---------- PIN ---------- */
@@ -116,25 +144,37 @@ async function verifyPin(){
   if (await sha(v) === PIN_HASH) { localStorage.setItem(AUTH_KEY, Date.now()+30*86400000); start(); }
   else { document.getElementById('pinErr').textContent = '❌ PINが違います'; document.getElementById('pinIn').value=''; }
 }
-if (Number(localStorage.getItem(AUTH_KEY)||0) > Date.now()) start();
 
-/* ---------- 起動 ---------- */
+/* ---------- 状態 ---------- */
 let staff = localStorage.getItem('fair_staff') || '';
-let customers = [], custState = 'loading', picked = null, results = [], visits = [];
+let customers = [], custState = 'loading', results = [], visits = [];
+let form = null;   // 入力中の1件（null＝未選択）
+
+function blank(){ return { id:'', name:'', address:'', tel:'', area:'', inMaster:false, md:false, panaJoin:false, panaForm:false, credit:false, cash:false, garapon:'', plan:'', memo:'' }; }
 
 function start(){
   document.getElementById('pin').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   const d = new Date();
-  document.getElementById('today').textContent = (d.getMonth()+1)+'月'+d.getDate()+'日（'+'日月火水木金土'[d.getDay()]+'）';
-  renderStaff(); renderPicked(); loadCustomers(); loadList(); resendPending();
+  document.getElementById('today').textContent = d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日（'+'日月火水木金土'[d.getDay()]+'）';
+  renderStaff(); renderForm(); renderAreas(); loadCustomers(); loadList(); resendPending();
+  setInterval(()=>{ if (pending().length) resendPending(); }, 30000);
+  setInterval(()=>{ if (!form || !form.id) loadList(); }, 60000);   // 他の端末の分も反映
 }
+if (Number(localStorage.getItem(AUTH_KEY)||0) > Date.now()) start();
 
 function renderStaff(){
   document.getElementById('staff').innerHTML = STAFF.map(s =>
-    '<button class="'+(s===staff?'on':'')+'" onclick="setStaff(\''+s+'\')">'+s+'</button>').join('');
+    '<button class="opt '+(s===staff?'on':'')+'" onclick="setStaff(\''+s+'\')">'+s+'</button>').join('');
 }
 function setStaff(s){ staff = s; localStorage.setItem('fair_staff', s); renderStaff(); }
+
+/* ---------- 区域別人数（Excel右側の表） ---------- */
+function renderAreas(){
+  const c = {}; visits.forEach(v => { c[v.area] = (c[v.area]||0)+1; });
+  document.getElementById('areas').innerHTML = AREAS.map(a => '<div><b>'+(c[a]||0)+'</b><span>'+a+'</span></div>').join('') +
+    '<div class="tot"><b>'+visits.length+'</b><span>合計</span></div>';
+}
 
 /* ---------- 顧客マスタ（受注日報と同じ読み込み） ---------- */
 async function loadCustomers(){
@@ -168,8 +208,7 @@ function toKana(str){
     .replace(/[ぁ-ん]/g, c => String.fromCharCode(c.charCodeAt(0)+0x60));
 }
 const norm = s => toKana(s).replace(/[-\s　]/g,'').toLowerCase();
-const KU = {1:'①',2:'②',3:'③',4:'④',5:'⑤',6:'⑥',7:'⑦',8:'⑧',9:'⑨'};
-const kuMark = c => { const m = String((c&&c.ku)||'').match(/(\d+)\s*区/); return m ? (KU[Number(m[1])]||'') : ''; };
+const areaOf = c => { const m = String((c&&c.ku)||'').match(/(\d+)\s*区/); return m ? m[1]+'区' : ''; };
 const telOf = c => (c.telList && c.telList.length) ? c.telList.join(' / ') : (c.tel||'');
 
 function onSearch(){
@@ -184,40 +223,61 @@ function onSearch(){
   }
   const q = norm(raw), qt = raw.replace(/[-\s]/g,'');
   results = customers.filter(c => norm(c.name).includes(q) || norm(c.kana).includes(q) ||
-    (qt.length>=3 && /^\d+$/.test(qt) && c.tels && c.tels.includes(qt)) || (c.address && c.address.includes(raw))).slice(0,15);
+    (/^\d{3,}$/.test(qt) && c.tels && c.tels.includes(qt)) || (c.address && c.address.includes(raw))).slice(0,15);
   box.innerHTML = (results.length ? results.map((c,i) =>
-    '<div class="cand" onclick="pick('+i+')"><div class="n">'+kuMark(c)+esc(c.name)+' 様</div><div class="s">'+esc(telOf(c))+'　'+esc(c.address)+'</div></div>').join('')
+    '<div class="cand" onclick="pick('+i+')"><div class="n">'+esc(areaOf(c))+'　'+esc(c.name)+' 様</div><div class="s">'+esc(telOf(c))+'　'+esc(c.address)+'</div></div>').join('')
     : '<div class="msg">顧客マスタに見つかりません</div>') + newBtn(raw);
 }
 function newBtn(raw){ return '<button class="newbtn" onclick="pickNew()">＋「'+esc(raw)+'」さんを新規のお客様として入力</button>'; }
 
 function pick(i){
   const c = results[i]; if (!c) return;
-  picked = { name:c.name, address:c.address||'', tel:telOf(c), ku:kuMark(c), inMaster:true };
-  renderPicked();
+  form = Object.assign(blank(), { name:c.name, address:c.address||'', tel:telOf(c), area:areaOf(c), inMaster:true });
+  renderForm();
 }
 function pickNew(){
-  picked = { name:document.getElementById('q').value.trim(), address:'', tel:'', ku:'', inMaster:false };
-  renderPicked();
+  form = Object.assign(blank(), { name:document.getElementById('q').value.trim() });
+  renderForm();
 }
-function clearPick(){ picked = null; document.getElementById('q').value=''; document.getElementById('cands').innerHTML=''; renderPicked(); document.getElementById('q').focus(); }
+function clearForm(){
+  form = null; document.getElementById('q').value=''; document.getElementById('cands').innerHTML='';
+  renderForm(); window.scrollTo({top:0, behavior:'smooth'});
+}
 
-function renderPicked(){
-  document.getElementById('searchArea').style.display = picked ? 'none' : 'block';
-  document.getElementById('clearBtn').style.display = picked ? 'inline' : 'none';
+function renderForm(){
+  const on = !!form, editing = on && !!form.id;
+  document.getElementById('searchArea').style.display = on ? 'none' : 'block';
+  document.getElementById('clearBtn').style.display = on ? 'inline' : 'none';
+  document.getElementById('detail').style.display = on ? 'block' : 'none';
+  document.getElementById('formBox').classList.toggle('edit', editing);
   const a = document.getElementById('pickedArea');
-  if (!picked){ a.innerHTML=''; return; }
-  const dup = visits.some(v => norm(v.name) === norm(picked.name));
+  if (!on){ a.innerHTML=''; return; }
+  const dup = !editing && visits.some(v => norm(v.name) === norm(form.name));
   a.innerHTML = '<div class="picked">' +
-    '<div style="margin-bottom:8px">'+(picked.inMaster ? '<span class="tag">顧客マスタから</span>' : '<span class="tag new">新規のお客様</span>')+' '+(picked.ku||'')+'</div>' +
+    '<div style="margin-bottom:8px">'+(editing ? '<span class="tag" style="background:#dbeafe;color:#1e40af">№'+esc(form.no||'')+' を変更中</span> ' : '') +
+    (form.inMaster ? '<span class="tag">顧客マスタから</span>' : '<span class="tag new">新規のお客様</span>')+'</div>' +
     row('お名前','name') + row('住所','address') + row('電話','tel','tel') +
     (dup ? '<div class="warn">⚠ 本日すでに来店記録があります</div>' : '') + '</div>';
+  document.getElementById('areaBtns').innerHTML = AREAS.concat(['不明']).map(x => {
+    const v = x==='不明' ? '' : x;
+    return '<button class="opt '+(form.area===v?'on':'')+'" onclick="form.area=\''+v+'\';renderForm()">'+x+'</button>';
+  }).join('');
+  document.getElementById('chks').innerHTML = CHKS.map(([k,l]) =>
+    '<button class="chk '+(form[k]?'on':'')+'" onclick="form.'+k+'=!form.'+k+';renderForm()">'+l+'</button>').join('');
+  document.getElementById('gara').innerHTML = GARA.map(g =>
+    '<button class="opt '+(form.garapon===g?'on':'')+'" onclick="form.garapon=\''+g+'\';renderForm()">'+(g||'なし')+'</button>').join('');
+  const pl = document.getElementById('plan'), me = document.getElementById('memo');
+  if (pl.value !== form.plan) pl.value = form.plan;
+  if (me.value !== form.memo) me.value = form.memo;
+  document.getElementById('goBtn').textContent = editing ? '変更を保存する' : '来店を記録する';
+  document.getElementById('goBtn').classList.toggle('blue', editing);
+  document.getElementById('delBtn').style.display = editing ? 'block' : 'none';
 }
 function row(label,key,type){
-  return '<div class="row"><span>'+label+'</span><input '+(type?'type="'+type+'" ':'')+'value="'+esc(picked[key])+'" oninput="picked.'+key+'=this.value"></div>';
+  return '<div class="row"><span>'+label+'</span><input '+(type?'type="'+type+'" ':'')+'value="'+esc(form[key])+'" oninput="form.'+key+'=this.value"></div>';
 }
 
-/* ---------- 記録 ---------- */
+/* ---------- 送信 ---------- */
 function toast(t){ const el=document.getElementById('toast'); el.textContent=t; el.style.display='block'; clearTimeout(toast._t); toast._t=setTimeout(()=>el.style.display='none',2200); }
 const pending = () => { try { return JSON.parse(localStorage.getItem(PEND_KEY)||'[]'); } catch(e){ return []; } };
 const setPending = a => localStorage.setItem(PEND_KEY, JSON.stringify(a));
@@ -228,55 +288,76 @@ async function post(obj){
 }
 
 async function submitVisit(){
-  if (!staff){ toast('受付した人を選んでください'); return; }
-  if (!picked || !String(picked.name).trim()){ toast('お客様を選んでください'); return; }
+  if (!staff){ toast('受付した人を選んでください'); window.scrollTo({top:0,behavior:'smooth'}); return; }
+  if (!form || !String(form.name).trim()){ toast('お客様のお名前を入れてください'); return; }
   const now = new Date();
-  const v = { action:'fairVisit', id:'f'+now.getTime()+Math.random().toString(36).slice(2,6),
-    date:ymd(now), time:hm(now), staff, name:picked.name.trim(), address:picked.address, tel:picked.tel,
-    ku:picked.ku, inMaster:picked.inMaster, memo:document.getElementById('memo').value.trim() };
-  // 先に保存してから送る（電波が悪くても消えない）
-  setPending(pending().concat([v]));
-  visits.unshift(Object.assign({pend:true}, v)); renderList();
-  picked = null; document.getElementById('q').value=''; document.getElementById('cands').innerHTML='';
-  document.getElementById('memo').value=''; renderPicked();
-  toast('✅ '+v.name+' 様を記録しました');
+  const editing = !!form.id;
+  const v = Object.assign({}, form, { action:'fairVisit', name:form.name.trim(),
+    id: form.id || ('f'+now.getTime()+Math.random().toString(36).slice(2,6)),
+    date: form.date || TODAY, time: form.time || hm(now), staff: form.staff || staff });
+  delete v.pend;
+  // 先に端末へ保存してから送る（電波が悪くても消えない）
+  setPending(pending().filter(p=>p.id!==v.id).concat([v]));
+  const i = visits.findIndex(x=>x.id===v.id);
+  const shown = Object.assign({pend:true}, v);
+  if (i>=0) visits[i] = Object.assign({}, visits[i], shown); else visits.unshift(shown);
+  renderList();
+  toast('✅ '+v.name+' 様を'+(editing?'変更':'記録')+'しました');
+  clearForm();
   sendOne(v);
 }
 async function sendOne(v){
-  try { await post(v); setPending(pending().filter(p=>p.id!==v.id)); const x=visits.find(a=>a.id===v.id); if(x) x.pend=false; renderList(); }
-  catch(e){ /* 残しておき、あとで再送 */ }
+  try {
+    const j = await post(v);
+    setPending(pending().filter(p=>p.id!==v.id));
+    const x = visits.find(a=>a.id===v.id); if (x){ x.pend=false; if (j.no) x.no=j.no; }
+    renderList();
+  } catch(e){ /* 端末に残し、30秒ごとに再送 */ }
 }
 function resendPending(){ pending().forEach(sendOne); }
-setInterval(()=>{ if (pending().length) resendPending(); }, 30000);
 
 /* ---------- 一覧 ---------- */
 async function loadList(){
   try {
     const list = await (await fetch(GAS+'?action=fairList&date='+TODAY)).json();
-    const p = pending().filter(x=>x.date===TODAY && !list.some(l=>l.id===x.id)).map(x=>Object.assign({pend:true},x));
-    visits = p.concat(list.slice().reverse());
+    const p = pending().filter(x=>x.date===TODAY);
+    const merged = list.map(l => { const q = p.find(x=>x.id===l.id); return q ? Object.assign({}, l, q, {pend:true}) : l; });
+    p.filter(x=>!list.some(l=>l.id===x.id)).forEach(x=>merged.push(Object.assign({pend:true}, x)));
+    visits = merged.reverse();
   } catch(e){
     visits = pending().filter(x=>x.date===TODAY).map(x=>Object.assign({pend:true},x));
   }
   renderList();
 }
 function renderList(){
-  document.getElementById('cnt').textContent = visits.length;
+  renderAreas();
   const el = document.getElementById('list');
   if (!visits.length){ el.innerHTML='<div class="msg">まだ記録はありません</div>'; return; }
-  el.innerHTML = visits.map(v =>
-    '<div class="item"><div class="t">'+esc(v.time)+'</div><div class="b"><div class="n">'+esc(v.name)+' 様</div>' +
-    '<div class="s">受付 '+esc(v.staff)+(v.tel?'　'+esc(v.tel):'')+(v.memo?'<br>'+esc(v.memo):'')+'</div>' +
-    (v.pend?'<div class="pend">⏳ 送信待ち（自動で送ります）</div>':'')+'</div>' +
-    '<button class="del" onclick="delVisit(this,\''+v.id+'\')">取消</button></div>').join('');
+  el.innerHTML = visits.map((v,i) => {
+    const mk = CHKS.filter(([k])=>v[k]).map(([,l])=>'<span class="mk">'+l+'</span>').join('') + (v.garapon?'<span class="mk g">ｶﾞﾗﾎﾟﾝ '+esc(v.garapon)+'</span>':'');
+    return '<div class="item" onclick="editVisit('+i+')"><div class="no">'+esc(v.no||'…')+'</div><div class="b">' +
+      '<div class="n">'+esc(v.area||'')+'　'+esc(v.name)+' 様</div>' +
+      '<div class="s">'+esc(v.time)+' 受付 '+esc(v.staff)+(v.plan?'　予定 '+esc(v.plan):'')+'</div>' +
+      (mk?'<div>'+mk+'</div>':'') + (v.memo?'<div class="s">'+esc(v.memo)+'</div>':'') +
+      (v.pend?'<div class="pend">⏳ 送信待ち（自動で送ります）</div>':'')+'</div></div>';
+  }).join('');
 }
-async function delVisit(btn,id){
-  if (!btn.classList.contains('sure')){ btn.classList.add('sure'); btn.textContent='本当に消す'; setTimeout(()=>{btn.classList.remove('sure');btn.textContent='取消';},3000); return; }
+function editVisit(i){
+  const v = visits[i]; if (!v) return;
+  form = Object.assign(blank(), v); delete form.pend;
+  renderForm(); window.scrollTo({top: document.getElementById('formBox').offsetTop - 10, behavior:'smooth'});
+}
+async function delVisit(){
+  if (!form || !form.id) return;
+  const b = document.getElementById('delBtn');
+  if (!b.dataset.sure){ b.dataset.sure='1'; b.textContent='もう一度押すと取り消します'; b.style.color='#dc2626';
+    setTimeout(()=>{ delete b.dataset.sure; b.textContent='この記録を取り消す'; b.style.color=''; },3000); return; }
+  delete b.dataset.sure; b.textContent='この記録を取り消す'; b.style.color='';
+  const id = form.id;
   setPending(pending().filter(p=>p.id!==id));
-  visits = visits.filter(v=>v.id!==id); renderList();
+  visits = visits.filter(v=>v.id!==id); renderList(); clearForm();
   try { await post({action:'fairDelete', id}); toast('取り消しました'); } catch(e){ toast('⚠ 取消を送れませんでした'); loadList(); }
 }
-setInterval(loadList, 60000);   // 他の端末で入れた分も1分ごとに反映
 </script>
 </body>
 </html>
