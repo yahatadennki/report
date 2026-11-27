@@ -242,12 +242,13 @@
   </div>
 
   <div class="box">
-    <p class="lbl">本日の来店一覧（タップで変更）</p>
+    <p class="lbl"><span id="listTtl">本日の</span>来店一覧（タップで変更）</p>
+    <div class="days" id="listDays"></div>
     <div id="list"><div class="msg">読み込み中…</div></div>
   </div>
 
   <div class="box giftbox">
-    <p class="lbl">🚚 本日の配達で記念品 <span id="giftCnt"></span>
+    <p class="lbl">🚚 <span id="giftTtl">本日の</span>配達で記念品 <span id="giftCnt"></span>
       <a id="giftSheetLink" href="https://docs.google.com/spreadsheets/d/1Cg5FACS_HqpAlchsU6O4ansNHc7GO_FOWAYhpX_72_w/edit" target="_blank" style="float:right;font-size:12px;color:#0369a1">📊 シート</a></p>
     <div class="msg" style="padding-top:0">来店とは別に記録します（来店の人数・お礼はがきには入りません）</div>
     <div id="giftList"><div class="msg">読み込み中…</div></div>
@@ -849,6 +850,7 @@ async function submitVisit(){
     toast('⚠ 重複しています：'+dupText(dupsOf(form)));
     return;
   }
+  if (!editing && listDate !== TODAY){ listDate = TODAY; visits = []; gifts = []; setTimeout(loadList, 0); }   // 新しい記録は今日の一覧に戻す
   const isGift = form.kind === 'gift';
   if (isGift) Object.assign(form, { planDate:'', planTime:'', planStaff:'', planWhat:'' });   // 配達は予定なし
   const arr = isGift ? gifts : visits;
@@ -905,14 +907,15 @@ document.addEventListener('visibilitychange', () => { if (document.visibilitySta
 
 /* ---------- 一覧 ---------- */
 // サーバーの一覧に、まだ送れていない端末の分を重ねる
+let listDate = TODAY;   // 一覧に出す日（フェア期間の日を選べる）
 function mergeList(list, isGift){
-  const p = pending().filter(x => x.date===TODAY && ((x.action==='fairGift') === isGift));
+  const p = pending().filter(x => x.date===listDate && ((x.action==='fairGift') === isGift));
   const merged = list.map(l => { const q = p.find(x=>x.id===l.id); return q ? Object.assign({}, l, q, {pend:true}) : l; });
   p.filter(x=>!list.some(l=>l.id===x.id)).forEach(x=>merged.push(Object.assign({pend:true}, x)));
   return merged.reverse();
 }
 async function loadList(){
-  const get = async a => { try { return await (await fetch(GAS+'?action='+a+'&date='+TODAY)).json(); } catch(e){ return []; } };
+  const get = async a => { try { return await (await fetch(GAS+'?action='+a+'&date='+listDate)).json(); } catch(e){ return []; } };
   const [vl, gl] = await Promise.all([get('fairList'), get('fairGiftList')]);
   visits = mergeList(Array.isArray(vl) ? vl : [], false).map(v => Object.assign(v, {kind:'raiten'}));
   gifts  = mergeList(Array.isArray(gl) ? gl : [], true).map(v => Object.assign(v, {kind:'gift'}));
@@ -920,7 +923,14 @@ async function loadList(){
   loadInfo();
   loadUriage();
 }
+function pickListDay(d){ listDate = d; visits = []; gifts = []; renderList(); document.getElementById('list').innerHTML = '<div class="msg">読み込み中…</div>'; loadList(); }
 function renderList(){
+  const ds = sumDates().filter(d => d <= TODAY);
+  if (!ds.includes(TODAY)) ds.push(TODAY);
+  document.getElementById('listDays').innerHTML = ds.length < 2 ? '' : ds.map(d =>
+    '<button class="'+(d===listDate?'on':'')+'" onclick="pickListDay(\''+d+'\')">'+(d===TODAY?'今日 ':'')+sumMd(d)+'</button>').join('');
+  const ttl = listDate === TODAY ? '本日の' : sumMd(listDate)+'の';
+  document.getElementById('listTtl').textContent = ttl; document.getElementById('giftTtl').textContent = ttl;
   renderAreas();
   const ngBadge = v => v.notGiven ? '<span class="ng">🎁 まだ渡してない</span>' : '';
   const el = document.getElementById('list');
