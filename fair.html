@@ -123,6 +123,12 @@
   #pin > div { background:#fff; border-radius:20px; padding:36px 28px; width:90%; max-width:340px; text-align:center; }
   #pin input { font-size:28px; letter-spacing:12px; text-align:center; margin:14px 0; }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+<style>
+  .bc { margin:10px 0 4px; background:#fff; border:2px solid #111; border-radius:10px; padding:10px 6px; text-align:center; }
+  .bc p { margin:0 0 4px; font-size:13px; font-weight:700; color:#555; }
+  .bc svg { width:100%; height:auto; max-height:170px; }
+</style>
 </head>
 <body>
 
@@ -289,6 +295,12 @@ let staff = localStorage.getItem('fair_staff') || '';
 let customers = [], custState = 'loading', results = [], visits = [];
 let form = null;   // 入力中の1件（null＝未選択）
 // ボタンの onclick の中で「form」と書くとボタン自身の form（null）を指してしまうので、必ずこの関数を使う
+// 顧客コードのバーコード（CODE128。レジのバーコードリーダーで読める太さ）
+function drawBc(){
+  const el = document.getElementById('custBc');
+  if (!el || !form || !form.code || !window.JsBarcode) return;
+  try { JsBarcode(el, String(form.code).trim(), { format:'CODE128', width:4, height:120, margin:24, fontSize:28, fontOptions:'bold', displayValue:true }); } catch(e){ el.outerHTML = '<div class="msg">バーコードを作れませんでした</div>'; }
+}
 function setF(k, v){ form[k] = v; renderForm(); }
 function togF(k){ form[k] = !form[k]; renderForm(); }
 function inF(k, v){ form[k] = v; }   // 文字入力（描き直さない）
@@ -772,10 +784,12 @@ function renderForm(){
     (!cardHolder(form.card) && form.panaJoin ? '<span class="pana big">💳 パナカード</span>' : '') +
     '<div style="margin-bottom:8px">'+(editing ? '<span class="tag" style="background:#dbeafe;color:#1e40af">№'+esc(form.no||'')+' を変更中</span> ' : '') +
     (form.inMaster ? '<span class="tag">顧客マスタから'+(form.code?'　No.'+esc(form.code):'')+'</span>' : '<span class="tag new">新規のお客様</span>')+'</div>' +
+    (form.code ? '<div class="bc"><p>🧾 売上作成でお客様を呼び出すときはここを読む</p><svg id="custBc"></svg></div>' : '') +
     row('お名前','name') + row('住所','address') + row('電話','tel','tel') +
     (dups.length ? '<div class="warn dup">⚠ 重複しています：このフェアで '+esc(dupText(dups))+' の記録があります（記念品が二重にならないように）</div>' : '') +
     (estOf(form.name).length ? '<div style="margin-top:8px">'+estBadges(form.name)+'</div>' : '') +
     (!isGift ? '<button class="mitsu" onclick="openMitsumori()">📝 このお客様の見積書をつくる（商品見積）</button>' : '') + '</div>';
+  drawBc();
   document.getElementById('areaBtns').innerHTML = AREAS.concat(['不明']).map(x => {
     const v = x==='不明' ? '' : x;
     return '<button class="opt '+(form.area===v?'on':'')+'" onclick="setF(\'area\',\''+v+'\')">'+x+'</button>';
