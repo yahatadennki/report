@@ -37,6 +37,9 @@
   .cand:active { background:#fef3c7; }
   .cand .n { font-weight:700; }
   .cand .s { font-size:12px; color:var(--soft); }
+  .scan { margin-top:8px; width:100%; padding:12px; border:none; border-radius:10px; background:#0f766e; color:#fff; font-size:16px; font-weight:700; }
+  #reader { margin-top:8px; border-radius:10px; overflow:hidden; }
+  .code { font-size:11px; color:#0f766e; font-weight:700; }
   .msg { font-size:13px; color:var(--soft); padding:8px 2px; }
   .newbtn { margin-top:8px; width:100%; padding:10px; border:2px dashed #fbbf24; background:#fffbeb; border-radius:10px; font-size:14px; font-weight:700; color:#92400e; }
   .picked { border:2px solid var(--sun); border-radius:12px; padding:12px; background:#fffbeb; }
@@ -88,7 +91,9 @@
 
     <p class="lbl">お客様 <button class="clear" id="clearBtn" onclick="clearForm()" style="display:none">やり直す</button></p>
     <div id="searchArea">
-      <input id="q" placeholder="お名前・ふりがな・電話番号の一部" oninput="onSearch()" autocomplete="off">
+      <input id="q" placeholder="お名前・ふりがな・電話・顧客コード" oninput="onSearch()" onkeydown="if(event.key==='Enter'){event.preventDefault();codeEnter();}" autocomplete="off">
+      <button class="scan" id="scanBtn" onclick="toggleScan()">📷 カードのバーコードを読む</button>
+      <div id="reader"></div>
       <div class="cands" id="cands"></div>
     </div>
     <div id="pickedArea"></div>
@@ -129,7 +134,7 @@ const STAFF = ['高山','伊藤','服部','石橋','角井','北沢','宇留野'
 const AREAS = ['1区','2区','3区','4区','5区','6区','7区','8区','9区'];
 const CHKS = [['md','MD'],['panaJoin','ﾊﾟﾅｶｰﾄﾞ入会'],['panaForm','ﾊﾟﾅｶｰﾄﾞ用紙記入'],['credit','クレジット'],['cash','現金']];
 const GARA = ['特賞','1等','金','銀',''];
-const CUST_CACHE_KEY = 'juchu_customers_v1';   // 受注日報と同じ保存分を使う（同じ形）
+const CUST_CACHE_KEY = 'fair_customers_v1';   // 顧客コード入りで保存（受注日報の保存分はコードが無いので別に持つ）
 const PEND_KEY = 'fair_pending_v1';
 
 const ymd = d => { const z = n => String(n).padStart(2,'0'); return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate()); };
@@ -150,7 +155,7 @@ let staff = localStorage.getItem('fair_staff') || '';
 let customers = [], custState = 'loading', results = [], visits = [];
 let form = null;   // 入力中の1件（null＝未選択）
 
-function blank(){ return { id:'', name:'', address:'', tel:'', area:'', inMaster:false, md:false, panaJoin:false, panaForm:false, credit:false, cash:false, garapon:'', plan:'', memo:'' }; }
+function blank(){ return { id:'', code:'', name:'', address:'', tel:'', area:'', inMaster:false, md:false, panaJoin:false, panaForm:false, credit:false, cash:false, garapon:'', plan:'', memo:'' }; }
 
 function start(){
   document.getElementById('pin').style.display = 'none';
@@ -211,6 +216,62 @@ const norm = s => toKana(s).replace(/[-\s　]/g,'').toLowerCase();
 const areaOf = c => { const m = String((c&&c.ku)||'').match(/(\d+)\s*区/); return m ? m[1]+'区' : ''; };
 const telOf = c => (c.telList && c.telList.length) ? c.telList.join(' / ') : (c.tel||'');
 
+const codeKey = s => String(s||'').replace(/\D/g,'').replace(/^0+/,'');
+function findByCode(raw){
+  const k = codeKey(raw); if (!k) return null;
+  return customers.find(c => codeKey(c.no) === k) || null;
+}
+// バーコードリーダー（キーボードとして打ち込み＋Enter）や手入力の顧客コード
+function codeEnter(){
+  const raw = document.getElementById('q').value.trim();
+  if (!/^[0-9\s-]+$/.test(raw)) return;
+  const c = findByCode(raw);
+  if (c){ pickCust(c); toast('📇 '+c.name+' 様'); }
+  else toast('顧客コード '+raw+' は見つかりません');
+}
+function pickCust(c){
+  stopScan();
+  form = Object.assign(blank(), { code:c.no||'', name:c.name, address:c.address||'', tel:telOf(c), area:areaOf(c), inMaster:true });
+  renderForm();
+}
+
+/* ---------- カメラでバーコード ---------- */
+let scanner = null, scanLib = null;
+function loadScanLib(){
+  if (scanLib) return scanLib;
+  scanLib = new Promise((ok, ng) => { const t = document.createElement('script');
+    t.src = 'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js'; t.onload = ok; t.onerror = () => { scanLib = null; ng(); }; document.head.appendChild(t); });
+  return scanLib;
+}
+async function toggleScan(){
+  if (scanner){ stopScan(); return; }
+  const btn = document.getElementById('scanBtn');
+  btn.textContent = '⏳ カメラを準備中…';
+  try {
+    await loadScanLib();
+    scanner = new Html5Qrcode('reader');
+    let done = false;
+    await scanner.start({ facingMode:'environment' }, { fps:10, qrbox:{ width:280, height:120 } }, text => {
+      if (done) return;
+      const c = customers.length ? findByCode(text) : null;
+      if (c){ done = true; if (navigator.vibrate) navigator.vibrate(80); pickCust(c); toast('📇 '+c.name+' 様'); }
+      else if (customers.length) toast('コード '+text+' は顧客マスタにありません');
+      else toast('顧客データを読み込み中です');
+    });
+    btn.textContent = '✕ カメラを閉じる';
+  } catch(e){
+    stopScan();
+    toast('⚠ カメラを使えませんでした');
+  }
+}
+function stopScan(){
+  const btn = document.getElementById('scanBtn');
+  if (btn) btn.textContent = '📷 カードのバーコードを読む';
+  if (!scanner) return;
+  const s = scanner; scanner = null;
+  s.stop().then(()=>s.clear()).catch(()=>{ try{ s.clear(); }catch(e){} });
+}
+
 function onSearch(){
   const raw = document.getElementById('q').value.trim();
   const box = document.getElementById('cands');
@@ -222,20 +283,20 @@ function onSearch(){
     return;
   }
   const q = norm(raw), qt = raw.replace(/[-\s]/g,'');
-  results = customers.filter(c => norm(c.name).includes(q) || norm(c.kana).includes(q) ||
-    (/^\d{3,}$/.test(qt) && c.tels && c.tels.includes(qt)) || (c.address && c.address.includes(raw))).slice(0,15);
+  const byCode = /^\d+$/.test(qt) ? customers.filter(c => codeKey(c.no) === codeKey(qt)) : [];
+  results = byCode.concat(customers.filter(c => !byCode.includes(c) && (norm(c.name).includes(q) || norm(c.kana).includes(q) ||
+    (/^\d{3,}$/.test(qt) && c.tels && c.tels.includes(qt)) || (c.address && c.address.includes(raw))))).slice(0,15);
   box.innerHTML = (results.length ? results.map((c,i) =>
-    '<div class="cand" onclick="pick('+i+')"><div class="n">'+esc(areaOf(c))+'　'+esc(c.name)+' 様</div><div class="s">'+esc(telOf(c))+'　'+esc(c.address)+'</div></div>').join('')
+    '<div class="cand" onclick="pick('+i+')"><div class="code">No.'+esc(c.no)+'</div><div class="n">'+esc(areaOf(c))+'　'+esc(c.name)+' 様</div><div class="s">'+esc(telOf(c))+'　'+esc(c.address)+'</div></div>').join('')
     : '<div class="msg">顧客マスタに見つかりません</div>') + newBtn(raw);
 }
 function newBtn(raw){ return '<button class="newbtn" onclick="pickNew()">＋「'+esc(raw)+'」さんを新規のお客様として入力</button>'; }
 
 function pick(i){
-  const c = results[i]; if (!c) return;
-  form = Object.assign(blank(), { name:c.name, address:c.address||'', tel:telOf(c), area:areaOf(c), inMaster:true });
-  renderForm();
+  const c = results[i]; if (c) pickCust(c);
 }
 function pickNew(){
+  stopScan();
   form = Object.assign(blank(), { name:document.getElementById('q').value.trim() });
   renderForm();
 }
@@ -255,7 +316,7 @@ function renderForm(){
   const dup = !editing && visits.some(v => norm(v.name) === norm(form.name));
   a.innerHTML = '<div class="picked">' +
     '<div style="margin-bottom:8px">'+(editing ? '<span class="tag" style="background:#dbeafe;color:#1e40af">№'+esc(form.no||'')+' を変更中</span> ' : '') +
-    (form.inMaster ? '<span class="tag">顧客マスタから</span>' : '<span class="tag new">新規のお客様</span>')+'</div>' +
+    (form.inMaster ? '<span class="tag">顧客マスタから'+(form.code?'　No.'+esc(form.code):'')+'</span>' : '<span class="tag new">新規のお客様</span>')+'</div>' +
     row('お名前','name') + row('住所','address') + row('電話','tel','tel') +
     (dup ? '<div class="warn">⚠ 本日すでに来店記録があります</div>' : '') + '</div>';
   document.getElementById('areaBtns').innerHTML = AREAS.concat(['不明']).map(x => {

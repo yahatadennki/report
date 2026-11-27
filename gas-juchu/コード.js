@@ -412,6 +412,7 @@ function doGet(e) {
     const d = s.getDataRange().getValues();
     const out = d.slice(1).filter(function(r) { return r[1]; }).map(function(r) {
       return {
+        no:   String(r[0] || ''),         // A列 顧客番号（フェアのバーコード読み取りで使う）
         name: String(r[1] || ''),
         kana: String(r[2] || ''),
         tel:  String(r[3] || ''),

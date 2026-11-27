@@ -2,7 +2,7 @@
 // 受注日報SSの「フェア来店記録」シートに1来店1行。並びは店のExcel（2026年度フェア.xlsx）に合わせる。
 const FAIR_SHEET_NAME = 'フェア来店記録';
 const FAIR_HEADERS = ['来店日', '№', '区域', 'MD', '名前', 'ﾊﾟﾅｶｰﾄﾞ入会', 'パナカード用紙記入', '内容',
-  'クレジット', '現金', '予定日', 'ｶﾞﾗﾎﾟﾝ', '受付', '時刻', '住所', '電話番号', 'マスタ', '送信ID'];
+  'クレジット', '現金', '予定日', 'ｶﾞﾗﾎﾟﾝ', '受付', '時刻', '住所', '電話番号', 'マスタ', '送信ID', '顧客コード'];
 const FAIR_COL_ID = 18;
 
 function fairSheet_() {
@@ -21,6 +21,7 @@ function fairSheet_() {
     sh.getRange('K:K').setNumberFormat('@');
     sh.setColumnWidth(5, 120); sh.setColumnWidth(8, 320);
   }
+  if (sh.getRange(1, 19).getValue() !== '顧客コード') sh.getRange(1, 19).setValue('顧客コード').setFontWeight('bold').setBackground('#ffff00');
   return sh;
 }
 
@@ -35,6 +36,11 @@ const FAIR_CHK = function(b) { return b ? '✓' : ''; };
 // doGet から呼ぶ。action=fairList&date=YYYY-MM-DD → その日の来店一覧
 function fairGet_(e) {
   const p = (e && e.parameter) || {};
+  if (p.action === 'fairMasterHead') {   // 顧客マスタの見出し（列の確認用・読むだけ）
+    const s = SpreadsheetApp.openById(CUSTOMER_MASTER_SS_ID);
+    const m = s.getSheetByName('顧客マスタ') || s.getSheetByName('顧客ﾏｽﾀ');
+    return fairJson_(m.getRange(1, 1, 1, Math.min(m.getLastColumn(), 20)).getDisplayValues()[0]);
+  }
   if (p.action !== 'fairList') return null;
   const date = String(p.date || Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy-MM-dd'));
   const sh = fairSheet_();
@@ -47,7 +53,7 @@ function fairGet_(e) {
     out.push({
       date: date, no: r[1], area: r[2], md: !!r[3], name: r[4], panaJoin: !!r[5], panaForm: !!r[6],
       memo: r[7], credit: !!r[8], cash: !!r[9], plan: r[10], garapon: r[11], staff: r[12], time: r[13],
-      address: r[14], tel: r[15], inMaster: r[16] === '○', id: r[17]
+      address: r[14], tel: r[15], inMaster: r[16] === '○', id: r[17], code: r[18]
     });
   });
   return fairJson_(out);
@@ -90,7 +96,7 @@ function fairPost_(data) {
       FAIR_CHK(data.panaJoin), FAIR_CHK(data.panaForm), data.memo || '',
       FAIR_CHK(data.credit), FAIR_CHK(data.cash), data.plan || '', data.garapon || '',
       data.staff || '', data.time || '', data.address || '', data.tel || '',
-      data.inMaster ? '○' : '新規', sid
+      data.inMaster ? '○' : '新規', sid, data.code || ''
     ]];
     sh.getRange(row, 1, 1, FAIR_HEADERS.length).setValues(vals);
     return fairJson_({ ok: true, no: no, updated: !!hit });
