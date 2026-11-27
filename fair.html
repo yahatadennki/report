@@ -356,6 +356,7 @@ function toggleSum(open){
   box.style.display = show ? 'block' : 'none';
   if (show){ box.scrollIntoView({behavior:'smooth', block:'start'}); loadSum(); }
 }
+let sumD = null, sumDay = '';
 async function loadSum(){
   const body = document.getElementById('sumBody');
   body.innerHTML = '<div class="msg">⏳ 集計しています…</div>';
@@ -364,66 +365,99 @@ async function loadSum(){
     const dates = sumDates();
     const get = a => Promise.all(dates.map(d => fetch(GAS+'?action='+a+'&date='+d).then(r=>r.json())));
     const [vs, gs] = await Promise.all([get('fairList'), get('fairGiftList'), loadUriage(true)]);
-    body.innerHTML = renderSum(dates, vs, gs);
+    sumD = { dates, vs, gs };
+    if (!dates.includes(sumDay)) sumDay = dates.includes(TODAY) ? TODAY : (dates.filter(d => d <= TODAY).pop() || dates[0]);
+    drawSum();
   } catch(e){ body.innerHTML = '<div class="msg" style="color:#dc2626">⚠ 集計を読み込めませんでした <button onclick="loadSum()">もう一度</button></div>'; }
 }
-function renderSum(dates, vs, gs){
+const sumMd = d => { const x = new Date(d+'T00:00:00'); return (x.getMonth()+1)+'/'+x.getDate()+'('+'日月火水木金土'[x.getDay()]+')'; };
+function drawSum(){
+  const { dates, vs, gs } = sumD;
+  document.getElementById('sumBody').innerHTML =
+    '<div class="days">' + dates.map((d,k) => '<button class="'+(d===sumDay?'on':'')+'" onclick="sumDay=\''+d+'\';drawSum()">'+(k+1)+'日目 '+sumMd(d)+'</button>').join('') + '</div>' +
+    renderSum(dates, vs, gs, Math.max(0, dates.indexOf(sumDay)));
+}
+// 選んだ日（当日）と期間の合計を横に並べる
+function renderSum(dates, vs, gs, k){
   const i = info.info || {}, num = s => Number(String(s||'').replace(/[^\d]/g,'')) || 0;
   const inv = num(i.invites), tot = num(i.gifts);
-  const V = [].concat(...vs), G = [].concat(...gs);
+  const V = [].concat(...vs), G = [].concat(...gs), D = vs[k], DG = gs[k], day = dates[k];
   const pct = (a, b) => b ? (Math.round(a / b * 1000) / 10) + '%' : '—';
   const cnt = (arr, f) => arr.filter(f).length;
-  const md = d => { const x = new Date(d+'T00:00:00'); return (x.getMonth()+1)+'/'+x.getDate()+'('+'日月火水木金土'[x.getDay()]+')'; };
-  const given = cnt(V, v=>!v.notGiven) + cnt(G, v=>!v.notGiven);
+  const md = sumMd, allL = dates.length + '日間合計';
+  const fut = day > TODAY;
   const table = (head, rows, totRow) => '<table class="sumt"><tr>'+head.map(h=>'<th>'+h+'</th>').join('')+'</tr>' +
     rows.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('') +
     (totRow ? '<tr class="tot">'+totRow.map(c=>'<td>'+c+'</td>').join('')+'</tr>' : '') + '</table>';
   const lbl = t => '<p class="lbl" style="margin-top:4px">'+t+'</p>';
+  const H = ['', md(day), allL];
+  const two = (label, f) => [label, fut ? '—' : f(D, DG), f(V, G)];   // [項目, 当日, 合計]
+  const cp = (a, f) => cnt(a, f) + ' <small>(' + pct(cnt(a, f), a.length) + ')</small>';   // 人数（来店の中で何%）
+  const givenOf = (v, g) => cnt(v, x=>!x.notGiven) + cnt(g, x=>!x.notGiven);
+  const givenUpTo = vs.slice(0, k+1).reduce((t, v, j) => t + givenOf(v, gs[j]), 0);
   let acc = 0;
-  const dayRows = dates.map((d, k) => { const n = vs[k].length; acc += n;
-    return d > TODAY ? [md(d), '—', '—', '—', '—'] : [md(d), n, gs[k].length, acc, pct(acc, inv)]; });
-  const areaRows = AREAS.concat(['']).map(a => [a || '不明', cnt(V, v=>(v.area||'')===a)]).filter(r => r[0] !== '不明' || r[1]);
-  const panaMem = cnt(V, isPana);   // パナカード会員（もともとの会員＋フェアで入った人）
-  const items = [
-    ['パナカード会員の来店', panaMem, pct(panaMem, V.length)],
-    ['うちフェアで入った', cnt(V, v=>v.panaJoin && !cardHolder(v.card)), pct(cnt(V, v=>v.panaJoin && !cardHolder(v.card)), V.length)],
-    ['ﾊﾟﾅｶｰﾄﾞ用紙記入', cnt(V, v=>v.panaForm), pct(cnt(V, v=>v.panaForm), V.length)],
-    ['MD', cnt(V, v=>v.md), pct(cnt(V, v=>v.md), V.length)],
-    ['クレジット', cnt(V, v=>v.credit), pct(cnt(V, v=>v.credit), V.length)],
-    ['現金', cnt(V, v=>v.cash), pct(cnt(V, v=>v.cash), V.length)],
-    ['予定を入れた', cnt(V, v=>v.planDate), pct(cnt(V, v=>v.planDate), V.length)],
-    ['新規のお客様', cnt(V, v=>!v.inMaster), pct(cnt(V, v=>!v.inMaster), V.length)]
+  const dayRows = dates.map((d, j) => { const n = vs[j].length; acc += n;
+    const nm = (d === day ? '▶ ' : '') + md(d);
+    return d > TODAY ? [nm, '—', '—', '—', '—'] : [nm, n, gs[j].length, acc, pct(acc, inv)]; });
+  const accDay = vs.slice(0, k+1).reduce((t, v) => t + v.length, 0);
+  const main = [
+    two('来店（組）', v => v.length),
+    two('来店率（招待状'+(inv||'—')+'部）', v => pct(v.length, inv)),
+    ['来店の累計', fut ? '—' : accDay + ' <small>(' + pct(accDay, inv) + ')</small>', V.length + ' <small>(' + pct(V.length, inv) + ')</small>'],
+    two('💳 パナカード会員', v => cp(v, isPana)),
+    two('🎁 記念品を渡した', givenOf),
+    ['🎁 記念品の残り', fut || !tot ? '—' : tot - givenUpTo, tot ? tot - givenOf(V, G) : '—']
   ];
-  const planKinds = [...new Set(V.filter(v=>v.planDate).map(v=>v.planWhat||'（内容なし）'))].map(w => [w, cnt(V, v=>v.planDate && (v.planWhat||'（内容なし）')===w)]);
-  const garaRows = GARA.map(g => [g || 'なし・未入力', cnt(V, v=>(v.garapon||'')===g)]);
+  const items = [
+    two('パナカード会員の来店', v => cp(v, isPana)),
+    two('うちフェアで入った', v => cp(v, x=>x.panaJoin && !cardHolder(x.card))),
+    two('ﾊﾟﾅｶｰﾄﾞ用紙記入', v => cp(v, x=>x.panaForm)),
+    two('MD', v => cp(v, x=>x.md)),
+    two('クレジット', v => cp(v, x=>x.credit)),
+    two('現金', v => cp(v, x=>x.cash)),
+    two('予定を入れた', v => cp(v, x=>x.planDate)),
+    two('新規のお客様', v => cp(v, x=>!x.inMaster))
+  ];
+  const gift = [
+    two('来店で渡した', v => cnt(v, x=>!x.notGiven)),
+    two('配達で渡した', (v, g) => cnt(g, x=>!x.notGiven)),
+    two('まだ渡してない', (v, g) => cnt(v, x=>x.notGiven) + cnt(g, x=>x.notGiven))
+  ];
+  const what = x => x.planWhat || '（内容なし）';
+  const planKinds = [...new Set(V.filter(v=>v.planDate).map(what))].map(w => two(w, v => cnt(v, x=>x.planDate && what(x)===w)));
+  const areaRows = AREAS.concat(['']).map(a => two(a || '不明', v => cnt(v, x=>(x.area||'')===a))).filter(r => r[0] !== '不明' || r[2]);
+  const garaRows = GARA.map(g => two(g || 'なし・未入力', v => cnt(v, x=>(x.garapon||'')===g)));
   return '<div class="msg" style="margin-bottom:6px">'+esc(i.name||'')+'　'+md(dates[0])+(dates.length>1?'〜'+md(dates[dates.length-1]):'')+'（'+dates.length+'日間）</div>' +
-    '<div class="sumk"><div><b>'+V.length+'</b><span>来店（組）</span></div><div><b>'+pct(V.length, inv)+'</b><span>来店率（招待状'+(inv||'—')+'部）</span></div>' +
-    '<div><b>'+(tot ? tot - given : '—')+'</b><span>記念品 残り／'+(tot||'—')+'</span></div>' +
-    '<div><b>'+panaMem+'組 <small>'+pct(panaMem, V.length)+'</small></b><span>パナカード会員の来店（来店の中で）</span></div></div>' +
-    lbl('日別') + table(['日','来店','配達で記念品','来店の累計','来店率'], dayRows, ['合計', V.length, G.length, V.length, pct(V.length, inv)]) +
-    sumUriage(V) +
-    lbl('記念品') + table(['','数'], [['来店で渡した', cnt(V, v=>!v.notGiven)], ['配達で渡した', cnt(G, v=>!v.notGiven)], ['まだ渡してない', cnt(V, v=>v.notGiven) + cnt(G, v=>v.notGiven)]], ['渡した合計', given]) +
-    lbl('来店の中身') + table(['','人数','来店の中で'], items) +
-    (planKinds.length ? lbl('予定の内容') + table(['','件数'], planKinds) : '') +
-    lbl('区域別') + table(['区域','来店'], areaRows, ['合計', V.length]) +
-    lbl('ガラポン') + table(['賞','人数'], garaRows);
+    table(H, main) +
+    sumUriage(V, day, allL) +
+    lbl('記念品') + table(H, gift, ['渡した合計', fut ? '—' : givenOf(D, DG), givenOf(V, G)]) +
+    lbl('来店の中身（かっこ＝来店の中で何%）') + table(H, items) +
+    (planKinds.length ? lbl('予定の内容') + table(H, planKinds) : '') +
+    lbl('区域別') + table(H, areaRows, ['合計', fut ? '—' : D.length, V.length]) +
+    lbl('ガラポン') + table(H, garaRows) +
+    lbl('日別') + table(['日','来店','配達で記念品','来店の累計','来店率'], dayRows, ['合計', V.length, G.length, V.length, pct(V.length, inv)]);
 }
-function sumUriage(V){
+function sumUriage(V, day, allL){
   const lbl = t => '<p class="lbl" style="margin-top:4px">'+t+'</p>';
   if (!uriage) return lbl('💴 売上（商品見積）') + '<div class="msg" style="color:#dc2626">⚠ 売上を読み込めませんでした（受注日報のスクリプトで「フェア売上の許可」を一度実行してください）</div>';
-  const L = uriage.list, sei = L.filter(x=>x.seiyaku), est = L.filter(x=>!x.seiyaku);
+  const L = uriage.list, DL = L.filter(x => x.made === day);
   const sum = a => a.reduce((t,x)=>t+(Number(x.total)||0),0);
+  const sei = a => a.filter(x=>x.seiyaku), est = a => a.filter(x=>!x.seiyaku);
   const vNames = new Set(V.map(v=>norm(v.name)));
-  const seiV = sei.filter(x=>vNames.has(norm(x.cust))).length;
-  const kinds = uriage.kinds.map(k => [k, sei.reduce((t,x)=>t+(x.kinds[k]||0),0), est.reduce((t,x)=>t+(x.kinds[k]||0),0)]).filter(r => r[1] || r[2]);
+  const seiV = sei(L).filter(x=>vNames.has(norm(x.cust))).length;
+  const kc = (a, k) => a.reduce((t,x)=>t+(x.kinds[k]||0),0);
   const tr = r => '<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>';
+  const md = sumMd(day);
+  const kinds = uriage.kinds.map(k => [k, kc(sei(DL), k), kc(sei(L), k), kc(est(L), k)]).filter(r => r[2] || r[3]);
   return lbl('💴 売上（商品見積でフェア期間に作った見積）') +
-    '<div class="sumk"><div><b>'+yen(sum(sei))+'</b><span>成約 '+sei.length+'件</span></div><div><b>'+yen(sum(est))+'</b><span>見積中 '+est.length+'件</span></div>' +
-    '<div><b>'+(V.length ? (Math.round(seiV / V.length * 1000) / 10)+'%' : '—')+'</b><span>来店→成約（'+seiV+'組）</span></div></div>' +
-    (kinds.length ? '<table class="sumt"><tr><th>品目</th><th>成約（台）</th><th>見積中（台）</th></tr>'+kinds.map(tr).join('')+'</table>' : '') +
-    (L.length ? '<table class="sumt"><tr><th>お客様</th><th>担当</th><th>金額</th><th></th></tr>' +
-      L.map(x => tr([esc(x.cust)+(x.raiten?'':' <span style="font-size:11px;color:#888">（来店なし）</span>'), esc(x.tantou), x.plan&&!x.seiyaku?'プラン':yen(x.total), x.seiyaku?'🎉成約':'見積'])).join('') + '</table>'
-      : '<div class="msg">まだ見積はありません</div>') +
+    '<table class="sumt"><tr><th></th><th>'+md+'</th><th>'+allL+'</th></tr>' +
+    tr(['成約', sei(DL).length+'件 '+yen(sum(sei(DL))), sei(L).length+'件 '+yen(sum(sei(L)))]) +
+    tr(['見積中', est(DL).length+'件 '+yen(sum(est(DL))), est(L).length+'件 '+yen(sum(est(L)))]) +
+    tr(['来店→成約', '', (V.length ? (Math.round(seiV / V.length * 1000) / 10)+'%' : '—')+'（'+seiV+'組）']) + '</table>' +
+    (kinds.length ? '<table class="sumt"><tr><th>品目</th><th>成約 '+md+'</th><th>成約 合計</th><th>見積中 合計</th></tr>'+kinds.map(tr).join('')+'</table>' : '') +
+    (DL.length ? '<table class="sumt"><tr><th>'+md+'の見積</th><th>担当</th><th>金額</th><th></th></tr>' +
+      DL.map(x => tr([esc(x.cust)+(x.raiten?'':' <span style="font-size:11px;color:#888">（来店なし）</span>'), esc(x.tantou), x.plan&&!x.seiyaku?'プラン':yen(x.total), x.seiyaku?'🎉成約':'見積'])).join('') + '</table>'
+      : '<div class="msg">'+md+'に作った見積はありません</div>') +
     '<div class="msg" style="margin-bottom:12px">シート「フェア売上」にも書き出しています。成約＝工事日か「発注済・在庫」が入った見積。</div>';
 }
 /* ---------- フェア日報（1日1枚。数字は自動、ひとことだけ書く） ---------- */
