@@ -39,6 +39,10 @@
   .cand .s { font-size:12px; color:var(--soft); }
   .scan { margin-top:8px; width:100%; padding:12px; border:none; border-radius:10px; background:#0f766e; color:#fff; font-size:16px; font-weight:700; }
   .code { font-size:11px; color:#0f766e; font-weight:700; }
+  .pana { display:inline-block; background:#1d4ed8; color:#fff; font-weight:700; font-size:12px; padding:2px 10px; border-radius:999px; margin-left:6px; vertical-align:middle; }
+  .pana.big { display:block; margin:0 0 10px; padding:10px; font-size:18px; text-align:center; border-radius:10px; }
+  .pana.end { background:#9ca3af; }
+  .item.pa { background:#eff6ff; border-left:5px solid #1d4ed8; padding-left:8px; border-radius:6px; }
   .msg { font-size:13px; color:var(--soft); padding:8px 2px; }
   .newbtn { margin-top:8px; width:100%; padding:10px; border:2px dashed #fbbf24; background:#fffbeb; border-radius:10px; font-size:14px; font-weight:700; color:#92400e; }
   .picked { border:2px solid var(--sun); border-radius:12px; padding:12px; background:#fffbeb; }
@@ -159,7 +163,7 @@ let staff = localStorage.getItem('fair_staff') || '';
 let customers = [], custState = 'loading', results = [], visits = [];
 let form = null;   // 入力中の1件（null＝未選択）
 
-function blank(){ return { id:'', code:'', name:'', address:'', tel:'', area:'', inMaster:false, md:false, panaJoin:false, panaForm:false, credit:false, cash:false, garapon:'', plan:'', memo:'' }; }
+function blank(){ return { id:'', code:'', card:'', name:'', address:'', tel:'', area:'', inMaster:false, md:false, panaJoin:false, panaForm:false, credit:false, cash:false, garapon:'', plan:'', memo:'' }; }
 
 function start(){
   document.getElementById('pin').style.display = 'none';
@@ -217,6 +221,12 @@ function toKana(str){
     .replace(/[ぁ-ん]/g, c => String.fromCharCode(c.charCodeAt(0)+0x60));
 }
 const norm = s => toKana(s).replace(/[-\s　]/g,'').toLowerCase();
+// パナカード：顧客マスタのカード区分（終了は除く）か、フェアで入会した人
+const cardHolder = card => /ﾊﾟﾅ|パナ/.test(card||'') && !/終了/.test(card||'');
+const isPana = v => cardHolder(v.card) || !!v.panaJoin;
+const panaBadge = (card, big) => cardHolder(card)
+  ? '<span class="pana'+(big?' big':'')+'">💳 '+(big?'パナカード会員（'+esc(card)+'）':'パナカード')+'</span>'
+  : (/終了/.test(card||'') ? '<span class="pana end'+(big?' big':'')+'">パナカード終了</span>' : '');
 const areaOf = c => { const m = String((c&&c.ku)||'').match(/(\d+)\s*区/); return m ? m[1]+'区' : ''; };
 const telOf = c => (c.telList && c.telList.length) ? c.telList.join(' / ') : (c.tel||'');
 
@@ -235,7 +245,7 @@ function codeEnter(){
 }
 function pickCust(c){
   stopScan();
-  form = Object.assign(blank(), { code:c.no||'', name:c.name, address:c.address||'', tel:telOf(c), area:areaOf(c), inMaster:true });
+  form = Object.assign(blank(), { code:c.no||'', card:c.card||'', name:c.name, address:c.address||'', tel:telOf(c), area:areaOf(c), inMaster:true });
   renderForm();
 }
 
@@ -342,7 +352,7 @@ function onSearch(){
   results = byCode.concat(customers.filter(c => !byCode.includes(c) && (norm(c.name).includes(q) || norm(c.kana).includes(q) ||
     (/^\d{3,}$/.test(qt) && c.tels && c.tels.includes(qt)) || (c.address && c.address.includes(raw))))).slice(0,15);
   box.innerHTML = (results.length ? results.map((c,i) =>
-    '<div class="cand" onclick="pick('+i+')"><div class="code">No.'+esc(c.no)+'</div><div class="n">'+esc(areaOf(c))+'　'+esc(c.name)+' 様</div><div class="s">'+esc(telOf(c))+'　'+esc(c.address)+'</div></div>').join('')
+    '<div class="cand" onclick="pick('+i+')"><div class="code">No.'+esc(c.no)+'</div><div class="n">'+esc(areaOf(c))+'　'+esc(c.name)+' 様'+panaBadge(c.card)+'</div><div class="s">'+esc(telOf(c))+'　'+esc(c.address)+'</div></div>').join('')
     : '<div class="msg">顧客マスタに見つかりません</div>') + newBtn(raw);
 }
 function newBtn(raw){ return '<button class="newbtn" onclick="pickNew()">＋「'+esc(raw)+'」さんを新規のお客様として入力</button>'; }
@@ -369,7 +379,8 @@ function renderForm(){
   const a = document.getElementById('pickedArea');
   if (!on){ a.innerHTML=''; return; }
   const dup = !editing && visits.some(v => norm(v.name) === norm(form.name));
-  a.innerHTML = '<div class="picked">' +
+  a.innerHTML = '<div class="picked">' + panaBadge(form.card, true) +
+    (!cardHolder(form.card) && form.panaJoin ? '<span class="pana big">💳 パナカード（フェアで入会）</span>' : '') +
     '<div style="margin-bottom:8px">'+(editing ? '<span class="tag" style="background:#dbeafe;color:#1e40af">№'+esc(form.no||'')+' を変更中</span> ' : '') +
     (form.inMaster ? '<span class="tag">顧客マスタから'+(form.code?'　No.'+esc(form.code):'')+'</span>' : '<span class="tag new">新規のお客様</span>')+'</div>' +
     row('お名前','name') + row('住所','address') + row('電話','tel','tel') +
@@ -451,8 +462,8 @@ function renderList(){
   if (!visits.length){ el.innerHTML='<div class="msg">まだ記録はありません</div>'; return; }
   el.innerHTML = visits.map((v,i) => {
     const mk = CHKS.filter(([k])=>v[k]).map(([,l])=>'<span class="mk">'+l+'</span>').join('') + (v.garapon?'<span class="mk g">ｶﾞﾗﾎﾟﾝ '+esc(v.garapon)+'</span>':'');
-    return '<div class="item" onclick="editVisit('+i+')"><div class="no">'+esc(v.no||'…')+'</div><div class="b">' +
-      '<div class="n">'+esc(v.area||'')+'　'+esc(v.name)+' 様</div>' +
+    return '<div class="item'+(isPana(v)?' pa':'')+'" onclick="editVisit('+i+')"><div class="no">'+esc(v.no||'…')+'</div><div class="b">' +
+      '<div class="n">'+esc(v.area||'')+'　'+esc(v.name)+' 様'+(cardHolder(v.card) ? panaBadge(v.card) : (v.panaJoin ? '<span class="pana">💳 入会</span>' : ''))+'</div>' +
       '<div class="s">'+esc(v.time)+' 受付 '+esc(v.staff)+(v.plan?'　予定 '+esc(v.plan):'')+'</div>' +
       (mk?'<div>'+mk+'</div>':'') + (v.memo?'<div class="s">'+esc(v.memo)+'</div>':'') +
       (v.pend?'<div class="pend">⏳ 送信待ち（自動で送ります）</div>':'')+'</div></div>';

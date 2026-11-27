@@ -413,6 +413,7 @@ function doGet(e) {
     const out = d.slice(1).filter(function(r) { return r[1]; }).map(function(r) {
       return {
         no:   String(r[0] || ''),         // A列 顧客番号（フェアのバーコード読み取りで使う）
+        card: String(r[11] || ''),        // L列 カード区分（フェアでパナカードの人を目立たせる）
         name: String(r[1] || ''),
         kana: String(r[2] || ''),
         tel:  String(r[3] || ''),
