@@ -63,6 +63,7 @@ function fairGet_(e) {
     const sh = fairSheet_();
     return fairJson_({ url: sh.getParent().getUrl() + '#gid=' + sh.getSheetId() });
   }
+  if (p.action === 'fairInfo') return fairInfoGet_();
   const g = giftGet_(p); if (g) return g;
   if (p.action !== 'fairList') return null;
   const date = String(p.date || Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy-MM-dd'));
@@ -122,6 +123,7 @@ function fairCalCreate_(d) {
 
 // doPost から呼ぶ。fairVisit＝追加（同じ送信IDなら上書き＝あとから変更）／fairDelete＝取消
 function fairPost_(data) {
+  if (data && data.action === 'fairInfoSave') return fairInfoSave_(data);
   if (data && (data.action === 'fairGift' || data.action === 'fairGiftDelete')) return giftPost_(data);
   if (!data || (data.action !== 'fairVisit' && data.action !== 'fairDelete')) return null;
   const lock = LockService.getScriptLock();
@@ -271,4 +273,56 @@ function giftPost_(data) {
   } finally {
     lock.releaseLock();
   }
+}
+
+// ===== 基本情報（招待状部数・記念品の数など）と残数 =====
+const INFO_SHEET_NAME = 'フェア基本情報';
+const INFO_KEYS = [['name', 'フェア名'], ['start', '開始日'], ['end', '終了日'], ['invites', '招待状部数'], ['gifts', '記念品の数']];
+
+function infoSheet_() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sh = ss.getSheetByName(INFO_SHEET_NAME);
+  if (!sh) {
+    sh = ss.insertSheet(INFO_SHEET_NAME);
+    sh.getRange(1, 1, 1, 2).setValues([['項目', '値']]).setFontWeight('bold').setBackground('#fde68a');
+    sh.getRange(2, 1, INFO_KEYS.length, 1).setValues(INFO_KEYS.map(function(k) { return [k[1]]; }));
+    sh.getRange('B:B').setNumberFormat('@');
+    sh.setColumnWidth(1, 120); sh.setColumnWidth(2, 200);
+  }
+  return sh;
+}
+function infoRead_() {
+  const v = infoSheet_().getRange(2, 2, INFO_KEYS.length, 1).getDisplayValues();
+  const o = {};
+  INFO_KEYS.forEach(function(k, i) { o[k[0]] = String(v[i][0] || '').replace(/\//g, '-'); });
+  return o;
+}
+
+// 期間中（開始日〜終了日、未設定なら全部）の来店数・記念品を渡した数
+function fairInfoGet_() {
+  const info = infoRead_();
+  const inRange = function(d) { return (!info.start || d >= info.start) && (!info.end || d <= info.end); };
+  let raiten = 0, given = 0, notGiven = 0, giftRows = 0;
+  const vs = fairSheet_(), vl = vs.getLastRow();
+  if (vl >= 2) vs.getRange(2, 1, vl - 1, FAIR_HEADERS.length).getDisplayValues().forEach(function(r) {
+    if (!inRange(fairYmd_(r[0]))) return;
+    raiten++;
+    if (r[25] === '未渡し') notGiven++; else given++;
+  });
+  const gs = giftSheet_(), gl = gs.getLastRow();
+  if (gl >= 2) gs.getRange(2, 1, gl - 1, GIFT_HEADERS.length).getDisplayValues().forEach(function(r) {
+    if (!inRange(fairYmd_(r[0]))) return;
+    giftRows++;
+    if (r[13] === '未渡し') notGiven++; else given++;
+  });
+  const total = Number(String(info.gifts).replace(/[^\d]/g, '')) || 0;
+  return fairJson_({ ok: true, info: info, raiten: raiten, haitatsu: giftRows, given: given, notGiven: notGiven,
+    remain: total ? total - given : null });
+}
+
+function fairInfoSave_(data) {
+  const sh = infoSheet_();
+  const d = data.info || {};
+  sh.getRange(2, 2, INFO_KEYS.length, 1).setValues(INFO_KEYS.map(function(k) { return [String(d[k[0]] || '')]; }));
+  return fairInfoGet_();
 }

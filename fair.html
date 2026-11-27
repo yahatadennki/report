@@ -39,6 +39,15 @@
   .cand .s { font-size:12px; color:var(--soft); }
   .scan { margin-top:8px; width:100%; padding:12px; border:none; border-radius:10px; background:#0f766e; color:#fff; font-size:16px; font-weight:700; }
   .code { font-size:11px; color:#0f766e; font-weight:700; }
+  .infobar { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-top:12px; }
+  .infobar div { background:rgba(255,255,255,.2); border-radius:10px; padding:6px 4px; text-align:center; }
+  .infobar b { display:block; font-size:20px; line-height:1.2; }
+  .infobar span { font-size:11px; }
+  .infobar .gift { background:#fff; color:#c2410c; }
+  .infobar .gift.low { background:#dc2626; color:#fff; }
+  .info-grid { display:grid; grid-template-columns:90px 1fr; gap:8px; align-items:center; }
+  .info-grid span { font-size:13px; color:var(--soft); }
+  .info-grid input { padding:10px; font-size:16px; }
   .tabs { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:14px; }
   .tabs button { padding:12px 0; font-size:16px; font-weight:700; border:2px solid var(--line); background:#fff; border-radius:12px; color:var(--soft); }
   .tabs #tabRaiten.on { background:#ea580c; border-color:#c2410c; color:#fff; }
@@ -104,12 +113,28 @@
 <div class="wrap" id="app" style="display:none">
   <div class="head">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
-      <div><h1>🎪 フェア来店記録</h1><div class="d" id="today"></div></div>
+      <div><h1 id="title">🎪 フェア来店記録</h1><div class="d" id="today"></div>
+        <button onclick="toggleInfo()" style="margin-top:6px;background:rgba(255,255,255,.25);color:#fff;border:none;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:700">⚙ 基本情報</button></div>
       <a id="sheetLink" href="https://docs.google.com/spreadsheets/d/1Cg5FACS_HqpAlchsU6O4ansNHc7GO_FOWAYhpX_72_w/edit" target="_blank"
          style="flex:none;background:#fff;color:#c2410c;font-weight:700;font-size:13px;text-decoration:none;padding:8px 12px;border-radius:999px">📊 シートを開く</a>
     </div>
+    <div class="infobar" id="infoBar"></div>
     <div class="areas" id="areas"></div>
     <div class="nogift" id="nogiftSum"></div>
+  </div>
+
+  <div class="box" id="infoBox" style="display:none">
+    <p class="lbl">⚙ 基本情報</p>
+    <div class="info-grid">
+      <span>フェア名</span><input id="inName" placeholder="例）2026 冬フェア">
+      <span>開始日</span><input type="date" id="inStart">
+      <span>終了日</span><input type="date" id="inEnd">
+      <span>招待状部数</span><input type="number" inputmode="numeric" id="inInvites" placeholder="部">
+      <span>記念品の数</span><input type="number" inputmode="numeric" id="inGifts" placeholder="個">
+    </div>
+    <div class="msg">記念品の残り＝記念品の数 − 渡した数（期間中の来店＋配達。「まだ渡してない」の人は数えません）</div>
+    <button class="go" onclick="saveInfo()">基本情報を保存する</button>
+    <button class="sub" onclick="toggleInfo(false)">閉じる</button>
   </div>
 
   <div class="tabs">
@@ -247,6 +272,46 @@ function renderStaff(){
     '<button class="opt '+(s===staff?'on':'')+'" onclick="setStaff(\''+s+'\')">'+s+'</button>').join('');
 }
 function setStaff(s){ staff = s; localStorage.setItem('fair_staff', s); renderStaff(); }
+
+/* ---------- 基本情報（招待状部数・記念品の数）と残り ---------- */
+let info = null;
+function showInfo(j){
+  if (!j || !j.info) return;
+  info = j;
+  const i = j.info, num = s => Number(String(s||'').replace(/[^\d]/g,'')) || 0;
+  if (i.name) document.getElementById('title').textContent = '🎪 ' + i.name;
+  const inv = num(i.invites), tot = num(i.gifts);
+  const period = (i.start || i.end) ? '期間計' : '累計';
+  const rate = inv ? '（'+(Math.round(j.raiten / inv * 1000) / 10)+'%）' : '';
+  const low = j.remain !== null && j.remain <= Math.max(5, tot * 0.1);
+  document.getElementById('infoBar').innerHTML =
+    '<div><b>'+(inv ? inv : '—')+'</b><span>招待状（部）</span></div>' +
+    '<div><b>'+j.raiten+'</b><span>来店 '+period+rate+'</span></div>' +
+    '<div class="gift'+(low?' low':'')+'"><b>'+(j.remain === null ? '—' : j.remain)+'</b><span>'+(tot ? '記念品 残り／'+tot : '記念品の数を⚙に')+'</span></div>';
+}
+async function loadInfo(){
+  try { showInfo(await (await fetch(GAS+'?action=fairInfo')).json()); } catch(e){}
+}
+function toggleInfo(open){
+  const box = document.getElementById('infoBox');
+  const show = open === undefined ? box.style.display === 'none' : open;
+  box.style.display = show ? 'block' : 'none';
+  if (show){
+    const i = (info && info.info) || {};
+    document.getElementById('inName').value = i.name || '';
+    document.getElementById('inStart').value = i.start || '';
+    document.getElementById('inEnd').value = i.end || '';
+    document.getElementById('inInvites').value = i.invites || '';
+    document.getElementById('inGifts').value = i.gifts || '';
+    box.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+}
+async function saveInfo(){
+  const v = id => document.getElementById(id).value.trim();
+  const data = { action:'fairInfoSave', info:{ name:v('inName'), start:v('inStart'), end:v('inEnd'), invites:v('inInvites'), gifts:v('inGifts') } };
+  try { showInfo(await post(data)); toast('✅ 基本情報を保存しました'); toggleInfo(false); window.scrollTo({top:0,behavior:'smooth'}); }
+  catch(e){ toast('⚠ 保存できませんでした'); }
+}
 
 /* ---------- 区域別人数（Excel右側の表） ---------- */
 function renderAreas(){
@@ -562,6 +627,7 @@ async function sendOne(v){
     else if (j.cal === 'nocal') toast('⚠ '+v.planStaff+'さんのカレンダーに入れられません（共有されていません）');
     else if (j.cal && j.cal.indexOf('error') === 0) toast('⚠ カレンダーに入れられませんでした');
     renderList();
+    loadInfo();   // 記念品の残りを更新
   } catch(e){ /* 端末に残し、30秒ごとに再送 */ }
 }
 function resendPending(){ pending().forEach(sendOne); }
@@ -580,6 +646,7 @@ async function loadList(){
   visits = mergeList(Array.isArray(vl) ? vl : [], false).map(v => Object.assign(v, {kind:'raiten'}));
   gifts  = mergeList(Array.isArray(gl) ? gl : [], true).map(v => Object.assign(v, {kind:'gift'}));
   renderList();
+  loadInfo();
 }
 function renderList(){
   renderAreas();
@@ -614,7 +681,7 @@ async function delVisit(){
   const id = form.id, isGift = form.kind === 'gift';
   setPending(pending().filter(p=>p.id!==id));
   visits = visits.filter(v=>v.id!==id); gifts = gifts.filter(v=>v.id!==id); renderList(); clearForm();
-  try { await post({action: isGift ? 'fairGiftDelete' : 'fairDelete', id}); toast('取り消しました'); } catch(e){ toast('⚠ 取消を送れませんでした'); loadList(); }
+  try { await post({action: isGift ? 'fairGiftDelete' : 'fairDelete', id}); toast('取り消しました'); loadInfo(); } catch(e){ toast('⚠ 取消を送れませんでした'); loadList(); }
 }
 
 // 準備（上の定義）がすべて済んでから起動する。PINを覚えていればそのまま開く
