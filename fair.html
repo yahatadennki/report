@@ -295,11 +295,12 @@ let staff = localStorage.getItem('fair_staff') || '';
 let customers = [], custState = 'loading', results = [], visits = [];
 let form = null;   // 入力中の1件（null＝未選択）
 // ボタンの onclick の中で「form」と書くとボタン自身の form（null）を指してしまうので、必ずこの関数を使う
-// 顧客コードのバーコード（CODE128。レジのバーコードリーダーで読める太さ）
+// 顧客コードのバーコード（案内状と同じ NW-7。レジのバーコードリーダーで読める太さ）
 function drawBc(){
   const el = document.getElementById('custBc');
   if (!el || !form || !form.code || !window.JsBarcode) return;
-  try { JsBarcode(el, String(form.code).trim(), { format:'CODE128', width:4, height:120, margin:24, fontSize:28, fontOptions:'bold', displayValue:true }); } catch(e){ el.outerHTML = '<div class="msg">バーコードを作れませんでした</div>'; }
+  const c = String(form.code).replace(/[^0-9]/g, '').padStart(8, '0');   // 案内状と同じ NW-7：A＋8桁＋A
+  try { JsBarcode(el, 'A' + c + 'A', { format:'codabar', width:3, height:130, margin:24, fontSize:28, fontOptions:'bold', displayValue:true, text:c }); } catch(e){ el.outerHTML = '<div class="msg">バーコードを作れませんでした</div>'; }
 }
 function setF(k, v){ form[k] = v; renderForm(); }
 function togF(k){ form[k] = !form[k]; renderForm(); }
