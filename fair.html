@@ -39,6 +39,19 @@
   .cand .s { font-size:12px; color:var(--soft); }
   .scan { margin-top:8px; width:100%; padding:12px; border:none; border-radius:10px; background:#0f766e; color:#fff; font-size:16px; font-weight:700; }
   .code { font-size:11px; color:#0f766e; font-weight:700; }
+  .tabs { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:14px; }
+  .tabs button { padding:12px 0; font-size:16px; font-weight:700; border:2px solid var(--line); background:#fff; border-radius:12px; color:var(--soft); }
+  .tabs #tabRaiten.on { background:#ea580c; border-color:#c2410c; color:#fff; }
+  .tabs #tabGift.on { background:#0369a1; border-color:#075985; color:#fff; }
+  body.gift .head { background:linear-gradient(135deg,#0ea5e9,#0369a1); }
+  body.gift .box#formBox { outline:3px solid #7dd3fc; }
+  .giftbox { border-top:4px solid #0369a1; }
+  .giftbtn { width:100%; padding:12px; margin-top:12px; border:2px dashed #fca5a5; background:#fff; color:#b91c1c; border-radius:10px; font-size:15px; font-weight:700; }
+  .giftbtn.on { background:#dc2626; border:2px solid #b91c1c; color:#fff; }
+  .nogift { margin-top:8px; font-size:13px; font-weight:700; }
+  .nogift:empty { display:none; }
+  .ng { display:inline-block; font-size:11px; padding:1px 8px; border-radius:999px; background:#dc2626; color:#fff; font-weight:700; margin-left:6px; vertical-align:middle; }
+  .item.ngi { background:#fef2f2; }
   .gobar { position:fixed; left:0; right:0; bottom:0; padding:10px 14px calc(10px + env(safe-area-inset-bottom)); background:rgba(255,248,235,.95); box-shadow:0 -2px 10px rgba(0,0,0,.12); z-index:40; }
   .gobar .go { margin:0 auto; display:block; max-width:652px; }
   .toast { bottom:96px !important; }
@@ -96,10 +109,16 @@
          style="flex:none;background:#fff;color:#c2410c;font-weight:700;font-size:13px;text-decoration:none;padding:8px 12px;border-radius:999px">📊 シートを開く</a>
     </div>
     <div class="areas" id="areas"></div>
+    <div class="nogift" id="nogiftSum"></div>
+  </div>
+
+  <div class="tabs">
+    <button id="tabRaiten" class="on" onclick="setMode('raiten')">🎪 来店</button>
+    <button id="tabGift" onclick="setMode('gift')">🚚 配達で記念品</button>
   </div>
 
   <div class="box" id="formBox">
-    <p class="lbl">受付した人</p>
+    <p class="lbl" id="staffLbl">受付した人</p>
     <div class="grid g4" id="staff"></div>
 
     <p class="lbl">お客様 <button class="clear" id="clearBtn" onclick="clearForm()" style="display:none">やり直す</button></p>
@@ -113,18 +132,23 @@
     <div id="pickedArea"></div>
 
     <div id="detail" style="display:none">
+      <button class="giftbtn" id="giftBtn" onclick="form.notGiven=!form.notGiven;renderForm()"></button>
+
       <p class="lbl">区域</p>
       <div class="grid g5" id="areaBtns"></div>
 
+      <div id="raitenOnly">
       <p class="lbl">チェック</p>
       <div class="grid g3" id="chks"></div>
 
       <p class="lbl">ガラポン</p>
       <div class="grid g5" id="gara"></div>
+      </div>
 
       <p class="lbl">内容</p>
       <textarea id="memo" rows="2" placeholder="例）エアコン買換え・記入済後日・口座未 など" oninput="form.memo=this.value"></textarea>
 
+      <div id="planBox">
       <p class="lbl">予定（入れるとカレンダーに入ります）</p>
       <div class="plan">
         <div class="grid" style="grid-template-columns:1.3fr 1fr;gap:8px">
@@ -141,6 +165,7 @@
           <button class="sub" onclick="clearPlan()">予定を消す</button>
         </div>
       </div>
+      </div>
 
       <div style="height:84px"></div>
       <button class="sub" id="delBtn" onclick="delVisit()" style="display:none">この記録を取り消す</button>
@@ -150,6 +175,13 @@
   <div class="box">
     <p class="lbl">本日の来店一覧（タップで変更）</p>
     <div id="list"><div class="msg">読み込み中…</div></div>
+  </div>
+
+  <div class="box giftbox">
+    <p class="lbl">🚚 本日の配達で記念品 <span id="giftCnt"></span>
+      <a id="giftSheetLink" href="https://docs.google.com/spreadsheets/d/1Cg5FACS_HqpAlchsU6O4ansNHc7GO_FOWAYhpX_72_w/edit" target="_blank" style="float:right;font-size:12px;color:#0369a1">📊 シート</a></p>
+    <div class="msg" style="padding-top:0">来店とは別に記録します（来店の人数・お礼はがきには入りません）</div>
+    <div id="giftList"><div class="msg">読み込み中…</div></div>
   </div>
 </div>
 <!-- 記録ボタンは画面の下に固定（バーコードを読んだらスクロールせずに押せる） -->
@@ -187,7 +219,16 @@ let staff = localStorage.getItem('fair_staff') || '';
 let customers = [], custState = 'loading', results = [], visits = [];
 let form = null;   // 入力中の1件（null＝未選択）
 
-function blank(){ return { id:'', code:'', card:'', name:'', address:'', tel:'', area:'', inMaster:false, md:false, panaJoin:false, panaForm:false, credit:false, cash:false, garapon:'', plan:'', memo:'', planDate:'', planTime:'', planHours:'1', planWhat:'', planStaff:'' }; }
+let mode = 'raiten', gifts = [];   // raiten＝来店／gift＝配達で記念品（来店とは別のシート・集計）
+function setMode(m){
+  mode = m;
+  document.getElementById('tabRaiten').classList.toggle('on', m === 'raiten');
+  document.getElementById('tabGift').classList.toggle('on', m === 'gift');
+  document.body.classList.toggle('gift', m === 'gift');
+  if (form && !form.id) form.kind = m;   // 入力途中なら切り替え先として記録
+  renderForm();
+}
+function blank(){ return { kind:mode, notGiven:false, id:'', code:'', card:'', name:'', address:'', tel:'', area:'', inMaster:false, md:false, panaJoin:false, panaForm:false, credit:false, cash:false, garapon:'', plan:'', memo:'', planDate:'', planTime:'', planHours:'1', planWhat:'', planStaff:'' }; }
 
 function start(){
   document.getElementById('pin').style.display = 'none';
@@ -196,6 +237,7 @@ function start(){
   document.getElementById('today').textContent = d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日（'+'日月火水木金土'[d.getDay()]+'）';
   renderStaff(); renderForm(); renderAreas(); loadCustomers(); loadList(); resendPending();
   fetch(GAS+'?action=fairSheetUrl').then(r=>r.json()).then(j=>{ if (j.url) document.getElementById('sheetLink').href = j.url; }).catch(()=>{});
+  fetch(GAS+'?action=fairGiftSheetUrl').then(r=>r.json()).then(j=>{ if (j.url) document.getElementById('giftSheetLink').href = j.url; }).catch(()=>{});
   setInterval(()=>{ if (pending().length) resendPending(); }, 30000);
   setInterval(()=>{ if (!form || !form.id) loadList(); }, 60000);   // 他の端末の分も反映
 }
@@ -210,7 +252,10 @@ function setStaff(s){ staff = s; localStorage.setItem('fair_staff', s); renderSt
 function renderAreas(){
   const c = {}; visits.forEach(v => { c[v.area] = (c[v.area]||0)+1; });
   document.getElementById('areas').innerHTML = AREAS.map(a => '<div><b>'+(c[a]||0)+'</b><span>'+a+'</span></div>').join('') +
-    '<div class="tot"><b>'+visits.length+'</b><span>合計</span></div>';
+    '<div class="tot"><b>'+visits.length+'</b><span>来店計</span></div>';
+  const ngV = visits.filter(v=>v.notGiven).length, ngG = gifts.filter(v=>v.notGiven).length;
+  document.getElementById('nogiftSum').innerHTML = (ngV||ngG)
+    ? '🎁 記念品まだ渡してない：来店 '+ngV+'人・配達 '+ngG+'人' : '';
 }
 
 /* ---------- 顧客マスタ（受注日報と同じ読み込み） ---------- */
@@ -402,14 +447,30 @@ function renderForm(){
   document.getElementById('formBox').classList.toggle('edit', editing);
   const a = document.getElementById('pickedArea');
   document.getElementById('goBar').style.display = on ? 'block' : 'none';
-  if (!on){ a.innerHTML=''; return; }
-  const dup = !editing && visits.some(v => norm(v.name) === norm(form.name));
+  if (!on){
+    a.innerHTML='';
+    document.body.classList.toggle('gift', mode === 'gift');
+    document.getElementById('staffLbl').textContent = mode === 'gift' ? '渡した人' : '受付した人';
+    return;
+  }
+  const isGift = form.kind === 'gift';
+  document.body.classList.toggle('gift', isGift);
+  document.getElementById('staffLbl').textContent = isGift ? '渡した人' : '受付した人';
+  document.getElementById('raitenOnly').style.display = isGift ? 'none' : 'block';
+  document.getElementById('planBox').style.display = isGift ? 'none' : 'block';
+  const gb = document.getElementById('giftBtn');
+  gb.classList.toggle('on', !!form.notGiven);
+  gb.textContent = form.notGiven ? '🎁 記念品まだ渡してない（押すと「渡した」に戻る）' : '🎁 記念品が足りずまだ渡してないときは押す';
+  const same = arr => arr.some(v => v.id !== form.id && norm(v.name) === norm(form.name));
+  const dup = isGift ? same(gifts) : same(visits);
+  const cross = isGift ? same(visits) : same(gifts);
   a.innerHTML = '<div class="picked">' + panaBadge(form.card, true) +
     (!cardHolder(form.card) && form.panaJoin ? '<span class="pana big">💳 パナカード（フェアで入会）</span>' : '') +
     '<div style="margin-bottom:8px">'+(editing ? '<span class="tag" style="background:#dbeafe;color:#1e40af">№'+esc(form.no||'')+' を変更中</span> ' : '') +
     (form.inMaster ? '<span class="tag">顧客マスタから'+(form.code?'　No.'+esc(form.code):'')+'</span>' : '<span class="tag new">新規のお客様</span>')+'</div>' +
     row('お名前','name') + row('住所','address') + row('電話','tel','tel') +
-    (dup ? '<div class="warn">⚠ 本日すでに来店記録があります</div>' : '') + '</div>';
+    (dup ? '<div class="warn">⚠ 本日すでに'+(isGift?'配達で記念品':'来店')+'の記録があります</div>' : '') +
+    (cross ? '<div class="warn">⚠ 本日'+(isGift?'来店':'配達で記念品')+'の記録もあります（記念品が二重にならないように）</div>' : '') + '</div>';
   document.getElementById('areaBtns').innerHTML = AREAS.concat(['不明']).map(x => {
     const v = x==='不明' ? '' : x;
     return '<button class="opt '+(form.area===v?'on':'')+'" onclick="form.area=\''+v+'\';renderForm()">'+x+'</button>';
@@ -421,7 +482,7 @@ function renderForm(){
   const me = document.getElementById('memo');
   if (me.value !== form.memo) me.value = form.memo;
   renderPlan();
-  document.getElementById('goBtn').textContent = editing ? '変更を保存する' : '来店を記録する';
+  document.getElementById('goBtn').textContent = editing ? '変更を保存する' : (isGift ? '🚚 配達で記念品を記録する' : '来店を記録する');
   document.getElementById('goBtn').classList.toggle('blue', editing);
   document.getElementById('delBtn').style.display = editing ? 'block' : 'none';
 }
@@ -474,17 +535,20 @@ async function submitVisit(){
   if (form.planDate && !form.planStaff){ toast('予定を入れる人（だれのカレンダー）を選んでください'); return; }
   const now = new Date();
   const editing = !!form.id;
-  const v = Object.assign({}, form, { action:'fairVisit', name:form.name.trim(),
+  const isGift = form.kind === 'gift';
+  if (isGift) Object.assign(form, { planDate:'', planTime:'', planStaff:'', planWhat:'' });   // 配達は予定なし
+  const arr = isGift ? gifts : visits;
+  const v = Object.assign({}, form, { action: isGift ? 'fairGift' : 'fairVisit', name:form.name.trim(),
     id: form.id || ('f'+now.getTime()+Math.random().toString(36).slice(2,6)),
     date: form.date || TODAY, time: form.time || hm(now), staff: form.staff || staff });
   delete v.pend;
   // 先に端末へ保存してから送る（電波が悪くても消えない）
   setPending(pending().filter(p=>p.id!==v.id).concat([v]));
-  const i = visits.findIndex(x=>x.id===v.id);
+  const i = arr.findIndex(x=>x.id===v.id);
   const shown = Object.assign({pend:true}, v);
-  if (i>=0) visits[i] = Object.assign({}, visits[i], shown); else visits.unshift(shown);
+  if (i>=0) arr[i] = Object.assign({}, arr[i], shown); else arr.unshift(shown);
   renderList();
-  toast('✅ '+v.name+' 様を'+(editing?'変更':'記録')+'しました');
+  toast('✅ '+v.name+' 様を'+(isGift?'配達で記念品として':'')+(editing?'変更':'記録')+'しました');
   clearForm();
   sendOne(v);
 }
@@ -492,7 +556,7 @@ async function sendOne(v){
   try {
     const j = await post(v);
     setPending(pending().filter(p=>p.id!==v.id));
-    const x = visits.find(a=>a.id===v.id); if (x){ x.pend=false; if (j.no) x.no=j.no; x.calOk = !!v.planDate && (j.cal==='ok'||j.cal==='kept'); }
+    const x = visits.concat(gifts).find(a=>a.id===v.id); if (x){ x.pend=false; if (j.no) x.no=j.no; x.calOk = !!v.planDate && (j.cal==='ok'||j.cal==='kept'); }
     if (j.cal === 'ok') toast('📅 '+v.planStaff+'さんのカレンダーに入れました');
     else if (j.cal === 'removed') toast('📅 カレンダーの予定を消しました');
     else if (j.cal === 'nocal') toast('⚠ '+v.planStaff+'さんのカレンダーに入れられません（共有されていません）');
@@ -503,34 +567,42 @@ async function sendOne(v){
 function resendPending(){ pending().forEach(sendOne); }
 
 /* ---------- 一覧 ---------- */
+// サーバーの一覧に、まだ送れていない端末の分を重ねる
+function mergeList(list, isGift){
+  const p = pending().filter(x => x.date===TODAY && ((x.action==='fairGift') === isGift));
+  const merged = list.map(l => { const q = p.find(x=>x.id===l.id); return q ? Object.assign({}, l, q, {pend:true}) : l; });
+  p.filter(x=>!list.some(l=>l.id===x.id)).forEach(x=>merged.push(Object.assign({pend:true}, x)));
+  return merged.reverse();
+}
 async function loadList(){
-  try {
-    const list = await (await fetch(GAS+'?action=fairList&date='+TODAY)).json();
-    const p = pending().filter(x=>x.date===TODAY);
-    const merged = list.map(l => { const q = p.find(x=>x.id===l.id); return q ? Object.assign({}, l, q, {pend:true}) : l; });
-    p.filter(x=>!list.some(l=>l.id===x.id)).forEach(x=>merged.push(Object.assign({pend:true}, x)));
-    visits = merged.reverse();
-  } catch(e){
-    visits = pending().filter(x=>x.date===TODAY).map(x=>Object.assign({pend:true},x));
-  }
+  const get = async a => { try { return await (await fetch(GAS+'?action='+a+'&date='+TODAY)).json(); } catch(e){ return []; } };
+  const [vl, gl] = await Promise.all([get('fairList'), get('fairGiftList')]);
+  visits = mergeList(Array.isArray(vl) ? vl : [], false).map(v => Object.assign(v, {kind:'raiten'}));
+  gifts  = mergeList(Array.isArray(gl) ? gl : [], true).map(v => Object.assign(v, {kind:'gift'}));
   renderList();
 }
 function renderList(){
   renderAreas();
+  const ngBadge = v => v.notGiven ? '<span class="ng">🎁 まだ渡してない</span>' : '';
   const el = document.getElementById('list');
-  if (!visits.length){ el.innerHTML='<div class="msg">まだ記録はありません</div>'; return; }
-  el.innerHTML = visits.map((v,i) => {
+  el.innerHTML = !visits.length ? '<div class="msg">まだ記録はありません</div>' : visits.map((v,i) => {
     const mk = CHKS.filter(([k])=>v[k]).map(([,l])=>'<span class="mk">'+l+'</span>').join('') + (v.garapon?'<span class="mk g">ｶﾞﾗﾎﾟﾝ '+esc(v.garapon)+'</span>':'');
-    return '<div class="item'+(isPana(v)?' pa':'')+'" onclick="editVisit('+i+')"><div class="no">'+esc(v.no||'…')+'</div><div class="b">' +
-      '<div class="n">'+esc(v.area||'')+'　'+esc(v.name)+' 様'+(cardHolder(v.card) ? panaBadge(v.card) : (v.panaJoin ? '<span class="pana">💳 入会</span>' : ''))+'</div>' +
+    return '<div class="item'+(isPana(v)?' pa':'')+(v.notGiven?' ngi':'')+'" onclick="editItem(\'raiten\','+i+')"><div class="no">'+esc(v.no||'…')+'</div><div class="b">' +
+      '<div class="n">'+esc(v.area||'')+'　'+esc(v.name)+' 様'+(cardHolder(v.card) ? panaBadge(v.card) : (v.panaJoin ? '<span class="pana">💳 入会</span>' : ''))+ngBadge(v)+'</div>' +
       '<div class="s">'+esc(v.time)+' 受付 '+esc(v.staff)+(planText(v)?'　📅 '+esc(planText(v))+(v.planDate&&!v.pend&&!v.calOk?' ⚠未登録':''):'')+'</div>' +
       (mk?'<div>'+mk+'</div>':'') + (v.memo?'<div class="s">'+esc(v.memo)+'</div>':'') +
       (v.pend?'<div class="pend">⏳ 送信待ち（自動で送ります）</div>':'')+'</div></div>';
   }).join('');
+  document.getElementById('giftCnt').textContent = gifts.length ? gifts.length+'件' : '';
+  document.getElementById('giftList').innerHTML = !gifts.length ? '<div class="msg">まだ記録はありません</div>' : gifts.map((v,i) =>
+    '<div class="item'+(isPana(v)?' pa':'')+(v.notGiven?' ngi':'')+'" onclick="editItem(\'gift\','+i+')"><div class="no" style="color:#0369a1">'+esc(v.no||'…')+'</div><div class="b">' +
+      '<div class="n">'+esc(v.area||'')+'　'+esc(v.name)+' 様'+(cardHolder(v.card) ? panaBadge(v.card) : '')+ngBadge(v)+'</div>' +
+      '<div class="s">'+esc(v.time)+' 渡した人 '+esc(v.staff)+'</div>' + (v.memo?'<div class="s">'+esc(v.memo)+'</div>':'') +
+      (v.pend?'<div class="pend">⏳ 送信待ち（自動で送ります）</div>':'')+'</div></div>').join('');
 }
-function editVisit(i){
-  const v = visits[i]; if (!v) return;
-  form = Object.assign(blank(), v); delete form.pend;
+function editItem(kind, i){
+  const v = (kind === 'gift' ? gifts : visits)[i]; if (!v) return;
+  form = Object.assign(blank(), v, {kind}); delete form.pend;
   renderForm(); window.scrollTo({top: document.getElementById('formBox').offsetTop - 10, behavior:'smooth'});
 }
 async function delVisit(){
@@ -539,10 +611,10 @@ async function delVisit(){
   if (!b.dataset.sure){ b.dataset.sure='1'; b.textContent='もう一度押すと取り消します'; b.style.color='#dc2626';
     setTimeout(()=>{ delete b.dataset.sure; b.textContent='この記録を取り消す'; b.style.color=''; },3000); return; }
   delete b.dataset.sure; b.textContent='この記録を取り消す'; b.style.color='';
-  const id = form.id;
+  const id = form.id, isGift = form.kind === 'gift';
   setPending(pending().filter(p=>p.id!==id));
-  visits = visits.filter(v=>v.id!==id); renderList(); clearForm();
-  try { await post({action:'fairDelete', id}); toast('取り消しました'); } catch(e){ toast('⚠ 取消を送れませんでした'); loadList(); }
+  visits = visits.filter(v=>v.id!==id); gifts = gifts.filter(v=>v.id!==id); renderList(); clearForm();
+  try { await post({action: isGift ? 'fairGiftDelete' : 'fairDelete', id}); toast('取り消しました'); } catch(e){ toast('⚠ 取消を送れませんでした'); loadList(); }
 }
 
 // 準備（上の定義）がすべて済んでから起動する。PINを覚えていればそのまま開く

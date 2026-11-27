@@ -4,7 +4,7 @@
 const FAIR_SHEET_NAME = 'フェア来店記録';
 const FAIR_HEADERS = ['来店日', '№', '区域', 'MD', '名前', 'ﾊﾟﾅｶｰﾄﾞ入会', 'パナカード用紙記入', '内容',
   'クレジット', '現金', '予定日', 'ｶﾞﾗﾎﾟﾝ', '受付', '時刻', '住所', '電話番号', 'マスタ', '送信ID', '顧客コード', 'カード区分',
-  '予定担当', '予定日時', '予定時間', '予定の内容', 'カレンダーID'];
+  '予定担当', '予定日時', '予定時間', '予定の内容', 'カレンダーID', '記念品'];
 const FAIR_COL_ID = 18;
 const FAIR_STAFF_MAIL = {
   '高山': 'yawata51@gmail.com', '伊藤': 'yahata.itou@gmail.com', '服部': 'yahata.hattori@gmail.com',
@@ -63,6 +63,7 @@ function fairGet_(e) {
     const sh = fairSheet_();
     return fairJson_({ url: sh.getParent().getUrl() + '#gid=' + sh.getSheetId() });
   }
+  const g = giftGet_(p); if (g) return g;
   if (p.action !== 'fairList') return null;
   const date = String(p.date || Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy-MM-dd'));
   const sh = fairSheet_();
@@ -77,7 +78,7 @@ function fairGet_(e) {
       date: date, no: r[1], area: r[2], md: !!r[3], name: r[4], panaJoin: !!r[5], panaForm: !!r[6],
       memo: r[7], credit: !!r[8], cash: !!r[9], plan: r[10], garapon: r[11], staff: r[12], time: r[13],
       address: r[14], tel: r[15], inMaster: r[16] === '○', id: r[17], code: r[18], card: r[19],
-      planStaff: r[20], planDate: dt[0] || '', planTime: dt[1] || '', planHours: r[22], planWhat: r[23], calOk: !!r[24]
+      planStaff: r[20], planDate: dt[0] || '', planTime: dt[1] || '', planHours: r[22], planWhat: r[23], calOk: !!r[24], notGiven: r[25] === '未渡し'
     });
   });
   return fairJson_(out);
@@ -121,6 +122,7 @@ function fairCalCreate_(d) {
 
 // doPost から呼ぶ。fairVisit＝追加（同じ送信IDなら上書き＝あとから変更）／fairDelete＝取消
 function fairPost_(data) {
+  if (data && (data.action === 'fairGift' || data.action === 'fairGiftDelete')) return giftPost_(data);
   if (!data || (data.action !== 'fairVisit' && data.action !== 'fairDelete')) return null;
   const lock = LockService.getScriptLock();
   lock.waitLock(20000);
@@ -185,10 +187,87 @@ function fairPost_(data) {
       data.staff || '', data.time || '', data.address || '', data.tel || '',
       data.inMaster ? '○' : '新規', sid, data.code || '', data.card || '',
       data.planDate ? (data.planStaff || '') : '', planDT, data.planDate && data.planTime ? (data.planHours || '1') : '',
-      data.planWhat || '', calId
+      data.planWhat || '', calId, data.notGiven ? '未渡し' : ''
     ]];
     sh.getRange(row, 1, 1, FAIR_HEADERS.length).setValues(vals);
     return fairJson_({ ok: true, no: no, updated: !!hit, cal: cal });
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// ===== 配達で記念品（来店していない人）=====
+// 来店とは別のシート。来店お礼はがき・来店集計には入れない。
+const GIFT_SHEET_NAME = 'フェア配達記念品';
+const GIFT_HEADERS = ['日付', '№', '区域', '名前', '内容', '渡した人', '時刻', '住所', '電話番号', 'マスタ', '送信ID', '顧客コード', 'カード区分', '記念品'];
+const GIFT_COL_ID = 11;
+
+function giftSheet_() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sh = ss.getSheetByName(GIFT_SHEET_NAME);
+  if (!sh) {
+    sh = ss.insertSheet(GIFT_SHEET_NAME);
+    sh.getRange(1, 1, 1, GIFT_HEADERS.length).setValues([GIFT_HEADERS]).setFontWeight('bold').setBackground('#bae6fd');
+    sh.setFrozenRows(1);
+    sh.getRange('A:A').setNumberFormat('yyyy/mm/dd');
+    ['G', 'I'].forEach(function(c) { sh.getRange(c + ':' + c).setNumberFormat('@'); });
+    sh.setColumnWidth(4, 120); sh.setColumnWidth(5, 280);
+  }
+  if (sh.getRange(1, GIFT_HEADERS.length).getValue() !== GIFT_HEADERS[GIFT_HEADERS.length - 1])
+    sh.getRange(1, 1, 1, GIFT_HEADERS.length).setValues([GIFT_HEADERS]).setFontWeight('bold').setBackground('#bae6fd');
+  return sh;
+}
+
+function giftGet_(p) {
+  if (p.action === 'fairGiftSheetUrl') {
+    const sh = giftSheet_();
+    return fairJson_({ url: sh.getParent().getUrl() + '#gid=' + sh.getSheetId() });
+  }
+  if (p.action !== 'fairGiftList') return null;
+  const date = String(p.date || Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy-MM-dd'));
+  const sh = giftSheet_();
+  const lr = sh.getLastRow();
+  if (lr < 2) return fairJson_([]);
+  const out = [];
+  sh.getRange(2, 1, lr - 1, GIFT_HEADERS.length).getDisplayValues().forEach(function(r) {
+    if (fairYmd_(r[0]) !== date) return;
+    out.push({ kind: 'gift', date: date, no: r[1], area: r[2], name: r[3], memo: r[4], staff: r[5], time: r[6],
+      address: r[7], tel: r[8], inMaster: r[9] === '○', id: r[10], code: r[11], card: r[12], notGiven: r[13] === '未渡し' });
+  });
+  return fairJson_(out);
+}
+
+function giftPost_(data) {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    const sh = giftSheet_();
+    const lr = sh.getLastRow();
+    const sid = String(data.id || '');
+    const hit = (sid && lr >= 2)
+      ? sh.getRange(2, GIFT_COL_ID, lr - 1, 1).createTextFinder(sid).matchEntireCell(true).findNext()
+      : null;
+    if (data.action === 'fairGiftDelete') {
+      if (hit) sh.deleteRow(hit.getRow());
+      return fairJson_({ ok: true });
+    }
+    const date = data.date || Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy-MM-dd');
+    let row, no;
+    if (hit) {
+      row = hit.getRow();
+      no = sh.getRange(row, 2).getValue();
+    } else {
+      no = 1;
+      if (lr >= 2) sh.getRange(2, 1, lr - 1, 2).getValues().forEach(function(r) {
+        if (fairYmd_(r[0]) === date) no = Math.max(no, Number(r[1] || 0) + 1);
+      });
+      row = lr + 1;
+    }
+    sh.getRange(row, 1, 1, GIFT_HEADERS.length).setValues([[
+      date.replace(/-/g, '/'), no, data.area || '', data.name || '', data.memo || '', data.staff || '', data.time || '',
+      data.address || '', data.tel || '', data.inMaster ? '○' : '新規', sid, data.code || '', data.card || '', data.notGiven ? '未渡し' : ''
+    ]]);
+    return fairJson_({ ok: true, no: no, updated: !!hit });
   } finally {
     lock.releaseLock();
   }
