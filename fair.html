@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>フェア来店記録 - ヤハタ電機商会</title>
+<style>
+  :root { --sun:#f59e0b; --sun-d:#d97706; --navy:#1a3a5c; --ink:#1f2937; --soft:#6b7280; --line:#e5e7eb; --bg:#fff8eb; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Yu Gothic Medium","Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP","Meiryo",sans-serif; }
+  .wrap { max-width:640px; margin:0 auto; padding:16px 14px 80px; }
+  .head { background:linear-gradient(135deg,#f59e0b,#ea580c); color:#fff; border-radius:14px; padding:18px 20px; display:flex; justify-content:space-between; align-items:center; }
+  .head h1 { margin:0; font-size:21px; }
+  .head .d { font-size:13px; opacity:.9; }
+  .count { text-align:center; background:rgba(255,255,255,.2); border-radius:10px; padding:6px 12px; }
+  .count b { display:block; font-size:26px; line-height:1.1; }
+  .count span { font-size:11px; }
+  .box { background:#fff; border-radius:14px; padding:16px; margin-top:14px; box-shadow:0 1px 4px rgba(0,0,0,.06); }
+  .lbl { font-size:13px; font-weight:700; color:var(--navy); margin:0 0 8px; }
+  .staff { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+  .staff button { padding:10px 0; border:2px solid var(--line); background:#fff; border-radius:8px; font-size:15px; font-weight:700; color:var(--ink); }
+  .staff button.on { background:var(--sun); border-color:var(--sun-d); color:#fff; }
+  input, textarea { width:100%; padding:12px; font-size:17px; border:2px solid var(--line); border-radius:10px; outline:none; font-family:inherit; }
+  input:focus, textarea:focus { border-color:var(--sun); }
+  .cands { margin-top:6px; border-radius:10px; overflow:hidden; }
+  .cand { padding:11px 12px; border-bottom:1px solid var(--line); background:#fafafa; cursor:pointer; }
+  .cand:active { background:#fef3c7; }
+  .cand .n { font-weight:700; }
+  .cand .s { font-size:12px; color:var(--soft); }
+  .msg { font-size:13px; color:var(--soft); padding:8px 2px; }
+  .newbtn { margin-top:8px; width:100%; padding:10px; border:2px dashed #fbbf24; background:#fffbeb; border-radius:10px; font-size:14px; font-weight:700; color:#92400e; }
+  .picked { border:2px solid var(--sun); border-radius:12px; padding:12px; background:#fffbeb; }
+  .picked .row { display:flex; gap:8px; align-items:center; margin-bottom:8px; }
+  .picked .row span { width:44px; font-size:12px; color:var(--soft); flex:none; }
+  .picked .row input { padding:8px 10px; font-size:16px; }
+  .tag { display:inline-block; font-size:11px; padding:2px 9px; border-radius:999px; background:#dcfce7; color:#166534; font-weight:700; }
+  .tag.new { background:#fee2e2; color:#991b1b; }
+  .warn { margin-top:8px; font-size:13px; color:#b45309; font-weight:700; }
+  .clear { float:right; font-size:13px; background:none; border:none; color:var(--soft); text-decoration:underline; }
+  .go { margin-top:14px; width:100%; padding:16px; font-size:19px; font-weight:700; color:#fff; background:var(--navy); border:none; border-radius:12px; }
+  .go:disabled { background:#9ca3af; }
+  .toast { position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:#166534; color:#fff; padding:12px 22px; border-radius:999px; font-weight:700; display:none; z-index:50; }
+  .item { display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-bottom:1px solid var(--line); }
+  .item:last-child { border-bottom:none; }
+  .item .t { font-size:13px; color:var(--soft); width:42px; flex:none; padding-top:2px; }
+  .item .b { flex:1; }
+  .item .n { font-weight:700; }
+  .item .s { font-size:12px; color:var(--soft); }
+  .item .del { font-size:12px; border:1px solid var(--line); background:#fff; border-radius:6px; padding:4px 8px; color:var(--soft); }
+  .item .del.sure { background:#dc2626; color:#fff; border-color:#dc2626; }
+  .pend { font-size:11px; color:#b45309; }
+  #pin { position:fixed; inset:0; background:linear-gradient(135deg,#f59e0b,#ea580c); display:flex; align-items:center; justify-content:center; z-index:99; }
+  #pin > div { background:#fff; border-radius:20px; padding:36px 28px; width:90%; max-width:340px; text-align:center; }
+  #pin input { font-size:28px; letter-spacing:12px; text-align:center; margin:14px 0; }
+</style>
+</head>
+<body>
+
+<div id="pin"><div>
+  <div style="font-size:44px">🎪</div>
+  <div style="font-weight:700;color:var(--navy);font-size:18px">フェア来店記録</div>
+  <div style="font-size:13px;color:var(--soft)">PINコードを入力してください</div>
+  <input id="pinIn" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="●●●●" onkeydown="if(event.key==='Enter')verifyPin()">
+  <div id="pinErr" style="color:#dc2626;font-size:13px;min-height:18px"></div>
+  <button class="go" onclick="verifyPin()" style="background:var(--sun-d)">ひらく</button>
+</div></div>
+
+<div class="wrap" id="app" style="display:none">
+  <div class="head">
+    <div><h1>🎪 フェア来店記録</h1><div class="d" id="today"></div></div>
+    <div class="count"><b id="cnt">0</b><span>本日の来店</span></div>
+  </div>
+
+  <div class="box">
+    <p class="lbl">受付した人</p>
+    <div class="staff" id="staff"></div>
+  </div>
+
+  <div class="box">
+    <p class="lbl">来店されたお客様 <button class="clear" id="clearBtn" onclick="clearPick()" style="display:none">やり直す</button></p>
+    <div id="searchArea">
+      <input id="q" placeholder="お名前・ふりがな・電話番号の一部" oninput="onSearch()" autocomplete="off">
+      <div class="cands" id="cands"></div>
+    </div>
+    <div id="pickedArea"></div>
+    <p class="lbl" style="margin-top:14px">メモ（任意）</p>
+    <textarea id="memo" rows="2" placeholder="見たい商品・ご家族で来店 など"></textarea>
+    <button class="go" id="goBtn" onclick="submitVisit()">来店を記録する</button>
+  </div>
+
+  <div class="box">
+    <p class="lbl">本日の来店一覧</p>
+    <div id="list"><div class="msg">読み込み中…</div></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const GAS = 'https://script.google.com/macros/s/AKfycbybHVTvastbYdcePLc-WxDZtChBKtpcEPF7IYqMX4UPVs1TbfKnIhvnhlIJGtIfK8Y/exec';
+const PIN_HASH = 'e2f691407acb1efa4c9f9f8b1ae626cf6d9a4d96e73e207e9ea7f429293127a8';
+const AUTH_KEY = 'fair_auth_v1';
+const STAFF = ['高山','伊藤','服部','石橋','角井','北沢','宇留野'];
+const CUST_CACHE_KEY = 'juchu_customers_v1';   // 受注日報と同じ保存分を使う（同じ形）
+const PEND_KEY = 'fair_pending_v1';
+
+const ymd = d => { const z = n => String(n).padStart(2,'0'); return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate()); };
+const hm  = d => String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+const esc = s => String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const TODAY = ymd(new Date());
+
+/* ---------- PIN ---------- */
+async function sha(s){ const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
+async function verifyPin(){
+  const v = document.getElementById('pinIn').value;
+  if (await sha(v) === PIN_HASH) { localStorage.setItem(AUTH_KEY, Date.now()+30*86400000); start(); }
+  else { document.getElementById('pinErr').textContent = '❌ PINが違います'; document.getElementById('pinIn').value=''; }
+}
+if (Number(localStorage.getItem(AUTH_KEY)||0) > Date.now()) start();
+
+/* ---------- 起動 ---------- */
+let staff = localStorage.getItem('fair_staff') || '';
+let customers = [], custState = 'loading', picked = null, results = [], visits = [];
+
+function start(){
+  document.getElementById('pin').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  const d = new Date();
+  document.getElementById('today').textContent = (d.getMonth()+1)+'月'+d.getDate()+'日（'+'日月火水木金土'[d.getDay()]+'）';
+  renderStaff(); renderPicked(); loadCustomers(); loadList(); resendPending();
+}
+
+function renderStaff(){
+  document.getElementById('staff').innerHTML = STAFF.map(s =>
+    '<button class="'+(s===staff?'on':'')+'" onclick="setStaff(\''+s+'\')">'+s+'</button>').join('');
+}
+function setStaff(s){ staff = s; localStorage.setItem('fair_staff', s); renderStaff(); }
+
+/* ---------- 顧客マスタ（受注日報と同じ読み込み） ---------- */
+async function loadCustomers(){
+  try {
+    const c = JSON.parse(localStorage.getItem(CUST_CACHE_KEY)||'null');
+    if (c && c.date === new Date().toISOString().slice(0,10) && Array.isArray(c.data) && c.data.length) { customers = c.data; custState = 'ready'; }
+  } catch(e){}
+  for (let i=0;i<3;i++){
+    try {
+      const list = await (await fetch(GAS+'?action=customers')).json();
+      if (Array.isArray(list) && list.length){
+        customers = list; custState = 'ready';
+        try { localStorage.setItem(CUST_CACHE_KEY, JSON.stringify({date:new Date().toISOString().slice(0,10), data:list})); } catch(e){}
+        onSearch(); return;
+      }
+    } catch(e){}
+    await new Promise(r=>setTimeout(r,1500));
+  }
+  if (!customers.length){ custState = 'error'; onSearch(); }
+}
+
+function toKana(str){
+  return String(str)
+    .replace(/ｶﾞ/g,'ガ').replace(/ｷﾞ/g,'ギ').replace(/ｸﾞ/g,'グ').replace(/ｹﾞ/g,'ゲ').replace(/ｺﾞ/g,'ゴ')
+    .replace(/ｻﾞ/g,'ザ').replace(/ｼﾞ/g,'ジ').replace(/ｽﾞ/g,'ズ').replace(/ｾﾞ/g,'ゼ').replace(/ｿﾞ/g,'ゾ')
+    .replace(/ﾀﾞ/g,'ダ').replace(/ﾁﾞ/g,'ヂ').replace(/ﾂﾞ/g,'ヅ').replace(/ﾃﾞ/g,'デ').replace(/ﾄﾞ/g,'ド')
+    .replace(/ﾊﾞ/g,'バ').replace(/ﾋﾞ/g,'ビ').replace(/ﾌﾞ/g,'ブ').replace(/ﾍﾞ/g,'ベ').replace(/ﾎﾞ/g,'ボ')
+    .replace(/ﾊﾟ/g,'パ').replace(/ﾋﾟ/g,'ピ').replace(/ﾌﾟ/g,'プ').replace(/ﾍﾟ/g,'ペ').replace(/ﾎﾟ/g,'ポ')
+    .replace(/ｳﾞ/g,'ヴ')
+    .replace(/[ｦ-ﾝ]/g, c => { const hw='ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ', fw='ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン'; const i=hw.indexOf(c); return i>=0?fw[i]:c; })
+    .replace(/[ぁ-ん]/g, c => String.fromCharCode(c.charCodeAt(0)+0x60));
+}
+const norm = s => toKana(s).replace(/[-\s　]/g,'').toLowerCase();
+const KU = {1:'①',2:'②',3:'③',4:'④',5:'⑤',6:'⑥',7:'⑦',8:'⑧',9:'⑨'};
+const kuMark = c => { const m = String((c&&c.ku)||'').match(/(\d+)\s*区/); return m ? (KU[Number(m[1])]||'') : ''; };
+const telOf = c => (c.telList && c.telList.length) ? c.telList.join(' / ') : (c.tel||'');
+
+function onSearch(){
+  const raw = document.getElementById('q').value.trim();
+  const box = document.getElementById('cands');
+  if (!raw){ box.innerHTML=''; return; }
+  if (!customers.length){
+    box.innerHTML = custState==='error'
+      ? '<div class="msg" style="color:#dc2626">⚠️ 顧客データを読み込めませんでした <button onclick="location.reload()">再読み込み</button></div>' + newBtn(raw)
+      : '<div class="msg">⏳ 顧客データを読み込み中です…</div>';
+    return;
+  }
+  const q = norm(raw), qt = raw.replace(/[-\s]/g,'');
+  results = customers.filter(c => norm(c.name).includes(q) || norm(c.kana).includes(q) ||
+    (qt.length>=3 && /^\d+$/.test(qt) && c.tels && c.tels.includes(qt)) || (c.address && c.address.includes(raw))).slice(0,15);
+  box.innerHTML = (results.length ? results.map((c,i) =>
+    '<div class="cand" onclick="pick('+i+')"><div class="n">'+kuMark(c)+esc(c.name)+' 様</div><div class="s">'+esc(telOf(c))+'　'+esc(c.address)+'</div></div>').join('')
+    : '<div class="msg">顧客マスタに見つかりません</div>') + newBtn(raw);
+}
+function newBtn(raw){ return '<button class="newbtn" onclick="pickNew()">＋「'+esc(raw)+'」さんを新規のお客様として入力</button>'; }
+
+function pick(i){
+  const c = results[i]; if (!c) return;
+  picked = { name:c.name, address:c.address||'', tel:telOf(c), ku:kuMark(c), inMaster:true };
+  renderPicked();
+}
+function pickNew(){
+  picked = { name:document.getElementById('q').value.trim(), address:'', tel:'', ku:'', inMaster:false };
+  renderPicked();
+}
+function clearPick(){ picked = null; document.getElementById('q').value=''; document.getElementById('cands').innerHTML=''; renderPicked(); document.getElementById('q').focus(); }
+
+function renderPicked(){
+  document.getElementById('searchArea').style.display = picked ? 'none' : 'block';
+  document.getElementById('clearBtn').style.display = picked ? 'inline' : 'none';
+  const a = document.getElementById('pickedArea');
+  if (!picked){ a.innerHTML=''; return; }
+  const dup = visits.some(v => norm(v.name) === norm(picked.name));
+  a.innerHTML = '<div class="picked">' +
+    '<div style="margin-bottom:8px">'+(picked.inMaster ? '<span class="tag">顧客マスタから</span>' : '<span class="tag new">新規のお客様</span>')+' '+(picked.ku||'')+'</div>' +
+    row('お名前','name') + row('住所','address') + row('電話','tel','tel') +
+    (dup ? '<div class="warn">⚠ 本日すでに来店記録があります</div>' : '') + '</div>';
+}
+function row(label,key,type){
+  return '<div class="row"><span>'+label+'</span><input '+(type?'type="'+type+'" ':'')+'value="'+esc(picked[key])+'" oninput="picked.'+key+'=this.value"></div>';
+}
+
+/* ---------- 記録 ---------- */
+function toast(t){ const el=document.getElementById('toast'); el.textContent=t; el.style.display='block'; clearTimeout(toast._t); toast._t=setTimeout(()=>el.style.display='none',2200); }
+const pending = () => { try { return JSON.parse(localStorage.getItem(PEND_KEY)||'[]'); } catch(e){ return []; } };
+const setPending = a => localStorage.setItem(PEND_KEY, JSON.stringify(a));
+
+async function post(obj){
+  const r = await fetch(GAS, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(obj) });
+  const j = await r.json(); if (!j.ok) throw new Error('NG'); return j;
+}
+
+async function submitVisit(){
+  if (!staff){ toast('受付した人を選んでください'); return; }
+  if (!picked || !String(picked.name).trim()){ toast('お客様を選んでください'); return; }
+  const now = new Date();
+  const v = { action:'fairVisit', id:'f'+now.getTime()+Math.random().toString(36).slice(2,6),
+    date:ymd(now), time:hm(now), staff, name:picked.name.trim(), address:picked.address, tel:picked.tel,
+    ku:picked.ku, inMaster:picked.inMaster, memo:document.getElementById('memo').value.trim() };
+  // 先に保存してから送る（電波が悪くても消えない）
+  setPending(pending().concat([v]));
+  visits.unshift(Object.assign({pend:true}, v)); renderList();
+  picked = null; document.getElementById('q').value=''; document.getElementById('cands').innerHTML='';
+  document.getElementById('memo').value=''; renderPicked();
+  toast('✅ '+v.name+' 様を記録しました');
+  sendOne(v);
+}
+async function sendOne(v){
+  try { await post(v); setPending(pending().filter(p=>p.id!==v.id)); const x=visits.find(a=>a.id===v.id); if(x) x.pend=false; renderList(); }
+  catch(e){ /* 残しておき、あとで再送 */ }
+}
+function resendPending(){ pending().forEach(sendOne); }
+setInterval(()=>{ if (pending().length) resendPending(); }, 30000);
+
+/* ---------- 一覧 ---------- */
+async function loadList(){
+  try {
+    const list = await (await fetch(GAS+'?action=fairList&date='+TODAY)).json();
+    const p = pending().filter(x=>x.date===TODAY && !list.some(l=>l.id===x.id)).map(x=>Object.assign({pend:true},x));
+    visits = p.concat(list.slice().reverse());
+  } catch(e){
+    visits = pending().filter(x=>x.date===TODAY).map(x=>Object.assign({pend:true},x));
+  }
+  renderList();
+}
+function renderList(){
+  document.getElementById('cnt').textContent = visits.length;
+  const el = document.getElementById('list');
+  if (!visits.length){ el.innerHTML='<div class="msg">まだ記録はありません</div>'; return; }
+  el.innerHTML = visits.map(v =>
+    '<div class="item"><div class="t">'+esc(v.time)+'</div><div class="b"><div class="n">'+esc(v.name)+' 様</div>' +
+    '<div class="s">受付 '+esc(v.staff)+(v.tel?'　'+esc(v.tel):'')+(v.memo?'<br>'+esc(v.memo):'')+'</div>' +
+    (v.pend?'<div class="pend">⏳ 送信待ち（自動で送ります）</div>':'')+'</div>' +
+    '<button class="del" onclick="delVisit(this,\''+v.id+'\')">取消</button></div>').join('');
+}
+async function delVisit(btn,id){
+  if (!btn.classList.contains('sure')){ btn.classList.add('sure'); btn.textContent='本当に消す'; setTimeout(()=>{btn.classList.remove('sure');btn.textContent='取消';},3000); return; }
+  setPending(pending().filter(p=>p.id!==id));
+  visits = visits.filter(v=>v.id!==id); renderList();
+  try { await post({action:'fairDelete', id}); toast('取り消しました'); } catch(e){ toast('⚠ 取消を送れませんでした'); loadList(); }
+}
+setInterval(loadList, 60000);   // 他の端末で入れた分も1分ごとに反映
+</script>
+</body>
+</html>

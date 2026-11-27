@@ -396,6 +396,8 @@ function doGet(e) {
       }).join(' | ');
     }).join('\n'));
   }
+  const fairRes = fairGet_(e);   // フェア来店（fair.js）
+  if (fairRes) return fairRes;
   if (e && e.parameter && e.parameter.action === 'search') {
     const results = searchCustomer(e.parameter.query);
     return ContentService.createTextOutput(JSON.stringify(results))
@@ -450,6 +452,8 @@ function doGet(e) {
 function doPost(e) {
   try {
     const data = JSON.parse(e.postData.contents);
+    const fairRes = fairPost_(data);   // フェア来店（fair.js）
+    if (fairRes) return fairRes;
     console.log('受信データ: 添付ID=' + data.添付ファイルID + ' 訪問担当メール=' + data.訪問担当メール + ' 訪問日時=' + data.訪問日時);
 
     const ss = SpreadsheetApp.getActiveSpreadsheet();
