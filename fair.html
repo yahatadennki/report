@@ -327,6 +327,7 @@ let info = null;
 function showInfo(j){
   if (!j || !j.info) return;
   info = j;
+  renderListDays();
   const i = j.info, num = s => Number(String(s||'').replace(/[^\d]/g,'')) || 0;
   if (i.name) document.getElementById('title').textContent = '🎪 ' + i.name;
   const gm = [i.game1, i.game2].filter(Boolean);
@@ -925,13 +926,20 @@ async function loadList(){
 }
 function pickListDay(d){ listDate = d; visits = []; gifts = []; renderList(); document.getElementById('list').innerHTML = '<div class="msg">読み込み中…</div>'; loadList(); }
 function renderList(){
+  renderListDays();
+  renderAreas();
+  renderList2();
+}
+// 一覧の上の日付ボタン（基本情報を読んだあとにも描き直す）
+function renderListDays(){
   const ds = sumDates().filter(d => d <= TODAY);
   if (!ds.includes(TODAY)) ds.push(TODAY);
   document.getElementById('listDays').innerHTML = ds.length < 2 ? '' : ds.map(d =>
     '<button class="'+(d===listDate?'on':'')+'" onclick="pickListDay(\''+d+'\')">'+(d===TODAY?'今日 ':'')+sumMd(d)+'</button>').join('');
   const ttl = listDate === TODAY ? '本日の' : sumMd(listDate)+'の';
   document.getElementById('listTtl').textContent = ttl; document.getElementById('giftTtl').textContent = ttl;
-  renderAreas();
+}
+function renderList2(){
   const ngBadge = v => v.notGiven ? '<span class="ng">🎁 まだ渡してない</span>' : '';
   const el = document.getElementById('list');
   el.innerHTML = !visits.length ? '<div class="msg">まだ記録はありません</div>' : visits.map((v,i) => {
