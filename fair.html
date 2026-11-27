@@ -838,7 +838,7 @@ function renderPlan(){
     ? PLAN_HOURS.map(([v,l]) => btn('planHours', v, l)).join('')
     : '<div class="msg" style="grid-column:1/-1">時刻を入れないと「終日」の予定になります</div>';
   document.getElementById('planStaffBtns').innerHTML = STAFF.map(s => btn('planStaff', s, s)).join('');
-  document.getElementById('paidBtn').innerHTML = '<button class="chk '+(form.paid?'on':'')+'" onclick="togPaid()">'+(form.paid ? '代済（店でお支払い済み）' : '代済にする（店でお支払い済みなら押す）')+'</button>';
+  document.getElementById('paidBtn').innerHTML = '<button class="chk '+(form.paid?'on':'')+'" onclick="togPaid()">'+(form.paid ? '領収済（店でお支払い済み）' : '領収済にする（店でお支払い済みなら押す）')+'</button>';
 }
 function togPaid(){ form.paid = !form.paid; renderPlan(); }
 // 買い物の支払い（パナカード・現金・売掛。いくつでも）
@@ -848,7 +848,7 @@ function togKai(x){ const a = KAI.filter(k => k === x ? !kaiOn(k) : kaiOn(k)); f
 function planText(v){
   if (!v.planDate) return v.plan || '';
   const p = v.planDate.split('-').map(Number), dt = new Date(p[0], p[1]-1, p[2]);
-  return (v.paid?'代済】':'')+p[1]+'/'+p[2]+'('+'日月火水木金土'[dt.getDay()]+')'+(v.planTime?' '+v.planTime:'')+(v.planWhat?' '+v.planWhat:'')+(v.planStaff?'（'+v.planStaff+'）':'');
+  return (v.paid?'領収済】':'')+p[1]+'/'+p[2]+'('+'日月火水木金土'[dt.getDay()]+')'+(v.planTime?' '+v.planTime:'')+(v.planWhat?' '+v.planWhat:'')+(v.planStaff?'（'+v.planStaff+'）':'');
 }
 
 /* ---------- 送信 ---------- */
