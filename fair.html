@@ -214,7 +214,7 @@
 
       <div id="raitenOnly">
       <p class="lbl">チェック</p>
-      <div class="grid g3" id="chks"></div>
+      <div class="grid" id="chks"></div>
 
       <p class="lbl">ガラポン</p>
       <div class="grid g5" id="gara"></div>
@@ -272,7 +272,7 @@ const PIN_HASH = 'e2f691407acb1efa4c9f9f8b1ae626cf6d9a4d96e73e207e9ea7f429293127
 const AUTH_KEY = 'fair_auth_v1';
 const STAFF = ['高山','伊藤','服部','石橋','角井','北沢','宇留野'];
 const AREAS = ['1区','2区','3区','4区','5区','6区','7区','8区','9区'];
-const CHKS = [['md','MD'],['panaJoin','パナカード'],['panaForm','ﾊﾟﾅｶｰﾄﾞ用紙記入'],['credit','クレジット'],['cash','現金']];
+const CHKS = [['panaJoin','パナカード（フェアで入会）']];   // ✓はパナカード入会だけ（MD・用紙記入・クレジット・現金はやめた）
 const GARA = ['特賞','1等',''];   // 特賞＝金・1等＝銀
 const garaL = g => ({'特賞':'🥇 特賞（金）','1等':'🥈 1等（銀）'})[g] || g || 'なし';
 const CUST_CACHE_KEY = 'fair_customers_v1';   // 顧客コード入りで保存（受注日報の保存分はコードが無いので別に持つ）
@@ -427,10 +427,6 @@ function renderSum(dates, vs, gs, k){
   const items = [
     two('パナカード会員の来店', v => cp(v, isPana)),
     two('うちフェアで入った', v => cp(v, x=>x.panaJoin && !cardHolder(x.card))),
-    two('ﾊﾟﾅｶｰﾄﾞ用紙記入', v => cp(v, x=>x.panaForm)),
-    two('MD', v => cp(v, x=>x.md)),
-    two('クレジット', v => cp(v, x=>x.credit)),
-    two('現金', v => cp(v, x=>x.cash)),
     two('予定を入れた', v => cp(v, x=>x.planDate)),
     two('新規のお客様', v => cp(v, x=>!x.inMaster))
   ];
@@ -510,10 +506,10 @@ function renderNippo(){
       r('区域別', esc(d.areas)) + r('新規のお客様', d.shinki+'組') +
     h('🎁 記念品'+(i.giftName?'（'+esc(i.giftName)+'）':'')) + r('渡した（来店＋配達）', d.given+'個') + r('うち配達で', d.haitatsu+'個') +
       r('まだ渡してない', d.notGiven+'人') + r('残り', d.remain === null ? null : d.remain+'個') +
-    h('💳 パナカード') + r('会員の来店', d.pana+'組') + r('パナカード', d.panaJoin) + r('用紙記入', d.panaForm) +
+    h('💳 パナカード') + r('会員の来店', d.pana+'組') + r('フェアで入会', d.panaJoin) +
     h('💴 売上（この日に作った見積）') + (d.sei === null ? r('売上', '読めません（許可が必要）') :
       r('成約', d.sei+'件　'+yen(d.seiYen)) + r('見積中', d.est+'件　'+yen(d.estYen)) + r('成約の品目', esc(d.kinds))) +
-      r('MD', d.md) + r('クレジット', d.credit) + r('現金', d.cash) + r('予定を入れた', d.plan+'件') +
+      r('予定を入れた', d.plan+'件') +
     h('🎯 ゲーム') + r('ゲーム1', esc(i.game1||'')) + r('ゲーム2', esc(i.game2||'')) + r('ガラポン', esc(d.gara)) +
     '</table>' +
     '<p class="lbl">ひとこと（良かったこと・反省・明日やること）</p>' +
