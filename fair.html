@@ -38,7 +38,6 @@
   .cand .n { font-weight:700; }
   .cand .s { font-size:12px; color:var(--soft); }
   .scan { margin-top:8px; width:100%; padding:12px; border:none; border-radius:10px; background:#0f766e; color:#fff; font-size:16px; font-weight:700; }
-  #reader { margin-top:8px; border-radius:10px; overflow:hidden; }
   .code { font-size:11px; color:#0f766e; font-weight:700; }
   .msg { font-size:13px; color:var(--soft); padding:8px 2px; }
   .newbtn { margin-top:8px; width:100%; padding:10px; border:2px dashed #fbbf24; background:#fffbeb; border-radius:10px; font-size:14px; font-weight:700; color:#92400e; }
@@ -97,7 +96,8 @@
     <div id="searchArea">
       <input id="q" placeholder="お名前・ふりがな・電話・顧客コード" oninput="onSearch()" onkeydown="if(event.key==='Enter'){event.preventDefault();codeEnter();}" autocomplete="off">
       <button class="scan" id="scanBtn" onclick="toggleScan()">📷 カードのバーコードを読む</button>
-      <div id="reader"></div>
+      <div id="scanMsg"></div>
+      <video id="cam" playsinline muted autoplay style="display:none;width:100%;margin-top:8px;border-radius:10px;background:#000"></video>
       <div class="cands" id="cands"></div>
     </div>
     <div id="pickedArea"></div>
@@ -241,40 +241,91 @@ function pickCust(c){
 }
 
 /* ---------- カメラでバーコード ---------- */
-let scanner = null, scanLib = null;
-function loadScanLib(){
-  if (scanLib) return scanLib;
-  scanLib = new Promise((ok, ng) => { const t = document.createElement('script');
-    t.src = 'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js'; t.onload = ok; t.onerror = () => { scanLib = null; ng(); }; document.head.appendChild(t); });
-  return scanLib;
+// カメラは自分で起動する（止まった理由を画面に出す）。読み取りは端末の機能(BarcodeDetector)→無ければZXing(同梱)
+let scanning = false, scanStream = null, scanTimer = null, zxLib = null;
+function scanMsg(t, err){
+  const el = document.getElementById('scanMsg');
+  el.innerHTML = t ? '<div style="font-size:13px;padding:8px 4px;color:'+(err?'#dc2626':'#0f766e')+'">'+t+'</div>' : '';
 }
+function loadZX(){
+  if (window.ZXing) return Promise.resolve();
+  if (zxLib) return zxLib;
+  zxLib = new Promise((ok, ng) => { const t = document.createElement('script');
+    t.src = 'zxing.min.js?v=1'; t.onload = ok; t.onerror = () => { zxLib = null; ng(new Error('読み取り部品を読み込めません')); }; document.head.appendChild(t); });
+  return zxLib;
+}
+const timeout = (p, ms, msg) => Promise.race([p, new Promise((_, ng) => setTimeout(() => ng(new Error(msg)), ms))]);
+
 async function toggleScan(){
-  if (scanner){ stopScan(); return; }
+  if (scanning){ stopScan(); return; }
   const btn = document.getElementById('scanBtn');
-  btn.textContent = '⏳ カメラを準備中…';
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    scanMsg('⚠ このブラウザではカメラを使えません。LINEなどの中で開いている場合は、右上のメニューから「Safari／Chromeで開く」にしてください。', true);
+    return;
+  }
+  scanning = true;
+  btn.textContent = '✕ カメラを閉じる';
+  scanMsg('⏳ カメラを起動しています…（「カメラを許可」と出たら「許可」を押してください）');
   try {
-    await loadScanLib();
-    scanner = new Html5Qrcode('reader');
-    let done = false;
-    await scanner.start({ facingMode:'environment' }, { fps:10, qrbox:{ width:280, height:120 } }, text => {
-      if (done) return;
-      const c = customers.length ? findByCode(text) : null;
-      if (c){ done = true; if (navigator.vibrate) navigator.vibrate(80); pickCust(c); toast('📇 '+c.name+' 様'); }
-      else if (customers.length) toast('コード '+text+' は顧客マスタにありません');
-      else toast('顧客データを読み込み中です');
-    });
-    btn.textContent = '✕ カメラを閉じる';
+    scanStream = await timeout(navigator.mediaDevices.getUserMedia({ video:{ facingMode:{ ideal:'environment' }, width:{ ideal:1280 }, height:{ ideal:720 } }, audio:false }),
+      20000, 'カメラの許可が出ていません');
+    if (!scanning){ scanStream.getTracks().forEach(t=>t.stop()); return; }
+    const v = document.getElementById('cam');
+    v.srcObject = scanStream;
+    v.style.display = 'block';
+    await v.play().catch(()=>{});
+    scanMsg('📷 カードのバーコードを枠いっぱいに映してください');
+
+    let detect;
+    if ('BarcodeDetector' in window){
+      const fm = await BarcodeDetector.getSupportedFormats().catch(()=>[]);
+      const bd = new BarcodeDetector(fm.length ? { formats: fm } : undefined);
+      detect = async () => { const r = await bd.detect(v); return r[0] && r[0].rawValue; };
+    } else {
+      await timeout(loadZX(), 20000, '読み取り部品を読み込めません');
+      const Z = window.ZXing;
+      const hints = new Map(); hints.set(Z.DecodeHintType.TRY_HARDER, true);
+      const reader = new Z.MultiFormatReader(); reader.setHints(hints);
+      const cv = document.createElement('canvas'), cx = cv.getContext('2d', { willReadFrequently:true });
+      detect = async () => {
+        if (!v.videoWidth) return null;
+        const w = Math.min(960, v.videoWidth), h = Math.round(v.videoHeight * w / v.videoWidth);
+        cv.width = w; cv.height = h; cx.drawImage(v, 0, 0, w, h);
+        try { return reader.decode(new Z.BinaryBitmap(new Z.HybridBinarizer(new Z.HTMLCanvasElementLuminanceSource(cv)))).getText(); }
+        catch(e){ return null; }
+      };
+    }
+    let busy = false, lastBad = '';
+    scanTimer = setInterval(async () => {
+      if (busy || !scanning) return; busy = true;
+      try {
+        const text = await detect();
+        if (text && scanning){
+          const c = customers.length ? findByCode(text) : null;
+          if (c){ if (navigator.vibrate) navigator.vibrate(80); pickCust(c); toast('📇 '+c.name+' 様'); }
+          else if (!customers.length) scanMsg('⏳ 顧客データを読み込み中です。少し待ってもう一度映してください');
+          else if (text !== lastBad){ lastBad = text; scanMsg('⚠ 「'+esc(text)+'」は顧客マスタにありません', true); }
+        }
+      } catch(e){}
+      busy = false;
+    }, 250);
   } catch(e){
+    const name = e && e.name;
+    const why = name === 'NotAllowedError' ? 'カメラが許可されていません。ブラウザの設定でこのページのカメラを「許可」にしてください。'
+      : name === 'NotFoundError' ? 'カメラが見つかりません。'
+      : name === 'NotReadableError' ? '他のアプリがカメラを使っています。閉じてからもう一度押してください。'
+      : (e && e.message) || 'カメラを使えませんでした';
     stopScan();
-    toast('⚠ カメラを使えませんでした');
+    scanMsg('⚠ ' + esc(why), true);
   }
 }
 function stopScan(){
-  const btn = document.getElementById('scanBtn');
-  if (btn) btn.textContent = '📷 カードのバーコードを読む';
-  if (!scanner) return;
-  const s = scanner; scanner = null;
-  s.stop().then(()=>s.clear()).catch(()=>{ try{ s.clear(); }catch(e){} });
+  scanning = false;
+  clearInterval(scanTimer); scanTimer = null;
+  if (scanStream){ scanStream.getTracks().forEach(t=>t.stop()); scanStream = null; }
+  const v = document.getElementById('cam'); if (v){ v.srcObject = null; v.style.display = 'none'; }
+  const btn = document.getElementById('scanBtn'); if (btn) btn.textContent = '📷 カードのバーコードを読む';
+  scanMsg('');
 }
 
 function onSearch(){
