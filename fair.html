@@ -216,6 +216,9 @@
       <p class="lbl">チェック</p>
       <div class="grid" id="chks"></div>
 
+      <p class="lbl">買い物（支払い）</p>
+      <div class="grid g3" id="kaiBtns"></div>
+
       <p class="lbl">ガラポン</p>
       <div class="grid g5" id="gara"></div>
       </div>
@@ -235,6 +238,8 @@
           <div class="grid g5" id="planWhatBtns"></div>
           <div class="sublbl">どのくらい</div>
           <div class="grid g5" id="planHoursBtns"></div>
+          <div class="sublbl">お代</div>
+          <div class="grid" id="paidBtn"></div>
           <div class="sublbl">だれのカレンダー</div>
           <div class="grid g4" id="planStaffBtns"></div>
           <button class="sub" onclick="clearPlan()">予定を消す</button>
@@ -316,7 +321,7 @@ function setMode(m){
   if (form && !form.id) form.kind = m;   // 入力途中なら切り替え先として記録
   renderForm();
 }
-function blank(){ return { kind:mode, notGiven:false, id:'', code:'', card:'', name:'', address:'', tel:'', area:'', inMaster:false, md:false, panaJoin:false, panaForm:false, credit:false, cash:false, garapon:'', plan:'', memo:'', planDate:'', planTime:'', planHours:'1', planWhat:'', planStaff:'' }; }
+function blank(){ return { kind:mode, notGiven:false, id:'', code:'', card:'', name:'', address:'', tel:'', area:'', inMaster:false, md:false, panaJoin:false, panaForm:false, credit:false, cash:false, garapon:'', plan:'', memo:'', planDate:'', planTime:'', planHours:'1', planWhat:'', planStaff:'', kaimono:'', paid:false }; }
 
 function start(){
   document.getElementById('pin').style.display = 'none';
@@ -794,6 +799,7 @@ function renderForm(){
   }).join('');
   document.getElementById('chks').innerHTML = CHKS.map(([k,l]) =>
     '<button class="chk '+(form[k]?'on':'')+'" onclick="togF(\''+k+'\')">'+l+'</button>').join('');
+  document.getElementById('kaiBtns').innerHTML = KAI.map(x => '<button class="chk '+(kaiOn(x)?'on':'')+'" onclick="togKai(\''+x+'\')">'+x+'</button>').join('');
   document.getElementById('gara').innerHTML = GARA.map(g =>
     '<button class="opt '+(form.garapon===g?'on':'')+'" onclick="setF(\'garapon\',\''+g+'\')">'+garaL(g)+'</button>').join('');
   const me = document.getElementById('memo');
@@ -820,7 +826,7 @@ function setPlan(k, v){
 }
 // 何をする はもう一度押すと外れる。ほかは押したものに切り替え
 function pickPlan(k, v){ form[k] = (k === 'planWhat' && form[k] === v) ? '' : v; renderPlan(); }
-function clearPlan(){ Object.assign(form, { planDate:'', planTime:'', planHours:'1', planWhat:'', planStaff:'' }); renderPlan(); }
+function clearPlan(){ Object.assign(form, { planDate:'', planTime:'', planHours:'1', planWhat:'', planStaff:'', paid:false }); renderPlan(); }
 function renderPlan(){
   const d = document.getElementById('planDate'), t = document.getElementById('planTime');
   if (d.value !== form.planDate) d.value = form.planDate || '';
@@ -832,11 +838,17 @@ function renderPlan(){
     ? PLAN_HOURS.map(([v,l]) => btn('planHours', v, l)).join('')
     : '<div class="msg" style="grid-column:1/-1">時刻を入れないと「終日」の予定になります</div>';
   document.getElementById('planStaffBtns').innerHTML = STAFF.map(s => btn('planStaff', s, s)).join('');
+  document.getElementById('paidBtn').innerHTML = '<button class="chk '+(form.paid?'on':'')+'" onclick="togPaid()">'+(form.paid ? '代済（店でお支払い済み）' : '代済にする（店でお支払い済みなら押す）')+'</button>';
 }
+function togPaid(){ form.paid = !form.paid; renderPlan(); }
+// 買い物の支払い（パナカード・現金・売掛。いくつでも）
+const KAI = ['パナカード','現金','売掛'];
+function kaiOn(x){ return String(form.kaimono||'').split('・').includes(x); }
+function togKai(x){ const a = KAI.filter(k => k === x ? !kaiOn(k) : kaiOn(k)); form.kaimono = a.join('・'); renderForm(); }
 function planText(v){
   if (!v.planDate) return v.plan || '';
   const p = v.planDate.split('-').map(Number), dt = new Date(p[0], p[1]-1, p[2]);
-  return p[1]+'/'+p[2]+'('+'日月火水木金土'[dt.getDay()]+')'+(v.planTime?' '+v.planTime:'')+(v.planWhat?' '+v.planWhat:'')+(v.planStaff?'（'+v.planStaff+'）':'');
+  return (v.paid?'代済】':'')+p[1]+'/'+p[2]+'('+'日月火水木金土'[dt.getDay()]+')'+(v.planTime?' '+v.planTime:'')+(v.planWhat?' '+v.planWhat:'')+(v.planStaff?'（'+v.planStaff+'）':'');
 }
 
 /* ---------- 送信 ---------- */
@@ -865,7 +877,7 @@ async function submitVisit(){
   }
   if (!editing && listDate !== TODAY){ listDate = TODAY; visits = []; gifts = []; setTimeout(loadList, 0); }   // 新しい記録は今日の一覧に戻す
   const isGift = form.kind === 'gift';
-  if (isGift) Object.assign(form, { planDate:'', planTime:'', planStaff:'', planWhat:'' });   // 配達は予定なし
+  if (isGift) Object.assign(form, { planDate:'', planTime:'', planStaff:'', planWhat:'', paid:false, kaimono:'' });   // 配達は予定なし
   const arr = isGift ? gifts : visits;
   const v = Object.assign({}, form, { action: isGift ? 'fairGift' : 'fairVisit', name:form.name.trim(),
     id: form.id || ('f'+now.getTime()+Math.random().toString(36).slice(2,6)),
@@ -955,7 +967,7 @@ function renderList2(){
   const ngBadge = v => v.notGiven ? '<span class="ng">🎁 まだ渡してない</span>' : '';
   const el = document.getElementById('list');
   el.innerHTML = !visits.length ? '<div class="msg">まだ記録はありません</div>' : visits.map((v,i) => {
-    const mk = CHKS.filter(([k])=>v[k]).map(([,l])=>'<span class="mk">'+l+'</span>').join('') + (v.garapon?'<span class="mk g">ｶﾞﾗﾎﾟﾝ '+esc(garaL(v.garapon))+'</span>':'');
+    const mk = CHKS.filter(([k])=>v[k]).map(([,l])=>'<span class="mk">'+l+'</span>').join('') + (v.kaimono?'<span class="mk">🛒 '+esc(v.kaimono)+'</span>':'') + (v.garapon?'<span class="mk g">ｶﾞﾗﾎﾟﾝ '+esc(garaL(v.garapon))+'</span>':'');
     return '<div class="item'+(isPana(v)?' pa':'')+(v.notGiven?' ngi':'')+'" onclick="editItem(\'raiten\','+i+')"><div class="no">'+esc(v.no||'…')+'</div><div class="b">' +
       '<div class="n">'+esc(v.area||'')+'　'+esc(v.name)+' 様'+(cardHolder(v.card) ? panaBadge(v.card) : (v.panaJoin ? '<span class="pana">💳 パナカード</span>' : ''))+ngBadge(v)+'</div>' +
       '<div class="s">'+esc(v.time)+(v.staff?' 受付 '+esc(v.staff):'')+(planText(v)?'　📅 '+esc(planText(v))+(v.planDate&&!v.pend&&!v.calOk?' ⚠未登録':''):'')+'</div>' +
