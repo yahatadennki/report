@@ -48,6 +48,7 @@
   .nip th { text-align:left; font-weight:400; color:#555; padding:6px 4px; border-bottom:1px solid #eee; width:45%; }
   .nip td { text-align:right; font-weight:700; padding:6px 4px; border-bottom:1px solid #eee; }
   .nip tr.h td { text-align:left; background:#fff7ed; color:#c2410c; font-size:13px; }
+  body:not(.gift) #staffLbl, body:not(.gift) #staff { display:none; }   /* 来店では受付した人は聞かない */
   .sumk { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin:6px 0 12px; }
   .sumk div { background:#fff7ed; border-radius:10px; padding:8px 4px; text-align:center; }
   .sumk b { display:block; font-size:22px; color:#c2410c; line-height:1.2; }
@@ -391,7 +392,6 @@ function renderSum(dates, vs, gs){
   ];
   const planKinds = [...new Set(V.filter(v=>v.planDate).map(v=>v.planWhat||'（内容なし）'))].map(w => [w, cnt(V, v=>v.planDate && (v.planWhat||'（内容なし）')===w)]);
   const garaRows = GARA.map(g => [g || 'なし・未入力', cnt(V, v=>(v.garapon||'')===g)]);
-  const staffs = [...new Set(V.map(v=>v.staff||'—'))].map(s => [s, cnt(V, v=>(v.staff||'—')===s)]).sort((a,b)=>b[1]-a[1]);
   return '<div class="msg" style="margin-bottom:6px">'+esc(i.name||'')+'　'+md(dates[0])+(dates.length>1?'〜'+md(dates[dates.length-1]):'')+'（'+dates.length+'日間）</div>' +
     '<div class="sumk"><div><b>'+V.length+'</b><span>来店（組）</span></div><div><b>'+pct(V.length, inv)+'</b><span>来店率（招待状'+(inv||'—')+'部）</span></div>' +
     '<div><b>'+(tot ? tot - given : '—')+'</b><span>記念品 残り／'+(tot||'—')+'</span></div></div>' +
@@ -401,8 +401,7 @@ function renderSum(dates, vs, gs){
     lbl('来店の中身') + table(['','人数','来店の中で'], items) +
     (planKinds.length ? lbl('予定の内容') + table(['','件数'], planKinds) : '') +
     lbl('区域別') + table(['区域','来店'], areaRows, ['合計', V.length]) +
-    lbl('ガラポン') + table(['賞','人数'], garaRows) +
-    lbl('受付した人') + table(['','来店'], staffs);
+    lbl('ガラポン') + table(['賞','人数'], garaRows);
 }
 function sumUriage(V){
   const lbl = t => '<p class="lbl" style="margin-top:4px">'+t+'</p>';
@@ -798,7 +797,7 @@ async function post(obj){
 }
 
 async function submitVisit(){
-  if (!staff){ toast('受付した人を選んでください'); window.scrollTo({top:0,behavior:'smooth'}); return; }
+  if (form && form.kind === 'gift' && !staff){ toast('渡した人を選んでください'); window.scrollTo({top:0,behavior:'smooth'}); return; }
   if (!form || !String(form.name).trim()){ toast('お客様のお名前を入れてください'); return; }
   if (form.planDate && !form.planStaff){ toast('予定を入れる人（だれのカレンダー）を選んでください'); return; }
   const now = new Date();
@@ -816,7 +815,7 @@ async function submitVisit(){
   const arr = isGift ? gifts : visits;
   const v = Object.assign({}, form, { action: isGift ? 'fairGift' : 'fairVisit', name:form.name.trim(),
     id: form.id || ('f'+now.getTime()+Math.random().toString(36).slice(2,6)),
-    date: form.date || TODAY, time: form.time || hm(now), staff: form.staff || staff });
+    date: form.date || TODAY, time: form.time || hm(now), staff: form.staff || (isGift ? staff : '') });
   delete v.pend;
   // 先に端末へ保存してから送る（電波が悪くても消えない）
   setPending(pending().filter(p=>p.id!==v.id).concat([v]));
@@ -890,7 +889,7 @@ function renderList(){
     const mk = CHKS.filter(([k])=>v[k]).map(([,l])=>'<span class="mk">'+l+'</span>').join('') + (v.garapon?'<span class="mk g">ｶﾞﾗﾎﾟﾝ '+esc(v.garapon)+'</span>':'');
     return '<div class="item'+(isPana(v)?' pa':'')+(v.notGiven?' ngi':'')+'" onclick="editItem(\'raiten\','+i+')"><div class="no">'+esc(v.no||'…')+'</div><div class="b">' +
       '<div class="n">'+esc(v.area||'')+'　'+esc(v.name)+' 様'+(cardHolder(v.card) ? panaBadge(v.card) : (v.panaJoin ? '<span class="pana">💳 入会</span>' : ''))+ngBadge(v)+'</div>' +
-      '<div class="s">'+esc(v.time)+' 受付 '+esc(v.staff)+(planText(v)?'　📅 '+esc(planText(v))+(v.planDate&&!v.pend&&!v.calOk?' ⚠未登録':''):'')+'</div>' +
+      '<div class="s">'+esc(v.time)+(v.staff?' 受付 '+esc(v.staff):'')+(planText(v)?'　📅 '+esc(planText(v))+(v.planDate&&!v.pend&&!v.calOk?' ⚠未登録':''):'')+'</div>' +
       (mk?'<div>'+mk+'</div>':'') + (v.memo?'<div class="s">'+esc(v.memo)+'</div>':'') + estBadges(v.name) +
       (v.pend?'<div class="pend">⏳ 送信待ち（自動で送ります）</div>':'')+'</div></div>';
   }).join('');
