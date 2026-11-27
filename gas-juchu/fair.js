@@ -1,9 +1,17 @@
 // ===== フェア来店記録（fair.html から使う） =====
 // 受注日報SSの「フェア来店記録」シートに1来店1行。並びは店のExcel（2026年度フェア.xlsx）に合わせる。
+// 予定（日時・担当）が入っていれば、その担当のGoogleカレンダーに予定を入れる（変えたら直す・消したら消す）。
 const FAIR_SHEET_NAME = 'フェア来店記録';
 const FAIR_HEADERS = ['来店日', '№', '区域', 'MD', '名前', 'ﾊﾟﾅｶｰﾄﾞ入会', 'パナカード用紙記入', '内容',
-  'クレジット', '現金', '予定日', 'ｶﾞﾗﾎﾟﾝ', '受付', '時刻', '住所', '電話番号', 'マスタ', '送信ID', '顧客コード', 'カード区分'];
+  'クレジット', '現金', '予定日', 'ｶﾞﾗﾎﾟﾝ', '受付', '時刻', '住所', '電話番号', 'マスタ', '送信ID', '顧客コード', 'カード区分',
+  '予定担当', '予定日時', '予定時間', '予定の内容', 'カレンダーID'];
 const FAIR_COL_ID = 18;
+const FAIR_STAFF_MAIL = {
+  '高山': 'yawata51@gmail.com', '伊藤': 'yahata.itou@gmail.com', '服部': 'yahata.hattori@gmail.com',
+  '石橋': 'yahata.ishibashi@gmail.com', '角井': 'yahata.kakui@gmail.com', '北沢': 'yahata.kitazawa@gmail.com',
+  '宇留野': 'yahata.uruno@gmail.com'
+};
+const FAIR_KU = { 1: '①', 2: '②', 3: '③', 4: '④', 5: '⑤', 6: '⑥', 7: '⑦', 8: '⑧', 9: '⑨' };
 
 function fairSheet_() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -14,15 +22,15 @@ function fairSheet_() {
     sh = ss.insertSheet(FAIR_SHEET_NAME);
     sh.appendRow(FAIR_HEADERS);
     sh.setFrozenRows(1);
-    sh.getRange(1, 1, 1, FAIR_HEADERS.length).setFontWeight('bold').setBackground('#ffff00');
     sh.getRange('A:A').setNumberFormat('yyyy/mm/dd');
-    sh.getRange('N:N').setNumberFormat('@');
-    sh.getRange('P:P').setNumberFormat('@');
-    sh.getRange('K:K').setNumberFormat('@');
     sh.setColumnWidth(5, 120); sh.setColumnWidth(8, 320);
   }
-  if (sh.getRange(1, 20).getValue() !== 'カード区分') sh.getRange(1, 20).setValue('カード区分').setFontWeight('bold').setBackground('#ffff00');
-  if (sh.getRange(1, 19).getValue() !== '顧客コード') sh.getRange(1, 19).setValue('顧客コード').setFontWeight('bold').setBackground('#ffff00');
+  // 見出しが足りなければ足す（列を増やしたとき用）
+  const head = sh.getRange(1, 1, 1, FAIR_HEADERS.length).getValues()[0];
+  if (head.join('|') !== FAIR_HEADERS.join('|')) {
+    sh.getRange(1, 1, 1, FAIR_HEADERS.length).setValues([FAIR_HEADERS]).setFontWeight('bold').setBackground('#ffff00');
+    ['K', 'N', 'P', 'V'].forEach(function(c) { sh.getRange(c + ':' + c).setNumberFormat('@'); });
+  }
   return sh;
 }
 
@@ -33,6 +41,15 @@ function fairYmd_(v) {
   return (v instanceof Date) ? Utilities.formatDate(v, 'Asia/Tokyo', 'yyyy-MM-dd') : String(v || '').replace(/\//g, '-');
 }
 const FAIR_CHK = function(b) { return b ? '✓' : ''; };
+
+// 「12/5(金) 14:00 工事」のような見やすい予定の文
+function fairPlanText_(d) {
+  if (!d.planDate) return d.planWhat || '';
+  const p = d.planDate.split('-').map(Number);
+  const dt = new Date(p[0], p[1] - 1, p[2]);
+  return p[1] + '/' + p[2] + '(' + '日月火水木金土'[dt.getDay()] + ')' + (d.planTime ? ' ' + d.planTime : '') +
+    (d.planWhat ? ' ' + d.planWhat : '') + (d.planStaff ? '（' + d.planStaff + '）' : '');
+}
 
 // doGet から呼ぶ。action=fairList&date=YYYY-MM-DD → その日の来店一覧
 function fairGet_(e) {
@@ -55,13 +72,51 @@ function fairGet_(e) {
   const out = [];
   rows.forEach(function(r) {
     if (fairYmd_(r[0]) !== date) return;
+    const dt = String(r[21] || '').split(' ');
     out.push({
       date: date, no: r[1], area: r[2], md: !!r[3], name: r[4], panaJoin: !!r[5], panaForm: !!r[6],
       memo: r[7], credit: !!r[8], cash: !!r[9], plan: r[10], garapon: r[11], staff: r[12], time: r[13],
-      address: r[14], tel: r[15], inMaster: r[16] === '○', id: r[17], code: r[18], card: r[19]
+      address: r[14], tel: r[15], inMaster: r[16] === '○', id: r[17], code: r[18], card: r[19],
+      planStaff: r[20], planDate: dt[0] || '', planTime: dt[1] || '', planHours: r[22], planWhat: r[23], calOk: !!r[24]
     });
   });
   return fairJson_(out);
+}
+
+// カレンダーの予定を消す（見つからなければ何もしない）
+function fairCalDelete_(staff, eventId) {
+  if (!eventId) return;
+  try {
+    const cal = CalendarApp.getCalendarById(FAIR_STAFF_MAIL[staff] || '');
+    const ev = cal && cal.getEventById(eventId);
+    if (ev) ev.deleteEvent();
+  } catch (e) { console.log('fair cal delete: ' + e); }
+}
+
+// カレンダーに予定を入れる。戻り値 { id, msg }
+function fairCalCreate_(d) {
+  const mail = FAIR_STAFF_MAIL[d.planStaff];
+  if (!mail) return { id: '', msg: 'nostaff' };
+  const cal = CalendarApp.getCalendarById(mail);
+  if (!cal) return { id: '', msg: 'nocal' };
+  const m = String(d.area || '').match(/(\d+)\s*区/);
+  const title = '🎪' + (m ? (FAIR_KU[Number(m[1])] || '') : '') + d.name + ' 様' + (d.planWhat ? ' - ' + d.planWhat : '');
+  const desc = ['【フェア来店】 ' + String(d.date || '').replace(/-/g, '/') + ' 受付 ' + (d.staff || '')];
+  if (d.tel) desc.push('【電話】 ' + d.tel);
+  if (d.card) desc.push('【カード】 ' + d.card);
+  if (d.memo) desc.push('【内容】 ' + d.memo);
+  const opt = { location: d.address || '', description: desc.join('\n') };
+  const p = d.planDate.split('-').map(Number);
+  let ev;
+  if (d.planTime) {
+    const t = d.planTime.split(':').map(Number);
+    const st = new Date(p[0], p[1] - 1, p[2], t[0], t[1]);
+    const h = parseFloat(d.planHours) || 1;
+    ev = cal.createEvent(title, st, new Date(st.getTime() + h * 3600000), opt);
+  } else {
+    ev = cal.createAllDayEvent(title, new Date(p[0], p[1] - 1, p[2]), opt);   // 時刻なし＝終日
+  }
+  return { id: ev.getId(), msg: 'ok' };
 }
 
 // doPost から呼ぶ。fairVisit＝追加（同じ送信IDなら上書き＝あとから変更）／fairDelete＝取消
@@ -76,17 +131,22 @@ function fairPost_(data) {
     const hit = (sid && lr >= 2)
       ? sh.getRange(2, FAIR_COL_ID, lr - 1, 1).createTextFinder(sid).matchEntireCell(true).findNext()
       : null;
+    const old = hit ? sh.getRange(hit.getRow(), 1, 1, FAIR_HEADERS.length).getDisplayValues()[0] : null;
 
     if (data.action === 'fairDelete') {
-      if (hit) sh.deleteRow(hit.getRow());
+      if (hit) {
+        fairCalDelete_(old[20], old[24]);
+        sh.deleteRow(hit.getRow());
+      }
       return fairJson_({ ok: true });
     }
 
     const date = data.date || Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy-MM-dd');
+    data.date = date;
     let row, no;
     if (hit) {
       row = hit.getRow();
-      no = sh.getRange(row, 2).getValue();
+      no = old[1];
     } else {
       // №＝その日の何組目か
       no = 1;
@@ -96,15 +156,39 @@ function fairPost_(data) {
       }
       row = lr + 1;
     }
+
+    // ---- カレンダー ----
+    const planDT = data.planDate ? (data.planDate + (data.planTime ? ' ' + data.planTime : '')) : '';
+    const sig = [data.planStaff || '', planDT, data.planHours || '', data.planWhat || '', data.name || '', data.area || ''].join('|');
+    const oldSig = old ? [old[20], old[21], old[22], old[23], old[4], old[2]].join('|') : '';
+    let calId = old ? old[24] : '';
+    let cal = '';
+    if (!data.planDate || !data.planStaff) {
+      if (calId) { fairCalDelete_(old[20], calId); calId = ''; cal = 'removed'; }
+    } else if (sig !== oldSig || !calId) {
+      if (calId) fairCalDelete_(old[20], calId);
+      try {
+        const r = fairCalCreate_(data);
+        calId = r.id; cal = r.msg;
+      } catch (e) {
+        calId = ''; cal = 'error: ' + e.message;
+        console.log('fair cal create: ' + e);
+      }
+    } else {
+      cal = 'kept';
+    }
+
     const vals = [[
       date.replace(/-/g, '/'), no, data.area || '', FAIR_CHK(data.md), data.name || '',
       FAIR_CHK(data.panaJoin), FAIR_CHK(data.panaForm), data.memo || '',
-      FAIR_CHK(data.credit), FAIR_CHK(data.cash), data.plan || '', data.garapon || '',
+      FAIR_CHK(data.credit), FAIR_CHK(data.cash), fairPlanText_(data), data.garapon || '',
       data.staff || '', data.time || '', data.address || '', data.tel || '',
-      data.inMaster ? '○' : '新規', sid, data.code || '', data.card || ''
+      data.inMaster ? '○' : '新規', sid, data.code || '', data.card || '',
+      data.planDate ? (data.planStaff || '') : '', planDT, data.planDate && data.planTime ? (data.planHours || '1') : '',
+      data.planWhat || '', calId
     ]];
     sh.getRange(row, 1, 1, FAIR_HEADERS.length).setValues(vals);
-    return fairJson_({ ok: true, no: no, updated: !!hit });
+    return fairJson_({ ok: true, no: no, updated: !!hit, cal: cal });
   } finally {
     lock.releaseLock();
   }

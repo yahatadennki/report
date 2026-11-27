@@ -39,6 +39,12 @@
   .cand .s { font-size:12px; color:var(--soft); }
   .scan { margin-top:8px; width:100%; padding:12px; border:none; border-radius:10px; background:#0f766e; color:#fff; font-size:16px; font-weight:700; }
   .code { font-size:11px; color:#0f766e; font-weight:700; }
+  .gobar { position:fixed; left:0; right:0; bottom:0; padding:10px 14px calc(10px + env(safe-area-inset-bottom)); background:rgba(255,248,235,.95); box-shadow:0 -2px 10px rgba(0,0,0,.12); z-index:40; }
+  .gobar .go { margin:0 auto; display:block; max-width:652px; }
+  .toast { bottom:96px !important; }
+  .plan { border:2px solid #bfdbfe; background:#eff6ff; border-radius:12px; padding:10px; }
+  .plan input { padding:10px; font-size:16px; background:#fff; }
+  .sublbl { font-size:12px; color:var(--soft); margin:10px 0 5px; }
   .pana { display:inline-block; background:#1d4ed8; color:#fff; font-weight:700; font-size:12px; padding:2px 10px; border-radius:999px; margin-left:6px; vertical-align:middle; }
   .pana.big { display:block; margin:0 0 10px; padding:10px; font-size:18px; text-align:center; border-radius:10px; }
   .pana.end { background:#9ca3af; }
@@ -116,13 +122,27 @@
       <p class="lbl">ガラポン</p>
       <div class="grid g5" id="gara"></div>
 
-      <p class="lbl">予定日</p>
-      <input id="plan" placeholder="例）12/5 工事" oninput="form.plan=this.value">
-
       <p class="lbl">内容</p>
       <textarea id="memo" rows="2" placeholder="例）エアコン買換え・記入済後日・口座未 など" oninput="form.memo=this.value"></textarea>
 
-      <button class="go" id="goBtn" onclick="submitVisit()">来店を記録する</button>
+      <p class="lbl">予定（入れるとカレンダーに入ります）</p>
+      <div class="plan">
+        <div class="grid" style="grid-template-columns:1.3fr 1fr;gap:8px">
+          <input type="date" id="planDate" onchange="setPlan('planDate',this.value)">
+          <input type="time" id="planTime" step="900" onchange="setPlan('planTime',this.value)">
+        </div>
+        <div id="planMore">
+          <div class="sublbl">何をする</div>
+          <div class="grid g5" id="planWhatBtns"></div>
+          <div class="sublbl">どのくらい</div>
+          <div class="grid g5" id="planHoursBtns"></div>
+          <div class="sublbl">だれのカレンダー</div>
+          <div class="grid g4" id="planStaffBtns"></div>
+          <button class="sub" onclick="clearPlan()">予定を消す</button>
+        </div>
+      </div>
+
+      <div style="height:84px"></div>
       <button class="sub" id="delBtn" onclick="delVisit()" style="display:none">この記録を取り消す</button>
     </div>
   </div>
@@ -131,6 +151,10 @@
     <p class="lbl">本日の来店一覧（タップで変更）</p>
     <div id="list"><div class="msg">読み込み中…</div></div>
   </div>
+</div>
+<!-- 記録ボタンは画面の下に固定（バーコードを読んだらスクロールせずに押せる） -->
+<div class="gobar" id="goBar" style="display:none">
+  <button class="go" id="goBtn" onclick="submitVisit()">来店を記録する</button>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -163,7 +187,7 @@ let staff = localStorage.getItem('fair_staff') || '';
 let customers = [], custState = 'loading', results = [], visits = [];
 let form = null;   // 入力中の1件（null＝未選択）
 
-function blank(){ return { id:'', code:'', card:'', name:'', address:'', tel:'', area:'', inMaster:false, md:false, panaJoin:false, panaForm:false, credit:false, cash:false, garapon:'', plan:'', memo:'' }; }
+function blank(){ return { id:'', code:'', card:'', name:'', address:'', tel:'', area:'', inMaster:false, md:false, panaJoin:false, panaForm:false, credit:false, cash:false, garapon:'', plan:'', memo:'', planDate:'', planTime:'', planHours:'1', planWhat:'', planStaff:'' }; }
 
 function start(){
   document.getElementById('pin').style.display = 'none';
@@ -377,6 +401,7 @@ function renderForm(){
   document.getElementById('detail').style.display = on ? 'block' : 'none';
   document.getElementById('formBox').classList.toggle('edit', editing);
   const a = document.getElementById('pickedArea');
+  document.getElementById('goBar').style.display = on ? 'block' : 'none';
   if (!on){ a.innerHTML=''; return; }
   const dup = !editing && visits.some(v => norm(v.name) === norm(form.name));
   a.innerHTML = '<div class="picked">' + panaBadge(form.card, true) +
@@ -393,15 +418,44 @@ function renderForm(){
     '<button class="chk '+(form[k]?'on':'')+'" onclick="form.'+k+'=!form.'+k+';renderForm()">'+l+'</button>').join('');
   document.getElementById('gara').innerHTML = GARA.map(g =>
     '<button class="opt '+(form.garapon===g?'on':'')+'" onclick="form.garapon=\''+g+'\';renderForm()">'+(g||'なし')+'</button>').join('');
-  const pl = document.getElementById('plan'), me = document.getElementById('memo');
-  if (pl.value !== form.plan) pl.value = form.plan;
+  const me = document.getElementById('memo');
   if (me.value !== form.memo) me.value = form.memo;
+  renderPlan();
   document.getElementById('goBtn').textContent = editing ? '変更を保存する' : '来店を記録する';
   document.getElementById('goBtn').classList.toggle('blue', editing);
   document.getElementById('delBtn').style.display = editing ? 'block' : 'none';
 }
 function row(label,key,type){
   return '<div class="row"><span>'+label+'</span><input '+(type?'type="'+type+'" ':'')+'value="'+esc(form[key])+'" oninput="form.'+key+'=this.value"></div>';
+}
+
+/* ---------- 予定（カレンダー） ---------- */
+const PLAN_WHAT = ['工事','配達','訪問','下見','見積'];
+const PLAN_HOURS = [['0.5','30分'],['1','1時間'],['2','2時間'],['4','半日'],['8','1日']];
+function setPlan(k, v){
+  form[k] = v;
+  if (k === 'planDate' && v && !form.planStaff) form.planStaff = staff;   // 担当の初期値＝受付した人
+  renderPlan();
+}
+// 何をする はもう一度押すと外れる。ほかは押したものに切り替え
+function pickPlan(k, v){ form[k] = (k === 'planWhat' && form[k] === v) ? '' : v; renderPlan(); }
+function clearPlan(){ Object.assign(form, { planDate:'', planTime:'', planHours:'1', planWhat:'', planStaff:'' }); renderPlan(); }
+function renderPlan(){
+  const d = document.getElementById('planDate'), t = document.getElementById('planTime');
+  if (d.value !== form.planDate) d.value = form.planDate || '';
+  if (t.value !== form.planTime) t.value = form.planTime || '';
+  document.getElementById('planMore').style.display = form.planDate ? 'block' : 'none';
+  const btn = (k, v, label) => '<button class="opt '+(String(form[k])===String(v)?'on':'')+'" onclick="pickPlan(\''+k+'\',\''+v+'\')">'+label+'</button>';
+  document.getElementById('planWhatBtns').innerHTML = PLAN_WHAT.map(w => btn('planWhat', w, w)).join('');
+  document.getElementById('planHoursBtns').innerHTML = form.planTime
+    ? PLAN_HOURS.map(([v,l]) => btn('planHours', v, l)).join('')
+    : '<div class="msg" style="grid-column:1/-1">時刻を入れないと「終日」の予定になります</div>';
+  document.getElementById('planStaffBtns').innerHTML = STAFF.map(s => btn('planStaff', s, s)).join('');
+}
+function planText(v){
+  if (!v.planDate) return v.plan || '';
+  const p = v.planDate.split('-').map(Number), dt = new Date(p[0], p[1]-1, p[2]);
+  return p[1]+'/'+p[2]+'('+'日月火水木金土'[dt.getDay()]+')'+(v.planTime?' '+v.planTime:'')+(v.planWhat?' '+v.planWhat:'')+(v.planStaff?'（'+v.planStaff+'）':'');
 }
 
 /* ---------- 送信 ---------- */
@@ -417,6 +471,7 @@ async function post(obj){
 async function submitVisit(){
   if (!staff){ toast('受付した人を選んでください'); window.scrollTo({top:0,behavior:'smooth'}); return; }
   if (!form || !String(form.name).trim()){ toast('お客様のお名前を入れてください'); return; }
+  if (form.planDate && !form.planStaff){ toast('予定を入れる人（だれのカレンダー）を選んでください'); return; }
   const now = new Date();
   const editing = !!form.id;
   const v = Object.assign({}, form, { action:'fairVisit', name:form.name.trim(),
@@ -437,7 +492,11 @@ async function sendOne(v){
   try {
     const j = await post(v);
     setPending(pending().filter(p=>p.id!==v.id));
-    const x = visits.find(a=>a.id===v.id); if (x){ x.pend=false; if (j.no) x.no=j.no; }
+    const x = visits.find(a=>a.id===v.id); if (x){ x.pend=false; if (j.no) x.no=j.no; x.calOk = !!v.planDate && (j.cal==='ok'||j.cal==='kept'); }
+    if (j.cal === 'ok') toast('📅 '+v.planStaff+'さんのカレンダーに入れました');
+    else if (j.cal === 'removed') toast('📅 カレンダーの予定を消しました');
+    else if (j.cal === 'nocal') toast('⚠ '+v.planStaff+'さんのカレンダーに入れられません（共有されていません）');
+    else if (j.cal && j.cal.indexOf('error') === 0) toast('⚠ カレンダーに入れられませんでした');
     renderList();
   } catch(e){ /* 端末に残し、30秒ごとに再送 */ }
 }
@@ -464,7 +523,7 @@ function renderList(){
     const mk = CHKS.filter(([k])=>v[k]).map(([,l])=>'<span class="mk">'+l+'</span>').join('') + (v.garapon?'<span class="mk g">ｶﾞﾗﾎﾟﾝ '+esc(v.garapon)+'</span>':'');
     return '<div class="item'+(isPana(v)?' pa':'')+'" onclick="editVisit('+i+')"><div class="no">'+esc(v.no||'…')+'</div><div class="b">' +
       '<div class="n">'+esc(v.area||'')+'　'+esc(v.name)+' 様'+(cardHolder(v.card) ? panaBadge(v.card) : (v.panaJoin ? '<span class="pana">💳 入会</span>' : ''))+'</div>' +
-      '<div class="s">'+esc(v.time)+' 受付 '+esc(v.staff)+(v.plan?'　予定 '+esc(v.plan):'')+'</div>' +
+      '<div class="s">'+esc(v.time)+' 受付 '+esc(v.staff)+(planText(v)?'　📅 '+esc(planText(v))+(v.planDate&&!v.pend&&!v.calOk?' ⚠未登録':''):'')+'</div>' +
       (mk?'<div>'+mk+'</div>':'') + (v.memo?'<div class="s">'+esc(v.memo)+'</div>':'') +
       (v.pend?'<div class="pend">⏳ 送信待ち（自動で送ります）</div>':'')+'</div></div>';
   }).join('');
