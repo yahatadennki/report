@@ -453,7 +453,7 @@ function renderNippo(){
     '<div style="font-weight:700;font-size:17px;margin-bottom:6px">'+esc(i.name||'フェア')+'　'+md(d.date)+'</div>' +
     '<table class="nip">' +
     h('来店') + r('来店', d.raiten+'組') + r('来店の累計', d.acc+'組') + r('来店率（累計／招待状'+(i.invites||'—')+'部）', d.rate === null ? null : d.rate+'%') +
-      r('区域別', esc(d.areas)) + r('新規のお客様', d.shinki+'組') + r('受付', esc(d.staff)) +
+      r('区域別', esc(d.areas)) + r('新規のお客様', d.shinki+'組') +
     h('🎁 記念品'+(i.giftName?'（'+esc(i.giftName)+'）':'')) + r('渡した（来店＋配達）', d.given+'個') + r('うち配達で', d.haitatsu+'個') +
       r('まだ渡してない', d.notGiven+'人') + r('残り', d.remain === null ? null : d.remain+'個') +
     h('💳 パナカード') + r('会員の来店', d.pana+'組') + r('入会', d.panaJoin) + r('用紙記入', d.panaForm) +
