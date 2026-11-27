@@ -273,7 +273,8 @@ const AUTH_KEY = 'fair_auth_v1';
 const STAFF = ['高山','伊藤','服部','石橋','角井','北沢','宇留野'];
 const AREAS = ['1区','2区','3区','4区','5区','6区','7区','8区','9区'];
 const CHKS = [['md','MD'],['panaJoin','パナカード'],['panaForm','ﾊﾟﾅｶｰﾄﾞ用紙記入'],['credit','クレジット'],['cash','現金']];
-const GARA = ['特賞','1等','金','銀',''];
+const GARA = ['特賞','1等',''];   // 特賞＝金・1等＝銀
+const garaL = g => ({'特賞':'🥇 特賞（金）','1等':'🥈 1等（銀）'})[g] || g || 'なし';
 const CUST_CACHE_KEY = 'fair_customers_v1';   // 顧客コード入りで保存（受注日報の保存分はコードが無いので別に持つ）
 const PEND_KEY = 'fair_pending_v1';
 
@@ -441,7 +442,7 @@ function renderSum(dates, vs, gs, k){
   const what = x => x.planWhat || '（内容なし）';
   const planKinds = [...new Set(V.filter(v=>v.planDate).map(what))].map(w => two(w, v => cnt(v, x=>x.planDate && what(x)===w)));
   const areaRows = AREAS.concat(['']).map(a => two(a || '不明', v => cnt(v, x=>(x.area||'')===a))).filter(r => r[0] !== '不明' || r[2]);
-  const garaRows = GARA.map(g => two(g || 'なし・未入力', v => cnt(v, x=>(x.garapon||'')===g)));
+  const garaRows = GARA.map(g => two(g ? garaL(g) : 'なし・未入力', v => cnt(v, x=>(x.garapon||'')===g)));
   return '<div class="msg" style="margin-bottom:6px">'+esc(i.name||'')+'　'+md(dates[0])+(dates.length>1?'〜'+md(dates[dates.length-1]):'')+'（'+dates.length+'日間）</div>' +
     table(H, main) +
     sumUriage(V, day, allL) +
@@ -798,7 +799,7 @@ function renderForm(){
   document.getElementById('chks').innerHTML = CHKS.map(([k,l]) =>
     '<button class="chk '+(form[k]?'on':'')+'" onclick="togF(\''+k+'\')">'+l+'</button>').join('');
   document.getElementById('gara').innerHTML = GARA.map(g =>
-    '<button class="opt '+(form.garapon===g?'on':'')+'" onclick="setF(\'garapon\',\''+g+'\')">'+(g||'なし')+'</button>').join('');
+    '<button class="opt '+(form.garapon===g?'on':'')+'" onclick="setF(\'garapon\',\''+g+'\')">'+garaL(g)+'</button>').join('');
   const me = document.getElementById('memo');
   if (me.value !== form.memo) me.value = form.memo;
   renderPlan();
@@ -958,7 +959,7 @@ function renderList2(){
   const ngBadge = v => v.notGiven ? '<span class="ng">🎁 まだ渡してない</span>' : '';
   const el = document.getElementById('list');
   el.innerHTML = !visits.length ? '<div class="msg">まだ記録はありません</div>' : visits.map((v,i) => {
-    const mk = CHKS.filter(([k])=>v[k]).map(([,l])=>'<span class="mk">'+l+'</span>').join('') + (v.garapon?'<span class="mk g">ｶﾞﾗﾎﾟﾝ '+esc(v.garapon)+'</span>':'');
+    const mk = CHKS.filter(([k])=>v[k]).map(([,l])=>'<span class="mk">'+l+'</span>').join('') + (v.garapon?'<span class="mk g">ｶﾞﾗﾎﾟﾝ '+esc(garaL(v.garapon))+'</span>':'');
     return '<div class="item'+(isPana(v)?' pa':'')+(v.notGiven?' ngi':'')+'" onclick="editItem(\'raiten\','+i+')"><div class="no">'+esc(v.no||'…')+'</div><div class="b">' +
       '<div class="n">'+esc(v.area||'')+'　'+esc(v.name)+' 様'+(cardHolder(v.card) ? panaBadge(v.card) : (v.panaJoin ? '<span class="pana">💳 パナカード</span>' : ''))+ngBadge(v)+'</div>' +
       '<div class="s">'+esc(v.time)+(v.staff?' 受付 '+esc(v.staff):'')+(planText(v)?'　📅 '+esc(planText(v))+(v.planDate&&!v.pend&&!v.calOk?' ⚠未登録':''):'')+'</div>' +
