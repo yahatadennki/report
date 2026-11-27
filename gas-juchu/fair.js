@@ -303,21 +303,26 @@ function fairInfoGet_() {
   const info = infoRead_();
   const inRange = function(d) { return (!info.start || d >= info.start) && (!info.end || d <= info.end); };
   let raiten = 0, given = 0, notGiven = 0, giftRows = 0;
+  const people = [];   // 重複チェック用：[種類, 日付, 名前, 顧客コード, 電話, 送信ID]
   const vs = fairSheet_(), vl = vs.getLastRow();
   if (vl >= 2) vs.getRange(2, 1, vl - 1, FAIR_HEADERS.length).getDisplayValues().forEach(function(r) {
-    if (!inRange(fairYmd_(r[0]))) return;
+    const d = fairYmd_(r[0]);
+    if (!inRange(d)) return;
     raiten++;
     if (r[25] === '未渡し') notGiven++; else given++;
+    people.push(['v', d, r[4], r[18], r[15], r[17]]);
   });
   const gs = giftSheet_(), gl = gs.getLastRow();
   if (gl >= 2) gs.getRange(2, 1, gl - 1, GIFT_HEADERS.length).getDisplayValues().forEach(function(r) {
-    if (!inRange(fairYmd_(r[0]))) return;
+    const d = fairYmd_(r[0]);
+    if (!inRange(d)) return;
     giftRows++;
     if (r[13] === '未渡し') notGiven++; else given++;
+    people.push(['g', d, r[3], r[11], r[8], r[10]]);
   });
   const total = Number(String(info.gifts).replace(/[^\d]/g, '')) || 0;
   return fairJson_({ ok: true, info: info, raiten: raiten, haitatsu: giftRows, given: given, notGiven: notGiven,
-    remain: total ? total - given : null });
+    remain: total ? total - given : null, people: people });
 }
 
 function fairInfoSave_(data) {

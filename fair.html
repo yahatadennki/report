@@ -80,6 +80,9 @@
   .tag { display:inline-block; font-size:11px; padding:2px 9px; border-radius:999px; background:#dcfce7; color:#166534; font-weight:700; }
   .tag.new { background:#fee2e2; color:#991b1b; }
   .warn { margin-top:8px; font-size:13px; color:#b45309; font-weight:700; }
+  .warn.dup { background:#fee2e2; color:#b91c1c; border:2px solid #dc2626; border-radius:10px; padding:10px; font-size:15px; }
+  .dupb { display:inline-block; background:#dc2626; color:#fff; font-weight:700; font-size:12px; padding:2px 8px; border-radius:999px; margin-left:6px; vertical-align:middle; }
+  .go.dupgo { background:#dc2626 !important; font-size:16px; }
   .clear { float:right; font-size:13px; background:none; border:none; color:var(--soft); text-decoration:underline; }
   .go { margin-top:16px; width:100%; padding:16px; font-size:19px; font-weight:700; color:#fff; background:var(--navy); border:none; border-radius:12px; }
   .go.blue { background:#2563eb; }
@@ -365,6 +368,22 @@ const areaOf = c => { const m = String((c&&c.ku)||'').match(/(\d+)\s*区/); retu
 const telOf = c => (c.telList && c.telList.length) ? c.telList.join(' / ') : (c.tel||'');
 
 const codeKey = s => String(s||'').replace(/\D/g,'').replace(/^0+/,'');
+/* ---------- 重複チェック（フェア期間中の来店・配達すべて） ---------- */
+const telKeys = s => String(s||'').split(/[\/,、]/).map(t => t.replace(/\D/g,'')).filter(t => t.length >= 9);
+function dupsOf(f){
+  if (!f || !String(f.name||'').trim() && !f.code) return [];
+  const all = ((info && info.people) || []).map(p => ({ kind:p[0]==='g'?'gift':'raiten', date:p[1], name:p[2], code:p[3], tel:p[4], id:p[5] }));
+  const local = (arr, kind) => arr.forEach(v => { if (!all.some(a => a.id === v.id)) all.push({ kind, date:v.date||TODAY, name:v.name, code:v.code, tel:v.tel, id:v.id }); });
+  local(visits, 'raiten'); local(gifts, 'gift');   // まだ送れていない今日の分も
+  const fc = codeKey(f.code), fn = norm(f.name||''), ft = telKeys(f.tel);
+  return all.filter(a => {
+    if (f.id && a.id === f.id) return false;
+    const ac = codeKey(a.code);
+    if (fc && ac) return fc === ac;                       // 両方に顧客コードがあればコードで判断
+    return (fn && norm(a.name||'') === fn) || telKeys(a.tel).some(t => ft.includes(t));
+  }).sort((a,b) => a.date < b.date ? -1 : 1);
+}
+const dupText = d => d.map(a => a.date.slice(5).replace('-','/').replace(/^0/,'') + (a.kind==='gift'?' 配達で記念品':' 来店')).join('、');
 function findByCode(raw){
   const k = codeKey(raw); if (!k) return null;
   return customers.find(c => codeKey(c.no) === k) || null;
@@ -381,6 +400,8 @@ function pickCust(c){
   stopScan();
   form = Object.assign(blank(), { code:c.no||'', card:c.card||'', name:c.name, address:c.address||'', tel:telOf(c), area:areaOf(c), inMaster:true });
   renderForm();
+  const d = dupsOf(form);
+  if (d.length){ if (navigator.vibrate) navigator.vibrate([120,80,120]); toast('⚠ 重複：'+c.name+' 様は '+dupText(d)+' に記録済み'); }
 }
 
 /* ---------- カメラでバーコード ---------- */
@@ -486,7 +507,7 @@ function onSearch(){
   results = byCode.concat(customers.filter(c => !byCode.includes(c) && (norm(c.name).includes(q) || norm(c.kana).includes(q) ||
     (/^\d{3,}$/.test(qt) && c.tels && c.tels.includes(qt)) || (c.address && c.address.includes(raw))))).slice(0,15);
   box.innerHTML = (results.length ? results.map((c,i) =>
-    '<div class="cand" onclick="pick('+i+')"><div class="code">No.'+esc(c.no)+'</div><div class="n">'+esc(areaOf(c))+'　'+esc(c.name)+' 様'+panaBadge(c.card)+'</div><div class="s">'+esc(telOf(c))+'　'+esc(c.address)+'</div></div>').join('')
+    '<div class="cand" onclick="pick('+i+')"><div class="code">No.'+esc(c.no)+'</div><div class="n">'+esc(areaOf(c))+'　'+esc(c.name)+' 様'+panaBadge(c.card)+(dupsOf({ code:c.no, name:c.name, tel:telOf(c) }).length ? '<span class="dupb">⚠ 記録済み</span>' : '')+'</div><div class="s">'+esc(telOf(c))+'　'+esc(c.address)+'</div></div>').join('')
     : '<div class="msg">顧客マスタに見つかりません</div>') + newBtn(raw);
 }
 function newBtn(raw){ return '<button class="newbtn" onclick="pickNew()">＋「'+esc(raw)+'」さんを新規のお客様として入力</button>'; }
@@ -526,16 +547,13 @@ function renderForm(){
   const gb = document.getElementById('giftBtn');
   gb.classList.toggle('on', !!form.notGiven);
   gb.textContent = form.notGiven ? '🎁 記念品まだ渡してない（押すと「渡した」に戻る）' : '🎁 記念品が足りずまだ渡してないときは押す';
-  const same = arr => arr.some(v => v.id !== form.id && norm(v.name) === norm(form.name));
-  const dup = isGift ? same(gifts) : same(visits);
-  const cross = isGift ? same(visits) : same(gifts);
+  const dups = dupsOf(form);
   a.innerHTML = '<div class="picked">' + panaBadge(form.card, true) +
     (!cardHolder(form.card) && form.panaJoin ? '<span class="pana big">💳 パナカード（フェアで入会）</span>' : '') +
     '<div style="margin-bottom:8px">'+(editing ? '<span class="tag" style="background:#dbeafe;color:#1e40af">№'+esc(form.no||'')+' を変更中</span> ' : '') +
     (form.inMaster ? '<span class="tag">顧客マスタから'+(form.code?'　No.'+esc(form.code):'')+'</span>' : '<span class="tag new">新規のお客様</span>')+'</div>' +
     row('お名前','name') + row('住所','address') + row('電話','tel','tel') +
-    (dup ? '<div class="warn">⚠ 本日すでに'+(isGift?'配達で記念品':'来店')+'の記録があります</div>' : '') +
-    (cross ? '<div class="warn">⚠ 本日'+(isGift?'来店':'配達で記念品')+'の記録もあります（記念品が二重にならないように）</div>' : '') + '</div>';
+    (dups.length ? '<div class="warn dup">⚠ 重複しています：このフェアで '+esc(dupText(dups))+' の記録があります（記念品が二重にならないように）</div>' : '') + '</div>';
   document.getElementById('areaBtns').innerHTML = AREAS.concat(['不明']).map(x => {
     const v = x==='不明' ? '' : x;
     return '<button class="opt '+(form.area===v?'on':'')+'" onclick="form.area=\''+v+'\';renderForm()">'+x+'</button>';
@@ -549,6 +567,9 @@ function renderForm(){
   renderPlan();
   document.getElementById('goBtn').textContent = editing ? '変更を保存する' : (isGift ? '🚚 配達で記念品を記録する' : '来店を記録する');
   document.getElementById('goBtn').classList.toggle('blue', editing);
+  const dupGo = !editing && form.dupOk && dups.length;
+  document.getElementById('goBtn').classList.toggle('dupgo', !!dupGo);
+  if (dupGo) document.getElementById('goBtn').textContent = '⚠ 重複しています。それでも記録するならもう一度押す';
   document.getElementById('delBtn').style.display = editing ? 'block' : 'none';
 }
 function row(label,key,type){
@@ -600,6 +621,14 @@ async function submitVisit(){
   if (form.planDate && !form.planStaff){ toast('予定を入れる人（だれのカレンダー）を選んでください'); return; }
   const now = new Date();
   const editing = !!form.id;
+  if (!editing && !form.dupOk && dupsOf(form).length){   // 重複は1回止めて、もう一度押したら記録
+    form.dupOk = true;
+    const b = document.getElementById('goBtn');
+    b.textContent = '⚠ 重複しています。それでも記録するならもう一度押す';
+    b.classList.add('dupgo');
+    toast('⚠ 重複しています：'+dupText(dupsOf(form)));
+    return;
+  }
   const isGift = form.kind === 'gift';
   if (isGift) Object.assign(form, { planDate:'', planTime:'', planStaff:'', planWhat:'' });   // 配達は予定なし
   const arr = isGift ? gifts : visits;
