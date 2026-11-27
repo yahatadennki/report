@@ -265,7 +265,7 @@ const PIN_HASH = 'e2f691407acb1efa4c9f9f8b1ae626cf6d9a4d96e73e207e9ea7f429293127
 const AUTH_KEY = 'fair_auth_v1';
 const STAFF = ['高山','伊藤','服部','石橋','角井','北沢','宇留野'];
 const AREAS = ['1区','2区','3区','4区','5区','6区','7区','8区','9区'];
-const CHKS = [['md','MD'],['panaJoin','ﾊﾟﾅｶｰﾄﾞ入会'],['panaForm','ﾊﾟﾅｶｰﾄﾞ用紙記入'],['credit','クレジット'],['cash','現金']];
+const CHKS = [['md','MD'],['panaJoin','パナカード'],['panaForm','ﾊﾟﾅｶｰﾄﾞ用紙記入'],['credit','クレジット'],['cash','現金']];
 const GARA = ['特賞','1等','金','銀',''];
 const CUST_CACHE_KEY = 'fair_customers_v1';   // 顧客コード入りで保存（受注日報の保存分はコードが無いので別に持つ）
 const PEND_KEY = 'fair_pending_v1';
@@ -386,7 +386,7 @@ function renderSum(dates, vs, gs){
   const panaMem = cnt(V, v=>cardHolder(v.card));
   const items = [
     ['パナカード会員の来店', panaMem, pct(panaMem, V.length)],
-    ['ﾊﾟﾅｶｰﾄﾞ入会', cnt(V, v=>v.panaJoin), pct(cnt(V, v=>v.panaJoin), V.length)],
+    ['パナカード', cnt(V, v=>v.panaJoin), pct(cnt(V, v=>v.panaJoin), V.length)],
     ['ﾊﾟﾅｶｰﾄﾞ用紙記入', cnt(V, v=>v.panaForm), pct(cnt(V, v=>v.panaForm), V.length)],
     ['MD', cnt(V, v=>v.md), pct(cnt(V, v=>v.md), V.length)],
     ['クレジット', cnt(V, v=>v.credit), pct(cnt(V, v=>v.credit), V.length)],
@@ -459,7 +459,7 @@ function renderNippo(){
       r('区域別', esc(d.areas)) + r('新規のお客様', d.shinki+'組') +
     h('🎁 記念品'+(i.giftName?'（'+esc(i.giftName)+'）':'')) + r('渡した（来店＋配達）', d.given+'個') + r('うち配達で', d.haitatsu+'個') +
       r('まだ渡してない', d.notGiven+'人') + r('残り', d.remain === null ? null : d.remain+'個') +
-    h('💳 パナカード') + r('会員の来店', d.pana+'組') + r('入会', d.panaJoin) + r('用紙記入', d.panaForm) +
+    h('💳 パナカード') + r('会員の来店', d.pana+'組') + r('パナカード', d.panaJoin) + r('用紙記入', d.panaForm) +
     h('💴 売上（この日に作った見積）') + (d.sei === null ? r('売上', '読めません（許可が必要）') :
       r('成約', d.sei+'件　'+yen(d.seiYen)) + r('見積中', d.est+'件　'+yen(d.estYen)) + r('成約の品目', esc(d.kinds))) +
       r('MD', d.md) + r('クレジット', d.credit) + r('現金', d.cash) + r('予定を入れた', d.plan+'件') +
@@ -732,7 +732,7 @@ function renderForm(){
   gb.textContent = form.notGiven ? '🎁 記念品まだ渡してない（押すと「渡した」に戻る）' : '🎁 記念品が足りずまだ渡してないときは押す';
   const dups = dupsOf(form);
   a.innerHTML = '<div class="picked">' + panaBadge(form.card, true) +
-    (!cardHolder(form.card) && form.panaJoin ? '<span class="pana big">💳 パナカード（フェアで入会）</span>' : '') +
+    (!cardHolder(form.card) && form.panaJoin ? '<span class="pana big">💳 パナカード</span>' : '') +
     '<div style="margin-bottom:8px">'+(editing ? '<span class="tag" style="background:#dbeafe;color:#1e40af">№'+esc(form.no||'')+' を変更中</span> ' : '') +
     (form.inMaster ? '<span class="tag">顧客マスタから'+(form.code?'　No.'+esc(form.code):'')+'</span>' : '<span class="tag new">新規のお客様</span>')+'</div>' +
     row('お名前','name') + row('住所','address') + row('電話','tel','tel') +
@@ -892,7 +892,7 @@ function renderList(){
   el.innerHTML = !visits.length ? '<div class="msg">まだ記録はありません</div>' : visits.map((v,i) => {
     const mk = CHKS.filter(([k])=>v[k]).map(([,l])=>'<span class="mk">'+l+'</span>').join('') + (v.garapon?'<span class="mk g">ｶﾞﾗﾎﾟﾝ '+esc(v.garapon)+'</span>':'');
     return '<div class="item'+(isPana(v)?' pa':'')+(v.notGiven?' ngi':'')+'" onclick="editItem(\'raiten\','+i+')"><div class="no">'+esc(v.no||'…')+'</div><div class="b">' +
-      '<div class="n">'+esc(v.area||'')+'　'+esc(v.name)+' 様'+(cardHolder(v.card) ? panaBadge(v.card) : (v.panaJoin ? '<span class="pana">💳 入会</span>' : ''))+ngBadge(v)+'</div>' +
+      '<div class="n">'+esc(v.area||'')+'　'+esc(v.name)+' 様'+(cardHolder(v.card) ? panaBadge(v.card) : (v.panaJoin ? '<span class="pana">💳 パナカード</span>' : ''))+ngBadge(v)+'</div>' +
       '<div class="s">'+esc(v.time)+(v.staff?' 受付 '+esc(v.staff):'')+(planText(v)?'　📅 '+esc(planText(v))+(v.planDate&&!v.pend&&!v.calOk?' ⚠未登録':''):'')+'</div>' +
       (mk?'<div>'+mk+'</div>':'') + (v.memo?'<div class="s">'+esc(v.memo)+'</div>':'') + estBadges(v.name) +
       (v.pend?'<div class="pend">⏳ 送信待ち（自動で送ります）</div>':'')+'</div></div>';
