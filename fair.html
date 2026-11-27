@@ -49,7 +49,7 @@
   .nip td { text-align:right; font-weight:700; padding:6px 4px; border-bottom:1px solid #eee; }
   .nip tr.h td { text-align:left; background:#fff7ed; color:#c2410c; font-size:13px; }
   body:not(.gift) #staffLbl, body:not(.gift) #staff { display:none; }   /* 来店では受付した人は聞かない */
-  .sumk { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin:6px 0 12px; }
+  .sumk { display:grid; grid-template-columns:repeat(2,1fr); gap:6px; margin:6px 0 12px; }
   .sumk div { background:#fff7ed; border-radius:10px; padding:8px 4px; text-align:center; }
   .sumk b { display:block; font-size:22px; color:#c2410c; line-height:1.2; }
   .sumk span { font-size:11px; color:#555; }
@@ -383,10 +383,10 @@ function renderSum(dates, vs, gs){
   const dayRows = dates.map((d, k) => { const n = vs[k].length; acc += n;
     return d > TODAY ? [md(d), '—', '—', '—', '—'] : [md(d), n, gs[k].length, acc, pct(acc, inv)]; });
   const areaRows = AREAS.concat(['']).map(a => [a || '不明', cnt(V, v=>(v.area||'')===a)]).filter(r => r[0] !== '不明' || r[1]);
-  const panaMem = cnt(V, v=>cardHolder(v.card));
+  const panaMem = cnt(V, isPana);   // パナカード会員（もともとの会員＋フェアで入った人）
   const items = [
     ['パナカード会員の来店', panaMem, pct(panaMem, V.length)],
-    ['パナカード', cnt(V, v=>v.panaJoin), pct(cnt(V, v=>v.panaJoin), V.length)],
+    ['うちフェアで入った', cnt(V, v=>v.panaJoin && !cardHolder(v.card)), pct(cnt(V, v=>v.panaJoin && !cardHolder(v.card)), V.length)],
     ['ﾊﾟﾅｶｰﾄﾞ用紙記入', cnt(V, v=>v.panaForm), pct(cnt(V, v=>v.panaForm), V.length)],
     ['MD', cnt(V, v=>v.md), pct(cnt(V, v=>v.md), V.length)],
     ['クレジット', cnt(V, v=>v.credit), pct(cnt(V, v=>v.credit), V.length)],
@@ -398,7 +398,8 @@ function renderSum(dates, vs, gs){
   const garaRows = GARA.map(g => [g || 'なし・未入力', cnt(V, v=>(v.garapon||'')===g)]);
   return '<div class="msg" style="margin-bottom:6px">'+esc(i.name||'')+'　'+md(dates[0])+(dates.length>1?'〜'+md(dates[dates.length-1]):'')+'（'+dates.length+'日間）</div>' +
     '<div class="sumk"><div><b>'+V.length+'</b><span>来店（組）</span></div><div><b>'+pct(V.length, inv)+'</b><span>来店率（招待状'+(inv||'—')+'部）</span></div>' +
-    '<div><b>'+(tot ? tot - given : '—')+'</b><span>記念品 残り／'+(tot||'—')+'</span></div></div>' +
+    '<div><b>'+(tot ? tot - given : '—')+'</b><span>記念品 残り／'+(tot||'—')+'</span></div>' +
+    '<div><b>'+panaMem+'組 <small>'+pct(panaMem, V.length)+'</small></b><span>パナカード会員の来店（来店の中で）</span></div></div>' +
     lbl('日別') + table(['日','来店','配達で記念品','来店の累計','来店率'], dayRows, ['合計', V.length, G.length, V.length, pct(V.length, inv)]) +
     sumUriage(V) +
     lbl('記念品') + table(['','数'], [['来店で渡した', cnt(V, v=>!v.notGiven)], ['配達で渡した', cnt(G, v=>!v.notGiven)], ['まだ渡してない', cnt(V, v=>v.notGiven) + cnt(G, v=>v.notGiven)]], ['渡した合計', given]) +
