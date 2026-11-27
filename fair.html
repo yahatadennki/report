@@ -201,7 +201,7 @@
     <div id="pickedArea"></div>
 
     <div id="detail" style="display:none">
-      <button class="giftbtn" id="giftBtn" onclick="form.notGiven=!form.notGiven;renderForm()"></button>
+      <button class="giftbtn" id="giftBtn" onclick="togF(\'notGiven\')"></button>
 
       <p class="lbl">区域</p>
       <div class="grid g5" id="areaBtns"></div>
@@ -215,7 +215,7 @@
       </div>
 
       <p class="lbl">内容</p>
-      <textarea id="memo" rows="2" placeholder="例）エアコン買換え・記入済後日・口座未 など" oninput="form.memo=this.value"></textarea>
+      <textarea id="memo" rows="2" placeholder="例）エアコン買換え・記入済後日・口座未 など" oninput="inF('memo',this.value)"></textarea>
 
       <div id="planBox">
       <p class="lbl">予定（入れるとカレンダーに入ります）</p>
@@ -287,6 +287,10 @@ async function verifyPin(){
 let staff = localStorage.getItem('fair_staff') || '';
 let customers = [], custState = 'loading', results = [], visits = [];
 let form = null;   // 入力中の1件（null＝未選択）
+// ボタンの onclick の中で「form」と書くとボタン自身の form（null）を指してしまうので、必ずこの関数を使う
+function setF(k, v){ form[k] = v; renderForm(); }
+function togF(k){ form[k] = !form[k]; renderForm(); }
+function inF(k, v){ form[k] = v; }   // 文字入力（描き直さない）
 
 let mode = 'raiten', gifts = [];   // raiten＝来店／gift＝配達で記念品（来店とは別のシート・集計）
 function setMode(m){
@@ -737,12 +741,12 @@ function renderForm(){
     (!isGift ? '<button class="mitsu" onclick="openMitsumori()">📝 このお客様の見積書をつくる（商品見積）</button>' : '') + '</div>';
   document.getElementById('areaBtns').innerHTML = AREAS.concat(['不明']).map(x => {
     const v = x==='不明' ? '' : x;
-    return '<button class="opt '+(form.area===v?'on':'')+'" onclick="form.area=\''+v+'\';renderForm()">'+x+'</button>';
+    return '<button class="opt '+(form.area===v?'on':'')+'" onclick="setF(\'area\',\''+v+'\')">'+x+'</button>';
   }).join('');
   document.getElementById('chks').innerHTML = CHKS.map(([k,l]) =>
-    '<button class="chk '+(form[k]?'on':'')+'" onclick="form.'+k+'=!form.'+k+';renderForm()">'+l+'</button>').join('');
+    '<button class="chk '+(form[k]?'on':'')+'" onclick="togF(\''+k+'\')">'+l+'</button>').join('');
   document.getElementById('gara').innerHTML = GARA.map(g =>
-    '<button class="opt '+(form.garapon===g?'on':'')+'" onclick="form.garapon=\''+g+'\';renderForm()">'+(g||'なし')+'</button>').join('');
+    '<button class="opt '+(form.garapon===g?'on':'')+'" onclick="setF(\'garapon\',\''+g+'\')">'+(g||'なし')+'</button>').join('');
   const me = document.getElementById('memo');
   if (me.value !== form.memo) me.value = form.memo;
   renderPlan();
@@ -754,7 +758,7 @@ function renderForm(){
   document.getElementById('delBtn').style.display = editing ? 'block' : 'none';
 }
 function row(label,key,type){
-  return '<div class="row"><span>'+label+'</span><input '+(type?'type="'+type+'" ':'')+'value="'+esc(form[key])+'" oninput="form.'+key+'=this.value"></div>';
+  return '<div class="row"><span>'+label+'</span><input '+(type?'type="'+type+'" ':'')+'value="'+esc(form[key])+'" oninput="inF(\''+key+'\',this.value)"></div>';
 }
 
 /* ---------- 予定（カレンダー） ---------- */
