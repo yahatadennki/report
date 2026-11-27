@@ -39,6 +39,15 @@
   .cand .s { font-size:12px; color:var(--soft); }
   .scan { margin-top:8px; width:100%; padding:12px; border:none; border-radius:10px; background:#0f766e; color:#fff; font-size:16px; font-weight:700; }
   .code { font-size:11px; color:#0f766e; font-weight:700; }
+  .games { margin-top:8px; display:flex; gap:6px; flex-wrap:wrap; }
+  .games span { background:rgba(255,255,255,.25); border-radius:999px; padding:3px 10px; font-size:12px; font-weight:700; }
+  .days { display:flex; gap:6px; margin-bottom:10px; overflow-x:auto; }
+  .days button { flex:none; padding:8px 12px; border:2px solid #fed7aa; background:#fff; border-radius:10px; font-weight:700; font-size:14px; }
+  .days button.on { background:#ea580c; border-color:#ea580c; color:#fff; }
+  .nip { width:100%; border-collapse:collapse; font-size:15px; margin-bottom:10px; }
+  .nip th { text-align:left; font-weight:400; color:#555; padding:6px 4px; border-bottom:1px solid #eee; width:45%; }
+  .nip td { text-align:right; font-weight:700; padding:6px 4px; border-bottom:1px solid #eee; }
+  .nip tr.h td { text-align:left; background:#fff7ed; color:#c2410c; font-size:13px; }
   .sumk { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin:6px 0 12px; }
   .sumk div { background:#fff7ed; border-radius:10px; padding:8px 4px; text-align:center; }
   .sumk b { display:block; font-size:22px; color:#c2410c; line-height:1.2; }
@@ -56,7 +65,7 @@
   .infobar .gift.low { background:#dc2626; color:#fff; }
   .info-grid { display:grid; grid-template-columns:90px 1fr; gap:8px; align-items:center; }
   .info-grid span { font-size:13px; color:var(--soft); }
-  .info-grid input { padding:10px; font-size:16px; }
+  .info-grid input, .info-grid select { padding:10px; font-size:16px; border:1px solid #ddd; border-radius:8px; background:#fff; }
   .tabs { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:14px; }
   .tabs button { padding:12px 0; font-size:16px; font-weight:700; border:2px solid var(--line); background:#fff; border-radius:12px; color:var(--soft); }
   .tabs #tabRaiten.on { background:#ea580c; border-color:#c2410c; color:#fff; }
@@ -130,13 +139,22 @@
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
       <div><h1 id="title">🎪 フェア来店記録</h1><div class="d" id="today"></div>
         <button onclick="toggleInfo()" style="margin-top:6px;background:rgba(255,255,255,.25);color:#fff;border:none;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:700">⚙ 基本情報</button>
-        <button onclick="toggleSum()" style="margin-top:6px;background:rgba(255,255,255,.25);color:#fff;border:none;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:700">📊 期間の集計</button></div>
-      <a id="sheetLink" href="https://docs.google.com/spreadsheets/d/1Cg5FACS_HqpAlchsU6O4ansNHc7GO_FOWAYhpX_72_w/edit" target="_blank"
+        <button onclick="toggleSum()" style="margin-top:6px;background:rgba(255,255,255,.25);color:#fff;border:none;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:700">📊 期間の集計</button>
+        <button onclick="toggleNippo()" style="margin-top:6px;background:rgba(255,255,255,.25);color:#fff;border:none;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:700">📝 フェア日報</button></div>
+      <a id="sheetLink" href="https://docs.google.com/spreadsheets/d/1POoG7cVDZ4GR6Nu-gtn1vcEjlTrRpQmR4eEaKfTaQ1o/edit" target="_blank"
          style="flex:none;background:#fff;color:#c2410c;font-weight:700;font-size:13px;text-decoration:none;padding:8px 12px;border-radius:999px">📊 シートを開く</a>
     </div>
+    <div class="games" id="gameBar"></div>
     <div class="infobar" id="infoBar"></div>
     <div class="areas" id="areas"></div>
     <div class="nogift" id="nogiftSum"></div>
+  </div>
+
+  <div class="box" id="nippoBox" style="display:none">
+    <p class="lbl">📝 フェア日報 <a id="nippoLink" target="_blank" style="float:right;font-size:12px;color:#c2410c">📊 シートで見る</a></p>
+    <div class="days" id="nippoDays"></div>
+    <div id="nippoBody"><div class="msg">⏳ 読み込み中…</div></div>
+    <button class="sub" onclick="toggleNippo(false)">閉じる</button>
   </div>
 
   <div class="box" id="sumBox" style="display:none">
@@ -153,6 +171,9 @@
       <span>終了日</span><input type="date" id="inEnd">
       <span>招待状部数</span><input type="number" inputmode="numeric" id="inInvites" placeholder="部">
       <span>記念品の数</span><input type="number" inputmode="numeric" id="inGifts" placeholder="個">
+      <span>記念品</span><input id="inGiftName" placeholder="例）ボックスティッシュ">
+      <span>ゲーム1</span><select id="inGame1"><option value="">なし</option><option>数字当て</option><option>ビンゴ</option></select>
+      <span>ゲーム2</span><select id="inGame2"><option value="">なし</option><option>ダーツ</option><option>お米の重さ当て</option><option>一円玉落とし</option><option>輪投げ</option></select>
     </div>
     <div class="msg">記念品の残り＝記念品の数 − 渡した数（期間中の来店＋配達。「まだ渡してない」の人は数えません）</div>
     <button class="go" onclick="saveInfo()">基本情報を保存する</button>
@@ -302,6 +323,8 @@ function showInfo(j){
   info = j;
   const i = j.info, num = s => Number(String(s||'').replace(/[^\d]/g,'')) || 0;
   if (i.name) document.getElementById('title').textContent = '🎪 ' + i.name;
+  const gm = [i.game1, i.game2].filter(Boolean);
+  document.getElementById('gameBar').innerHTML = (gm.length ? '<span>🎯 '+gm.map(esc).join('・')+'</span>' : '') + (i.giftName ? '<span>🎁 '+esc(i.giftName)+'</span>' : '');
   const inv = num(i.invites), tot = num(i.gifts);
   const period = (i.start || i.end) ? '期間計' : '累計';
   const rate = inv ? '（'+(Math.round(j.raiten / inv * 1000) / 10)+'%）' : '';
@@ -399,6 +422,56 @@ function sumUriage(V){
       : '<div class="msg">まだ見積はありません</div>') +
     '<div class="msg" style="margin-bottom:12px">シート「フェア売上」にも書き出しています。成約＝工事日か「発注済・在庫」が入った見積。</div>';
 }
+/* ---------- フェア日報（1日1枚。数字は自動、ひとことだけ書く） ---------- */
+let nippo = null, nippoDay = '';
+function toggleNippo(open){
+  const box = document.getElementById('nippoBox');
+  const show = open === undefined ? box.style.display === 'none' : open;
+  box.style.display = show ? 'block' : 'none';
+  if (show){ box.scrollIntoView({behavior:'smooth', block:'start'}); loadNippo(); }
+}
+async function loadNippo(){
+  document.getElementById('nippoBody').innerHTML = '<div class="msg">⏳ 日報を作っています…</div>';
+  try {
+    nippo = await (await fetch(GAS+'?action=fairNippo')).json();
+    if (!nippo.ok) throw 0;
+    document.getElementById('nippoLink').href = nippo.url;
+    if (!nippo.days.some(d => d.date === nippoDay)) nippoDay = (nippo.days.find(d => d.date === TODAY) || nippo.days[nippo.days.length-1] || {}).date || '';
+    renderNippo();
+  } catch(e){ document.getElementById('nippoBody').innerHTML = '<div class="msg" style="color:#dc2626">⚠ 日報を読み込めませんでした <button onclick="loadNippo()">もう一度</button></div>'; }
+}
+function renderNippo(){
+  const md = d => { const x = new Date(d+'T00:00:00'); return (x.getMonth()+1)+'/'+x.getDate()+'('+'日月火水木金土'[x.getDay()]+')'; };
+  document.getElementById('nippoDays').innerHTML = nippo.days.map((d,k) =>
+    '<button class="'+(d.date===nippoDay?'on':'')+'" onclick="nippoDay=\''+d.date+'\';renderNippo()">'+(k+1)+'日目 '+md(d.date)+'</button>').join('');
+  const d = nippo.days.find(x => x.date === nippoDay); if (!d) return;
+  const i = nippo.info || {};
+  const h = t => '<tr class="h"><td colspan="2">'+t+'</td></tr>';
+  const r = (t, v) => '<tr><th>'+t+'</th><td>'+(v === null || v === '' || v === undefined ? '—' : v)+'</td></tr>';
+  const fut = d.date > TODAY;
+  document.getElementById('nippoBody').innerHTML = fut ? '<div class="msg">まだこの日になっていません</div>' :
+    '<div style="font-weight:700;font-size:17px;margin-bottom:6px">'+esc(i.name||'フェア')+'　'+md(d.date)+'</div>' +
+    '<table class="nip">' +
+    h('来店') + r('来店', d.raiten+'組') + r('来店の累計', d.acc+'組') + r('来店率（累計／招待状'+(i.invites||'—')+'部）', d.rate === null ? null : d.rate+'%') +
+      r('区域別', esc(d.areas)) + r('新規のお客様', d.shinki+'組') + r('受付', esc(d.staff)) +
+    h('🎁 記念品'+(i.giftName?'（'+esc(i.giftName)+'）':'')) + r('渡した（来店＋配達）', d.given+'個') + r('うち配達で', d.haitatsu+'個') +
+      r('まだ渡してない', d.notGiven+'人') + r('残り', d.remain === null ? null : d.remain+'個') +
+    h('💳 パナカード') + r('会員の来店', d.pana+'組') + r('入会', d.panaJoin) + r('用紙記入', d.panaForm) +
+    h('💴 売上（この日に作った見積）') + (d.sei === null ? r('売上', '読めません（許可が必要）') :
+      r('成約', d.sei+'件　'+yen(d.seiYen)) + r('見積中', d.est+'件　'+yen(d.estYen)) + r('成約の品目', esc(d.kinds))) +
+      r('MD', d.md) + r('クレジット', d.credit) + r('現金', d.cash) + r('予定を入れた', d.plan+'件') +
+    h('🎯 ゲーム') + r('ゲーム1', esc(i.game1||'')) + r('ゲーム2', esc(i.game2||'')) + r('ガラポン', esc(d.gara)) +
+    '</table>' +
+    '<p class="lbl">ひとこと（良かったこと・反省・明日やること）</p>' +
+    '<textarea id="nippoCom" rows="4" style="width:100%;font-size:15px;padding:8px;border:1px solid #ddd;border-radius:10px">'+esc(d.comment)+'</textarea>' +
+    '<button class="go" onclick="saveNippo()">ひとことを保存する</button>';
+}
+async function saveNippo(){
+  const c = document.getElementById('nippoCom').value;
+  try { await post({ action:'fairNippoSave', date:nippoDay, comment:c });
+    const d = nippo.days.find(x => x.date === nippoDay); if (d) d.comment = c; toast('✅ 日報に保存しました'); }
+  catch(e){ toast('⚠ 保存できませんでした'); }
+}
 function toggleInfo(open){
   const box = document.getElementById('infoBox');
   const show = open === undefined ? box.style.display === 'none' : open;
@@ -410,12 +483,15 @@ function toggleInfo(open){
     document.getElementById('inEnd').value = i.end || '';
     document.getElementById('inInvites').value = i.invites || '';
     document.getElementById('inGifts').value = i.gifts || '';
+    document.getElementById('inGiftName').value = i.giftName || '';
+    document.getElementById('inGame1').value = i.game1 || '';
+    document.getElementById('inGame2').value = i.game2 || '';
     box.scrollIntoView({behavior:'smooth', block:'start'});
   }
 }
 async function saveInfo(){
   const v = id => document.getElementById(id).value.trim();
-  const data = { action:'fairInfoSave', info:{ name:v('inName'), start:v('inStart'), end:v('inEnd'), invites:v('inInvites'), gifts:v('inGifts') } };
+  const data = { action:'fairInfoSave', info:{ name:v('inName'), start:v('inStart'), end:v('inEnd'), invites:v('inInvites'), gifts:v('inGifts'), giftName:v('inGiftName'), game1:v('inGame1'), game2:v('inGame2') } };
   try { showInfo(await post(data)); toast('✅ 基本情報を保存しました'); toggleInfo(false); window.scrollTo({top:0,behavior:'smooth'}); }
   catch(e){ toast('⚠ 保存できませんでした'); }
 }
