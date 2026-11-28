@@ -431,7 +431,7 @@ function renderSum(dates, vs, gs, k){
   ];
   const items = [
     two('パナカード会員の来店', v => cp(v, isPana)),
-    two('うちフェアで入った', v => cp(v, x=>x.panaJoin && !cardHolder(x.card))),
+    two('うちフェアで入った', v => cp(v, x=>x.panaJoin)),
     two('予定を入れた', v => cp(v, x=>x.planDate)),
     two('新規のお客様', v => cp(v, x=>!x.inMaster))
   ];
