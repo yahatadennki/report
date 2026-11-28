@@ -49,6 +49,10 @@
   .nip td { text-align:right; font-weight:700; padding:6px 4px; border-bottom:1px solid #eee; }
   .nip tr.h td { text-align:left; background:#fff7ed; color:#c2410c; font-size:13px; }
   body:not(.gift) #staffLbl, body:not(.gift) #staff { display:none; }   /* 来店では受付した人は聞かない */
+  .pgrid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .pgrid label span { display:block; font-size:12px; font-weight:700; color:#6b7280; margin-bottom:3px; }
+  .pgrid input, .pgrid select { width:100%; padding:11px 8px; border:2px solid #d1d5db; border-radius:8px; font-size:16px; background:#fff; box-sizing:border-box; }
+  #planDatePh { position:absolute; inset:0; display:flex; align-items:center; padding-left:10px; color:#9ca3af; font-size:14px; background:#fff; border:2px solid #d1d5db; border-radius:8px; cursor:pointer; }
   .sumk { display:grid; grid-template-columns:repeat(2,1fr); gap:6px; margin:6px 0 12px; }
   .sumk div { background:#fff7ed; border-radius:10px; padding:8px 4px; text-align:center; }
   .sumk b { display:block; font-size:22px; color:#c2410c; line-height:1.2; }
@@ -229,19 +233,20 @@
       <div id="planBox">
       <p class="lbl">予定（入れるとカレンダーに入ります）</p>
       <div class="plan">
-        <div class="grid" style="grid-template-columns:1.3fr 1fr;gap:8px">
-          <input type="date" id="planDate" onchange="setPlan('planDate',this.value)">
-          <input type="time" id="planTime" step="900" onchange="setPlan('planTime',this.value)">
+        <!-- 受注日報と同じ並び：日にち・時刻 / 訪問担当・予定時間 -->
+        <div class="pgrid">
+          <label><span>日にち</span><div style="position:relative">
+            <input type="date" id="planDate" onchange="setPlan('planDate',this.value)">
+            <div id="planDatePh" onclick="var el=document.getElementById('planDate');if(el.showPicker)el.showPicker();else el.focus();">📅 日にちを選択</div></div></label>
+          <label><span>時刻</span><select id="planTime" onchange="setPlan('planTime',this.value)"></select></label>
+          <label><span>訪問担当</span><select id="planStaff" onchange="setPlan('planStaff',this.value)"></select></label>
+          <label><span>予定時間</span><select id="planHours" onchange="setPlan('planHours',this.value)"></select></label>
         </div>
         <div id="planMore">
           <div class="sublbl">何をする</div>
           <div class="grid g5" id="planWhatBtns"></div>
-          <div class="sublbl">どのくらい</div>
-          <div class="grid g5" id="planHoursBtns"></div>
           <div class="sublbl">お代</div>
           <div class="grid" id="paidBtn"></div>
-          <div class="sublbl">だれのカレンダー</div>
-          <div class="grid g4" id="planStaffBtns"></div>
           <button class="sub" onclick="clearPlan()">予定を消す</button>
         </div>
       </div>
@@ -830,10 +835,10 @@ function row(label,key,type){
 
 /* ---------- 予定（カレンダー） ---------- */
 const PLAN_WHAT = ['工事','配達','訪問','下見','見積'];
-const PLAN_HOURS = [['0.5','30分'],['1','1時間'],['2','2時間'],['4','半日'],['8','1日']];
+const PLAN_HOURS = ['0.5','1','1.5','2','2.5','3','4','5'];   // 受注日報と同じ（0.5時間〜5時間）
+const PLAN_TIMES = Array.from({length:14}, (_, i) => String(i+8).padStart(2,'0')).flatMap(h => [h+':00', h+':30']);   // 8:00〜21:30（受注日報と同じ）
 function setPlan(k, v){
   form[k] = v;
-  if (k === 'planDate' && v && !form.planStaff) form.planStaff = staff;   // 担当の初期値＝受付した人
   renderPlan();
 }
 // 何をする はもう一度押すと外れる。ほかは押したものに切り替え
@@ -842,14 +847,15 @@ function clearPlan(){ Object.assign(form, { planDate:'', planTime:'', planHours:
 function renderPlan(){
   const d = document.getElementById('planDate'), t = document.getElementById('planTime');
   if (d.value !== form.planDate) d.value = form.planDate || '';
-  if (t.value !== form.planTime) t.value = form.planTime || '';
+  document.getElementById('planDatePh').style.display = form.planDate ? 'none' : 'flex';
   document.getElementById('planMore').style.display = form.planDate ? 'block' : 'none';
+  const opts = (list, v, label) => '<option value="">選択</option>' + list.map(x => '<option value="'+x+'"'+(String(v)===String(x)?' selected':'')+'>'+label(x)+'</option>').join('');
+  const tl = !form.planTime || PLAN_TIMES.includes(form.planTime) ? PLAN_TIMES : PLAN_TIMES.concat([form.planTime]);   // 前に入れた半端な時刻も残す
+  t.innerHTML = opts(tl, form.planTime, x => x);
+  document.getElementById('planStaff').innerHTML = opts(STAFF, form.planStaff, x => x);
+  document.getElementById('planHours').innerHTML = opts(PLAN_HOURS, form.planHours, x => x+'時間');
   const btn = (k, v, label) => '<button class="opt '+(String(form[k])===String(v)?'on':'')+'" onclick="pickPlan(\''+k+'\',\''+v+'\')">'+label+'</button>';
   document.getElementById('planWhatBtns').innerHTML = PLAN_WHAT.map(w => btn('planWhat', w, w)).join('');
-  document.getElementById('planHoursBtns').innerHTML = form.planTime
-    ? PLAN_HOURS.map(([v,l]) => btn('planHours', v, l)).join('')
-    : '<div class="msg" style="grid-column:1/-1">時刻を入れないと「終日」の予定になります</div>';
-  document.getElementById('planStaffBtns').innerHTML = STAFF.map(s => btn('planStaff', s, s)).join('');
   document.getElementById('paidBtn').innerHTML = '<button class="chk '+(form.paid?'on':'')+'" onclick="togPaid()">'+(form.paid ? '領収済（店でお支払い済み）' : '領収済にする（店でお支払い済みなら押す）')+'</button>';
 }
 function togPaid(){ form.paid = !form.paid; renderPlan(); }
@@ -876,7 +882,7 @@ async function post(obj){
 async function submitVisit(){
   if (form && form.kind === 'gift' && !staff){ toast('渡した人を選んでください'); window.scrollTo({top:0,behavior:'smooth'}); return; }
   if (!form || !String(form.name).trim()){ toast('お客様のお名前を入れてください'); return; }
-  if (form.planDate && !form.planStaff){ toast('予定を入れる人（だれのカレンダー）を選んでください'); return; }
+  if (form.planDate && !form.planStaff){ toast('予定の「訪問担当」を選んでください'); return; }
   const now = new Date();
   const editing = !!form.id;
   if (!editing && !form.dupOk && dupsOf(form).length){   // 重複は1回止めて、もう一度押したら記録
