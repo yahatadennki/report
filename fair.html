@@ -454,6 +454,17 @@ function renderSum(dates, vs, gs, k){
     lbl('ガラポン') + table(H, garaRows) +
     lbl('日別') + table(['日','来店','配達で記念品','来店の累計','来店率'], dayRows, ['合計', V.length, G.length, V.length, pct(V.length, inv)]);
 }
+// 成約した見積ごとに「お客様・商品・金額」と合計
+function seiList(a, title){
+  const lbl = '<p class="lbl" style="margin-top:4px">'+title+'</p>';
+  if (!a.length) return lbl + '<div class="msg">成約はまだありません</div>';
+  const g = x => (x.goods||[]).map(it => esc(it.n)+' <span style="font-size:11px;color:#888">'+esc(it.c)+'</span>'+(it.q>1?' ×'+it.q:'')).join('<br>') || '<span style="color:#888">（工事・部材など）</span>';
+  const cnt = a.reduce((t,x) => t + (x.goods||[]).reduce((s,it) => s + (Number(it.q)||1), 0), 0);
+  const sum = a.reduce((t,x) => t + (Number(x.total)||0), 0);
+  return lbl + '<table class="sumt"><tr><th>お客様</th><th>商品</th><th>金額</th></tr>' +
+    a.map(x => '<tr><td>'+esc(x.cust)+'<br><span style="font-size:11px;color:#888">'+esc(x.tantou)+'</span></td><td style="text-align:left">'+g(x)+'</td><td>'+yen(x.total)+'</td></tr>').join('') +
+    '<tr class="tot"><td>合計 '+a.length+'件</td><td style="text-align:left">商品 '+cnt+'台</td><td>'+yen(sum)+'</td></tr></table>';
+}
 function sumUriage(V, day, allL){
   const lbl = t => '<p class="lbl" style="margin-top:4px">'+t+'</p>';
   if (!uriage) return lbl('💴 売上（商品見積）') + '<div class="msg" style="color:#dc2626">⚠ 売上を読み込めませんでした（受注日報のスクリプトで「フェア売上の許可」を一度実行してください）</div>';
@@ -471,9 +482,10 @@ function sumUriage(V, day, allL){
     tr(['成約', sei(DL).length+'件 '+yen(sum(sei(DL))), sei(L).length+'件 '+yen(sum(sei(L)))]) +
     tr(['見積中', est(DL).length+'件 '+yen(sum(est(DL))), est(L).length+'件 '+yen(sum(est(L)))]) +
     tr(['来店→成約', '', (V.length ? (Math.round(seiV / V.length * 1000) / 10)+'%' : '—')+'（'+seiV+'組）']) + '</table>' +
+    seiList(sei(DL), '🎉 '+md+' に成約した商品') + seiList(sei(L), '🎉 '+allL+'で成約した商品') +
     (kinds.length ? '<table class="sumt"><tr><th>品目</th><th>成約 '+md+'</th><th>成約 合計</th><th>見積中 合計</th></tr>'+kinds.map(tr).join('')+'</table>' : '') +
     (DL.length ? '<table class="sumt"><tr><th>'+md+'の見積</th><th>担当</th><th>金額</th><th></th></tr>' +
-      DL.map(x => tr([esc(x.cust)+(x.raiten?'':' <span style="font-size:11px;color:#888">（来店なし）</span>'), esc(x.tantou), x.plan&&!x.seiyaku?'プラン':yen(x.total), x.seiyaku?'🎉成約':'見積'])).join('') + '</table>'
+      DL.map(x => tr([esc(x.cust)+(vNames.has(norm(x.cust))?'':' <span style="font-size:11px;color:#888">（来店なし）</span>'), esc(x.tantou), x.plan&&!x.seiyaku?'プラン':yen(x.total), x.seiyaku?'🎉成約':'見積'])).join('') + '</table>'
       : '<div class="msg">'+md+'に作った見積はありません</div>') +
     '<div class="msg" style="margin-bottom:12px">シート「フェア売上」にも書き出しています。成約＝工事日か「発注済・在庫」が入った見積。</div>';
 }
@@ -920,7 +932,14 @@ function openMitsumori(){
 async function loadUriage(force){
   if (!force && Date.now() - uriageAt < 60000) return uriage;
   uriageAt = Date.now();
-  try { const j = await (await fetch(GAS+'?action=fairUriage')).json(); if (j && j.ok){ uriage = j; renderList(); } } catch(e){}
+  try { const j = await (await fetch(GAS+'?action=fairUriage')).json(); if (j && j.ok){ uriage = j; renderList(); return uriage; } } catch(e){}
+  // 受注日報側が読めない（許可前など）ときは、商品見積から直接読む
+  try {
+    if (!info) await loadInfo();
+    const i = (info && info.info) || {}, st = i.start || TODAY, en = i.end || st;
+    const j = await (await fetch(SHOHIN+'?action=fairUriage&pin=7860&start='+st+'&end='+en)).json();
+    if (j && j.ok){ uriage = j; renderList(); }
+  } catch(e){}
   return uriage;
 }
 function estOf(name){ const n = norm(name||''); return ((uriage && uriage.list) || []).filter(x => norm(x.cust) === n); }
